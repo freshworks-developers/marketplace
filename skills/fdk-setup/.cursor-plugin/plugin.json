@@ -1,0 +1,23 @@
+{
+  "name": "fdk-setup",
+  "displayName": "FDK Setup",
+  "version": "1.0.0",
+  "description": "Automated Freshworks FDK installation and management for macOS and Windows with PATH configuration",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "fdk",
+    "cli",
+    "setup",
+    "install",
+    "macos",
+    "windows",
+    "homebrew",
+    "npm"
+  ],
+  "logo": "assets/logo.svg"
+}

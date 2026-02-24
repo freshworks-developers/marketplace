@@ -1,0 +1,29 @@
+{
+  "name": "freshworks-marketplace",
+  "owner": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "metadata": {
+    "description": "Cursor plugins for building Freshworks Platform 3.0 marketplace applications",
+    "version": "1.0.0",
+    "pluginRoot": "skills"
+  },
+  "plugins": [
+    {
+      "name": "freshworks-app-dev",
+      "source": "./skills/app-dev",
+      "description": "Expert-level development skill for building, debugging, and reviewing Freshworks Platform 3.0 apps"
+    },
+    {
+      "name": "fdk-setup",
+      "source": "./skills/fdk-setup",
+      "description": "Automated FDK installation, upgrade, downgrade, and uninstall for macOS and Windows"
+    },
+    {
+      "name": "freshworks-publish",
+      "source": "./skills/publish",
+      "description": "Guide for publishing Freshworks apps to the marketplace"
+    }
+  ]
+}

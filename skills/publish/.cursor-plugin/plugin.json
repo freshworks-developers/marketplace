@@ -1,0 +1,20 @@
+{
+  "name": "freshworks-publish",
+  "displayName": "Freshworks App Publishing",
+  "version": "1.0.0",
+  "description": "Guide for publishing Freshworks apps to the marketplace with submission workflows and review guidelines",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "marketplace",
+    "publish",
+    "submission",
+    "review",
+    "app-store"
+  ],
+  "logo": "assets/logo.svg"
+}

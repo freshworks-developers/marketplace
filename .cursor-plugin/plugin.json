@@ -1,0 +1,10 @@
+{
+  "name": "freshworks-skills",
+  "displayName": "Freshworks Skills",
+  "description": "Freshworks Platform 3.0 skills for app development, FDK setup, and marketplace publishing.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Freshworks Developers"
+  },
+  "skills": "./skills/"
+}

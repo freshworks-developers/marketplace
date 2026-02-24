@@ -1,0 +1,22 @@
+{
+  "name": "freshworks-app-dev",
+  "displayName": "Freshworks App Development",
+  "version": "1.0.0",
+  "description": "Expert-level Cursor skill for building Freshworks Platform 3.0 marketplace applications with zero tolerance for legacy patterns",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "crayons",
+    "fdk",
+    "validation",
+    "oauth",
+    "serverless"
+  ],
+  "logo": "assets/logo.svg"
+}
