@@ -1,4 +1,4 @@
-<h1 align="center">Freshworks Marketplace</h1>
+<h1 align="center">Freshworks Marketplace Skills</h1>
 
 <p align="center"><strong>Skills for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshworks Platform 3.0 guidance.</strong></p>
 
