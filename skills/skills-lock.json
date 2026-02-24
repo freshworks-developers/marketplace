@@ -2,7 +2,7 @@
   "version": 1,
   "skills": {
     "fdk-setup": {
-      "source": "/Users/dchatterjee/freshworks-marketplace/skills/fdk-setup",
+      "source": "/Users/dchatterjee/marketplace/skills/fdk-setup",
       "sourceType": "local",
       "computedHash": "f87385858cb92ae8114566c5328709ae95d182d889cdc51fead777ee5c13a6d0"
     }

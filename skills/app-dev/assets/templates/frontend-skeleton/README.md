@@ -35,4 +35,4 @@ fdk validate
 ## Resources
 
 - [Freshworks Sample Apps](https://community.developers.freshworks.com/t/freshworks-sample-apps/3604)
-- [Freshworks Marketplace](https://github.com/freshworks-developers/freshworks-marketplace)
+- [Freshworks Marketplace](https://github.com/freshworks-developers/marketplace)

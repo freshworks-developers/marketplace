@@ -535,12 +535,12 @@ Agent:
 
 **From GitHub:**
 ```bash
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill publish
+npx skills add https://github.com/freshworks-developers/marketplace --skill publish
 ```
 
 **From local:**
 ```bash
-npx skills add /path/to/freshworks-marketplace/skills/publish
+npx skills add /path/to/marketplace/skills/publish
 ```
 
 **Verify installation:**
@@ -703,7 +703,7 @@ fdk pack --skip-coverage
 
 **Community:**
 - Developer Community: https://community.freshworks.dev/
-- GitHub Issues: https://github.com/freshworks-developers/freshworks-marketplace/issues
+- GitHub Issues: https://github.com/freshworks-developers/marketplace/issues
 - Support Email: developer-support@freshworks.com
 
 ## License

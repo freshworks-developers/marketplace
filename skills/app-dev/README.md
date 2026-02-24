@@ -41,17 +41,17 @@ Use `/add-plugin <skill-name>` in Cursor chat:
 Or install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill freshworks-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-app-dev
 ```
 
 ### Claude Code
 
 ```bash
 # Install full plugin (includes all skills)
-claude plugin install https://github.com/freshworks-developers/freshworks-marketplace
+claude plugin install https://github.com/freshworks-developers/marketplace
 
 # Or add this skill only
-npx @anthropic-ai/add-skill https://github.com/freshworks-developers/freshworks-marketplace/tree/main/skills/app-dev
+npx @anthropic-ai/add-skill https://github.com/freshworks-developers/marketplace/tree/main/skills/app-dev
 ```
 
 ## Verify Installation
@@ -101,7 +101,7 @@ Invoke with `@freshworks-app-dev` in chat, or it activates automatically when wo
 
 For issues or questions:
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/freshworks-marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
 
 ## License
 

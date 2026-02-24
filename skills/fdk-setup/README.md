@@ -31,17 +31,17 @@ Use `/add-plugin <skill-name>` in Cursor chat:
 Or install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
 ```
 
 ### Claude Code
 
 ```bash
 # Install full plugin (includes all skills)
-claude plugin install https://github.com/freshworks-developers/freshworks-marketplace
+claude plugin install https://github.com/freshworks-developers/marketplace
 
 # Or add this skill only
-npx @anthropic-ai/add-skill https://github.com/freshworks-developers/freshworks-marketplace/tree/main/skills/fdk-setup
+npx @anthropic-ai/add-skill https://github.com/freshworks-developers/marketplace/tree/main/skills/fdk-setup
 ```
 
 ## Verify Installation
@@ -116,7 +116,7 @@ Each command spawns a **dedicated shell subagent** that:
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/freshworks-marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
 
 ## License
 

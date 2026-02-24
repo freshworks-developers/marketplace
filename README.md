@@ -34,19 +34,19 @@ Use `/add-plugin <skill-name>` in Cursor chat to add a skill:
 Or install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill freshworks-app-dev
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill fdk-setup
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace --skill freshworks-publish
+npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-publish
 ```
 
 ### Claude Code
 
 ```bash
 # Install full plugin
-claude plugin install https://github.com/freshworks-developers/freshworks-marketplace
+claude plugin install https://github.com/freshworks-developers/marketplace
 
 # Or add individual skills
-npx skills add https://github.com/freshworks-developers/freshworks-marketplace/skills/app-dev
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
 ```
 
 ## Available Skills
@@ -128,7 +128,7 @@ The manifest is used by the CLI to discover available skills.
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/freshworks-marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
 
 ## License
 
