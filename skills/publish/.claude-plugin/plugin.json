@@ -1,0 +1,10 @@
+{
+  "name": "publish",
+  "displayName": "FDK Pack & Publish",
+  "version": "1.0.0",
+  "description": "Automated Freshworks marketplace FDK pack and publish",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  }
+}

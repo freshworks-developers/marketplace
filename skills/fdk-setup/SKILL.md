@@ -1,5 +1,5 @@
 ---
-name: fdk-setup
+name: freshworks-fdk-setup-skill
 description: Complete FDK management for macOS and Windows - install, upgrade, downgrade, and uninstall. Use when the user needs to install/configure/upgrade/downgrade/uninstall the Freshworks Development Kit, set up FDK on a new machine, asks about FDK installation on Mac or Windows, wants to change FDK version, or encounters FDK/CLI setup issues.
 argument-hint: "[install|upgrade|downgrade|uninstall] [version]"
 allowed-tools: ["shell", "read", "write", "task"]

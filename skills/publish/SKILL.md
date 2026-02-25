@@ -1,5 +1,5 @@
 ---
-name: publish
+name: freshworks-publish-skill
 description: Pack and publish completed Freshworks custom apps to the marketplace. Use when the user wants to pack, publish, submit, or deploy a Freshworks app to the marketplace, prepare app for submission, create app package, or asks about app publishing workflow.
 argument-hint: "[pack|publish|submit] [app-directory]"
 allowed-tools: ["shell", "read", "write"]

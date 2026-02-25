@@ -8,7 +8,7 @@
     "email": "developers@freshworks.com"
   },
   "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace/skills/app-dev",
+  "repository": "https://github.com/freshworks-developers/marketplace",
   "license": "MIT",
   "logo": "assets/logo.svg",
   "keywords": [

@@ -1,13 +1,16 @@
 {
-  "name": "freshworks-publish",
+  "name": "app-dev",
   "displayName": "Freshworks App Publishing",
   "version": "1.0.0",
   "description": "Guide for publishing Freshworks apps to the marketplace with submission workflows and review guidelines",
   "author": {
     "name": "Freshworks Developers",
-    "email": "developers@freshworks.com"
+    "email": "skills@dev-assist.freshservice.com"
   },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/publish",
   "license": "MIT",
+  "logo": "assets/logo.svg",
   "keywords": [
     "freshworks",
     "marketplace",
@@ -16,5 +19,10 @@
     "review",
     "app-store"
   ],
-  "logo": "assets/logo.svg"
+  "category": "developer-tools",
+  "tags": [
+    "automation",
+    "publishing",
+    "marketplace"
+  ]
 }

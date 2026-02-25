@@ -93,3 +93,8 @@ TODO.md
 .agents/
 .cursor/
 test/
+skills/.agents/
+skills/.cursor/
+skills/test/
+skills/skills-lock.json
+skills-lock.json

@@ -7,7 +7,10 @@
     "name": "Freshworks Developers",
     "email": "developers@freshworks.com"
   },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/fdk-setup",
   "license": "MIT",
+  "logo": "assets/logo.svg",
   "keywords": [
     "freshworks",
     "fdk",
@@ -19,5 +22,10 @@
     "homebrew",
     "npm"
   ],
-  "logo": "assets/logo.svg"
+  "category": "developer-tools",
+  "tags": [
+    "automation",
+    "setup",
+    "cli"
+  ]
 }

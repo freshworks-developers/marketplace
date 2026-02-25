@@ -21,41 +21,42 @@
 
 ## Installation
 
-### Cursor
-
-Use `/add-plugin <skill-name>` in Cursor chat to add a skill:
-
-```
-/add-plugin freshworks-app-dev
-/add-plugin fdk-setup
-/add-plugin freshworks-publish
-```
-
-Or install via CLI:
+### For Claude Code:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
-npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-publish
+databricks experimental aitools skills install
 ```
+This installs skills to ~/.claude/skills/ for use with Claude Code.
 
-### Claude Code
+### For Cursor:
 
 ```bash
-# Install full plugin
-claude plugin install https://github.com/freshworks-developers/marketplace
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill
+npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill
+npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill
+```
+
+### Or add individual skills
+```bash
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
+```
+
+### In chat:
 
 # Or add individual skills
 npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
 ```
 
+
+
+
 ## Available Skills
 
 | Skill | Description | Execution Mode |
 |-------|-------------|----------------|
-| [**freshworks-app-dev**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
-| [**fdk-setup**](skills/fdk-setup/) | Automated FDK installation with Node.js 18 via nvm using subagents | **Subagent-Based** |
-| [**freshworks-publish**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+| [**freshworks-app-dev-skill**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
+| [**freshworks-fdk-setup-skill**](skills/fdk-setup/) | Automated FDK installation with Node.js 18 via nvm using subagents | **Subagent-Based** |
+| [**freshworks-publish-skill**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
 
 ### Subagent-Based Skills
 

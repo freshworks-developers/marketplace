@@ -43,12 +43,6 @@ Then apply these patterns:
 - Request templates with <%= access_token %>
 ```
 
-### Manifest
-
-```bash
-python3 scripts/generate_manifest.py           # generate
-python3 scripts/generate_manifest.py validate  # check in CI
-```
 
 ## Security
 

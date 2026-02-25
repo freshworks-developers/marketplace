@@ -1,0 +1,10 @@
+{
+  "name": "fdk-setup",
+  "displayName": "FDK Setup",
+  "version": "1.0.0",
+  "description": "Automated Freshworks FDK installation and management for macOS and Windows with PATH configuration",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  }
+}
