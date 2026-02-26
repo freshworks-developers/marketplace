@@ -37,7 +37,7 @@ claude plugin marketplace add freshworks-developers/marketplace
 **Step2**
 
 ```bash
-claude plugin install <fdk-setup>@freshworks-developers
+claude plugin install fdk-setup@freshworks-developers
 ```
 
 ## Verify Installation
