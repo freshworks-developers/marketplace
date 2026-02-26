@@ -20,33 +20,29 @@
 
 ## Install
 
-### Cursor
-
-Use `/add-plugin <skill-name>` in Cursor chat:
-
-```
-/add-plugin fdk-setup
-```
-
-Or install via CLI:
+### Install via CLI:
 
 ```bash
 npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
 ```
 
-### Claude Code
+### Install as Claude Plugin
+
+**Step1**
 
 ```bash
-# Install full plugin (includes all skills)
-claude plugin install https://github.com/freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/marketplace
+```
 
-# Or add this skill only
-npx @anthropic-ai/add-skill https://github.com/freshworks-developers/marketplace/tree/main/skills/fdk-setup
+**Step2**
+
+```bash
+claude plugin install <fdk-setup>@freshworks-developers
 ```
 
 ## Verify Installation
 
-The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
+The plugin should appear in Cursor/Claude Settings → Plugins → Installed Plugins.
 
 
 ## Usage
