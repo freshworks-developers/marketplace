@@ -30,28 +30,24 @@
 
 ## Install
 
-### Cursor
-
-Use `/add-plugin <skill-name>` in Cursor chat:
-
-```
-/add-plugin freshworks-app-dev
-```
-
-Or install via CLI:
+### Install via CLI:
 
 ```bash
 npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-app-dev
 ```
 
-### Claude Code
+### Install as Claude Plugin
+
+**Step1**
 
 ```bash
-# Install full plugin (includes all skills)
-claude plugin install https://github.com/freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/marketplace
+```
 
-# Or add this skill only
-npx @anthropic-ai/add-skill https://github.com/freshworks-developers/marketplace/tree/main/skills/app-dev
+**Step2**
+
+```bash
+claude plugin install app-dev@freshworks-developers
 ```
 
 ## Verify Installation
