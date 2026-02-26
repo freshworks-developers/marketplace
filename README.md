@@ -1,6 +1,6 @@
 <h1 align="center">Freshworks Marketplace Skills</h1>
 
-<p align="center"><strong>Skills for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshworks Platform 3.0 guidance.</strong></p>
+<p align="center"><strong>App Development Kit for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshworks Platform 3.0 guidance.</strong></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-3.0-blue?style=for-the-badge" alt="Platform 3.0">
@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
 </p>
 
-<p align="center">Agentic App Dvelopment Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
+<p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
 
 <p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code></p>
 
