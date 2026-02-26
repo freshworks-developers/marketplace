@@ -47,7 +47,7 @@ claude plugin marketplace add freshworks-developers/marketplace
 **Step2**
 
 ```bash
-claude plugin install <publish>@freshworks-developers
+claude plugin install publish@freshworks-developers
 ```
 
 ## Verify Installation
