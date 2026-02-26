@@ -1,6 +1,6 @@
 <h1 align="center">Freshworks App Development</h1>
 
-<p align="center"><strong>Expert-level Cursor plugin for building Freshworks Platform 3.0 marketplace applications</strong></p>
+<p align="center"><strong>Expert-level skill for building Freshworks Platform 3.0 marketplace applications</strong></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-3.0-blue?style=for-the-badge" alt="Platform 3.0">
