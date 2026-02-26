@@ -21,13 +21,6 @@
 
 ## Installation
 
-### For Claude Code:
-
-```bash
-databricks experimental aitools skills install
-```
-This installs skills to ~/.claude/skills/ for use with Claude Code.
-
 ### For Cursor:
 
 ```bash
@@ -44,10 +37,10 @@ npx skills add https://github.com/freshworks-developers/marketplace/skills/app-d
 ### In chat:
 
 # Or add individual skills
+
+```bash
 npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
 ```
-
-
 
 
 ## Available Skills
@@ -92,24 +85,7 @@ skill-name/
     └── commands/      # Slash commands (optional)
 ```
 
-### Subagent Architecture
 
-Skills can use **subagent-based execution** for complex operations:
-
-```javascript
-// In SKILL.md, when operation is triggered:
-Task({
-  subagent_type: "shell",      // Shell specialist for commands
-  model: "fast",               // Fast model for straightforward tasks
-  description: "Brief summary", // 3-5 words
-  prompt: `Detailed instructions with:
-    - Requirements
-    - Step-by-step workflow
-    - Error handling
-    - Output format
-  `
-})
-```
 ## Manifest Management
 
 Generate manifest after adding or updating skills:
