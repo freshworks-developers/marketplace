@@ -67,12 +67,122 @@ Before generating ANY code, verify these are NEVER present:
    - ✅ ALWAYS use `<%= iparam.name %>` for app-specific iparams
    - ✅ ALWAYS use `<%= access_token %>` for OAuth
 
-4. **Async/Await Enforcement**
+4. **🚨 Request Template Manifest Sync (CRITICAL)**
+   - **EVERY template in `config/requests.json` MUST be declared in `manifest.json`**
+   - ❌ Template in requests.json but NOT in manifest → "Request template declared but not associated with module"
+   - ✅ For EVERY key in requests.json, add matching entry to `modules.common.requests`
+   
+   **MANDATORY SYNC PATTERN:**
+   ```
+   config/requests.json:           manifest.json:
+   {                               "modules": {
+     "createTask": {...},    →       "common": {
+     "addComment": {...}     →         "requests": {
+   }                                     "createTask": {},
+                                         "addComment": {}
+                                       }
+                                     }
+                                   }
+   ```
+   **VALIDATION WARNING IF NOT SYNCED:** "Request template 'X' is declared but not associated with module"
+
+5. **🚨 Async/Await Enforcement (CRITICAL - PRE-GENERATION DECISION)**
    - ❌ NEVER use `async` without `await` - causes lint errors
-   - ✅ If function is `async`, it MUST contain at least one `await` expression
+   - ✅ **BEFORE writing any function, ASK: "Will this function use await?"**
+     - **YES** → Use `async function(args)` with actual `await` inside
+     - **NO** → Use `function(args)` without `async` keyword
    - ✅ OR remove `async` keyword if no await is needed
    - **LINT ERROR:** "Async function has no 'await' expression"
-   - **THIS IS A MANDATORY LINT REQUIREMENT - ALWAYS ENFORCE**
+   
+   **🚨 MINIMAL/STUB HANDLER PATTERN (USE THIS FOR SIMPLE HANDLERS):**
+   ```javascript
+   // ✅ CORRECT - Simple handler with NO async operations
+   exports = {
+     onAppInstallHandler: function(args) {
+       console.log('App installed for:', args.iparams.domain);
+     },
+     onTicketCreateHandler: function(args) {
+       console.log('Ticket created:', args.data.ticket.id);
+     }
+   };
+   
+   // ❌ WRONG - async without await (LINT ERROR!)
+   exports = {
+     onAppInstallHandler: async function(args) {  // NEVER DO THIS!
+       console.log('App installed');  // No await = lint error
+     }
+   };
+   
+   // ✅ CORRECT - Handler that ACTUALLY uses async
+   exports = {
+     onAppInstallHandler: async function(args) {
+       await $db.set('installed', { timestamp: Date.now() });  // Has await
+       console.log('App installed');
+     }
+   };
+   ```
+
+6. **🚨 Unused Parameters Enforcement (CRITICAL)**
+   - ❌ NEVER define parameters that aren't used - causes lint errors
+   - ✅ **If parameter is not used, REMOVE IT ENTIRELY** (don't just prefix with `_`)
+   - **LINT ERROR:** "'args' is defined but never used" or "'_args' is defined but never used"
+   
+   ```javascript
+   // ❌ WRONG - _args still causes lint warning
+   onAppInstallHandler: function(_args) {
+     console.log('Installed');
+   }
+   
+   // ✅ CORRECT - Remove unused parameter entirely
+   onAppInstallHandler: function() {
+     console.log('Installed');
+   }
+   
+   // ✅ CORRECT - Keep parameter if actually used
+   onAppInstallHandler: function(args) {
+     console.log('Installed for:', args.iparams.domain);
+   }
+   ```
+
+7. **🚨 Function Complexity Enforcement (CRITICAL)**
+   - ❌ NEVER generate functions with complexity > 7
+   - ✅ If function has > 3 nested conditions or > 5 branches, REFACTOR IMMEDIATELY
+   - ✅ Extract helper functions for each logical block
+   - ✅ Use early returns instead of nested if-else
+   - **WARNING:** "Function has complexity X. Maximum allowed is 7."
+   
+   **REFACTORING PATTERN for high-complexity handlers:**
+   ```javascript
+   // ❌ WRONG - complexity > 7
+   exports.onConversationCreateHandler = async function(args) {
+     if (condition1) {
+       if (condition2) {
+         if (condition3) {
+           // deeply nested logic
+         }
+       }
+     }
+   };
+   
+   // ✅ CORRECT - extract helpers
+   exports = {
+     onConversationCreateHandler: async function(args) {
+       const messageType = getMessageType(args);
+       return await handleByType(messageType, args);
+     }
+   };
+   
+   // Helper functions AFTER exports
+   function getMessageType(args) { ... }
+   async function handleByType(type, args) { ... }
+   ```
+
+8. **🚨 Manifest-to-File Consistency (CRITICAL)**
+   - **If manifest has `location` with `url: "index.html"` → `app/index.html` MUST exist**
+   - **If manifest has `location` with `icon: "styles/images/icon.svg"` → `app/styles/images/icon.svg` MUST exist**
+   - **If manifest has `functions` or `events` → `server/server.js` MUST exist**
+   - ❌ NEVER create manifest referencing files that don't exist
+   - ✅ ALWAYS create files BEFORE adding them to manifest
 
 You are not a tutor. You are an enforcement layer.
 
@@ -854,19 +964,35 @@ Before presenting the app, validate against:
 - [ ] For frontend apps: `app/index.html`, `app/scripts/app.js`, `app/styles/images/icon.svg`
 - [ ] For serverless apps: `server/server.js`
 
-### Gate 2: Manifest Structure Valid
+### Gate 2: Manifest-to-File Consistency (NEW - CRITICAL)
+- [ ] **Every file referenced in manifest MUST exist:**
+  - If `location.*.url: "index.html"` → `app/index.html` MUST exist
+  - If `location.*.icon: "styles/images/icon.svg"` → `app/styles/images/icon.svg` MUST exist
+  - If `modules.*.events` exists → `server/server.js` MUST exist with handlers
+  - If `modules.common.functions` exists → `server/server.js` MUST exist with functions
+- [ ] **Every template in requests.json MUST be in manifest:**
+  - For EACH key in `config/requests.json`, there MUST be a matching key in `modules.common.requests`
+
+### Gate 3: Manifest Structure Valid
 - [ ] `"platform-version": "3.0"`
 - [ ] No empty blocks (`functions: {}`, `requests: {}`, `events: {}`)
 - [ ] All declared functions have implementations in server.js
 - [ ] All declared requests exist in config/requests.json
 
-### Gate 3: OAuth Complete (if used)
+### Gate 4: OAuth Complete (if used)
 - [ ] Every integration has `display_name`
 - [ ] Every integration has `token_type`
 - [ ] Every `oauth_iparam` field has `description`
 
-### Gate 4: Validation Passes
+### Gate 5: Code Quality (NEW - CRITICAL)
+- [ ] **No function with complexity > 7** - Refactor before finalizing
+- [ ] **No async without await** - Add await or remove async
+- [ ] **No unused variables** - Remove or prefix with `_`
+
+### Gate 6: Validation Passes
 - [ ] `fdk validate` returns 0 platform errors
+- [ ] `fdk validate` returns 0 lint errors
+- [ ] Warnings reviewed and addressed if critical
 
 **IF ANY GATE FAILS:**
 - ❌ DO NOT report app as "complete" or "generated successfully"

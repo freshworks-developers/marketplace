@@ -46,12 +46,47 @@ fdk validate
 - ✅ **"/modules/common/functions must NOT have fewer than 1 properties"** → Add functions OR remove empty `functions: {}` block
 
 **What to FIX (Lint Errors) - ALSO BLOCKING:**
-- ✅ **Async without await** → Add `await` OR remove `async` keyword
-- ✅ **Unused parameters** → Remove parameter OR prefix with `_` (e.g., `_args`)
+- ✅ **Async without await** → Remove `async` keyword entirely (preferred), OR add actual `await` operation
+- ✅ **Unused parameters** → Remove parameter ENTIRELY (not `_args` - that still warns!)
 - ✅ **Unreachable code** → Remove dead code after return statements
 - ✅ **Missing semicolons** → Add semicolons where required
 - ✅ **Undefined variables** → Define or import missing variables
 - ✅ **Complexity issues** → Extract helper functions to reduce complexity
+
+**🚨 LINT ERROR FIX PATTERNS - USE EXACTLY:**
+
+```javascript
+// ❌ "Async function has no 'await' expression" - WRONG
+exports = {
+  onAppInstallHandler: async function(args) {
+    console.log('Installed');
+  }
+};
+
+// ✅ FIXED - Remove async keyword entirely
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('Installed');
+  }
+};
+```
+
+```javascript
+// ❌ "'args' is defined but never used" - WRONG
+onAppInstallHandler: function(args) {
+  console.log('Installed');
+}
+
+// ❌ "'_args' is defined but never used" - STILL WRONG (underscore doesn't help!)
+onAppInstallHandler: function(_args) {
+  console.log('Installed');
+}
+
+// ✅ FIXED - Remove unused parameter entirely
+onAppInstallHandler: function() {
+  console.log('Installed');
+}
+```
 
 **🚨 ALL ERRORS = BLOCKING. App is NOT complete until Platform Errors = 0 AND Lint Errors = 0.**
 
@@ -410,6 +445,212 @@ fdk validate
   <rect width="64" height="64" rx="8" fill="#4A90D9"/>
   <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">App</text>
 </svg>
+```
+
+### Pattern 9: Request Template Not Associated with Module
+
+**Warning:** `Request template 'createTask' is declared but not associated with module`
+
+**Cause:** Template exists in `config/requests.json` but not declared in `manifest.json`
+
+**Fix:** Add EVERY template from requests.json to manifest.json:
+```json
+// config/requests.json has:
+{
+  "createTask": { "schema": { ... } },
+  "addComment": { "schema": { ... } }
+}
+
+// manifest.json MUST have matching entries:
+{
+  "modules": {
+    "common": {
+      "requests": {
+        "createTask": {},
+        "addComment": {}
+      }
+    }
+  }
+}
+```
+
+**CRITICAL:** For EVERY key in `config/requests.json`, add an empty object `{}` with the same key name to `modules.common.requests` in manifest.json.
+
+### Pattern 10: Function Complexity > 7
+
+**Warning:** `Async method 'functionName' has a complexity of X. Maximum allowed is 7.`
+
+**Fix:** Refactor the function by extracting helper functions:
+```javascript
+// ❌ WRONG - complexity > 7 (too many nested conditions)
+exports.onConversationCreateHandler = async function(args) {
+  if (messageType === 'text') {
+    if (sentiment === 'negative') {
+      if (priority === 'high') {
+        // deeply nested
+      }
+    }
+  }
+};
+
+// ✅ CORRECT - extract into helpers (AFTER exports block)
+exports = {
+  onConversationCreateHandler: async function(args) {
+    const result = await processMessage(args);
+    return result;
+  }
+};
+
+// Helper functions AFTER exports
+async function processMessage(args) {
+  const messageType = getMessageType(args);
+  return await routeByType(messageType, args);
+}
+
+function getMessageType(args) {
+  return args.data?.message?.type || 'unknown';
+}
+
+async function routeByType(type, args) {
+  const handlers = {
+    'text': handleTextMessage,
+    'image': handleImageMessage
+  };
+  return handlers[type] ? await handlers[type](args) : null;
+}
+```
+
+### Pattern 11: Manifest References Non-Existent Files
+
+**Error:** `Template file 'index.html' mentioned in X is not found in app folder`
+
+**Fix:** If manifest has a location, the referenced files MUST exist:
+```
+manifest.json says:                     Files that MUST exist:
+"full_page_app": {                      
+  "url": "index.html",            →     app/index.html
+  "icon": "styles/images/icon.svg" →    app/styles/images/icon.svg
+}
+```
+
+**CRITICAL:** Create files BEFORE adding them to manifest, OR remove location from manifest if files won't be created.
+
+### Pattern 12: Async Function Without Await (LINT ERROR)
+
+**Error:** `Async function 'xxx' has no 'await' expression`
+
+**Root Cause:** Function is declared with `async` keyword but doesn't contain any `await` expression.
+
+**Fix Strategy:** Remove `async` keyword (preferred) OR add actual async operation:
+
+```javascript
+// ❌ WRONG - async without await
+exports = {
+  onAppInstallHandler: async function(args) {
+    console.log('App installed:', args.iparams.domain);
+    renderData({ success: true });
+  },
+  onTicketCreateHandler: async function(args) {
+    const ticket = args.data.ticket;
+    console.log('Ticket:', ticket.id);
+  }
+};
+
+// ✅ CORRECT - Remove async keyword (PREFERRED for simple handlers)
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('App installed:', args.iparams.domain);
+    renderData({ success: true });
+  },
+  onTicketCreateHandler: function(args) {
+    const ticket = args.data.ticket;
+    console.log('Ticket:', ticket.id);
+  }
+};
+
+// ✅ ALSO CORRECT - Keep async only if you ACTUALLY need await
+exports = {
+  onAppInstallHandler: async function(args) {
+    await $db.set('installed', { timestamp: Date.now() });  // Actual await
+    console.log('App installed');
+  }
+};
+```
+
+**🚨 DECISION RULE:** When generating handlers, ASK: "Does this handler need to call $request, $db, or any async API?" 
+- NO → Use `function()` (no async)
+- YES → Use `async function()` with actual `await` inside
+
+### Pattern 13: Unused Parameter (LINT ERROR)
+
+**Error:** `'args' is defined but never used` OR `'_args' is defined but never used`
+
+**Root Cause:** Handler defines `args` parameter but never references it. Note: Even `_args` prefix causes warnings!
+
+**Fix Strategy:** Remove parameter entirely OR use it:
+
+```javascript
+// ❌ WRONG - args defined but never used
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('App installed');
+  }
+};
+
+// ❌ STILL WRONG - underscore prefix doesn't suppress the warning!
+exports = {
+  onAppInstallHandler: function(_args) {
+    console.log('App installed');
+  }
+};
+
+// ✅ CORRECT - Remove unused parameter entirely
+exports = {
+  onAppInstallHandler: function() {
+    console.log('App installed');
+  }
+};
+
+// ✅ ALSO CORRECT - Actually use the parameter
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('App installed for domain:', args.iparams.domain);
+  }
+};
+```
+
+**🚨 DECISION RULE:** When generating handlers, ASK: "Will this handler use the args object?"
+- NO → Use `function()` with no parameters
+- YES → Use `function(args)` and reference `args.xxx` inside
+
+### Pattern 14: Unhandled Promise Rejection (WARNING)
+
+**Warning:** `Possible unhandled promise rejection`
+
+**Root Cause:** Async operation without try/catch.
+
+**Fix:** Wrap async operations in try/catch:
+
+```javascript
+// ❌ WRONG - no error handling
+exports = {
+  onTicketCreateHandler: async function(args) {
+    const response = await $request.invokeTemplate('createTask', {});
+    console.log(response);
+  }
+};
+
+// ✅ CORRECT - proper error handling
+exports = {
+  onTicketCreateHandler: async function(args) {
+    try {
+      const response = await $request.invokeTemplate('createTask', {});
+      console.log(response);
+    } catch (error) {
+      console.error('Error creating task:', error.message);
+    }
+  }
+};
 ```
 
 ## Enforcement Rules
