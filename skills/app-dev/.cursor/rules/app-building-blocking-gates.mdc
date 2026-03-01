@@ -1,0 +1,187 @@
+---
+name: app-building-blocking-gates
+description: MANDATORY blocking gates - app building and validation MUST NOT complete without passing ALL gates. Zero tolerance for missing files, incomplete structure, or platform errors.
+alwaysApply: true
+---
+
+# App Building Blocking Gates - STRICT ENFORCEMENT
+
+**CRITICAL: These gates are BLOCKING. App building and validation MUST NOT be considered complete until ALL gates pass.**
+
+**If ANY gate fails → STOP → FIX → RE-VERIFY → Only then proceed.**
+
+---
+
+## Gate 0: PRE-GENERATION - Template Selection (BLOCKING)
+
+**BEFORE writing any code, you MUST:**
+
+1. **Determine app type:** Frontend / Serverless / Hybrid
+2. **If manifest will declare ANY `location`** (ticket_sidebar, full_page_app, asset_sidebar, etc.):
+   - ✅ You MUST create the FULL frontend structure (app/, index.html, scripts/app.js, styles/style.css, styles/images/icon.svg)
+   - ❌ NEVER declare a location without creating ALL referenced files
+3. **If manifest will declare `url: "index.html"`**:
+   - ✅ app/index.html MUST exist before you finish
+   - ❌ NEVER write manifest with url pointing to a file you won't create
+4. **If manifest will declare `icon: "styles/images/icon.svg"`**:
+   - ✅ app/styles/images/icon.svg MUST exist before you finish
+   - ❌ NEVER reference icon without creating it
+
+**VIOLATION = App will fail fdk validate. DO NOT generate incomplete apps.**
+
+---
+
+## Gate 1: Manifest–File Consistency (BLOCKING)
+
+**For EVERY `location` in manifest.json:**
+
+| Manifest declares | Required file/folder | BLOCKING |
+|-------------------|----------------------|----------|
+| `"url": "index.html"` | `app/index.html` MUST exist | ✅ YES |
+| `"url": "ticket_sidebar.html"` | `app/ticket_sidebar.html` MUST exist | ✅ YES |
+| `"icon": "styles/images/icon.svg"` | `app/styles/images/icon.svg` MUST exist | ✅ YES |
+| Any `location` with `url` | `app/` folder MUST exist | ✅ YES |
+
+**Rule:** Every `url` and `icon` in manifest MUST have a corresponding file on disk. No exceptions.
+
+**Verification (MANDATORY before fdk validate):**
+```bash
+# For each location in manifest, verify file exists
+# If url: "index.html" → test -f app/index.html
+# If icon: "styles/images/icon.svg" → test -f app/styles/images/icon.svg
+```
+
+---
+
+## Gate 2: Complete App Structure (BLOCKING)
+
+**If app has ANY frontend (location declared):**
+
+```
+app/
+├── index.html          ← REQUIRED (or whatever url is in manifest)
+├── scripts/
+│   └── app.js          ← REQUIRED
+└── styles/
+    ├── style.css       ← REQUIRED
+    └── images/
+        └── icon.svg    ← REQUIRED - NEVER SKIP
+```
+
+**Checklist - ALL must be YES before marking app complete:**
+- [ ] app/ folder exists
+- [ ] app/index.html exists (or file matching manifest url)
+- [ ] app/scripts/app.js exists
+- [ ] app/styles/style.css exists
+- [ ] app/styles/images/icon.svg exists
+
+**If ANY is NO → CREATE THE MISSING FILES → Do NOT run fdk validate until all exist.**
+
+---
+
+## Gate 3: Serverless-Only Apps (No Location)
+
+**If app is serverless (NO location in manifest):**
+- ✅ app/ folder is NOT required
+- ✅ manifest may have only events, requests, functions
+- ⚠️ If you later add a location, you MUST create full app structure
+
+**Rule:** Serverless = no location. Hybrid/Frontend = full app structure required.
+
+---
+
+## Gate 4: fdk validate - Platform Errors = BLOCKING
+
+**Platform errors are FATAL. App is NOT complete until Platform Errors = 0.**
+
+| FDK Output | Meaning | Action |
+|------------|---------|--------|
+| `Total Platform Errors: 0` | ✅ PASS | May proceed |
+| `Total Platform Errors: 1` or more | ❌ BLOCK | MUST fix before completion |
+| `Template file 'index.html' ... not found` | ❌ BLOCK | Create the file |
+| `Mandatory folder(s) missing: app` | ❌ BLOCK | Create app/ structure |
+| `Icon '...' not found` | ❌ BLOCK | Create icon.svg |
+
+**Rule:** NEVER report "App complete" or "Validation successful" if Platform Errors > 0.
+
+---
+
+## Gate 5: Pre-Validation File Check (MANDATORY)
+
+**BEFORE running `fdk validate`, run this check:**
+
+```bash
+# Pseudocode - agent must verify
+if manifest has location with url "X":
+  assert file "app/X" exists
+if manifest has location with icon "Y":
+  assert file "app/Y" exists
+if manifest has location:
+  assert directory "app/" exists
+  assert file "app/styles/images/icon.svg" exists
+```
+
+**If any assert fails → Create missing files → Do NOT run fdk validate yet.**
+
+---
+
+## Gate 6: Post-Validation - No Completion Without Pass
+
+**App building/validation is NOT complete until:**
+1. fdk validate exits with success
+2. `Total Platform Errors: 0` in output
+3. All files referenced in manifest exist
+
+**If fdk validate reports Platform Errors:**
+- Iteration 1: Fix (create missing files, fix manifest)
+- Iteration 2: Fix again if needed
+- Do NOT mark complete until Platform Errors = 0
+
+---
+
+## Enforcement Summary
+
+| Gate | When | Blocking? |
+|------|------|-----------|
+| Gate 0 | Before generation | ✅ YES |
+| Gate 1 | After manifest written | ✅ YES |
+| Gate 2 | Before fdk validate | ✅ YES |
+| Gate 3 | Template selection | ✅ YES |
+| Gate 4 | After fdk validate | ✅ YES |
+| Gate 5 | Before fdk validate | ✅ YES |
+| Gate 6 | Final completion | ✅ YES |
+
+**NO EXCEPTIONS. NO SHORTCUTS. App building and validation MUST NOT occur without passing ALL gates.**
+
+---
+
+## Common Failures (From iteration2) - PREVENT THESE
+
+1. **Manifest declares ticket_sidebar with url: "index.html" but app/index.html missing**
+   - Cause: Generated manifest before creating app files
+   - Fix: Create app/index.html (and full app structure) BEFORE or WITH manifest
+   - Prevention: Gate 1, Gate 2
+
+2. **Manifest declares icon: "styles/images/icon.svg" but file missing**
+   - Cause: Skipped icon.svg creation
+   - Fix: ALWAYS create app/styles/images/icon.svg for any app with location
+   - Prevention: Gate 2, Pattern 9 in app-templates
+
+3. **app/ folder missing entirely**
+   - Cause: Treated hybrid app as serverless
+   - Fix: If manifest has location → MUST have app/ folder
+   - Prevention: Gate 0, Gate 2
+
+4. **Marking app "complete" when Platform Errors > 0**
+   - Cause: FDK says "Validation Successful" even with platform errors (exit 0)
+   - Fix: Parse output for "Platform Errors: [1-9]" and treat as FAIL
+   - Prevention: Gate 4, Gate 6
+
+---
+
+## Integration Points
+
+- **app-templates.mdc:** References these gates in Template Selection and Required File Structure
+- **validation-workflow.mdc:** Platform errors = FATAL, must fix in 2 iterations
+- **app-dev skill:** Pre-generation and post-generation gates in workflow
+- **csv-app-builder:** Subagent prompt must include "Do NOT mark complete until Platform Errors = 0 and all files exist"

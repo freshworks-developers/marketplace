@@ -1,0 +1,403 @@
+---
+name: platform3-modules-locations
+description: Platform 3.0 Modules and Locations Reference - Complete guide for all products
+alwaysApply: true
+---
+
+# Platform 3.0 Modules and Locations
+
+## Module Structure
+
+Platform 3.0 uses a `modules` structure instead of the legacy `product` structure:
+
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      /* Global locations and config */
+    },
+    "product_module": {
+      /* Product-specific locations */
+    }
+  }
+}
+```
+
+**Key Rules:**
+1. ✅ Must include at least ONE product module (even if empty: `{}`)
+2. ✅ `common` module is for global placeholders (full_page_app, cti_global_sidebar)
+3. ✅ Product modules define product-specific locations
+4. ✅ Must declare requests, functions, and events in manifest
+
+---
+
+## Freshdesk Modules
+
+### Available Modules
+- `support_ticket` - Ticket features
+- `support_contact` - Contact features
+- `support_company` - Company features
+- `support_agent` - Agent features
+- `support_email` - Email features
+- `support_portal` - Portal features
+
+### support_ticket Locations
+
+**Common Placeholders** (in `modules.common.location`):
+- `full_page_app` - Full-page standalone app
+- `cti_global_sidebar` - Global CTI sidebar
+
+**Module Placeholders** (in `modules.support_ticket.location`):
+- `ticket_sidebar` - Ticket details page sidebar
+- `ticket_requester_info` - Requester information section
+- `ticket_top_navigation` - Top navigation bar in ticket
+- `ticket_background` - Background app (no UI, intercept events)
+- `time_entry_background` - Background for time entries
+- `ticket_attachment` - Attachment section
+- `ticket_conversation_editor` - Conversation editor
+- `new_ticket_requester_info` - New ticket requester info
+- `new_ticket_background` - New ticket background
+
+### Example: Freshdesk Ticket Sidebar App
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "location": {
+        "full_page_app": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      },
+      "requests": {
+        "externalApi": {}
+      },
+      "functions": {
+        "smiMethod": {}
+      }
+    },
+    "support_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "ticket_sidebar.html",
+          "icon": "styles/images/icon.svg"
+        },
+        "ticket_background": {
+          "url": "ticket_background.html"
+        }
+      },
+      "events": {
+        "onTicketCreate": {
+          "handler": "onTicketCreateHandler"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+---
+
+## Freshservice Modules
+
+### Available Modules
+- `service_ticket` - Ticket features
+- `service_asset` - Asset features
+- `service_change` - Change management
+- `service_user` - User features
+- `service_problem` - Problem management
+- `service_release` - Release management
+
+### service_ticket Locations
+
+**Common Placeholders** (in `modules.common.location`):
+- `full_page_app` - Full-page standalone app
+
+**Module Placeholders** (in `modules.service_ticket.location`):
+- `ticket_sidebar` - Ticket details page sidebar
+- `ticket_requester_info` - Requester information section
+- `ticket_conversation_editor` - Conversation editor
+- `ticket_top_navigation` - Top navigation bar
+- `ticket_background` - Background app (no UI, intercept events)
+- `new_ticket_background` - New ticket background
+- `new_ticket_sidebar` - New ticket sidebar
+- `new_ticket_description_editor` - New ticket description editor
+
+### service_asset Locations
+
+**Module Placeholders** (in `modules.service_asset.location`):
+- `asset_sidebar` - Asset details page sidebar
+- `asset_top_navigation` - Asset top navigation
+- `asset_background` - Asset background app
+
+### service_change Locations
+
+**Module Placeholders** (in `modules.service_change.location`):
+- `change_sidebar` - Change details page sidebar
+
+### Example: Freshservice Ticket Sidebar App
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "requests": {
+        "graphApi": {}
+      },
+      "functions": {
+        "fetchPresence": {}
+      }
+    },
+    "service_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      },
+      "events": {
+        "onTicketCreate": {
+          "handler": "onTicketCreateHandler"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+---
+
+## Freshsales/CRM Modules
+
+### Available Modules
+- `deal` - Deal/Opportunity features
+- `contact` - Contact features
+- `account` - Account/Company features
+- `lead` - Lead features
+- `appointment` - Appointment features
+- `sales_activity` - Sales activity features
+
+### deal Locations
+
+**Common Placeholders** (in `modules.common.location`):
+- `full_page_app` - Full-page standalone app
+- `left_nav_cti` - Left navigation CTI
+- `left_nav_chat` - Left navigation chat
+
+**Module Placeholders** (in `modules.deal.location`):
+- `deal_entity_menu` - Deal entity menu
+- `deal_overview` - Deal overview section
+
+### contact Locations
+
+**Module Placeholders** (in `modules.contact.location`):
+- `contact_entity_menu` - Contact entity menu
+- `contact_overview` - Contact overview section
+
+### account Locations
+
+**Module Placeholders** (in `modules.account.location`):
+- `account_entity_menu` - Account entity menu
+- `account_overview` - Account overview section
+
+### Example: Freshsales Deal Sidebar
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "location": {
+        "full_page_app": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      },
+      "requests": {}
+    },
+    "deal": {
+      "location": {
+        "deal_entity_menu": {
+          "url": "deal_menu.html",
+          "icon": "styles/images/icon.svg"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+---
+
+## Multiple Locations Example
+
+You can have multiple locations in the same module:
+
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "location": {
+        "full_page_app": {
+          "url": "full_page.html",
+          "icon": "styles/images/icon.svg"
+        },
+        "cti_global_sidebar": {
+          "url": "cti_sidebar.html",
+          "icon": "styles/images/icon.svg"
+        }
+      },
+      "requests": {},
+      "functions": {}
+    },
+    "support_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "ticket_sidebar.html",
+          "icon": "styles/images/icon.svg"
+        },
+        "ticket_requester_info": {
+          "url": "requester_info.html",
+          "icon": "styles/images/icon.svg"
+        },
+        "ticket_background": {
+          "url": "background.html"
+        }
+      },
+      "events": {
+        "onTicketCreate": {
+          "handler": "onTicketCreateHandler"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+---
+
+## Background Apps (No UI)
+
+Background apps don't render UI but can intercept events:
+
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {},
+    "support_ticket": {
+      "location": {
+        "ticket_background": {
+          "url": "background.html"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+Use for:
+- Preventing actions (intercept events)
+- Validating data before submission
+- Adding custom logic without UI
+
+---
+
+## Common Mistakes to Avoid
+
+❌ **Wrong: Using "product" structure**
+```json
+{
+  "product": {
+    "freshdesk": {
+      "location": { ... }
+    }
+  }
+}
+```
+
+✅ **Correct: Using "modules" structure**
+```json
+{
+  "modules": {
+    "support_ticket": {
+      "location": { ... }
+    }
+  }
+}
+```
+
+❌ **Wrong: Only "common" module**
+```json
+{
+  "modules": {
+    "common": { ... }
+  }
+}
+```
+
+✅ **Correct: At least one product module**
+```json
+{
+  "modules": {
+    "common": { ... },
+    "support_ticket": {}  // Even if empty
+  }
+}
+```
+
+❌ **Wrong: Undeclared requests/functions**
+```javascript
+// In server.js
+exports = {
+  myMethod: function() { }  // Not declared in manifest
+}
+```
+
+✅ **Correct: Declared in manifest**
+```json
+{
+  "modules": {
+    "common": {
+      "functions": {
+        "myMethod": {}
+      }
+    }
+  }
+}
+```
+
+---
+
+## Quick Reference Table
+
+| Product | Module | Common Locations | Module-Specific Locations |
+|---------|--------|-----------------|---------------------------|
+| **Freshdesk** | `support_ticket` | `full_page_app`, `cti_global_sidebar` | `ticket_sidebar`, `ticket_requester_info`, `ticket_background` |
+| **Freshdesk** | `support_contact` | Same as above | `contact_sidebar` |
+| **Freshservice** | `service_ticket` | `full_page_app` | `ticket_sidebar`, `ticket_requester_info`, `ticket_background` |
+| **Freshservice** | `service_asset` | `full_page_app` | `asset_sidebar`, `asset_top_navigation` |
+| **Freshsales** | `deal` | `full_page_app`, `left_nav_cti` | `deal_entity_menu`, `deal_overview` |
+| **Freshsales** | `contact` | Same as above | `contact_entity_menu`, `contact_overview` |

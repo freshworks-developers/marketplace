@@ -1,0 +1,860 @@
+---
+name: confusion
+description: Disambiguation guide for Freshworks Platform 3.0 app development. Provides decision trees for resolving ambiguous prompts — authentication method, trigger type, standard fields, webhook payload structure, retry logic, UI components, event selection, field mapping, error handling, and rate limiting. Load any section when the prompt leaves an implementation detail unclear.
+alwaysApply: true
+---
+
+# Confusion Resolution Guide - App Development Disambiguation
+
+**Purpose:** Use when encountering ambiguous prompts or unclear requirements during Freshworks Platform 3.0 app development.
+
+**When to Use:** When prompt is vague, incomplete, or could be interpreted multiple ways.
+
+---
+
+## Decision Trees for Common Ambiguities
+
+### 1. OAuth vs API Token Decision
+
+**Ambiguous Prompt Patterns:**
+- "integrate with [external service]"
+- "connect to [third-party API]"
+- "send data to [service]"
+- No mention of authentication method
+
+**Decision Tree:**
+
+```
+Does the service support OAuth?
+├─ YES → Is this a user-facing service (users have accounts)?
+│   ├─ YES → Use OAuth (better UX, more secure)
+│   │   Examples: Project management tools, communication platforms, 
+│   │            document storage, issue trackers, CRM systems
+│   │   Why: Users already logged in, no need to copy/paste tokens
+│   │
+│   └─ NO → Is this a developer/admin service?
+│       ├─ YES → Use API Token (simpler for admins)
+│       │   Examples: Database services, analytics platforms,
+│       │            email sending services, data warehouses
+│       │   Why: Admins comfortable with API keys, simpler setup
+│       │
+│       └─ UNCLEAR → Default to OAuth (better user experience)
+│
+└─ NO (API token only) → Use API Token
+    Add secure: true to iparam
+```
+
+**Implementation Checklist:**
+
+**When using OAuth:**
+```markdown
+- [ ] Create config/oauth_config.json with integrations wrapper
+- [ ] Add OAuth provider: authorize_url, token_url, client_id, client_secret
+- [ ] Use <%= access_token %> in request template headers
+- [ ] Add options.oauth: "provider_name" to request template
+- [ ] Add iparams for client_id and client_secret
+- [ ] Token refresh handled automatically by platform
+```
+
+**When using API Token:**
+```markdown
+- [ ] Add API token/key iparam with secure: true
+- [ ] Use <%= iparam.api_token %> in request template headers
+- [ ] Add validation in onAppInstall (optional test call)
+```
+
+---
+
+### 2. Automatic vs Manual Trigger Decision
+
+**Ambiguous Prompt Patterns:**
+- "logs data to [service]"
+- "sends information to [platform]"
+- "writes records to [destination]"
+- "creates [item] from ticket"
+- No mention of "automatic" or "manual"
+
+**Decision Tree:**
+
+```
+What is the app's purpose?
+├─ LOGGING/ARCHIVING (audit trail, reporting, backup)
+│   Examples: "logs ticket data", "archives records", "stores snapshots"
+│   Decision: AUTOMATIC (serverless events)
+│   Why: Logging should happen without user action
+│   Implementation:
+│   ├─ Add onTicketCreate event (primary)
+│   ├─ Add onTicketUpdate event (if prompt mentions "updates")
+│   └─ Optional: Add manual trigger in sidebar as bonus feature
+│
+├─ NOTIFICATION/ALERT (inform team, send updates)
+│   Examples: "sends alerts", "notifies team", "posts updates"
+│   Decision: AUTOMATIC (serverless events)
+│   Why: Alerts must be timely, can't wait for manual action
+│   Implementation:
+│   ├─ Add onTicketCreate event
+│   ├─ Add onTicketUpdate event (for status/priority changes)
+│   └─ Add priority/type filters in iparams
+│
+├─ ACTION/CREATION (create external item, link resources)
+│   Examples: "creates issue", "generates card", "makes task"
+│   Decision: MANUAL with optional auto-create
+│   Why: Creating external items should be deliberate
+│   Implementation:
+│   ├─ Add ticket_sidebar with button (primary)
+│   ├─ Add SMI function for creation logic
+│   ├─ Optional: Add auto-create checkbox in iparams
+│   └─ If auto-create enabled: Add onTicketCreate event
+│
+└─ EXPORT/TRANSFORM (format data, copy to clipboard)
+    Examples: "exports as format", "converts to type", "copies data"
+    Decision: MANUAL (UI action)
+    Why: Export is user-initiated, not automatic
+    Implementation:
+    ├─ Add ticket_sidebar with button
+    ├─ Add SMI function for export logic
+    └─ Use client.interface methods for clipboard/download
+```
+
+**Rule of Thumb:**
+- **Passive verbs** ("logs", "stores", "archives", "sends") → Automatic
+- **Active verbs** ("create", "make", "generate", "export") → Manual
+- **When in doubt:** Implement automatic + add manual trigger as bonus
+
+---
+
+### 3. Standard Fields for Data Logging Apps
+
+**Ambiguous Prompt Patterns:**
+- "logs ticket data"
+- "stores ticket information"
+- "writes ticket records"
+- Prompt lists SOME fields but not all
+
+**Standard Field Set (ALWAYS Include):**
+
+```javascript
+// Minimum viable fields for ANY ticket logging app
+const standardTicketFields = {
+  // Identity
+  ticket_id: ticket.id,                    // CRITICAL: Primary key
+  
+  // Core Info
+  subject: ticket.subject,                 // CRITICAL: What is it about
+  requester_email: requester.email,        // CRITICAL: Who created it
+  status: ticket.status_name || ticket.status,  // CRITICAL: Current state
+  priority: ticket.priority_name || ticket.priority, // CRITICAL: Urgency
+  
+  // Metadata
+  created_at: ticket.created_at,           // CRITICAL: When created
+  updated_at: ticket.updated_at,           // IMPORTANT: Last modified
+  
+  // Link
+  ticket_url: buildTicketUrl(ticket.id),   // CRITICAL: Link back to source
+  
+  // Optional but Recommended
+  tags: formatTags(ticket.tags),           // Useful for filtering
+  description: truncate(ticket.description, 500), // Context (if space allows)
+  assignee_email: ticket.responder?.email  // Who's working on it
+};
+```
+
+**Why These Fields:**
+- **ticket_id**: Without ID, you can't correlate records or update them
+- **ticket_url**: Without link, users must manually search for the ticket
+- **priority**: Critical for filtering and reporting (often forgotten)
+- **status**: Essential for tracking ticket lifecycle
+- **created_at**: Timestamp is fundamental for any log
+
+**Decision Rule:**
+```
+If prompt says "logs ticket data" or lists fields:
+  1. Include ALL standard fields above
+  2. Add any additional fields mentioned in prompt
+  3. Never omit standard fields even if prompt doesn't mention them
+  
+If prompt lists specific fields (e.g., "requester, subject, status"):
+  1. Include those fields
+  2. ALSO include missing standard fields (ID, priority, link, created_at)
+  3. Rationale: Prompt is giving examples, not exhaustive list
+```
+
+---
+
+### 4. Webhook Payload Structure
+
+**Ambiguous Prompt Patterns:**
+- "sends data to webhook"
+- "posts to webhook URL"
+- "integrates with automation tools"
+- No payload structure specified
+
+**Standard Webhook Payload:**
+
+```javascript
+// Use this structure for ANY webhook integration
+const standardWebhookPayload = {
+  // Event metadata
+  eventType: 'onTicketCreate' | 'onTicketUpdate' | 'onContactCreate',
+  timestamp: new Date().toISOString(),
+  
+  // Entity data (ticket, contact, etc.)
+  ticket: {
+    id: ticket.id,
+    subject: ticket.subject,
+    status: ticket.status_name || ticket.status,
+    priority: ticket.priority_name || ticket.priority,
+    requester_email: requester?.email,
+    created_at: ticket.created_at,
+    updated_at: ticket.updated_at,
+    url: buildTicketUrl(ticket.id)
+  },
+  
+  // Optional: Include requester as separate object
+  requester: {
+    email: requester.email,
+    name: requester.name,
+    phone: requester.phone
+  }
+};
+```
+
+**Field Naming Conventions:**
+- Use **camelCase** (eventType, not event_type)
+- Use **full names** (eventType, not event or type)
+- Use **nested objects** (ticket.id, not ticket_id at root)
+- Use **ISO8601** for timestamps (toISOString())
+
+**Decision Rule:**
+```
+If prompt doesn't specify payload structure:
+  → Use standard webhook payload above
+  → Rationale: Works with 95% of automation tools (Zapier, Make, n8n)
+
+If prompt specifies exact structure:
+  → Use that structure verbatim
+  → Match field names exactly
+```
+
+---
+
+### 5. Retry Logic for External API Calls
+
+**Ambiguous Prompt Patterns:**
+- "sends to [service]"
+- "calls [API]"
+- "posts to [endpoint]"
+- No mention of error handling or retries
+
+**Default Retry Strategy:**
+
+```javascript
+// ALWAYS implement retry logic for external API calls
+async function callExternalAPIWithRetry(templateName, context, body, maxRetries = 2) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await $request.invokeTemplate(templateName, {
+        context: context,
+        body: body
+      });
+      
+      // Success - return immediately
+      return { success: true, response: response };
+      
+    } catch (error) {
+      // Determine if error is retryable
+      const isRetryable = 
+        (error.status >= 500 && error.status < 600) ||  // Server errors
+        error.code === 'ETIMEDOUT' ||                   // Timeout
+        error.code === 'ECONNREFUSED' ||                // Connection refused
+        error.code === 'ENOTFOUND';                     // DNS failure
+      
+      // If retryable and attempts remaining, retry with backoff
+      if (attempt < maxRetries && isRetryable) {
+        const backoffMs = 1000 * Math.pow(2, attempt);  // 1s, 2s, 4s
+        await sleep(backoffMs);
+        console.log(`Retry attempt ${attempt + 1} after ${backoffMs}ms`);
+        continue;
+      }
+      
+      // Not retryable or out of attempts - fail
+      console.error(`API call failed after ${attempt + 1} attempts:`, error);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+```
+
+**When to Apply:**
+- ✅ Webhooks (notification services, automation tools)
+- ✅ External API writes (creating records, sending data)
+- ✅ Third-party integrations (any service outside Freshworks)
+- ❌ Freshworks API calls (platform handles retries)
+- ❌ Read-only operations (less critical, can fail fast)
+
+**Decision Rule:**
+```
+If app makes external API calls:
+  → ALWAYS implement retry logic (2-3 retries)
+  → Use exponential backoff (1s, 2s, 4s)
+  → Retry on: 5xx, timeouts, connection errors
+  → Don't retry on: 4xx (client errors), authentication failures
+```
+
+---
+
+### 6. UI Component Selection (Frontend Apps)
+
+**Ambiguous Prompt Patterns:**
+- "ticket sidebar with button"
+- "UI to configure settings"
+- "show results to user"
+- No specific UI components mentioned
+
+**Decision Tree:**
+
+```
+What does the UI need to do?
+├─ TRIGGER ACTION (create, send, export)
+│   Component: fw-button
+│   Example: <fw-button color="primary">Create Issue</fw-button>
+│   Add: Loading state (fw-spinner), success/error message (fw-inline-message)
+│
+├─ DISPLAY STATUS (show sync status, connection state)
+│   Components: fw-label + fw-inline-message
+│   Example: 
+│     <fw-label value="Sync Status"></fw-label>
+│     <fw-inline-message type="success">Synced 5 minutes ago</fw-inline-message>
+│
+├─ COLLECT INPUT (select options, enter text)
+│   Components:
+│   ├─ Dropdown: fw-select with fw-select-option
+│   ├─ Text: fw-input
+│   ├─ Multi-line: fw-textarea
+│   ├─ Checkbox: fw-checkbox
+│   └─ Radio: fw-radio-group with fw-radio
+│
+├─ SHOW RESULTS (display data, list items)
+│   Components: fw-data-table or custom HTML with fw-label
+│   Example:
+│     <fw-label value="Created Items"></fw-label>
+│     <div class="results-list">...</div>
+│
+└─ CONFIRM ACTION (are you sure?)
+    Component: fw-modal with fw-modal-title, fw-modal-content, fw-modal-footer
+    Example: Show modal before destructive action
+```
+
+**Standard UI Pattern for Action Apps:**
+
+```html
+<!-- Ticket sidebar for creating external items -->
+<div class="app-container">
+  <!-- Header -->
+  <fw-label value="Create External Item"></fw-label>
+  
+  <!-- Configuration (if needed) -->
+  <fw-select id="targetSelect" label="Select Target" placeholder="Choose...">
+    <fw-select-option value="1">Option 1</fw-select-option>
+  </fw-select>
+  
+  <!-- Action Button -->
+  <fw-button id="createBtn" color="primary">Create Item</fw-button>
+  
+  <!-- Loading State (hidden by default) -->
+  <fw-spinner id="loadingSpinner" size="small" style="display: none;"></fw-spinner>
+  
+  <!-- Result Message (hidden by default) -->
+  <fw-inline-message id="resultMsg" type="success" style="display: none;">
+    Item created successfully!
+  </fw-inline-message>
+  
+  <!-- Result Link (if applicable) -->
+  <div id="resultLink" style="display: none;">
+    <fw-label value="View Item"></fw-label>
+    <a id="itemUrl" href="#" target="_blank">Open in new tab</a>
+  </div>
+</div>
+```
+
+**Decision Rule:**
+```
+If prompt says "ticket sidebar" or "UI":
+  1. Determine primary action (create, export, sync, view)
+  2. Use standard UI pattern above
+  3. Always include: button, loading state, success/error message
+  4. Add result link if creating external item
+  5. Use Crayons components ONLY (no plain HTML buttons/inputs)
+```
+
+---
+
+### 7. Event Selection for Serverless Apps
+
+**Ambiguous Prompt Patterns:**
+- "on ticket create"
+- "when ticket changes"
+- "for new tickets"
+- Unclear which events to use
+
+**Event Selection Matrix:**
+
+| Prompt Says | Events to Use | Rationale |
+|-------------|---------------|-----------|
+| "new tickets" | onTicketCreate | Only fires on creation |
+| "ticket changes" | onTicketUpdate | Fires on any update |
+| "ticket create and update" | Both onTicketCreate + onTicketUpdate | Explicit requirement |
+| "escalated tickets" | onTicketUpdate + check priority change | Escalation = priority increase |
+| "closed tickets" | onTicketUpdate + check status = closed | Closure is an update |
+| "high priority" | onTicketCreate + filter by priority | Create with priority check |
+| "status changes" | onTicketUpdate + check status field | Update with status check |
+
+**Event Handler Pattern:**
+
+```javascript
+// For "new tickets" or "ticket create"
+exports = {
+  onTicketCreateHandler: async function(args) {
+    const ticket = args.data?.ticket || args.data;
+    // Process ticket
+    await processTicket(ticket, 'create');
+  }
+};
+
+// For "ticket changes" or "ticket update"
+exports = {
+  onTicketUpdateHandler: async function(args) {
+    const ticket = args.data?.ticket || args.data;
+    const changes = args.data?.changes || {};
+    
+    // Optional: Check if relevant fields changed
+    if (changes.status || changes.priority) {
+      await processTicket(ticket, 'update');
+    }
+  }
+};
+
+// For "escalated tickets" (priority increase)
+exports = {
+  onTicketUpdateHandler: async function(args) {
+    const ticket = args.data?.ticket || args.data;
+    const changes = args.data?.changes || {};
+    
+    // Check if priority increased (escalation)
+    if (changes.priority && isEscalation(changes.priority)) {
+      await processTicket(ticket, 'escalated');
+    }
+  }
+};
+
+function isEscalation(priorityChange) {
+  // Priority increased (lower number = higher priority in some products)
+  // Or priority name changed to "High" or "Urgent"
+  return priorityChange.includes('High') || priorityChange.includes('Urgent');
+}
+```
+
+**Decision Rule:**
+```
+If prompt is vague about events:
+  → Default to onTicketCreate (most common use case)
+  → Add onTicketUpdate if prompt mentions "changes", "updates", or "status"
+  → Add priority/status filters in handler if prompt mentions specific conditions
+```
+
+---
+
+### 8. Field Mapping for External Services
+
+**Ambiguous Prompt Patterns:**
+- "map ticket fields to [service]"
+- "configurable field mapping"
+- "sync ticket data"
+- No specific field mapping provided
+
+**Standard Field Mapping Pattern:**
+
+```javascript
+// Use this mapping for ANY external service integration
+const standardFieldMapping = {
+  // Identity (ALWAYS map)
+  id: {
+    source: 'ticket.id',
+    target: 'external_id',
+    required: true
+  },
+  
+  // Title/Subject (ALWAYS map)
+  title: {
+    source: 'ticket.subject',
+    target: 'title',
+    required: true
+  },
+  
+  // Description/Body (ALWAYS map)
+  description: {
+    source: 'ticket.description',
+    target: 'body',
+    required: false,
+    transform: (val) => truncate(val, 1000)  // Limit length
+  },
+  
+  // Status (map to external status if possible)
+  status: {
+    source: 'ticket.status_name',
+    target: 'status',
+    required: false,
+    transform: (val) => mapStatus(val)  // Convert to external status values
+  },
+  
+  // Priority (map to external priority if possible)
+  priority: {
+    source: 'ticket.priority_name',
+    target: 'priority',
+    required: false,
+    transform: (val) => mapPriority(val)
+  },
+  
+  // Requester (map to external user/contact)
+  requester: {
+    source: 'requester.email',
+    target: 'reporter_email',
+    required: false
+  },
+  
+  // Timestamps
+  created_at: {
+    source: 'ticket.created_at',
+    target: 'created_date',
+    required: false,
+    transform: (val) => new Date(val).toISOString()
+  }
+};
+
+// Helper: Map Freshworks status to external service status
+function mapStatus(freshdeskStatus) {
+  const statusMap = {
+    'Open': 'open',
+    'Pending': 'in_progress',
+    'Resolved': 'done',
+    'Closed': 'closed'
+  };
+  return statusMap[freshdeskStatus] || 'open';
+}
+
+// Helper: Map Freshworks priority to external service priority
+function mapPriority(freshdeskPriority) {
+  const priorityMap = {
+    'Low': 'low',
+    'Medium': 'medium',
+    'High': 'high',
+    'Urgent': 'critical'
+  };
+  return priorityMap[freshdeskPriority] || 'medium';
+}
+```
+
+**Configurable Mapping (iparams):**
+
+```json
+// If prompt mentions "configurable mapping"
+{
+  "field_mapping_id": {
+    "display_name": "External ID Field Name",
+    "description": "Name of the field in external service for ticket ID",
+    "type": "text",
+    "default_value": "external_id"
+  },
+  "field_mapping_title": {
+    "display_name": "Title Field Name",
+    "description": "Name of the field in external service for ticket subject",
+    "type": "text",
+    "default_value": "title"
+  },
+  "field_mapping_description": {
+    "display_name": "Description Field Name",
+    "description": "Name of the field in external service for ticket description",
+    "type": "text",
+    "default_value": "body"
+  }
+}
+```
+
+**Decision Rule:**
+```
+If prompt mentions field mapping:
+  1. Use standard field mapping above
+  2. Map at minimum: ID, title, description, status, priority, requester, created_at
+  3. Add transform functions for status/priority if external service uses different values
+  4. If "configurable": Add iparams for field name customization
+  5. If "optional mapping": Add iparams with default values
+```
+
+---
+
+### 9. Error Handling and Validation
+
+**Ambiguous Prompt Patterns:**
+- "validate configuration"
+- "handle errors"
+- "check settings"
+- No specific validation mentioned
+
+**Standard Validation Pattern:**
+
+```javascript
+// ALWAYS validate in onAppInstall
+exports = {
+  onAppInstallHandler: async function(args) {
+    const iparams = args.iparams || {};
+    
+    // Validate required fields
+    const validationErrors = [];
+    
+    if (!iparams.api_key || iparams.api_key.trim() === '') {
+      validationErrors.push('API key is required');
+    }
+    
+    if (!iparams.target_url || !isValidUrl(iparams.target_url)) {
+      validationErrors.push('Valid target URL is required');
+    }
+    
+    // Optional: Test API connection
+    try {
+      await testConnection(iparams);
+      console.log('✅ Connection test successful');
+    } catch (error) {
+      validationErrors.push(`Connection test failed: ${error.message}`);
+    }
+    
+    // Log validation results
+    if (validationErrors.length > 0) {
+      console.error('❌ Validation errors:', validationErrors);
+      // Note: Can't prevent install, but log for debugging
+    } else {
+      console.log('✅ App installed and validated successfully');
+    }
+  }
+};
+
+function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function testConnection(iparams) {
+  // Make a simple test API call
+  const response = await $request.invokeTemplate('testConnection', {
+    context: { api_key: iparams.api_key }
+  });
+  return response;
+}
+```
+
+**Standard Error Handling in Event Handlers:**
+
+```javascript
+exports = {
+  onTicketCreateHandler: async function(args) {
+    try {
+      // Main logic
+      await processTicket(args);
+      console.log('✅ Ticket processed successfully');
+      
+    } catch (error) {
+      // Log error with context
+      console.error('❌ Error processing ticket:', {
+        ticketId: args.data?.ticket?.id,
+        error: error.message,
+        stack: error.stack
+      });
+      
+      // Don't throw - event handlers should not fail silently
+      // Platform will retry automatically on uncaught errors
+    }
+  }
+};
+```
+
+**Decision Rule:**
+```
+ALWAYS implement:
+  1. onAppInstall validation (check required iparams, test connection)
+  2. try/catch in all event handlers
+  3. Detailed error logging with context (ticket ID, error message)
+  4. Graceful degradation (log error but don't crash)
+
+NEVER:
+  1. Let errors propagate uncaught
+  2. Fail silently without logging
+  3. Assume iparams are valid without checking
+```
+
+---
+
+### 10. Rate Limiting and Throttling
+
+**Ambiguous Prompt Patterns:**
+- "sends to [service]"
+- "creates records in [platform]"
+- No mention of rate limits
+
+**When to Add Rate Limiting:**
+
+```
+Does the external service have rate limits?
+├─ YES (most APIs do) → Implement throttling
+│   Examples: Most REST APIs (100-1000 req/min)
+│   
+├─ UNKNOWN → Assume yes, add basic throttling
+│   
+└─ NO → Skip (rare, only for unlimited services)
+```
+
+**Basic Throttling Pattern:**
+
+```javascript
+// Simple in-memory throttle (for low-volume apps)
+let lastCallTime = 0;
+const MIN_INTERVAL_MS = 1000;  // 1 second between calls
+
+async function throttledAPICall(templateName, context, body) {
+  // Wait if called too recently
+  const now = Date.now();
+  const timeSinceLastCall = now - lastCallTime;
+  
+  if (timeSinceLastCall < MIN_INTERVAL_MS) {
+    const waitTime = MIN_INTERVAL_MS - timeSinceLastCall;
+    await sleep(waitTime);
+  }
+  
+  // Make the call
+  lastCallTime = Date.now();
+  return await $request.invokeTemplate(templateName, { context, body });
+}
+```
+
+**Advanced Throttling (for high-volume apps):**
+
+```javascript
+// Use $db to track rate limits across instances
+async function rateLimitedAPICall(templateName, context, body) {
+  const rateLimitKey = 'api_call_count';
+  const windowMs = 60000;  // 1 minute
+  const maxCalls = 100;    // 100 calls per minute
+  
+  // Get current count from $db
+  const stored = await $db.get(rateLimitKey) || { count: 0, windowStart: Date.now() };
+  
+  // Reset if window expired
+  if (Date.now() - stored.windowStart > windowMs) {
+    stored.count = 0;
+    stored.windowStart = Date.now();
+  }
+  
+  // Check if limit exceeded
+  if (stored.count >= maxCalls) {
+    const waitTime = windowMs - (Date.now() - stored.windowStart);
+    console.log(`⏳ Rate limit reached, waiting ${waitTime}ms`);
+    await sleep(waitTime);
+    stored.count = 0;
+    stored.windowStart = Date.now();
+  }
+  
+  // Make the call
+  const response = await $request.invokeTemplate(templateName, { context, body });
+  
+  // Increment count
+  stored.count++;
+  await $db.set(rateLimitKey, stored);
+  
+  return response;
+}
+```
+
+**Decision Rule:**
+```
+If app makes external API calls:
+  → Add basic throttling (1 second between calls)
+  → If high-volume (onTicketUpdate): Use advanced throttling with $db
+  → If batch operations: Add delay between items
+  → Log rate limit hits for monitoring
+```
+
+---
+
+## Quick Reference: Disambiguation Checklist
+
+When encountering ambiguous prompt, check:
+
+- [ ] **Authentication:** OAuth or API token? (Section 1)
+- [ ] **Trigger:** Automatic or manual? (Section 2)
+- [ ] **Fields:** Are standard fields included? (Section 3)
+- [ ] **Payload:** Is structure specified? Use standard if not (Section 4)
+- [ ] **Retry:** External API calls need retry logic (Section 5)
+- [ ] **UI:** Which Crayons components? (Section 6)
+- [ ] **Events:** Which events to use? (Section 7)
+- [ ] **Mapping:** Standard field mapping needed? (Section 8)
+- [ ] **Validation:** onAppInstall validation added? (Section 9)
+- [ ] **Rate Limits:** Throttling needed? (Section 10)
+
+---
+
+## General Principles
+
+### Principle 1: Prefer More Features Over Fewer
+When ambiguous, implement MORE rather than less:
+- ✅ Automatic + manual trigger (not just one)
+- ✅ More standard fields (not just mentioned fields)
+- ✅ Retry logic + error handling (not just basic call)
+
+### Principle 2: Follow Platform Best Practices
+Even if prompt doesn't mention:
+- ✅ Always use Crayons components (never plain HTML)
+- ✅ Always implement retry logic for external APIs
+- ✅ Always validate in onAppInstall
+- ✅ Always include standard fields in logging apps
+
+### Principle 3: Optimize for End-User Experience
+When choosing between options:
+- ✅ OAuth > API token (for user-facing services)
+- ✅ Automatic > manual (for logging/notifications)
+- ✅ More fields > fewer fields (for data apps)
+- ✅ Better error messages > silent failures
+
+### Principle 4: Make It Production-Ready
+Don't build "minimum viable" - build "production ready":
+- ✅ Error handling, not just happy path
+- ✅ Retry logic, not just single attempt
+- ✅ Validation, not just assumptions
+- ✅ Rate limiting, not just unlimited calls
+
+---
+
+## When to Load This Document
+
+**Load confusion.mdc when:**
+- ✅ Prompt doesn't specify authentication method
+- ✅ Prompt doesn't specify automatic vs manual
+- ✅ Prompt lists some fields but not all
+- ✅ Prompt doesn't specify payload structure
+- ✅ Prompt doesn't mention error handling
+- ✅ Prompt doesn't specify which events to use
+- ✅ Any time you're unsure about implementation details
+
+**Don't load when:**
+- ❌ Prompt is crystal clear and detailed
+- ❌ Validation criteria provides all details
+- ❌ You're 100% confident in interpretation
+
+---
+
+**End of Confusion Resolution Guide**

@@ -1,0 +1,881 @@
+---
+name: freshworks-platform3
+description: Freshworks Platform 3.0 Development Skill - Use when building, debugging, reviewing, or explaining Freshworks Platform 3.0 applications
+globs: ["**/manifest.json", "**/server.js", "**/app.js", "**/iparams.json", "**/requests.json", "**/oauth_config.json"]
+alwaysApply: true
+---
+
+# Freshworks Platform 3.0 Development Skill
+
+You are a Freshworks Platform 3.0 senior solutions architect with ZERO TOLERANCE for legacy Platform 2.x patterns.
+
+**CRITICAL ENFORCEMENT MODE:**
+- 🚫 **BLOCKING GATES:** App building/validation MUST NOT complete without passing ALL gates (app-building-blocking-gates.mdc)
+- ❌ NEVER declare location url/icon in manifest without creating those files
+- ❌ NEVER mark app complete if fdk validate reports Platform Errors > 0
+- ❌ IMMEDIATELY REJECT any `"whitelisted-domains"` in manifest
+- ❌ IMMEDIATELY REJECT any `"product"` structure in manifest
+- ❌ IMMEDIATELY REJECT any Platform 2.3 or 2.x syntax
+- ❌ IMMEDIATELY REJECT plain HTML UI elements (use Crayons)
+- ✅ ONLY generate Platform 3.0 compliant code
+- ✅ ALWAYS use skeleton templates as base
+- ✅ ALWAYS use Crayons components for UI
+- ✅ If manifest has location → ALWAYS create app/, index.html, scripts/app.js, styles/style.css, styles/images/icon.svg
+
+**You are NOT a tutor. You are a STRICT ENFORCEMENT LAYER.**
+
+## Core Principles
+
+### Execution Model
+- Frontend (`app.js`) executes in browser iframe context
+- Backend (`server.js`) executes in Node.js runtime
+- No shared memory between frontend and backend
+- Frontend communicates with backend via `client.request.invoke()`
+- Backend communicates with frontend via callback responses
+- Each request/response is stateless
+
+### Rules - CRITICAL
+- **ONLY use Platform 3.0 specifications** - Never use Platform 2.x or 2.3 docs
+- Platform 2.3 documentation exists for reference ONLY - NEVER use it for code generation
+- All apps MUST use `"platform-version": "3.0"` in manifest.json
+- Never assume behavior not explicitly defined in Platform 3.0
+- Never mix frontend and backend execution models
+- Reject legacy (2.x, 2.3) APIs, patterns, or snippets completely
+- Always use the Platform 3.0 patterns provided below
+- Generate working code based ONLY on Platform 3.0 specifications
+
+### You must:
+- Enforce manifest correctness with `"platform-version": "3.0"` (NOT 2.3)
+- Use proper Platform 3.0 execution boundaries (frontend vs backend)
+- Bias toward production-ready Platform 3.0 architecture
+- Use ONLY the Platform 3.0 patterns and examples provided in this skill
+- IGNORE all Platform 2.3 documentation completely
+- **START with skeleton templates**, then customize
+- **GENERATE complete folder structure** - Don't skip directories or files
+- **CREATE all required files**: HTML, JS, CSS, icon.svg
+
+## Code Quality Requirements (CRITICAL)
+
+**Based on real benchmarking failures - ALWAYS enforce:**
+
+### 1. ALWAYS Generate Icon File (BLOCKING)
+```
+❌ WRONG: Skipping icon.svg generation
+✅ CORRECT: Always create app/styles/images/icon.svg when app has location
+```
+
+**Rule:** Every app with location MUST have `app/styles/images/icon.svg` - NO EXCEPTIONS (app-building-blocking-gates.mdc)
+- Create default SVG if user doesn't specify
+- Reference correctly in manifest: `"icon": "styles/images/icon.svg"`
+- Common mistake: Manifest references it but file doesn't exist
+- **BLOCKING:** App building MUST NOT complete without this file when location is declared
+
+### 2. Function Complexity (Max 5)
+```javascript
+❌ WRONG: Complex nested function (complexity > 5)
+async function fetchData() {
+  if (condition1) {
+    if (condition2) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].status) {
+          // Deeply nested logic
+        }
+      }
+    }
+  }
+}
+
+✅ CORRECT: Break into smaller functions
+async function fetchData() {
+  const validItems = filterValidItems(items);
+  return processItems(validItems);
+}
+
+function filterValidItems(items) {
+  return items.filter(item => 
+    checkCondition1(item) && checkCondition2(item)
+  );
+}
+```
+
+**Rule:** Keep function complexity ≤ 5 (stricter than default 7)
+- Use lookup objects instead of if/else chains
+- Use guard clauses (early returns) to reduce nesting
+- Use functional patterns (map, filter, reduce) instead of loops with conditions
+- Extract helpers for each distinct operation
+- **For detailed fix patterns:** Load `.cursor/rules/code-quality-patterns.mdc`
+
+### 3. Async Variable Scoping (No Race Conditions)
+```javascript
+❌ WRONG: Variables in different scopes
+let client;
+async function init() {
+  client = await app.initialized();  // Race condition!
+}
+
+✅ CORRECT: Proper scoping
+async function init() {
+  const client = await app.initialized();
+  return client;
+}
+
+// Or use top-level await pattern
+const client = await app.initialized();
+```
+
+**Rule:** Avoid declaring variables in different scopes
+- Declare variables in same scope where used
+- Use `const` for variables that won't be reassigned
+- Avoid global mutable state
+- Use proper async/await patterns
+
+### 4. No Unused Parameters
+```javascript
+❌ WRONG: Unused parameter
+exports = {
+  myHandler: function(args) {
+    // 'args' is never used
+    console.log('Handler called');
+  }
+}
+
+✅ CORRECT: Remove or use underscore
+exports = {
+  myHandler: function() {
+    // No unused parameter
+    console.log('Handler called');
+  }
+  
+  // Or if signature requires it:
+  myHandler: function(_args) {
+    // Underscore indicates intentionally unused
+  }
+}
+```
+
+**Rule:** Never leave unused parameters
+- Remove unused parameters completely
+- Use underscore prefix if parameter is required by signature
+- FDK linter will flag unused variables as errors
+
+### 5. NEVER Use Deprecated Request API Methods
+```javascript
+❌ WRONG: Deprecated methods (Platform 2.x)
+$request.post('https://api.example.com/endpoint', { ... })
+$request.get('https://api.example.com/data')
+$request.put('https://api.example.com/update', { ... })
+
+✅ CORRECT: Use request templates (Platform 3.0)
+// 1. Define in config/requests.json
+{
+  "myApiCall": {
+    "schema": {
+      "method": "POST",
+      "host": "api.example.com",
+      "path": "/endpoint"
+    }
+  }
+}
+
+// 2. Use in server.js
+$request.invokeTemplate('myApiCall', {
+  context: {},
+  body: JSON.stringify({ data: 'value' })
+})
+```
+
+**Rule:** ALWAYS use request templates for external APIs
+- ❌ NEVER use `$request.post()`, `$request.get()`, `$request.put()`, `$request.delete()`
+- ✅ ALWAYS define request templates in `config/requests.json`
+- ✅ ALWAYS use `$request.invokeTemplate('templateName', options)`
+- Platform error: "post is no longer supported in Request API"
+
+### 6. Only Use `async` When You Actually `await`
+```javascript
+❌ WRONG: async without await
+async function onAppActivated() {
+  const element = document.getElementById('btn');
+  element.addEventListener('click', handleClick);
+}
+
+✅ CORRECT: Remove async if no await
+function onAppActivated() {
+  const element = document.getElementById('btn');
+  element.addEventListener('click', handleClick);
+}
+
+✅ CORRECT: Keep async only when you await
+async function onAppActivated() {
+  const data = await client.data.get('ticket');
+  renderData(data);
+}
+```
+
+**Rule:** Don't use `async` without `await`
+- Lint error: "Async function has no 'await' expression"
+- Only declare function as `async` if it uses `await` inside
+- Remove `async` keyword if function doesn't await anything
+- Event handlers don't need `async` unless they call async functions
+
+### 7. Promise Rejection Handling
+- All promise chains MUST have .catch()
+- All async functions that call APIs MUST have try/catch
+- Lint warning: "Expected rejection to be handled"
+- **For detailed fix patterns:** Load `.cursor/rules/code-quality-patterns.mdc` → Pattern 2
+
+### 8. Freshservice API Version
+- Freshservice apps MUST use /api/v2/ endpoints
+- NEVER use /api/v1/ or /helpdesk/ (deprecated)
+- Lint warning: "possible deprecated API usage detected"
+- **For migration checklist:** Load `.cursor/rules/code-quality-patterns.mdc` → Pattern 4
+
+### 9. Secure IParams
+- API keys, tokens, passwords, OAuth secrets MUST have "secure": true in iparams.json
+- Lint warning: "iparam 'X' appears to be a secure param but it isn't marked as secure"
+- **For guidance on what needs secure:** Load `.cursor/rules/code-quality-patterns.mdc` → Pattern 6
+
+### 10. Empty Block Statements
+- Never leave empty catch/if blocks
+- Add comment explaining why empty, or add actual handling
+- Lint warning: "Empty block statement"
+- **For fix patterns:** Load `.cursor/rules/code-quality-patterns.mdc` → Pattern 5
+
+### Product Context Understanding:
+When user says "Freshdesk app" or "Freshservice app", they mean:
+- ✅ Use the appropriate module for that product (`support_ticket`, `service_ticket`)
+- ❌ NOT that the manifest structure is product-specific
+- ✅ Base template is THE SAME for all products
+- ✅ Only the module name changes based on product
+
+**Example:**
+- "Freshdesk ticket app" → Use `"support_ticket"` module
+- "Freshservice ticket app" → Use `"service_ticket"` module
+- Manifest structure remains identical otherwise!
+
+## Quick Reference
+
+### Logging
+- Frontend logs: visible in browser DevTools console only
+- Backend logs: visible in terminal when running `fdk run`
+- Terminal shows backend logs only
+
+### Common Patterns
+- Backend API calls: Use `$request.invokeTemplate()` with request templates
+- Frontend to backend: Use `client.request.invoke("methodName", data)`
+- Data storage: Use `$db` for backend, `client.db` for frontend
+- OAuth: Configure in `config/oauth_config.json` and `config/requests.json`
+
+## FDK Create - Default App Structures
+
+When `fdk create` is run, it generates these base structures:
+
+### Type 1: Frontend App (`fdk create --app-dir frontend-app`)
+```
+frontend-app/
+├── manifest.json          # Platform 3.0, product location
+├── app/
+│   ├── index.html         # Main HTML with app container
+│   ├── scripts/
+│   │   └── app.js         # Frontend logic (client SDK)
+│   └── styles/
+│       ├── style.css      # Main styles
+│       └── images/
+│           └── icon.svg   # App icon
+└── config/
+    ├── iparams.json       # Installation parameters (optional)
+    └── iparams.html       # Custom iparams UI (optional)
+```
+
+**Key Files:**
+- `app/scripts/app.js`: Uses `app.initialized()` and `client` object
+- `manifest.json`: Defines `location` (e.g., `ticket_sidebar`)
+- No `server/` folder
+
+### Type 2: Serverless App (`fdk create --products freshdesk --template your_first_serverless_app`)
+```
+serverless-app/
+├── manifest.json          # Platform 3.0, events configuration
+├── server/
+│   └── server.js          # Backend with exports for SMI/events
+└── config/
+    ├── iparams.json       # Installation parameters
+    └── requests.json      # Request templates for external APIs
+```
+
+**Key Files:**
+- `server/server.js`: Contains `exports = { methodName: function(args) {} }`
+- `manifest.json`: May include `events` for product/scheduled events
+- No `app/` folder
+
+### Type 3: Hybrid App (Frontend + Backend/SMI)
+```
+hybrid-app/
+├── manifest.json          # Platform 3.0, location + events
+├── app/
+│   ├── index.html
+│   ├── scripts/
+│   │   └── app.js         # Frontend calls backend via client.request.invoke()
+│   └── styles/
+│       └── style.css
+├── server/
+│   └── server.js          # SMI methods, external API calls
+└── config/
+    ├── iparams.json
+    ├── requests.json      # Backend request templates
+    └── oauth_config.json  # Optional OAuth configuration
+```
+
+**Key Pattern:**
+- Frontend (`app.js`) calls backend: `client.request.invoke("methodName", data)`
+- Backend (`server.js`) responds: `exports = { methodName: async function(args) {} }`
+
+### Type 4: OAuth App (Hybrid with OAuth)
+```
+oauth-app/
+├── manifest.json
+├── app/
+│   ├── index.html
+│   ├── scripts/
+│   │   └── app.js
+│   └── styles/
+│       └── style.css
+├── server/
+│   └── server.js
+└── config/
+    ├── iparams.json
+    ├── iparams.html       # OAuth configuration UI
+    ├── requests.json      # Uses <%= access_token %>
+    └── oauth_config.json  # OAuth provider details
+```
+
+**OAuth Pattern:**
+- Request templates use `<%= access_token %>` for authorization
+- OAuth config defines `authorize_url`, `token_url`, `client_id`, `client_secret`
+
+## Platform 3.0 Manifest Structure
+
+**❌ BANNED PATTERNS - NEVER GENERATE:**
+```json
+// IMMEDIATE REJECTION - DO NOT GENERATE EVER
+{
+  "whitelisted-domains": ["https://..."]  // ❌ PLATFORM 2.3 - DEPRECATED
+}
+
+{
+  "product": {                            // ❌ PLATFORM 2.x - USE "modules"
+    "freshdesk": {}
+  }
+}
+
+{
+  "platform-version": "2.3"               // ❌ USE "3.0" ONLY
+}
+```
+
+**✅ CORRECT PLATFORM 3.0 BASE TEMPLATE:**
+Always start with this structure:
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {},
+    "support_ticket": {}
+  },
+  "engines": {
+    "node": "18.20.8",
+    "fdk": "9.7.4"
+  }
+}
+```
+
+**CRITICAL Platform 3.0 Requirements:**
+1. ✅ Use `"platform-version": "3.0"` - NEVER 2.3 or 2.x
+2. ✅ Use "modules" structure (NOT "product")
+3. ❌ NO "whitelisted-domains" (deprecated since 2.3)
+4. ✅ Declare request templates in "requests": {}
+5. ✅ Declare SMI functions in "functions": {}
+6. ✅ Must include "engines" with node and fdk versions
+7. ✅ Must have at least one product module even if empty: `"support_ticket": {}`
+8. ✅ **Product-specific locations ONLY in product module, NOT in common**
+9. ✅ **OAuth config MUST have `integrations` wrapper in Platform 3.0**
+
+### Module Names by Product
+
+| Product | Modules |
+|---------|---------|
+| **Freshdesk** | `support_ticket`, `support_contact`, `support_company`, `support_agent` |
+| **Freshservice** | `service_ticket`, `service_asset`, `service_change`, `service_user` |
+| **Freshsales/CRM** | `deal`, `contact`, `account`, `lead` |
+
+### Location Placement Rules (CRITICAL!)
+
+**❌ VALIDATION ERROR: "Invalid location(s) mentioned in modules in manifest.json: common - ticket_sidebar"**
+
+This error means a product-specific location is incorrectly placed in `common` module!
+
+**Common Module Locations** (`modules.common.location`) - **ONLY these:**
+- `full_page_app` ✅ - Full-page standalone app
+- `cti_global_sidebar` ✅ - CTI global sidebar (Freshdesk/Freshservice only)
+
+**Product Module Locations** - **MUST be in product module, NOT common:**
+
+**Freshdesk `support_ticket`:** (in `modules.support_ticket.location`)
+- `ticket_sidebar` ✅
+- `ticket_requester_info` ✅
+- `ticket_background` ✅
+- `ticket_top_navigation` ✅
+
+**Freshservice `service_ticket`:** (in `modules.service_ticket.location`)
+- `ticket_sidebar` ✅
+- `ticket_requester_info` ✅
+- `ticket_background` ✅
+- `new_ticket_sidebar` ✅
+
+**Freshservice `service_asset`:** (in `modules.service_asset.location`)
+- `asset_sidebar` ✅
+- `asset_top_navigation` ✅
+- `asset_background` ✅
+
+**Rule:** Product-specific locations (ticket_sidebar, asset_sidebar, etc.) → Product module ONLY!
+
+### Frontend App Example (Freshservice Ticket Sidebar)
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "requests": {
+        "graphApi": {}
+      },
+      "functions": {
+        "fetchPresence": {}
+      }
+    },
+    "service_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.20.8",
+    "fdk": "9.7.4"
+  }
+}
+```
+
+### OAuth App Example (Platform 3.0 Format)
+
+**config/oauth_config.json:**
+```json
+{
+  "integrations": {
+    "github": {
+      "display_name": "GitHub",
+      "client_id": "{{client_id}}",
+      "client_secret": "{{client_secret}}",
+      "authorize_url": "https://github.com/login/oauth/authorize",
+      "token_url": "https://github.com/login/oauth/access_token",
+      "token_type": "account",
+      "options": {
+        "scope": "repo"
+      }
+    }
+  }
+}
+```
+
+**config/requests.json:**
+```json
+{
+  "getGitHubRepos": {
+    "schema": {
+      "method": "GET",
+      "host": "api.github.com",
+      "path": "/user/repos",
+      "headers": {
+        "Authorization": "bearer <%= access_token %>"
+      }
+    },
+    "options": {
+      "oauth": "github"
+    }
+  }
+}
+```
+
+### Serverless App Example (Freshdesk)
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "requests": {
+        "externalApi": {}
+      }
+    },
+    "support_ticket": {
+      "events": {
+        "onTicketCreate": {
+          "handler": "onTicketCreateHandler"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+### Background App Example (No UI)
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {},
+    "support_ticket": {
+      "location": {
+        "ticket_background": {
+          "url": "background.html"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.18.0",
+    "fdk": "9.1.0"
+  }
+}
+```
+
+**For complete module and location reference, see `platform3-modules-locations.mdc`**
+
+---
+
+## Crayons UI Components (MANDATORY)
+
+**ALL frontend apps MUST use Crayons - Freshworks Design System**
+
+### Required CDN in Every HTML File:
+```html
+<!-- REQUIRED: Include in ALL HTML files -->
+<script async type="module" src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.esm.js"></script>
+<script async nomodule src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.js"></script>
+```
+
+### ❌ NEVER Use Plain HTML:
+```html
+<!-- WRONG - IMMEDIATE REJECTION -->
+<button>Click</button>
+<input type="text" />
+<select><option>Item</option></select>
+```
+
+### ✅ ALWAYS Use Crayons:
+```html
+<!-- CORRECT - REQUIRED -->
+<fw-button color="primary">Click</fw-button>
+<fw-input label="Name" placeholder="Enter name"></fw-input>
+<fw-select label="Choose">
+  <fw-select-option value="1">Item</fw-select-option>
+</fw-select>
+```
+
+### Common Components:
+- **Buttons:** `<fw-button color="primary|secondary|danger|link">`
+- **Inputs:** `<fw-input label="..." type="text|email|number">`
+- **Select:** `<fw-select>` with `<fw-select-option>`
+- **Labels:** `<fw-label value="...">`
+- **Spinners:** `<fw-spinner size="small|medium">`
+- **Modals:** `<fw-modal>` with `<fw-modal-title>`, `<fw-modal-content>`
+- **Messages:** `<fw-inline-message type="success|error|warning">`
+
+### Event Listeners:
+Crayons uses custom events with `fw` prefix:
+```javascript
+// Button click
+btn.addEventListener('fwClick', () => { ... });
+
+// Input change
+input.addEventListener('fwInput', (e) => { console.log(e.detail.value); });
+
+// Select change
+select.addEventListener('fwChange', (e) => { console.log(e.detail.value); });
+```
+
+### Documentation:
+Complete Crayons docs available in `references/common/crayons-docs/` (50+ components)
+
+**No exceptions - If building frontend UI, use Crayons components!**
+
+---
+
+## Required File Structure
+
+**CRITICAL: Generate complete folder structure for all apps!**
+
+### Frontend App Required Files:
+```
+my-app/
+├── app/
+│   ├── index.html              ✅ REQUIRED
+│   ├── scripts/
+│   │   └── app.js              ✅ REQUIRED
+│   └── styles/
+│       ├── style.css           ✅ REQUIRED
+│       └── images/
+│           └── icon.svg        ✅ REQUIRED
+├── manifest.json               ✅ REQUIRED
+└── README.md
+```
+
+### Default Files to Generate:
+
+**icon.svg (if not provided):**
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#2C5CC5"/>
+  <text x="32" y="40" font-size="32" fill="white" text-anchor="middle">A</text>
+</svg>
+```
+
+**style.css:**
+```css
+.main {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+```
+
+**NEVER skip folder creation!** Always generate:
+- `app/scripts/` folder
+- `app/styles/images/` folder
+- All required files (HTML, JS, CSS, SVG)
+
+## Request Template (config/requests.json)
+
+```json
+{
+  "api_call_name": {
+    "schema": {
+      "method": "GET",
+      "host": "api.example.com",
+      "path": "/v1/endpoint/<%= context.id %>",
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "create_item": {
+    "schema": {
+      "method": "POST",
+      "host": "api.example.com",
+      "path": "/v1/items",
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}
+```
+
+## OAuth Configuration (config/oauth_config.json)
+
+```json
+{
+  "client_id": "<%= iparam.oauth_client_id %>",
+  "client_secret": "<%= iparam.oauth_client_secret %>",
+  "authorize_url": "https://provider.com/oauth/authorize",
+  "token_url": "https://provider.com/oauth/token",
+  "options": {
+    "scope": "read write"
+  },
+  "token_type": "account"
+}
+```
+
+## Installation Parameters (config/iparams.json)
+
+```json
+{
+  "api_key": {
+    "display_name": "API Key",
+    "description": "Enter your API key",
+    "type": "text",
+    "required": true,
+    "secure": true
+  },
+  "domain": {
+    "display_name": "Domain",
+    "description": "Enter your domain",
+    "type": "text",
+    "required": true
+  }
+}
+```
+
+## Frontend Pattern (app/app.js)
+
+```javascript
+document.addEventListener("DOMContentLoaded", function() {
+  app.initialized().then(function(client) {
+    // Get installation parameters
+    client.iparams.get().then(function(iparams) {
+      console.log(iparams);
+    });
+
+    // Call backend SMI method
+    client.request.invoke("methodName", { data: "value" })
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+
+    // Get ticket data
+    client.data.get("ticket").then(function(data) {
+      console.log(data.ticket);
+    });
+  });
+});
+```
+
+## Backend Pattern (server/server.js)
+
+```javascript
+exports = {
+  // SMI method callable from frontend
+  methodName: async function(args) {
+    try {
+      // Access installation parameters
+      const apiKey = args.iparams.api_key;
+      const domain = args.iparams.domain;
+      
+      // Make external API call using request template
+      const response = await $request.invokeTemplate("api_call_name", {
+        context: { id: args.data },
+        body: JSON.stringify({ key: "value" })
+      });
+      
+      return JSON.parse(response.response);
+    } catch (error) {
+      console.error("Error:", error);
+      throw error;
+    }
+  },
+
+  // App setup event
+  onAppInstall: async function(args) {
+    console.log("App installed");
+    console.log("iparams:", args.iparams);
+    renderData();
+  },
+
+  // Product event
+  onTicketCreate: async function(args) {
+    console.log("Ticket created:", args.data.ticket.id);
+    // Access iparams in product events
+    const config = args.iparams;
+  }
+};
+```
+
+### Critical: Accessing iParams in Server.js
+
+In all server-side functions, access installation parameters via `args.iparams`:
+
+```javascript
+exports = {
+  myMethod: async function(args) {
+    // ✅ CORRECT: Access via args.iparams
+    const token = args.iparams.api_token;
+    const domain = args.iparams.domain_name;
+    
+    // ❌ WRONG: Don't use $iparams or client.iparams
+    // These don't exist in server.js
+  }
+};
+```
+
+### Critical: Using $request.invokeTemplate()
+
+```javascript
+// Basic GET request
+const response = await $request.invokeTemplate("template_name", {
+  context: { id: "123" }
+});
+
+// POST request with body
+const response = await $request.invokeTemplate("create_item", {
+  context: { workspace_id: "456" },
+  body: JSON.stringify({
+    name: "Item Name",
+    description: "Description"
+  })
+});
+
+// Access response
+const data = JSON.parse(response.response);
+console.log(data);
+```
+
+## Constraints
+
+### Disallowed Patterns (IMMEDIATE STOP & FIX)
+
+**CRITICAL - These trigger IMMEDIATE rejection:**
+1. ❌ **`"whitelisted-domains"`** in manifest
+   - Reason: Deprecated since Platform 2.3
+   - Fix: Use request templates in `config/requests.json`
+   - External domains are handled by request templates, NOT whitelisted-domains
+
+2. ❌ **`"product"`** structure in manifest
+   - Reason: Platform 2.x syntax
+   - Fix: Use `"modules"` structure with proper module names
+
+3. ❌ **`"platform-version": "2.3"`** or `"2.x"`
+   - Reason: Legacy platform
+   - Fix: Use `"platform-version": "3.0"` ONLY
+
+4. ❌ **Missing `"engines"`** block
+   - Reason: Required in Platform 3.0
+   - Fix: Always include node and fdk versions
+
+5. ❌ **Undeclared requests/functions**
+   - Reason: Must be registered in manifest
+   - Fix: Declare all requests in `"requests": {}` and functions in `"functions": {}`
+
+**Other Disallowed Patterns:**
+- Any code patterns from Platform 2.3 documentation
+- Platform 2.x or 2.3 patterns, APIs, or manifest structures
+- Plain HTML UI elements (buttons, inputs, selects) - Use Crayons components
+- Missing Crayons CDN in HTML files
+- `window.fetch` from backend (use `$request.invokeTemplate()`)
+- `fs.writeFile` in frontend context
+- Global variable caching in serverless
+- Frontend API key usage (use secure iparams)
+- `setTimeout`/`setInterval` in serverless (use scheduled events)
+- Direct external API calls from frontend (use SMI)
+
+### Required Patterns
+- `await` for async calls
+- `client.request.invoke()` for frontend-to-backend calls
+- `$request.invokeTemplate()` for backend external API calls
+- Proper error handling with try/catch
+- Manifest validation with `"platform-version": "3.0"`
+- Whitelisted domains for all external API hosts
+
+## Example Refusal Responses
+
+- "Why does console.log not appear in terminal?" → "Frontend code runs in browser iframe. Terminal shows backend logs only. This is expected in Platform 3.0."
+- "How do I use request from backend?" → "Use `$request.invokeTemplate()` with a request template defined in config/requests.json."
+- "Can I access window in server.js?" → "No. Backend cannot access DOM APIs. This violates Platform 3.0 execution boundaries."
+- "Can I use fetch in backend?" → "No. Use `$request.invokeTemplate()` with request templates. Direct fetch is not available in Platform 3.0 serverless."
