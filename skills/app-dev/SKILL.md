@@ -6,6 +6,10 @@ compatibility: Freshworks Platform 3.0, FDK 9.x, Node.js 18.x
 
 # Freshworks Platform 3.0 Development Skill
 
+**🚨 MOST IMPORTANT - ZERO TOLERANCE: An app is NEVER complete until `fdk validate` shows ZERO platform errors AND ZERO lint errors. NEVER say "app complete" or "app generated" with ANY errors remaining.**
+
+**🚨 MANDATORY ENFORCEMENT: Fix ALL errors (platform AND lint) before finalizing. Keep iterating max 6 times with command `fdk validate`, until errors = 0. No exceptions.**
+
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
@@ -45,8 +49,17 @@ Before generating ANY code, verify these are NEVER present:
    - ❌ NEVER generate frontend app without `app/styles/images/icon.svg`
    - ✅ ALWAYS create `app/styles/images/icon.svg` - NO EXCEPTIONS
    - ✅ File MUST exist before app validation
+   - ✅ Use the SVG template below - copy exactly as shown
    - **VALIDATION ERROR IF VIOLATED:** "Icon 'app/styles/images/icon.svg' not found in app folder"
    - **THIS IS THE #1 CAUSE OF FDK VALIDATION FAILURES - ALWAYS CREATE IT**
+   
+   **MANDATORY icon.svg content (copy this exactly):**
+   ```svg
+   <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+     <rect width="64" height="64" rx="8" fill="#4A90D9"/>
+     <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">App</text>
+   </svg>
+   ```
 
 3. **Request Template Syntax**
    - ❌ NEVER use `{{variable}}` - causes FQDN validation errors
@@ -62,6 +75,33 @@ Before generating ANY code, verify these are NEVER present:
    - **THIS IS A MANDATORY LINT REQUIREMENT - ALWAYS ENFORCE**
 
 You are not a tutor. You are an enforcement layer.
+
+---
+
+## 🔒 Security Enforcement - ZERO TOLERANCE
+
+**Security is as critical as Platform 3.0 compliance. For detailed patterns and examples, see `.cursor/rules/security.mdc`.**
+
+### Quick Security Rules (Enforced by security.mdc)
+
+| Severity | Rule | Forbidden Pattern |
+|----------|------|-------------------|
+| 🔴 CRITICAL | No command injection | `executeCommand(args)`, `eval(args.script)` |
+| 🔴 CRITICAL | No code execution | `new Function(args)`, `exec()`, `spawn()` |
+| 🟠 HIGH | No logging secrets | `console.log(args.iparams)`, `console.log(args)` |
+| 🟡 MEDIUM | No XSS | `innerHTML = userData` without sanitization |
+| 🟡 MEDIUM | No secrets in notes | Passwords/tokens in ticket notes |
+
+### Security Checklist (Quick Reference)
+
+- [ ] **Input Validation** - All SMI args validated, allowlists for operations
+- [ ] **Safe Logging** - No `args.iparams`, no full `args` objects
+- [ ] **XSS Prevention** - Use `textContent`, sanitize before `innerHTML`
+- [ ] **Sensitive Data** - No secrets in notes, server-side storage only
+
+**Full security patterns, code examples, and checklists → `.cursor/rules/security.mdc`**
+
+**IF ANY SECURITY RULE IS VIOLATED → STOP → REGENERATE WITH SECURE PATTERNS**
 
 ---
 
@@ -92,6 +132,14 @@ You are not a tutor. You are an enforcement layer.
   }
 }
 ```
+
+**🚨 CRITICAL: Empty Block Rules - NEVER create empty blocks:**
+- ❌ `"functions": {}` - INVALID - must have at least 1 function OR omit entirely
+- ❌ `"requests": {}` - INVALID - must have at least 1 request OR omit entirely
+- ❌ `"events": {}` - INVALID - must have at least 1 event OR omit entirely
+- ✅ If no functions needed, DO NOT include `"functions"` key at all
+- ✅ If no requests needed, DO NOT include `"requests"` key at all
+- **VALIDATION ERROR:** "/modules/common/functions must NOT have fewer than 1 properties"
 
 ### ❌ Forbidden Patterns - PLATFORM 2.X IMMEDIATE REJECTION
 
@@ -327,6 +375,22 @@ Load the appropriate template from `assets/templates/`:
 - Load: `references/architecture/oauth-configuration-latest.md`
 - Load: `references/api/oauth-docs.md`
 
+**🚨 MANDATORY OAuth Fields Checklist - ZERO TOLERANCE:**
+
+Every OAuth integration in `oauth_config.json` MUST have ALL of these fields:
+
+| Field | Required | Location | Example |
+|-------|----------|----------|---------|
+| `display_name` | ✅ YES | Integration root | `"display_name": "GitHub"` |
+| `token_type` | ✅ YES | Integration root | `"token_type": "account"` or `"agent"` |
+| `client_id` | ✅ YES | Integration root | `"<%= oauth_iparams.client_id %>"` |
+| `client_secret` | ✅ YES | Integration root | `"<%= oauth_iparams.client_secret %>"` |
+| `authorize_url` | ✅ YES | Integration root | `"https://..."` |
+| `token_url` | ✅ YES | Integration root | `"https://..."` |
+| `description` | ✅ YES | Each oauth_iparam | `"description": "Enter your Client ID"` |
+
+**🚨 CRITICAL: Every field inside `oauth_iparams` MUST have `description`** - This is frequently missed!
+
 **OAuth requires THREE files:**
 
 1. **`config/oauth_config.json`** - OAuth credentials in `oauth_iparams`
@@ -334,13 +398,26 @@ Load the appropriate template from `assets/templates/`:
    {
      "integrations": {
        "service_name": {
+         "display_name": "Service Name",
          "client_id": "<%= oauth_iparams.client_id %>",
          "client_secret": "<%= oauth_iparams.client_secret %>",
          "authorize_url": "https://...",
          "token_url": "https://...",
+         "token_type": "account",
          "oauth_iparams": {
-           "client_id": { "display_name": "Client ID", "type": "text", "required": true },
-           "client_secret": { "display_name": "Client Secret", "type": "text", "required": true, "secure": true }
+           "client_id": {
+             "display_name": "Client ID",
+             "description": "Enter your OAuth App Client ID from the service developer portal",
+             "type": "text",
+             "required": true
+           },
+           "client_secret": {
+             "display_name": "Client Secret",
+             "description": "Enter your OAuth App Client Secret from the service developer portal",
+             "type": "text",
+             "required": true,
+             "secure": true
+           }
          }
        }
      }
@@ -373,7 +450,13 @@ Load the appropriate template from `assets/templates/`:
 - ✅ Use `<%= oauth_iparams.client_id %>`, NEVER plain strings
 - ✅ Use `<%= access_token %>` in requests, NEVER `{{access_token}}`
 - ✅ Include `"options": { "oauth": "integration_name" }`
+- ✅ **MUST include `display_name` at integration root level**
+- ✅ **MUST include `token_type` (`"account"` or `"agent"`) at integration root level**
+- ✅ **MUST include `description` field for EVERY oauth_iparam**
 - ❌ NEVER put client_id/client_secret in regular `config/iparams.json`
+- ❌ NEVER omit `token_type` - causes validation error
+- ❌ NEVER omit `display_name` - causes validation error
+- ❌ NEVER omit `description` in oauth_iparams - causes validation error
 
 **CRITICAL: IParams Rule**
 - If app uses `config/iparams.json` with any parameters (not empty `{}`):
@@ -508,6 +591,19 @@ Before presenting the app, validate against:
 - [ ] Use `$request.invokeTemplate()`, never `$request.post()`
 - [ ] Helper functions AFTER exports block (not before)
 - [ ] No unreachable code after return statements
+- [ ] **Error Handling** - All async operations wrapped in try/catch blocks
+- [ ] **Graceful Failures** - SMI functions return `{ success: false, error: message }` on failure
+- [ ] **Minimal Comments** - Add brief comments for SMI functions explaining purpose (1 line max)
+- [ ] **Complex Logic Comments** - Add explanatory comments for non-obvious logic, workarounds, or business rules
+- [ ] **No Obvious Comments** - Never add comments that just describe what code does (e.g., `// loop through array`)
+
+### 🔒 Security (MANDATORY - See Security Enforcement Section)
+- [ ] **Input Validation** - All SMI args validated before use
+- [ ] **No Command Injection** - No `executeCommand`, `runScript`, `eval` with user input
+- [ ] **Safe Logging** - No `console.log(args.iparams)` or full args objects
+- [ ] **XSS Prevention** - Use `textContent` or sanitize before `innerHTML`
+- [ ] **Sensitive Data** - No passwords/secrets in ticket notes or UI
+- [ ] **Allowlists** - Enumerated operations use allowlists, not raw user input
 
 ### UI Components
 - [ ] Use `<fw-button>` not `<button>`
@@ -555,6 +651,14 @@ Before presenting the app, validate against:
 12. **Product Module** - MUST have at least one product module
 13. **LOCATION PLACEMENT** - **VERIFY BEFORE GENERATING MANIFEST** - `full_page_app` → `modules.common.location`, product locations → product module
 14. **REQUEST API** - MUST use `$request.invokeTemplate()`, NEVER `$request.post()/.get()/.put()/.delete()`
+
+**🔒 SECURITY CHECKLIST - MANDATORY (See Security Enforcement Section):**
+
+15. **🔴 NO COMMAND INJECTION** - NEVER pass user input to `executeCommand`, `runScript`, `eval`, `exec`
+16. **🔴 INPUT VALIDATION** - ALL SMI function args MUST be validated before use
+17. **🟠 SAFE LOGGING** - NEVER `console.log(args.iparams)` or full `args` objects
+18. **🟡 XSS PREVENTION** - Use `textContent` for dynamic data, sanitize before `innerHTML`
+19. **🟡 SENSITIVE DATA** - NEVER store passwords/secrets in ticket notes or visible UI
 
 **CRITICAL: #7 Async/Await Rule - ZERO TOLERANCE**
 - Every `async` function MUST contain at least one `await` expression
@@ -613,6 +717,14 @@ Before presenting the app, validate against:
 - [ ] **No unused parameters** - Remove or prefix with `_`
 - [ ] **Function complexity ≤ 7** - Extract helpers if needed
 - [ ] **IIFE pattern for async initialization** - Prevent race conditions
+
+#### 🔒 Security (MANDATORY)
+- [ ] **No command/code execution with user input** - No `executeCommand(args)`, `eval(args.script)`
+- [ ] **SMI args validated** - Type check, sanitize, use allowlists
+- [ ] **No logging iparams** - No `console.log(args.iparams)` or `console.log(args)`
+- [ ] **Safe DOM updates** - Use `textContent` or sanitize before `innerHTML`
+- [ ] **No secrets in notes** - No passwords/tokens in ticket notes or comments
+- [ ] **Sanitized error logging** - Log `e.message` only, not full error objects
 
 #### Manifest Structure
 - [ ] **All SMI functions declared in manifest** - `modules.common.functions`
@@ -732,6 +844,38 @@ Before presenting the app, validate against:
 }
 ```
 
+## App Completion Gates - MANDATORY
+
+**🚨 ZERO TOLERANCE: An app is NEVER complete unless ALL gates pass.**
+
+### Gate 1: Mandatory Files Exist
+- [ ] `manifest.json` exists - **APP CANNOT EXIST WITHOUT THIS**
+- [ ] `config/iparams.json` exists (can be empty `{}`)
+- [ ] For frontend apps: `app/index.html`, `app/scripts/app.js`, `app/styles/images/icon.svg`
+- [ ] For serverless apps: `server/server.js`
+
+### Gate 2: Manifest Structure Valid
+- [ ] `"platform-version": "3.0"`
+- [ ] No empty blocks (`functions: {}`, `requests: {}`, `events: {}`)
+- [ ] All declared functions have implementations in server.js
+- [ ] All declared requests exist in config/requests.json
+
+### Gate 3: OAuth Complete (if used)
+- [ ] Every integration has `display_name`
+- [ ] Every integration has `token_type`
+- [ ] Every `oauth_iparam` field has `description`
+
+### Gate 4: Validation Passes
+- [ ] `fdk validate` returns 0 platform errors
+
+**IF ANY GATE FAILS:**
+- ❌ DO NOT report app as "complete" or "generated successfully"
+- ❌ DO NOT proceed to "Next Steps"
+- ✅ Fix the issue and re-validate
+- ✅ Only report success when ALL gates pass
+
+---
+
 ## Post-Generation Message
 
 After successfully generating an app, ALWAYS include:
@@ -815,6 +959,13 @@ Use these references to validate generated apps:
 7. Location in wrong module → Reject
 8. Missing Crayons CDN → Reject
 
+**🔒 Security Refusal Tests** (see `.cursor/rules/security.mdc` for details):
+9. Command injection patterns → Reject
+10. Code execution patterns → Reject
+11. Credential logging → Reject
+12. XSS patterns → Reject
+13. Secrets in notes → Reject
+
 **Usage:** Never generate these patterns.
 
 ### Violation Tests (Common Mistakes)
@@ -829,6 +980,9 @@ Use these references to validate generated apps:
 8. OAuth missing options
 9. Missing alwaysApply in rules
 10. Missing product module
+
+**🔒 Security Violation Tests** (see `.cursor/rules/security.mdc`):
+11-15. Input validation, logging, XSS, sensitive data violations
 
 **Usage:** Check generated code against these violations.
 

@@ -98,3 +98,9 @@ skills/.cursor/
 skills/test/
 skills/skills-lock.json
 skills-lock.json
+prompts102.csv
+apps/
+.cursor/agents
+.agents/
+security-report.md
+validation-report.md

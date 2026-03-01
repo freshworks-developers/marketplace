@@ -1,11 +1,11 @@
 ---
 name: code-quality-patterns
-description: Code quality patterns for fixing FDK validation warnings. Load this file when fdk validate shows complexity > 5, async scoping issues, unhandled rejections, deprecated API usage, empty blocks, or secure iparam warnings.
+description: Code quality and security patterns for fixing FDK validation warnings. Load this file when fdk validate shows complexity > 5, async scoping issues, unhandled rejections, deprecated API usage, empty blocks, secure iparam warnings, or security vulnerabilities (hardcoded credentials, injection, XSS, sensitive data logging).
 globs: []
 alwaysApply: false
 ---
 
-# Code Quality Patterns - FDK Warning Fixes
+# Code Quality & Security Patterns - FDK Warning Fixes
 
 **Load this file when:**
 - `fdk validate` shows function complexity > 5
@@ -15,6 +15,11 @@ alwaysApply: false
 - Deprecated API usage warnings (Freshservice v1)
 - Empty block statement warnings
 - iparam secure warnings
+- **Security audit or vulnerability check needed**
+- **Hardcoded credentials detected**
+- **Injection vulnerabilities suspected**
+- **Sensitive data logging (args.iparams) detected**
+- **XSS patterns (innerHTML with variables) found**
 
 ---
 
@@ -690,3 +695,193 @@ Before finalizing any function:
 - [ ] No `let` variables assigned in async callbacks?
 - [ ] Dependencies passed as parameters, not globals?
 - [ ] State object pattern for shared state?
+
+---
+
+## 🔒 Pattern 9: Security Checks (MANDATORY)
+
+**These patterns MUST be checked during code generation and validation. Violations are BLOCKING.**
+
+### 9.1 Credential Exposure Detection
+
+**NEVER hardcode credentials in code:**
+
+```javascript
+// ❌ CRITICAL: Hardcoded API key
+const apiKey = 'sk-1234567890abcdef';
+
+// ❌ CRITICAL: Hardcoded password
+const password = 'mysecretpassword';
+
+// ❌ CRITICAL: Hardcoded token
+const token = 'Bearer eyJhbGciOiJIUzI1NiIs...';
+
+// ✅ CORRECT: Use iparams
+const apiKey = args.iparams.api_key;
+```
+
+**Patterns to detect (regex):**
+```javascript
+/api[_-]?key\s*[:=]\s*['"][^'"]{10,}['"]/i  // Hardcoded API keys
+/password\s*[:=]\s*['"][^'"]+['"]/i          // Hardcoded passwords
+/secret\s*[:=]\s*['"][^'"]{5,}['"]/i         // Hardcoded secrets
+/token\s*[:=]\s*['"][^'"]{20,}['"]/i         // Hardcoded tokens
+/Bearer\s+[A-Za-z0-9\-_\.]{20,}/             // Hardcoded Bearer tokens
+```
+
+### 9.2 Command/Code Injection Prevention
+
+**NEVER pass user input to dangerous operations:**
+
+```javascript
+// ❌ CRITICAL: Command injection vulnerability
+exports = {
+  executeCommand: async function(args) {
+    await $request.invokeTemplate('runScript', { body: JSON.stringify(args) });
+  }
+};
+
+// ❌ CRITICAL: Code execution
+eval(args.code);
+new Function(args.script)();
+
+// ✅ CORRECT: Use allowlists
+const ALLOWED_COMMANDS = ['status', 'health', 'list'];
+exports = {
+  executeCommand: async function(args) {
+    if (!ALLOWED_COMMANDS.includes(args.command)) {
+      return { success: false, error: 'Command not allowed' };
+    }
+    // Execute predefined operation
+  }
+};
+```
+
+**Patterns to detect:**
+```javascript
+/eval\s*\(/                    // eval() usage
+/new\s+Function\s*\(/          // new Function() usage
+/executeCommand|runScript|runPowerShell/  // Command execution
+```
+
+### 9.3 Sensitive Data Logging Prevention
+
+**NEVER log sensitive data:**
+
+```javascript
+// ❌ HIGH: Logs API keys and secrets
+console.log('App installed', args.iparams);
+
+// ❌ HIGH: Logs full args with potential secrets
+console.log('Handler called', args);
+
+// ❌ HIGH: Logs tokens
+console.log('Auth token:', authToken);
+
+// ✅ CORRECT: Log only confirmation
+console.log('App installed successfully');
+
+// ✅ CORRECT: Log only non-sensitive identifiers
+console.log('Processing ticket:', args.data?.ticket?.id);
+```
+
+**Patterns to detect:**
+```javascript
+/console\.(log|info|debug)\s*\([^)]*iparams/i   // Logging iparams
+/console\.(log|info|debug)\s*\([^)]*password/i  // Logging passwords
+/console\.(log|info|debug)\s*\([^)]*token/i     // Logging tokens
+/console\.(log|info|debug)\s*\([^)]*secret/i    // Logging secrets
+/console\.(log|info|debug)\s*\([^)]*key/i       // Logging keys
+```
+
+### 9.4 XSS Prevention (innerHTML)
+
+**NEVER insert unsanitized data into DOM:**
+
+```javascript
+// ❌ MEDIUM: XSS vulnerability
+el.innerHTML = userData;
+el.innerHTML = '<div>' + apiResponse + '</div>';
+el.innerHTML = items.map(i => '<p>' + i.title + '</p>').join('');
+
+// ✅ CORRECT: Use textContent for plain text
+el.textContent = userData;
+
+// ✅ CORRECT: Sanitize before innerHTML
+function sanitize(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+el.innerHTML = '<div>' + sanitize(userData) + '</div>';
+
+// ✅ CORRECT: Use Crayons components with static content
+el.innerHTML = '<fw-inline-message type="success">Done</fw-inline-message>';
+```
+
+**Patterns to detect:**
+```javascript
+/innerHTML\s*=\s*[^'"`<]*[a-zA-Z_$][a-zA-Z0-9_$]*[^;]*;/  // innerHTML with variable
+```
+
+### 9.5 Sensitive Data Storage Prevention
+
+**NEVER store secrets in visible locations:**
+
+```javascript
+// ❌ MEDIUM: Password in ticket notes
+const note = 'Password: ' + generatedPassword;
+await client.interface.trigger('addNote', { content: note });
+
+// ❌ MEDIUM: Secret in localStorage
+localStorage.setItem('apiKey', apiKey);
+
+// ✅ CORRECT: Send via secure channel
+await client.request.invoke('sendSecureEmail', {
+  to: email,
+  password: generatedPassword,
+  expiresIn: '24h'
+});
+await client.interface.trigger('addNote', {
+  content: 'Credentials sent to requester email. Expires in 24h.',
+  isPrivate: true
+});
+
+// ✅ CORRECT: Store server-side
+await $db.set('token', { value: encryptedToken });
+```
+
+---
+
+## 🔒 Quick Reference: Security Checklist
+
+**Before finalizing ANY app, verify:**
+
+### Credential Security
+- [ ] No hardcoded API keys, passwords, tokens, or secrets?
+- [ ] All credentials come from `args.iparams` or OAuth?
+- [ ] Credentials marked with `"secure": true` in iparams.json?
+
+### Injection Prevention
+- [ ] No `eval()`, `new Function()`, `exec()`, `spawn()` with user input?
+- [ ] No command execution with unsanitized user input?
+- [ ] SMI function arguments validated before use?
+- [ ] Allowlists used for enumerated operations?
+
+### Logging Security
+- [ ] No `console.log(args.iparams)`?
+- [ ] No logging of full `args` objects?
+- [ ] No logging of tokens, passwords, keys, or secrets?
+- [ ] Error logging uses only `error.message`, not full objects?
+
+### XSS Prevention
+- [ ] `textContent` used for dynamic text?
+- [ ] `innerHTML` only with sanitized or static content?
+- [ ] No raw API/user data in HTML templates?
+
+### Data Protection
+- [ ] No passwords/secrets in ticket notes or comments?
+- [ ] No credentials in localStorage?
+- [ ] Secrets stored server-side only?
+
+**🚨 ANY security violation is BLOCKING. App is NOT complete with security issues.**

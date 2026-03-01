@@ -6,7 +6,9 @@ alwaysApply: true
 
 # Validation & Autofix - Pre-Finalization Checklist
 
-**CRITICAL:** After creating ALL app files, you MUST automatically run validation and attempt to fix errors.
+**🚨 MANDATORY: App is NEVER complete until ALL errors (platform AND lint) are fixed. ZERO TOLERANCE.**
+
+**CRITICAL:** After creating ALL app files, you MUST automatically run validation and fix ALL errors - both platform errors AND lint errors. An app with ANY remaining errors is NOT complete.
 
 ## Mandatory Pre-Finalization Process
 
@@ -23,14 +25,14 @@ fdk validate
 
 ### Step 2: Automatic Error Fixing (2 Iterations)
 
-**CRITICAL: Only fix FATAL errors - Ignore lint errors and warnings**
+**🚨 MANDATORY: Fix ALL errors - both platform errors AND lint errors. NO EXCEPTIONS.**
 
-**If validation fails, AUTOMATICALLY attempt to fix FATAL errors only:**
+**If validation fails, AUTOMATICALLY fix ALL errors:**
 
-**What to FIX (Fatal Errors) - BLOCKING:**
+**What to FIX (Platform Errors) - BLOCKING:**
 - ✅ **"Template file 'index.html' ... not found"** → Create app/index.html + full app structure
 - ✅ **"Mandatory folder(s) missing: app"** → Create app/ with index.html, scripts/app.js, styles/, icon.svg
-- ✅ **"Icon '...' not found"** → Create app/styles/images/icon.svg
+- ✅ **"Icon '...' not found"** → Create app/styles/images/icon.svg with valid SVG content
 - ✅ JSON parsing errors (multiple top-level objects, syntax errors)
 - ✅ Missing required files (`icon.svg`, `manifest.json`)
 - ✅ Manifest structure errors (wrong platform version, invalid module structure)
@@ -38,32 +40,39 @@ fdk validate
 - ✅ Missing declarations in manifest (requests, functions, events)
 - ✅ OAuth structure errors (missing `integrations` wrapper)
 - ✅ Location placement errors (wrong module)
+- ✅ **"OAuth config must have required property 'token_type'"** → Add `"token_type": "account"` or `"agent"`
+- ✅ **"OAuth config must have required property 'display_name'"** → Add `"display_name": "Service Name"`
+- ✅ **"oauth_iparams/X must have required property 'description'"** → Add `"description": "..."` to each oauth_iparam
+- ✅ **"/modules/common/functions must NOT have fewer than 1 properties"** → Add functions OR remove empty `functions: {}` block
 
-**Platform Errors = BLOCKING.** Do NOT consider app complete until Platform Errors = 0.
+**What to FIX (Lint Errors) - ALSO BLOCKING:**
+- ✅ **Async without await** → Add `await` OR remove `async` keyword
+- ✅ **Unused parameters** → Remove parameter OR prefix with `_` (e.g., `_args`)
+- ✅ **Unreachable code** → Remove dead code after return statements
+- ✅ **Missing semicolons** → Add semicolons where required
+- ✅ **Undefined variables** → Define or import missing variables
+- ✅ **Complexity issues** → Extract helper functions to reduce complexity
 
-**What to IGNORE:**
-- ❌ Lint errors (async without await, unused parameters, unreachable code)
-- ❌ Warnings (non-critical issues)
-- ❌ Code style issues
-- ❌ Best practice suggestions
+**🚨 ALL ERRORS = BLOCKING. App is NOT complete until Platform Errors = 0 AND Lint Errors = 0.**
 
 1. **First Iteration:**
    - Parse validation output
-   - **Filter out lint errors and warnings** - Only process fatal errors
-   - Identify fixable fatal issues (JSON structure, syntax errors, missing files, manifest errors)
-   - Apply autofixes automatically
+   - Identify ALL errors (platform errors AND lint errors)
+   - Apply autofixes for platform errors (JSON, manifest, missing files)
+   - Apply autofixes for lint errors (async/await, unused params, etc.)
    - Re-run `fdk validate`
 
 2. **Second Iteration (if still failing):**
-   - Parse remaining fatal errors (ignore lint/warnings)
-   - Apply additional fixes for fatal errors only
+   - Parse ALL remaining errors (platform AND lint)
+   - Apply additional fixes for ALL errors
    - Re-run `fdk validate`
 
 3. **After 2 Iterations:**
-   - If fatal errors are resolved → Present app as complete (even if lint warnings remain)
-   - If fatal errors persist → Present remaining fatal errors to user with fix directions
+   - If ALL errors (platform AND lint) are resolved → Present app as complete
+   - If ANY errors persist → Continue fixing until ALL errors = 0
+   - **NEVER present app as complete with ANY remaining errors**
 
-**CRITICAL:** You MUST attempt fixes automatically for 2 iterations before asking user for help. **ONLY fix fatal errors - ignore lint and warnings.**
+**🚨 MANDATORY:** You MUST fix ALL errors - platform AND lint. An app with lint errors is NOT complete. Keep iterating until `fdk validate` shows ZERO errors.
 
 ### Step 2: JSON Structure Validation & Autofix
 
@@ -166,7 +175,11 @@ fdk validate
 **For config/oauth_config.json:**
 1. ✅ MUST be a single top-level JSON object `{ "integrations": { ... } }`
 2. ✅ All integrations MUST be properties of `integrations` object
-3. ❌ NEVER have multiple top-level objects
+3. ✅ Each integration MUST have `display_name` field
+4. ✅ Each integration MUST have `token_type` field (`"account"` or `"agent"`)
+5. ✅ Each field in `oauth_iparams` MUST have `description` field
+6. ❌ NEVER have multiple top-level objects
+7. ❌ NEVER omit required fields (token_type, display_name, description)
 
 **For manifest.json:**
 1. ✅ MUST be a single top-level JSON object
@@ -206,19 +219,26 @@ fdk validate
 - [ ] OAuth config (if used) has correct structure
 - [ ] Manifest.json is valid Platform 3.0 structure
 
-### Step 5: Finalize Only After Validation Passes
+### Step 5: Finalize Only After ALL Errors Are Fixed
 
-**CRITICAL:** Do NOT present the app as complete until:
+**🚨 MANDATORY - ZERO TOLERANCE:** Do NOT present the app as complete until:
 
-1. ✅ `fdk validate` passes
-2. ✅ All JSON structure errors are fixed
-3. ✅ All lint errors are resolved
-4. ✅ All validation errors are addressed
+1. ✅ `fdk validate` shows **ZERO platform errors**
+2. ✅ `fdk validate` shows **ZERO lint errors**
+3. ✅ All JSON structure errors are fixed
+4. ✅ All async/await issues are fixed
+5. ✅ All unused parameter issues are fixed
+6. ✅ ALL validation output shows NO errors
 
-**If validation fails:**
-- Fix errors immediately
+**If ANY errors remain:**
+- **DO NOT say "app is complete"**
+- **DO NOT say "app generated successfully"**
+- Fix ALL errors immediately
 - Re-run validation
-- Only proceed when ALL checks pass
+- Keep iterating until ZERO errors
+- Only proceed when `fdk validate` is completely clean
+
+**🚨 An app with ANY remaining errors (platform OR lint) is NOT complete. NEVER finalize with errors.**
 
 ## Common JSON Autofix Patterns
 
@@ -290,21 +310,137 @@ fdk validate
 "host": "<%= context.subdomain %>.example.com"
 ```
 
+### Pattern 5: OAuth Missing Required Fields
+
+**Error:** `OAuth config /integrations/X must have required property 'token_type'`
+**Error:** `OAuth config /integrations/X must have required property 'display_name'`
+
+**Fix:** Add missing required fields to each integration:
+```json
+// WRONG
+{
+  "integrations": {
+    "github": {
+      "client_id": "...",
+      "client_secret": "...",
+      "authorize_url": "...",
+      "token_url": "..."
+    }
+  }
+}
+
+// CORRECT
+{
+  "integrations": {
+    "github": {
+      "display_name": "GitHub",
+      "client_id": "...",
+      "client_secret": "...",
+      "authorize_url": "...",
+      "token_url": "...",
+      "token_type": "account"
+    }
+  }
+}
+```
+
+### Pattern 6: OAuth IParams Missing Description
+
+**Error:** `oauth_iparams/client_id must have required property 'description'`
+
+**Fix:** Add `description` to EVERY field in `oauth_iparams`:
+```json
+// WRONG
+"oauth_iparams": {
+  "client_id": { "display_name": "Client ID", "type": "text", "required": true }
+}
+
+// CORRECT
+"oauth_iparams": {
+  "client_id": {
+    "display_name": "Client ID",
+    "description": "Enter your OAuth App Client ID from the developer portal",
+    "type": "text",
+    "required": true
+  }
+}
+```
+
+### Pattern 7: Empty Functions/Requests Block
+
+**Error:** `/modules/common/functions must NOT have fewer than 1 properties`
+
+**Fix:** Either add functions OR remove the empty block entirely:
+```json
+// WRONG - empty functions block
+{
+  "modules": {
+    "common": {
+      "functions": {}
+    }
+  }
+}
+
+// CORRECT - Option 1: Add functions
+{
+  "modules": {
+    "common": {
+      "functions": {
+        "myFunction": {}
+      }
+    }
+  }
+}
+
+// CORRECT - Option 2: Remove the block
+{
+  "modules": {
+    "common": {}
+  }
+}
+```
+
+### Pattern 8: Missing Icon SVG
+
+**Error:** `Icon 'styles/images/icon.svg' not found in app folder`
+
+**Fix:** Create `app/styles/images/icon.svg` with valid SVG content:
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="8" fill="#4A90D9"/>
+  <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">App</text>
+</svg>
+```
+
 ## Enforcement Rules
 
 **ALWAYS:**
 - ✅ Run `fdk validate` before finalizing
-- ✅ Fix JSON structure errors immediately
+- ✅ Fix ALL platform errors immediately
+- ✅ Fix ALL lint errors immediately (async/await, unused params, etc.)
 - ✅ Verify single top-level object in all JSON files
 - ✅ Check for proper comma placement
 - ✅ Remove trailing commas
 - ✅ Use correct template syntax
+- ✅ Keep iterating until ZERO errors remain
 
 **NEVER:**
 - ❌ Present app without running validation
+- ❌ Say "app is complete" with ANY errors remaining
+- ❌ Say "app generated successfully" with lint errors
+- ❌ Ignore lint errors (they are NOT optional)
 - ❌ Leave JSON structure errors unfixed
 - ❌ Allow multiple top-level JSON objects
 - ❌ Skip validation step
-- ❌ Finalize with validation errors
+- ❌ Finalize with ANY validation errors (platform OR lint)
 
-**THIS IS MANDATORY - NO EXCEPTIONS**
+**🚨 THIS IS MANDATORY - ZERO TOLERANCE - NO EXCEPTIONS**
+
+**App completion criteria:**
+```
+Platform Errors: 0
+Lint Errors: 0
+Warnings: 0 (or acknowledged)
+```
+
+**If this criteria is NOT met, the app is NOT complete. Period.**
