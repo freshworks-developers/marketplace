@@ -33,7 +33,7 @@
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
 ```
 
 ### Install as Claude Plugin
@@ -57,7 +57,7 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 ## What's Included
 
 **Skills:**
-- `freshworks-app-dev` - Expert-level development skill for Platform 3.0
+- `app-dev` - Expert-level development skill for Platform 3.0
 
 **Rules:**
 - `app-templates.mdc` - Complete app templates
@@ -80,7 +80,7 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 
 ## Usage
 
-Invoke with `@freshworks-app-dev` in chat, or it activates automatically when working on Freshworks Platform 3.0 apps. When active, it:
+Invoke with `@app-dev` in chat, or it activates automatically when working on Freshworks Platform 3.0 apps. When active, it:
 - Enforces Platform 3.0 patterns
 - Generates correct manifest structure
 - Uses proper request templates
