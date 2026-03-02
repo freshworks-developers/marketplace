@@ -60,17 +60,21 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - `app-dev` - Expert-level development skill for Platform 3.0
 
 **Rules:**
-- `app-templates.mdc` - Complete app templates
-- `freshworks-platform3.mdc` - Platform 3.0 rules
+- `freshworks-platform3.mdc` - Platform 3.0 enforcement
+- `security.mdc` - Security enforcement
+- `validation-workflow.mdc` - Auto-validation & fixes
+- `app-building-blocking-gates.mdc` - Mandatory gates
 - `platform3-modules-locations.mdc` - Module reference
-- `validation-autofix.mdc` - Validation patterns
-- `validation-workflow.mdc` - Autofix workflow
+- `app-templates.mdc` - Template selection
+- `complexity-reduction.mdc` - Fix complexity
+- `async-patterns.mdc` - Fix async/await
+- `confusion.mdc` - Disambiguation
 
 **Commands:**
-- `/migrate` - Check platform version; migrate 2.x → 3.0
-- `/review` - Run 3 rounds of `fdk validate`
-- `/fix` - Fix all platform and lint errors
-- `/refactor` - Reduce function complexity (≤ 7)
+- `/fdk-fix` - Fix all platform and lint errors
+- `/fdk-migrate` - Migrate Platform 2.x → 3.0
+- `/fdk-refactor` - Reduce function complexity (≤ 7)
+- `/fdk-review` - Run 3 rounds of `fdk validate`
 
 **References:**
 - Progressive disclosure documentation (140+ files)

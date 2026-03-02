@@ -2,6 +2,8 @@
 name: app-dev
 description: Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission.
 compatibility: Freshworks Platform 3.0, FDK 9.x, Node.js 18.x
+argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
+allowed-tools: ["shell", "read", "write", "strreplace", "glob", "grep"]
 ---
 
 # Freshworks Platform 3.0 Development Skill
@@ -463,8 +465,22 @@ Load the appropriate template from `assets/templates/`:
    - Fix location placement (wrong module for location)
    - Re-run `fdk validate`
 5. **After iterations (up to 6):**
-   - ✅ If ALL errors (platform AND lint) are resolved → Present app as complete
+   - ✅ If ALL errors (platform AND lint) are resolved → Present concise success message
    - ⚠️ If ANY errors persist → Keep iterating, NEVER say "complete" with errors
+
+**Output after successful validation:**
+```
+✅ App generated successfully in <app-directory>/
+
+Validation: 0 platform errors, 0 lint errors
+
+Next steps:
+1. cd <app-directory>
+2. fdk run
+3. Test in product with ?dev=true
+```
+
+**DO NOT create validation reports or detailed summaries unless explicitly requested.**
 
 **What to FIX (Platform Errors) - BLOCKING:**
 - ✅ JSON parsing errors
@@ -1063,32 +1079,59 @@ Before presenting the app, validate against:
 
 ## Post-Generation Message
 
-After successfully generating an app, ALWAYS include:
+After successfully generating an app, provide a concise summary:
 
 ```
-✅ App generated successfully!
+✅ App generated successfully in <app-directory>/
 
-🔍 **Pre-Finalization Steps (MANDATORY):**
-1. Run: `cd <app-directory> && fdk validate`
-2. Fix any JSON structure errors (see .cursor/rules/validation-autofix.mdc)
-3. Re-run validation until it passes
-4. Only proceed when validation passes completely
+Validation: [0 platform errors, 0 lint errors]
 
-📖 **Next Steps:**
-1. Install FDK: `npm install -g @freshworks/fdk`
-2. Navigate to app directory
-3. Run: `fdk run`
-4. Validate: `fdk validate` (must pass before finalizing)
-
-📋 **Configuration Required:**
-[List any iparams, OAuth credentials, or API keys that need to be configured]
-
-⚠️ **Before Testing:**
-- Review installation parameters in config/iparams.json
-- Configure any external API credentials
-- Test all UI components in the target product
-- Ensure `fdk validate` passes without errors
+Next steps:
+1. cd <app-directory>
+2. fdk run
+3. Test in Freshworks product with ?dev=true
 ```
+
+**DO NOT automatically generate:**
+- ❌ Detailed validation reports (.validation-report.md)
+- ❌ Apps summary documents (APPS-SUMMARY.md)
+- ❌ Extensive feature lists or comparisons
+- ❌ Long "Next Steps" sections with multiple subsections
+
+**Only generate these when user explicitly requests:**
+- ✅ "Create a validation report"
+- ✅ "Generate a summary document"
+- ✅ "Write detailed documentation"
+- ✅ "Compare the apps"
+
+**Keep post-generation output minimal and focused on immediate next steps.**
+
+---
+
+## Documentation Generation Rules
+
+### Mandatory Files (ALWAYS create)
+- ✅ `manifest.json` - App manifest
+- ✅ `server/server.js` - Server code (if serverless/hybrid)
+- ✅ `app/` files - Frontend code (if frontend/hybrid)
+- ✅ `config/` files - Configuration (iparams, requests, oauth)
+- ✅ `README.md` - Basic installation and usage guide
+
+### Optional Files (ONLY create when explicitly requested)
+- ❌ `.validation-report.md` - Detailed validation report
+- ❌ `APPS-SUMMARY.md` - Multi-app comparison
+- ❌ `ARCHITECTURE.md` - Technical architecture docs
+- ❌ `CHANGELOG.md` - Version history
+- ❌ `.gitignore` - Git ignore file
+- ❌ `package.json` - NPM package file (not needed for FDK apps)
+
+**User must explicitly say:**
+- "Create a validation report"
+- "Generate a summary document"
+- "Write architecture documentation"
+- "Add a changelog"
+
+**Default behavior: Create only mandatory files + basic README.md**
 
 ---
 

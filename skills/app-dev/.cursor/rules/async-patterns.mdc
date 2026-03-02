@@ -1,0 +1,258 @@
+---
+description: Fix async/await patterns for FDK validation. Use when fdk validate shows "Async function has no 'await' expression", async scoping issues, or unhandled promise rejections. Covers IIFE pattern, error handling, and race conditions.
+alwaysApply: false
+globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
+---
+
+# Async/Await Patterns for FDK Validation
+
+**When to use:** `fdk validate` shows async-related errors
+
+## Common Async Errors
+
+### Error 1: Async without await
+
+```
+Lint Error: Async function has no 'await' expression
+```
+
+**Fix:** Remove `async` keyword OR add actual `await`
+
+```javascript
+// ❌ WRONG: async without await
+exports = {
+  onAppInstallHandler: async function() {
+    console.log('Installed');
+  }
+};
+
+// ✅ CORRECT: Remove async
+exports = {
+  onAppInstallHandler: function() {
+    console.log('Installed');
+  }
+};
+
+// ✅ CORRECT: Add await
+exports = {
+  onAppInstallHandler: async function() {
+    await $db.set('installed', { timestamp: Date.now() });
+    console.log('Installed');
+  }
+};
+```
+
+### Error 2: Async Variable Scoping (Frontend)
+
+```
+Warning: Async function may cause race conditions in frontend initialization
+```
+
+**Fix:** Use IIFE pattern
+
+```javascript
+// ❌ WRONG: Top-level async causes race conditions
+async function init() {
+  const client = await app.initialized();
+  // ... rest of code
+}
+init();
+
+// ✅ CORRECT: IIFE pattern
+(async function() {
+  const client = await app.initialized();
+  // ... rest of code
+})();
+```
+
+### Error 3: Unhandled Promise Rejection
+
+```
+Warning: Expected rejection to be handled
+```
+
+**Fix:** Wrap in try/catch
+
+```javascript
+// ❌ WRONG: No error handling
+exports = {
+  fetchData: async function() {
+    const result = await $request.invokeTemplate('api', {});
+    return result;
+  }
+};
+
+// ✅ CORRECT: Try/catch wrapper
+exports = {
+  fetchData: async function() {
+    try {
+      const result = await $request.invokeTemplate('api', {});
+      return { success: true, data: result };
+    } catch (e) {
+      console.error('API call failed:', e.message);
+      return { success: false, error: e.message };
+    }
+  }
+};
+```
+
+## Frontend Async Patterns
+
+### Pattern 1: App Initialization (IIFE)
+
+```javascript
+// ✅ CORRECT: Standard frontend pattern
+(async function() {
+  const client = await app.initialized();
+  
+  document.getElementById('btn').addEventListener('fwClick', async () => {
+    try {
+      const response = await client.request.invoke('getData', {});
+      displayResult(response);
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+})();
+```
+
+### Pattern 2: Multiple Async Calls
+
+```javascript
+// ✅ CORRECT: Sequential when order matters
+const user = await client.data.get('loggedInUser');
+const ticket = await client.data.get('ticket');
+
+// ✅ CORRECT: Parallel when independent
+const [user, ticket] = await Promise.all([
+  client.data.get('loggedInUser'),
+  client.data.get('ticket')
+]);
+```
+
+## Backend Async Patterns
+
+### Pattern 1: SMI Function
+
+```javascript
+// ✅ CORRECT: Standard SMI pattern
+exports = {
+  getData: async function(args) {
+    try {
+      const result = await $request.invokeTemplate('externalAPI', {
+        body: JSON.stringify(args)
+      });
+      return { success: true, data: result.response };
+    } catch (e) {
+      console.error('External API failed:', e.message);
+      return { success: false, error: e.message };
+    }
+  }
+};
+```
+
+### Pattern 2: Event Handler
+
+```javascript
+// ✅ CORRECT: Event handler with async operations
+exports = {
+  onTicketCreateHandler: async function(args) {
+    const ticket = args.data.ticket;
+    
+    try {
+      await $request.invokeTemplate('notifySlack', {
+        body: JSON.stringify({ text: `New ticket: ${ticket.subject}` })
+      });
+      console.log('Notification sent for ticket:', ticket.id);
+    } catch (e) {
+      console.error('Notification failed:', e.message);
+    }
+  }
+};
+```
+
+### Pattern 3: Multiple External Calls
+
+```javascript
+// ✅ CORRECT: Sequential calls (when second depends on first)
+exports = {
+  getUserPresence: async function(args) {
+    try {
+      // Step 1: Get user by email
+      const userResponse = await $request.invokeTemplate('getUserByEmail', {
+        body: JSON.stringify({ email: args.email })
+      });
+      
+      const userId = userResponse.response.id;
+      
+      // Step 2: Get presence by user ID
+      const presenceResponse = await $request.invokeTemplate('getPresence', {
+        body: JSON.stringify({ userId })
+      });
+      
+      return { success: true, presence: presenceResponse.response };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+};
+```
+
+## Critical Rules
+
+1. **Only use `async` if function contains `await`** (lint error otherwise)
+2. **Use IIFE pattern in frontend** `(async function() { ... })()`
+3. **Always wrap async operations in try/catch** (prevent unhandled rejections)
+4. **Return structured responses** `{ success: boolean, data?: any, error?: string }`
+5. **Log errors with `e.message` only** (not full error objects - security)
+
+## Common Mistakes
+
+### Mistake 1: Forgetting await
+
+```javascript
+// ❌ WRONG: Missing await (returns Promise, not value)
+const data = client.data.get('ticket'); // Promise object!
+
+// ✅ CORRECT: Use await
+const data = await client.data.get('ticket');
+```
+
+### Mistake 2: Async in wrong context
+
+```javascript
+// ❌ WRONG: Can't use await in non-async function
+function getData() {
+  const result = await $request.invokeTemplate('api', {}); // Error!
+}
+
+// ✅ CORRECT: Make function async
+async function getData() {
+  const result = await $request.invokeTemplate('api', {});
+}
+```
+
+### Mistake 3: Not handling errors
+
+```javascript
+// ❌ WRONG: Unhandled rejection
+button.addEventListener('fwClick', async () => {
+  const data = await client.request.invoke('getData', {}); // May fail!
+});
+
+// ✅ CORRECT: Try/catch wrapper
+button.addEventListener('fwClick', async () => {
+  try {
+    const data = await client.request.invoke('getData', {});
+    displayData(data);
+  } catch (e) {
+    showError(e.message);
+  }
+});
+```
+
+## Related Patterns
+
+- For complexity → See `complexity-reduction.mdc`
+- For security → See `security.mdc`
+- For validation → See `validation-workflow.mdc`

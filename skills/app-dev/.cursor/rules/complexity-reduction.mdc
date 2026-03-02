@@ -1,0 +1,203 @@
+---
+description: Reduce function complexity to ≤ 7 for FDK validation. Use when fdk validate shows "Function has complexity X. Maximum allowed is 7." Apply lookup objects, guard clauses, functional patterns, and Sets for multiple comparisons.
+alwaysApply: false
+globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
+---
+
+# Function Complexity Reduction Patterns
+
+**When to use:** `fdk validate` shows "Function 'X' has a complexity of Y. Maximum allowed is 7."
+
+**Target:** Keep complexity ≤ 7 (aim for ≤ 5 for maintainability)
+
+## Quick Fixes (Most Common)
+
+### 1. Sets for Multiple OR Comparisons
+
+**Problem:** Each `||` or `===` adds +1 complexity
+
+```javascript
+// ❌ WRONG: Complexity 12
+function matchesPriority(ticket, filter) {
+  const p = (ticket.priority || ticket.urgency || 0).toString();
+  if (filter.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) {
+    return true;
+  }
+  return false;
+}
+
+// ✅ CORRECT: Complexity 3
+const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
+
+function matchesPriority(ticket, filter) {
+  const p = (ticket.priority || ticket.urgency || 0).toString();
+  if (filter.includes('high') && HIGH_PRIORITIES.has(p)) {
+    return true;
+  }
+  return false;
+}
+```
+
+### 2. Lookup Objects (Replace if/else chains)
+
+```javascript
+// ❌ WRONG: Complexity 6+
+function getPriorityLabel(priority) {
+  if (priority === 1) return 'Low';
+  else if (priority === 2) return 'Medium';
+  else if (priority === 3) return 'High';
+  else if (priority === 4) return 'Urgent';
+  else return 'Unknown';
+}
+
+// ✅ CORRECT: Complexity 1
+const PRIORITY_LABELS = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Urgent' };
+
+function getPriorityLabel(priority) {
+  return PRIORITY_LABELS[priority] ?? 'Unknown';
+}
+```
+
+### 3. Guard Clauses (Reduce nesting)
+
+```javascript
+// ❌ WRONG: Complexity 5+ (nested conditions)
+function processTicket(ticket) {
+  if (ticket) {
+    if (ticket.status === 'open') {
+      if (ticket.priority >= 3) {
+        if (ticket.assignee) {
+          return handleUrgent(ticket);
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// ✅ CORRECT: Complexity 4 (early returns)
+function processTicket(ticket) {
+  if (!ticket) return null;
+  if (ticket.status !== 'open') return null;
+  if (ticket.priority < 3) return null;
+  if (!ticket.assignee) return null;
+  return handleUrgent(ticket);
+}
+```
+
+### 4. Extract Helper Functions
+
+```javascript
+// ❌ WRONG: Complexity > 7 (nested logic)
+exports = {
+  onConversationCreateHandler: async function(args) {
+    if (condition1) {
+      if (condition2) {
+        if (condition3) {
+          // deeply nested logic
+        }
+      }
+    }
+  }
+};
+
+// ✅ CORRECT: Extract helpers
+exports = {
+  onConversationCreateHandler: async function(args) {
+    const messageType = getMessageType(args);
+    return await handleByType(messageType, args);
+  }
+};
+
+// Helper functions AFTER exports
+function getMessageType(args) {
+  // Logic here
+}
+
+async function handleByType(type, args) {
+  // Logic here
+}
+```
+
+### 5. Functional Patterns (Replace loops with conditions)
+
+```javascript
+// ❌ WRONG: Complexity 6+ (loop + conditions)
+function getUrgentTicketIds(tickets) {
+  const result = [];
+  for (let i = 0; i < tickets.length; i++) {
+    if (tickets[i].status === 'open') {
+      if (tickets[i].priority >= 3) {
+        result.push(tickets[i].id);
+      }
+    }
+  }
+  return result;
+}
+
+// ✅ CORRECT: Complexity 1 (functional chain)
+function getUrgentTicketIds(tickets) {
+  return tickets
+    .filter(t => t.status === 'open' && t.priority >= 3)
+    .map(t => t.id);
+}
+```
+
+## Real-World Example: Filtering Tickets
+
+```javascript
+// ❌ WRONG: Complexity 15+
+function filterTickets(tickets, filters) {
+  const result = [];
+  for (let i = 0; i < tickets.length; i++) {
+    const ticket = tickets[i];
+    let matches = true;
+    
+    if (filters.status && ticket.status !== filters.status) {
+      matches = false;
+    }
+    
+    if (filters.priority) {
+      const p = ticket.priority.toString();
+      if (!(p === '1' || p === '2' || p === '3' || p === '4')) {
+        matches = false;
+      }
+    }
+    
+    if (filters.assignee && ticket.assignee_id !== filters.assignee) {
+      matches = false;
+    }
+    
+    if (matches) {
+      result.push(ticket);
+    }
+  }
+  return result;
+}
+
+// ✅ CORRECT: Complexity 3
+const VALID_PRIORITIES = new Set(['1', '2', '3', '4']);
+
+function filterTickets(tickets, filters) {
+  return tickets.filter(ticket => {
+    if (filters.status && ticket.status !== filters.status) return false;
+    if (filters.priority && !VALID_PRIORITIES.has(ticket.priority.toString())) return false;
+    if (filters.assignee && ticket.assignee_id !== filters.assignee) return false;
+    return true;
+  });
+}
+```
+
+## Critical Rules
+
+1. **Helper functions MUST be AFTER exports block** (FDK parser requirement)
+2. **Use Sets for 3+ OR comparisons** (reduces complexity dramatically)
+3. **Prefer functional methods** (filter, map, reduce) over loops
+4. **Early returns** instead of nested if-else
+5. **Lookup objects** for switch/if-else chains
+
+## Related Patterns
+
+- For async issues → See `async-patterns.mdc`
+- For security → See `security.mdc`
+- For validation → See `validation-workflow.mdc`

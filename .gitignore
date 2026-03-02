@@ -118,3 +118,12 @@ fdk_validation_results.txt
 SKILL-old.md
 run_fdk_validation.sh
 prompts12list4.csv
+FDK_VALIDATION_REPORT.md
+/manual-apps/
+analyze-manual-apps.sh
+analyze_iterations.sh
+analyze_iterations.py
+fdk_validation_results.json
+VALIDATION_SUMMARY.txt
+/apps-12-run2/
+validation_results.json
