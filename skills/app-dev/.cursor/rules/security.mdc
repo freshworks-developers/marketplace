@@ -1,0 +1,270 @@
+---
+description: Security enforcement rules for Freshworks Platform 3.0 app development. Apply these rules to EVERY app to prevent vulnerabilities.
+globs: ["apps/**/*.js", "apps/**/server.js", "apps/**/app.js", "**/server/*.js", "**/app/scripts/*.js"]
+alwaysApply: true
+---
+
+# 🔒 Security Enforcement - ZERO TOLERANCE
+
+Security is as critical as Platform 3.0 compliance. Apply these rules to EVERY app.
+
+## 🔴 CRITICAL: Input Validation & Command Injection Prevention
+
+**NEVER pass user input directly to dangerous operations:**
+
+- ❌ `executeCommand`, `runScript`, `runPowerShell` with user input → **IMMEDIATE REJECTION**
+- ❌ `eval()`, `new Function()`, `exec()`, `spawn()` with user input → **IMMEDIATE REJECTION**
+- ❌ `JSON.stringify(args)` passed directly to command/script execution APIs → **IMMEDIATE REJECTION**
+- ❌ Unsanitized user input in shell commands, SQL queries, or code evaluation
+
+### Forbidden Patterns - NEVER GENERATE:
+
+```javascript
+// ❌ CRITICAL VULNERABILITY - Command injection
+exports = {
+  executeCommand: async function(args) {
+    await $request.invokeTemplate('runPowerShell', { body: JSON.stringify(args) });
+  }
+};
+
+// ❌ CRITICAL VULNERABILITY - Arbitrary code execution
+exports = {
+  runScript: async function(args) {
+    eval(args.script);
+  }
+};
+```
+
+### Safe Patterns - ALWAYS USE:
+
+```javascript
+// ✅ SAFE - Allowlisted commands only
+const ALLOWED_COMMANDS = ['status', 'list', 'health'];
+exports = {
+  executeCommand: async function(args) {
+    if (!ALLOWED_COMMANDS.includes(args.command)) {
+      return { success: false, error: 'Command not allowed' };
+    }
+    // Execute only pre-defined, safe operations
+  }
+};
+
+// ✅ SAFE - Parameterized operations with validation
+exports = {
+  getData: async function(args) {
+    const id = parseInt(args.id, 10);
+    if (isNaN(id) || id < 0) {
+      return { success: false, error: 'Invalid ID' };
+    }
+    // Use validated input
+  }
+};
+```
+
+### Input Validation Checklist for SMI Functions:
+- [ ] Validate all input types (string, number, boolean)
+- [ ] Sanitize strings (remove/escape special characters)
+- [ ] Use allowlists for enumerated values
+- [ ] Reject unexpected or malformed input
+- [ ] Never trust client-provided data
+
+---
+
+## 🟠 HIGH: Logging Security - No Sensitive Data
+
+**NEVER log sensitive information:**
+
+- ❌ `console.log(args.iparams)` → May contain API keys, tokens, passwords
+- ❌ `console.log(args)` in handlers → May expose entire request including secrets
+- ❌ `console.log('Auth:', authToken)` → Exposes credentials
+- ❌ `console.error(e)` with full error objects → May leak sensitive context
+
+### Forbidden Logging Patterns:
+
+```javascript
+// ❌ SECURITY RISK - Logs all iparams including API keys
+onAppInstallHandler: async function(args) {
+  console.log('App installed', args.iparams);
+}
+
+// ❌ SECURITY RISK - Logs entire args object
+onTicketCreateHandler: async function(args) {
+  console.log('Ticket created', args);
+}
+```
+
+### Safe Logging Patterns:
+
+```javascript
+// ✅ SAFE - Log only confirmation, no sensitive data
+onAppInstallHandler: async function(args) {
+  console.log('App installed successfully');
+}
+
+// ✅ SAFE - Log only non-sensitive, specific fields
+onTicketCreateHandler: async function(args) {
+  console.log('Ticket created:', args.data?.ticket?.id);
+}
+
+// ✅ SAFE - Sanitized error logging
+catch (e) {
+  console.error('Operation failed:', e.message);
+}
+```
+
+### Logging Security Checklist:
+- [ ] Never log `args.iparams` directly
+- [ ] Never log full `args` objects in handlers
+- [ ] Never log tokens, passwords, API keys, or secrets
+- [ ] Log only operation status and non-sensitive identifiers
+- [ ] Sanitize error messages before logging
+
+---
+
+## 🟡 MEDIUM: XSS Prevention - Safe DOM Manipulation
+
+**NEVER insert unsanitized data into the DOM:**
+
+- ❌ `el.innerHTML = userInput` → XSS vulnerability
+- ❌ `el.innerHTML = '<div>' + apiResponse + '</div>'` → XSS vulnerability
+- ❌ `el.innerHTML = data.map(d => '<p>' + d.name + '</p>').join('')` → XSS vulnerability
+
+### Forbidden Patterns:
+
+```javascript
+// ❌ XSS RISK - Unsanitized API data in innerHTML
+const response = await client.request.invoke('getData', {});
+document.getElementById('result').innerHTML = response.data;
+
+// ❌ XSS RISK - User/ticket data rendered without sanitization
+const ticket = await client.data.get('ticket');
+el.innerHTML = '<div>' + ticket.ticket.subject + '</div>';
+```
+
+### Safe Patterns:
+
+```javascript
+// ✅ SAFE - Use textContent for plain text
+el.textContent = response.data;
+
+// ✅ SAFE - Use Crayons components with safe properties
+el.innerHTML = '<fw-inline-message type="success">Operation completed</fw-inline-message>';
+
+// ✅ SAFE - Sanitize dynamic content before rendering
+function sanitizeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+el.innerHTML = '<div>' + sanitizeHTML(userData) + '</div>';
+
+// ✅ SAFE - Create elements programmatically
+const div = document.createElement('div');
+div.textContent = response.data;
+container.appendChild(div);
+```
+
+### XSS Prevention Checklist:
+- [ ] Prefer `textContent` over `innerHTML` for dynamic data
+- [ ] Use Crayons components with safe string props
+- [ ] Sanitize ALL user/API data before innerHTML insertion
+- [ ] Create DOM elements programmatically when possible
+- [ ] Never render raw HTML from external sources
+
+---
+
+## 🟡 MEDIUM: Sensitive Data Handling
+
+**NEVER store sensitive data in visible/accessible locations:**
+
+- ❌ Passwords in ticket notes or comments
+- ❌ API keys in ticket custom fields
+- ❌ Secrets displayed in UI without masking
+- ❌ Credentials stored in browser localStorage
+
+### Forbidden Patterns:
+
+```javascript
+// ❌ SECURITY RISK - Password visible in ticket notes
+const note = 'Password: ' + generatedPassword;
+await client.interface.trigger('addNote', { content: note });
+
+// ❌ SECURITY RISK - Secret in localStorage
+localStorage.setItem('apiKey', apiKey);
+```
+
+### Safe Patterns:
+
+```javascript
+// ✅ SAFE - Send password via secure channel only
+await client.request.invoke('sendSecureEmail', {
+  to: requesterEmail,
+  password: generatedPassword,
+  expiresIn: '24h'
+});
+await client.interface.trigger('addNote', {
+  content: 'Temporary password sent to requester email. Expires in 24h.',
+  isPrivate: true
+});
+
+// ✅ SAFE - Use server-side storage for secrets
+await $db.set('integration_token', { token: encryptedToken });
+```
+
+### Sensitive Data Checklist:
+- [ ] Never store passwords/secrets in ticket notes
+- [ ] Never display full credentials in UI
+- [ ] Use secure delivery mechanisms (email with expiry)
+- [ ] Store secrets server-side using $db or encrypted storage
+- [ ] Mask sensitive data in logs and displays
+
+---
+
+## 🛡️ Security Pre-Generation Checklist
+
+**BEFORE generating ANY app code, verify ALL security requirements:**
+
+### Input Validation
+- [ ] All SMI functions validate their arguments
+- [ ] No command/script execution with user input
+- [ ] No `eval()`, `new Function()`, or dynamic code execution
+- [ ] Allowlists used for enumerated operations
+- [ ] Type checking for all numeric/boolean inputs
+
+### Logging Security
+- [ ] No `console.log(args.iparams)`
+- [ ] No `console.log(args)` with full objects
+- [ ] No logging of tokens, passwords, or secrets
+- [ ] Error logging sanitized (message only, no stack with secrets)
+
+### XSS Prevention
+- [ ] `textContent` used for dynamic text
+- [ ] `innerHTML` only with sanitized or static content
+- [ ] No raw API/user data in HTML templates
+- [ ] Crayons components used for UI
+
+### Sensitive Data
+- [ ] No passwords/secrets in ticket notes
+- [ ] No credentials in localStorage
+- [ ] Secure delivery for generated credentials
+- [ ] Secrets stored server-side only
+
+**IF ANY SECURITY RULE IS VIOLATED → STOP → REGENERATE WITH SECURE PATTERNS**
+
+---
+
+## Security Refusal Tests - NEVER GENERATE
+
+1. `executeCommand(args)` with user input → Reject (command injection)
+2. `eval(args.script)` or `new Function(args)` → Reject (code execution)
+3. `console.log(args.iparams)` → Reject (credential exposure)
+4. `innerHTML = userData` without sanitization → Reject (XSS)
+5. Passwords/secrets in ticket notes → Reject (data exposure)
+
+## Security Violation Tests
+
+1. SMI function with no input validation
+2. Logging full `args` object in handlers
+3. `innerHTML` with API/user data unsanitized
+4. Storing generated credentials in visible locations
+5. Missing allowlist for enumerated operations

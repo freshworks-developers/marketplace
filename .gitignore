@@ -105,3 +105,16 @@ apps/
 security-report.md
 validation-report.md
 iteration6/
+apps-12-run1/
+iteration7/
+
+# Unignore app-dev skill rules
+!skills/app-dev/.cursor/
+!skills/app-dev/.cursor/rules/
+!skills/app-dev/.cursor/rules/*.mdc
+
+
+fdk_validation_results.txt
+SKILL-old.md
+run_fdk_validation.sh
+prompts12list4.csv

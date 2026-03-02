@@ -190,7 +190,9 @@ You are not a tutor. You are an enforcement layer.
 
 ## 🔒 Security Enforcement - ZERO TOLERANCE
 
-**Security is as critical as Platform 3.0 compliance. For detailed patterns and examples, see `.cursor/rules/security.mdc`.**
+**Security is as critical as Platform 3.0 compliance. For detailed patterns and examples, see:**
+- `.cursor/rules/security.mdc` - Security patterns, forbidden/safe code examples, checklists
+- `.cursor/rules/code-quality-patterns.mdc` - Low-complexity helper patterns, lint fixes, security checks
 
 ### Quick Security Rules (Enforced by security.mdc)
 
@@ -242,6 +244,12 @@ You are not a tutor. You are an enforcement layer.
   }
 }
 ```
+
+**🚨 CRITICAL: Manifest `name` Field - NEVER INCLUDE:**
+- ❌ `"name": "My App"` inside manifest.json → **PLATFORM ERROR**
+- ❌ The `name` field is NOT allowed in Platform 3.0 manifest.json
+- ✅ App name is configured in the Freshworks developer portal, NOT in manifest
+- **VALIDATION ERROR:** `must NOT have additional properties 'name' in manifest.json`
 
 **🚨 CRITICAL: Empty Block Rules - NEVER create empty blocks:**
 - ❌ `"functions": {}` - INVALID - must have at least 1 function OR omit entirely
@@ -407,13 +415,13 @@ Load the appropriate template from `assets/templates/`:
 
 ### Step 3: Automatic Validation & Auto-Fix (MANDATORY)
 
-**CRITICAL: Only fix FATAL errors - Ignore lint errors and warnings**
+**CRITICAL: Fix ALL errors - Platform errors AND Lint errors. ZERO TOLERANCE.**
 
 **AFTER creating ALL app files, you MUST AUTOMATICALLY:**
 
 1. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
-2. **Parse validation output** and **filter out lint errors/warnings** - Only process fatal errors
-3. **Attempt Auto-Fix Iteration 1 (Fatal Errors Only):**
+2. **Parse validation output** - Identify ALL errors (platform AND lint)
+3. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
    - Fix JSON structure errors (multiple top-level objects → merge)
    - Fix comma placement (missing commas → add, trailing commas → remove)
    - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)
@@ -428,11 +436,11 @@ Load the appropriate template from `assets/templates/`:
    - Fix OAuth structure (missing `integrations` wrapper, wrong `oauth_iparams` location)
    - Fix location placement (wrong module for location)
    - Re-run `fdk validate`
-5. **After 2 Iterations:**
-   - ✅ If fatal errors are resolved → Present app as complete (even if lint warnings remain)
-   - ⚠️ If fatal errors persist → Present remaining fatal errors with specific fix directions
+5. **After iterations (up to 6):**
+   - ✅ If ALL errors (platform AND lint) are resolved → Present app as complete
+   - ⚠️ If ANY errors persist → Keep iterating, NEVER say "complete" with errors
 
-**What to FIX (Fatal Errors):**
+**What to FIX (Platform Errors) - BLOCKING:**
 - ✅ JSON parsing errors
 - ✅ Missing required files
 - ✅ Manifest structure errors
@@ -440,19 +448,22 @@ Load the appropriate template from `assets/templates/`:
 - ✅ Missing declarations in manifest
 - ✅ OAuth structure errors
 - ✅ Location placement errors
+- ✅ `"name"` field in manifest.json → REMOVE IT
 
-**What to IGNORE:**
-- ❌ Lint errors (async without await, unused parameters, unreachable code)
-- ❌ Warnings (non-critical issues)
-- ❌ Code style issues
+**What to FIX (Lint Errors) - ALSO BLOCKING:**
+- ✅ **Async without await** → Remove `async` keyword OR add actual `await`
+- ✅ **Unused parameters** → Remove parameter ENTIRELY (not `_args`)
+- ✅ **Unreachable code** → Remove dead code after return
+- ✅ **Function complexity > 7** → Extract helper functions
+- ✅ **Missing semicolons** → Add semicolons
 
 **CRITICAL RULES:**
 - ❌ NEVER ask user to run `fdk validate` manually
 - ✅ ALWAYS run validation automatically after file creation
-- ✅ ALWAYS attempt 2 fix iterations before presenting errors to user
+- ✅ ALWAYS attempt up to 6 fix iterations
 - ✅ ALWAYS re-run `fdk validate` after each fix iteration
-- ✅ ONLY present FATAL errors to user if they persist after 2 iterations
-- ❌ IGNORE lint errors and warnings - only fix fatal errors
+- ✅ Fix BOTH platform errors AND lint errors - BOTH are blocking
+- ❌ NEVER say "app complete" with ANY errors remaining
 
 **Reference:** See `.cursor/rules/validation-autofix.mdc` for detailed autofix patterns.
 
@@ -573,6 +584,24 @@ Every OAuth integration in `oauth_config.json` MUST have ALL of these fields:
   - ✅ MUST include `onAppInstall` event in `modules.common.events`
   - ✅ MUST implement `onAppInstallHandler` in `server/server.js`
   - Handler receives iparams via `args.iparams` for validation/initialization
+
+**🚨 CRITICAL: Secure IParams Rule - MANDATORY:**
+- Any iparam containing sensitive data MUST have `"secure": true`
+- **Keywords that REQUIRE `"secure": true`:** `api_key`, `token`, `secret`, `password`, `key`, `credential`, `auth`
+- **VALIDATION WARNING:** `iparam 'X' appears to be a secure param but it isn't marked as secure`
+
+```json
+// ❌ WRONG - Missing secure flag for sensitive data
+{
+  "api_key": { "display_name": "API Key", "type": "text", "required": true }
+}
+
+// ✅ CORRECT - Secure flag added
+{
+  "api_key": { "display_name": "API Key", "type": "text", "required": true, "secure": true },
+  "webhook_token": { "display_name": "Webhook Token", "type": "text", "required": true, "secure": true }
+}
+```
 
 **CRITICAL: Cleanup Rule**
 - If app has events that should stop happening (scheduled events, background tasks, webhooks, etc.):
@@ -879,32 +908,34 @@ Before presenting the app, validate against:
 
 ## Pre-Finalization Validation & Autofix
 
-**CRITICAL: Only fix FATAL errors - Ignore lint errors and warnings**
+**CRITICAL: Fix ALL errors - Platform errors AND Lint errors. ZERO TOLERANCE.**
 
 **After creating ALL app files, you MUST AUTOMATICALLY:**
 
 1. **Run `fdk validate`** - AUTOMATICALLY run validation (DO NOT ask user)
-2. **Filter validation output** - Ignore lint errors and warnings, only process fatal errors
-3. **Attempt Auto-Fix (Iteration 1 - Fatal Errors Only):**
+2. **Parse ALL errors** - Both platform errors AND lint errors need fixing
+3. **Attempt Auto-Fix (Iteration 1 - ALL Errors):**
    - Fix JSON structure errors (multiple top-level objects)
    - Fix comma placement (missing/trailing commas)
    - Fix template syntax (`{{variable}}` → `<%= variable %>`)
    - Create missing mandatory files (icon.svg, iparams.json)
    - Fix FQDN issues (host with path → FQDN only)
    - Fix path issues (missing `/` prefix)
+   - **Fix lint: Remove `async` if no `await`, remove unused params**
    - Re-run `fdk validate`
-4. **Attempt Auto-Fix (Iteration 2 - Fatal Errors Only):**
+4. **Attempt Auto-Fix (Iteration 2-6 - Keep iterating):**
    - Fix manifest structure issues
    - Fix request template declarations
    - Fix function declarations
    - Fix OAuth structure (if applicable)
    - Fix location placement
+   - **Fix lint: Extract helpers for complexity > 7**
    - Re-run `fdk validate`
-5. **After 2 Iterations:**
-   - ✅ If fatal errors are resolved → Present app as complete (even if lint warnings remain)
-   - ⚠️ If fatal errors persist → Present remaining fatal errors with specific fix directions
+5. **After iterations:**
+   - ✅ If ALL errors (platform AND lint) are resolved → Present app as complete
+   - ⚠️ If ANY errors persist → Keep fixing, NEVER say "complete"
 
-**What to FIX (Fatal Errors):**
+**What to FIX (Platform Errors) - BLOCKING:**
 - ✅ JSON parsing errors
 - ✅ Missing required files
 - ✅ Manifest structure errors
@@ -912,13 +943,15 @@ Before presenting the app, validate against:
 - ✅ Missing declarations in manifest
 - ✅ OAuth structure errors
 - ✅ Location placement errors
+- ✅ `"name"` field in manifest.json → REMOVE IT
 
-**What to IGNORE:**
-- ❌ Lint errors (async without await, unused parameters, unreachable code)
-- ❌ Warnings (non-critical issues)
-- ❌ Code style issues
+**What to FIX (Lint Errors) - ALSO BLOCKING:**
+- ✅ Async without await → Remove `async` OR add `await`
+- ✅ Unused parameters → Remove parameter ENTIRELY
+- ✅ Function complexity > 7 → Extract helpers
+- ✅ Unreachable code → Remove dead code
 
-**CRITICAL:** You MUST attempt fixes automatically for 2 iterations before asking user for help. **ONLY fix fatal errors - ignore lint and warnings.**
+**CRITICAL:** You MUST fix ALL errors (platform AND lint). Keep iterating (up to 6 times) until ZERO errors. An app with ANY errors is NOT complete.
 
 **Reference:** See `validation-autofix.mdc` for detailed autofix patterns and examples.
 
