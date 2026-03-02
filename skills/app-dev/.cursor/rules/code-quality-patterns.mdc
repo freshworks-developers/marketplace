@@ -100,7 +100,32 @@ function getUrgentTicketIds(tickets) {
 }
 ```
 
-### Technique 4: Extract Helper Functions
+### Technique 4: Sets/Arrays for Multiple Comparisons
+
+```javascript
+// ❌ WRONG: Complexity 12 (multiple OR comparisons)
+function matchesPriority(ticket, filter) {
+  const p = (ticket.priority || ticket.urgency || 0).toString();
+  const f = (filter || '').toLowerCase();
+  if (f.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) return true;
+  if (f.includes('urgent') && (p === '3' || p === 'urgent')) return true;
+  return false;
+}
+
+// ✅ CORRECT: Complexity 3 (use Set for membership check)
+const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
+const URGENT_PRIORITIES = new Set(['3', 'urgent']);
+
+function matchesPriority(ticket, filter) {
+  const p = (ticket.priority || ticket.urgency || 0).toString();
+  const f = (filter || '').toLowerCase();
+  if (f.includes('high') && HIGH_PRIORITIES.has(p)) return true;
+  if (f.includes('urgent') && URGENT_PRIORITIES.has(p)) return true;
+  return false;
+}
+```
+
+### Technique 5: Extract Helper Functions
 
 ```javascript
 // ❌ WRONG: Complexity 8+ (everything in one function)

@@ -30,9 +30,10 @@ Fix these first. Use `references/errors/` and `.cursor/rules/validation-autofix.
 
 After fatal errors are resolved, fix lint errors:
 - **Async without await**: Add `await` or remove `async`
-- **Unused parameters**: Remove or prefix with `_`
+- **Unused parameters**: Remove ENTIRELY (not `_args` - still causes lint error)
 - **Unreachable code**: Remove after return statements
 - **Helper before exports**: Move helper functions after exports block
+- **Function complexity > 7**: Extract helper functions, use Sets for comparisons
 
 ### Priority 3: Warnings (optional)
 

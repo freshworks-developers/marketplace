@@ -37,16 +37,16 @@ fdk validate
 - ✅ OAuth structure errors (missing `integrations` wrapper)
 - ✅ Location placement errors (wrong module)
 
-**CRITICAL: Platform Errors = BLOCKING.** Parse fdk validate output for "Platform Errors: [1-9]". If > 0, app is NOT complete. MUST fix before marking success.
+**CRITICAL: Platform Errors AND Lint Errors = BLOCKING.** Parse fdk validate output:
+- "Platform Errors: [1-9]" → MUST fix ALL
+- "Lint Errors: [1-9]" → MUST fix ALL (unused params, complexity, async/await)
 
-**What to IGNORE:**
-- ❌ Lint errors (async without await, unused parameters, unreachable code)
-- ❌ Warnings (non-critical issues)
-- ❌ Code style issues
-- ❌ Best practice suggestions
+**What to IGNORE (only these):**
+- ⚠️ Warnings (non-critical suggestions)
+- ⚠️ Code style suggestions (if not causing errors)
 
 **Iteration 1 - Common Fatal Fixes:**
-- Parse validation output and **filter out lint errors/warnings**
+- Parse validation output for BOTH platform AND lint errors
 - Fix JSON structure errors (multiple top-level objects → merge)
 - Fix comma placement (missing commas → add, trailing commas → remove)
 - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)

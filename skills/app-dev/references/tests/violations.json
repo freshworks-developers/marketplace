@@ -22,7 +22,7 @@
       },
       "fix": {
         "code": "exports = {\n  handler: function() {\n    console.log('Called');\n  }\n}",
-        "explanation": "Remove unused parameter or prefix with underscore: _args"
+        "explanation": "Remove unused parameter ENTIRELY (underscore prefix still causes lint warning)"
       }
     },
     {

@@ -122,13 +122,20 @@ Before generating ANY code, verify these are NEVER present:
    };
    ```
 
-6. **🚨 Unused Parameters Enforcement (CRITICAL)**
-   - ❌ NEVER define parameters that aren't used - causes lint errors
-   - ✅ **If parameter is not used, REMOVE IT ENTIRELY** (don't just prefix with `_`)
+6. **🚨 Unused Parameters Enforcement (CRITICAL) - BLOCKING ERROR**
+   - ❌ NEVER define parameters that aren't used - **BLOCKS validation**
+   - ❌ NEVER use `_args` prefix - **STILL CAUSES BLOCKING LINT ERROR**
+   - ✅ **ONLY SOLUTION: REMOVE parameter ENTIRELY from function signature**
    - **LINT ERROR:** "'args' is defined but never used" or "'_args' is defined but never used"
+   - **CRITICAL:** Apps with unused parameters CANNOT pass `fdk validate`
    
    ```javascript
-   // ❌ WRONG - _args still causes lint warning
+   // ❌ WRONG - args defined but never used (BLOCKING)
+   onAppInstallHandler: function(args) {
+     console.log('Installed');
+   }
+   
+   // ❌ WRONG - _args still causes lint error (BLOCKING)
    onAppInstallHandler: function(_args) {
      console.log('Installed');
    }
@@ -144,16 +151,35 @@ Before generating ANY code, verify these are NEVER present:
    }
    ```
 
-7. **🚨 Function Complexity Enforcement (CRITICAL)**
-   - ❌ NEVER generate functions with complexity > 7
-   - ✅ If function has > 3 nested conditions or > 5 branches, REFACTOR IMMEDIATELY
-   - ✅ Extract helper functions for each logical block
+7. **🚨 Function Complexity Enforcement (CRITICAL) - BLOCKING ERROR**
+   - ❌ NEVER generate functions with complexity > 7 - **BLOCKS validation**
+   - ✅ **PRIMARY FIX: Use Sets/Arrays for multiple OR comparisons** (reduces complexity 10+ → 3)
+   - ✅ Extract helper functions for nested logic blocks
    - ✅ Use early returns instead of nested if-else
    - **WARNING:** "Function has complexity X. Maximum allowed is 7."
+   - **CRITICAL:** Apps with complexity > 7 CANNOT pass `fdk validate`
    
-   **REFACTORING PATTERN for high-complexity handlers:**
+   **REFACTORING PATTERN 1: Multiple OR comparisons → Sets (MOST COMMON)**
    ```javascript
-   // ❌ WRONG - complexity > 7
+   // ❌ WRONG - complexity 12 (each || and === adds +1)
+   function matchesPriority(ticket, filter) {
+     const p = (ticket.priority || ticket.urgency || 0).toString();
+     if (filter.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) return true;
+     return false;
+   }
+   
+   // ✅ CORRECT - complexity 3 (Set.has() is single operation)
+   const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
+   function matchesPriority(ticket, filter) {
+     const p = (ticket.priority || ticket.urgency || 0).toString();
+     if (filter.includes('high') && HIGH_PRIORITIES.has(p)) return true;
+     return false;
+   }
+   ```
+   
+   **REFACTORING PATTERN 2: Extract helper functions**
+   ```javascript
+   // ❌ WRONG - complexity > 7 (nested conditions)
    exports.onConversationCreateHandler = async function(args) {
      if (condition1) {
        if (condition2) {
@@ -284,7 +310,7 @@ You are not a tutor. You are an enforcement layer.
 - ❌ Scheduled events declared in manifest → ✅ Create dynamically with `$schedule.create()`
 - ❌ Helper functions defined BEFORE exports block → ✅ Must be AFTER exports (FDK parser error)
 - ❌ Async functions without await expressions → ✅ Add await OR remove async (lint error)
-- ❌ Unused function parameters → ✅ Remove or prefix with `_`
+- ❌ Unused function parameters → ✅ Remove parameter ENTIRELY (not `_args`)
 
 **IF ANY PLATFORM 2.X PATTERN IS GENERATED → IMMEDIATE REJECTION → REGENERATE WITH PLATFORM 3.0**
 
@@ -723,7 +749,7 @@ Before presenting the app, validate against:
 - [ ] **If app has scheduled events/background tasks** → `onAppUninstall` event handler declared in `modules.common.events`
 
 ### Code Quality
-- [ ] No unused function parameters (or prefix with `_`)
+- [ ] No unused function parameters (remove entirely, not `_args`)
 - [ ] Function complexity ≤ 7 (extract helpers if needed)
 - [ ] Async functions have `await` expressions
 - [ ] No async variable scoping issues (use IIFE pattern)
@@ -853,7 +879,7 @@ Before presenting the app, validate against:
 #### Code Quality
 - [ ] **Helper functions AFTER exports block** - FDK parser requirement
 - [ ] **Async functions have await** - Or remove `async` keyword
-- [ ] **No unused parameters** - Remove or prefix with `_`
+- [ ] **No unused parameters** - Remove ENTIRELY (not `_args`)
 - [ ] **Function complexity ≤ 7** - Extract helpers if needed
 - [ ] **IIFE pattern for async initialization** - Prevent race conditions
 
