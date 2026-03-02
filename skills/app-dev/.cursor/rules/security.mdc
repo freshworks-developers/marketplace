@@ -10,42 +10,21 @@ Security is as critical as Platform 3.0 compliance. Apply these rules to EVERY a
 
 ## 🔴 CRITICAL: Input Validation & Command Injection Prevention
 
-**NEVER pass user input directly to dangerous operations:**
-
-- ❌ `executeCommand`, `runScript`, `runPowerShell` with user input → **IMMEDIATE REJECTION**
-- ❌ `eval()`, `new Function()`, `exec()`, `spawn()` with user input → **IMMEDIATE REJECTION**
-- ❌ `JSON.stringify(args)` passed directly to command/script execution APIs → **IMMEDIATE REJECTION**
-- ❌ Unsanitized user input in shell commands, SQL queries, or code evaluation
-
-### Forbidden Patterns - NEVER GENERATE:
-
-```javascript
-// ❌ CRITICAL VULNERABILITY - Command injection
-exports = {
-  executeCommand: async function(args) {
-    await $request.invokeTemplate('runPowerShell', { body: JSON.stringify(args) });
-  }
-};
-
-// ❌ CRITICAL VULNERABILITY - Arbitrary code execution
-exports = {
-  runScript: async function(args) {
-    eval(args.script);
-  }
-};
-```
+**All SMI functions MUST validate input. Use allowlists for operations.**
 
 ### Safe Patterns - ALWAYS USE:
 
 ```javascript
-// ✅ SAFE - Allowlisted commands only
-const ALLOWED_COMMANDS = ['status', 'list', 'health'];
+// ✅ SAFE - Allowlisted operations only
+const ALLOWED_OPERATIONS = ['status', 'list', 'health'];
+
 exports = {
-  executeCommand: async function(args) {
-    if (!ALLOWED_COMMANDS.includes(args.command)) {
-      return { success: false, error: 'Command not allowed' };
+  performOperation: async function(args) {
+    if (!ALLOWED_OPERATIONS.includes(args.operation)) {
+      return { success: false, error: 'Operation not allowed' };
     }
     // Execute only pre-defined, safe operations
+    return await executeAllowedOperation(args.operation);
   }
 };
 
@@ -57,11 +36,18 @@ exports = {
       return { success: false, error: 'Invalid ID' };
     }
     // Use validated input
+    return await fetchDataById(id);
   }
 };
+
+// ✅ SAFE - String sanitization
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/[<>\"\'&]/g, '');
+}
 ```
 
-### Input Validation Checklist for SMI Functions:
+### Input Validation Checklist:
 - [ ] Validate all input types (string, number, boolean)
 - [ ] Sanitize strings (remove/escape special characters)
 - [ ] Use allowlists for enumerated values
@@ -72,74 +58,41 @@ exports = {
 
 ## 🟠 HIGH: Logging Security - No Sensitive Data
 
-**NEVER log sensitive information:**
-
-- ❌ `console.log(args.iparams)` → May contain API keys, tokens, passwords
-- ❌ `console.log(args)` in handlers → May expose entire request including secrets
-- ❌ `console.log('Auth:', authToken)` → Exposes credentials
-- ❌ `console.error(e)` with full error objects → May leak sensitive context
-
-### Forbidden Logging Patterns:
-
-```javascript
-// ❌ SECURITY RISK - Logs all iparams including API keys
-onAppInstallHandler: async function(args) {
-  console.log('App installed', args.iparams);
-}
-
-// ❌ SECURITY RISK - Logs entire args object
-onTicketCreateHandler: async function(args) {
-  console.log('Ticket created', args);
-}
-```
+**Log only operation status and non-sensitive identifiers.**
 
 ### Safe Logging Patterns:
 
 ```javascript
 // ✅ SAFE - Log only confirmation, no sensitive data
-onAppInstallHandler: async function(args) {
+onAppInstallHandler: function() {
   console.log('App installed successfully');
 }
 
 // ✅ SAFE - Log only non-sensitive, specific fields
-onTicketCreateHandler: async function(args) {
+onTicketCreateHandler: function(args) {
   console.log('Ticket created:', args.data?.ticket?.id);
 }
 
 // ✅ SAFE - Sanitized error logging
-catch (e) {
+try {
+  await performOperation();
+} catch (e) {
   console.error('Operation failed:', e.message);
 }
 ```
 
 ### Logging Security Checklist:
-- [ ] Never log `args.iparams` directly
-- [ ] Never log full `args` objects in handlers
+- [ ] Never log full configuration objects
+- [ ] Never log full request objects in handlers
 - [ ] Never log tokens, passwords, API keys, or secrets
 - [ ] Log only operation status and non-sensitive identifiers
-- [ ] Sanitize error messages before logging
+- [ ] Sanitize error messages before logging (use e.message only)
 
 ---
 
 ## 🟡 MEDIUM: XSS Prevention - Safe DOM Manipulation
 
-**NEVER insert unsanitized data into the DOM:**
-
-- ❌ `el.innerHTML = userInput` → XSS vulnerability
-- ❌ `el.innerHTML = '<div>' + apiResponse + '</div>'` → XSS vulnerability
-- ❌ `el.innerHTML = data.map(d => '<p>' + d.name + '</p>').join('')` → XSS vulnerability
-
-### Forbidden Patterns:
-
-```javascript
-// ❌ XSS RISK - Unsanitized API data in innerHTML
-const response = await client.request.invoke('getData', {});
-document.getElementById('result').innerHTML = response.data;
-
-// ❌ XSS RISK - User/ticket data rendered without sanitization
-const ticket = await client.data.get('ticket');
-el.innerHTML = '<div>' + ticket.ticket.subject + '</div>';
-```
+**Use textContent for dynamic data. Sanitize before innerHTML.**
 
 ### Safe Patterns:
 
@@ -162,6 +115,12 @@ el.innerHTML = '<div>' + sanitizeHTML(userData) + '</div>';
 const div = document.createElement('div');
 div.textContent = response.data;
 container.appendChild(div);
+
+// ✅ SAFE - Display with fw-inline-message
+const msg = document.createElement('fw-inline-message');
+msg.setAttribute('type', 'success');
+msg.textContent = result.message;
+resultEl.appendChild(msg);
 ```
 
 ### XSS Prevention Checklist:
@@ -169,54 +128,44 @@ container.appendChild(div);
 - [ ] Use Crayons components with safe string props
 - [ ] Sanitize ALL user/API data before innerHTML insertion
 - [ ] Create DOM elements programmatically when possible
-- [ ] Never render raw HTML from external sources
 
 ---
 
 ## 🟡 MEDIUM: Sensitive Data Handling
 
-**NEVER store sensitive data in visible/accessible locations:**
-
-- ❌ Passwords in ticket notes or comments
-- ❌ API keys in ticket custom fields
-- ❌ Secrets displayed in UI without masking
-- ❌ Credentials stored in browser localStorage
-
-### Forbidden Patterns:
-
-```javascript
-// ❌ SECURITY RISK - Password visible in ticket notes
-const note = 'Password: ' + generatedPassword;
-await client.interface.trigger('addNote', { content: note });
-
-// ❌ SECURITY RISK - Secret in localStorage
-localStorage.setItem('apiKey', apiKey);
-```
+**Store secrets server-side. Use secure delivery for credentials.**
 
 ### Safe Patterns:
 
 ```javascript
-// ✅ SAFE - Send password via secure channel only
+// ✅ SAFE - Send credentials via secure channel only
 await client.request.invoke('sendSecureEmail', {
   to: requesterEmail,
-  password: generatedPassword,
+  temporaryAccess: true,
   expiresIn: '24h'
 });
 await client.interface.trigger('addNote', {
-  content: 'Temporary password sent to requester email. Expires in 24h.',
+  content: 'Temporary access sent to requester email. Expires in 24h.',
   isPrivate: true
 });
 
 // ✅ SAFE - Use server-side storage for secrets
-await $db.set('integration_token', { token: encryptedToken });
+await $db.set('integration_config', { 
+  configured: true, 
+  timestamp: Date.now() 
+});
+
+// ✅ SAFE - Mask sensitive display
+const maskedKey = '****' + apiKey.slice(-4);
+el.textContent = 'API Key: ' + maskedKey;
 ```
 
 ### Sensitive Data Checklist:
-- [ ] Never store passwords/secrets in ticket notes
+- [ ] Never store secrets in ticket notes or comments
 - [ ] Never display full credentials in UI
 - [ ] Use secure delivery mechanisms (email with expiry)
-- [ ] Store secrets server-side using $db or encrypted storage
-- [ ] Mask sensitive data in logs and displays
+- [ ] Store secrets server-side using $db
+- [ ] Mask sensitive data in displays (show only last 4 chars)
 
 ---
 
@@ -226,45 +175,41 @@ await $db.set('integration_token', { token: encryptedToken });
 
 ### Input Validation
 - [ ] All SMI functions validate their arguments
-- [ ] No command/script execution with user input
-- [ ] No `eval()`, `new Function()`, or dynamic code execution
 - [ ] Allowlists used for enumerated operations
 - [ ] Type checking for all numeric/boolean inputs
+- [ ] String inputs sanitized
 
 ### Logging Security
-- [ ] No `console.log(args.iparams)`
-- [ ] No `console.log(args)` with full objects
+- [ ] No logging of configuration objects
+- [ ] No logging of full request objects
 - [ ] No logging of tokens, passwords, or secrets
-- [ ] Error logging sanitized (message only, no stack with secrets)
+- [ ] Error logging uses e.message only
 
 ### XSS Prevention
 - [ ] `textContent` used for dynamic text
 - [ ] `innerHTML` only with sanitized or static content
-- [ ] No raw API/user data in HTML templates
 - [ ] Crayons components used for UI
 
 ### Sensitive Data
-- [ ] No passwords/secrets in ticket notes
-- [ ] No credentials in localStorage
+- [ ] No secrets in ticket notes
 - [ ] Secure delivery for generated credentials
 - [ ] Secrets stored server-side only
+- [ ] Sensitive displays masked
 
 **IF ANY SECURITY RULE IS VIOLATED → STOP → REGENERATE WITH SECURE PATTERNS**
 
 ---
 
-## Security Refusal Tests - NEVER GENERATE
+## Quick Reference: Security Patterns
 
-1. `executeCommand(args)` with user input → Reject (command injection)
-2. `eval(args.script)` or `new Function(args)` → Reject (code execution)
-3. `console.log(args.iparams)` → Reject (credential exposure)
-4. `innerHTML = userData` without sanitization → Reject (XSS)
-5. Passwords/secrets in ticket notes → Reject (data exposure)
-
-## Security Violation Tests
-
-1. SMI function with no input validation
-2. Logging full `args` object in handlers
-3. `innerHTML` with API/user data unsanitized
-4. Storing generated credentials in visible locations
-5. Missing allowlist for enumerated operations
+| Category | Safe Pattern |
+|----------|-------------|
+| Input Validation | `ALLOWED_OPS.includes(args.op)` |
+| Number Validation | `parseInt(args.id, 10)` with `isNaN` check |
+| String Sanitization | `str.replace(/[<>\"\'&]/g, '')` |
+| Safe Logging | `console.log('Done:', args.data?.ticket?.id)` |
+| Error Logging | `console.error('Failed:', e.message)` |
+| Safe DOM | `el.textContent = data` |
+| Sanitized HTML | `sanitizeHTML(data)` before innerHTML |
+| Secret Storage | `$db.set('config', { ... })` |
+| Masked Display | `'****' + key.slice(-4)` |
