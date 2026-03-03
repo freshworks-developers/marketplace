@@ -31,15 +31,7 @@ npx skills add https://github.com/freshworks-developers/marketplace/skills/publi
 
 ### Or add individual skills
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
-```
-
-### In chat:
-
-# Or add individual skills
-
-```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill app-dev
 ```
 
 
