@@ -1,0 +1,19 @@
+name: Trigger Internal Sync on Skills Change
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger freshworks-marketplace-internal sync
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.INTERNAL_REPO_PAT }}" \
+            https://api.github.com/repos/freshworks-developers/freshworks-marketplace-internal/dispatches \
+            -d '{"event_type":"sync-skills"}'
