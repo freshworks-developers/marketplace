@@ -2,47 +2,54 @@
 
 Skills for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshworks Platform 3.0 guidance.
 
-## Structure
+## Current Release
+
+### app-dev (v1.0.0)
+
+**Core skill for building Freshworks Platform 3.0 marketplace applications**
 
 ```
-skills/
-├── app-dev/              # core skill: Platform 3.0 apps, manifest, Crayons, FDK
-│   ├── SKILL.md
-│   ├── commands/         # /migrate, /review, /fix, /refactor
-│   ├── references/
-│   └── assets/templates/
-├── fdk-setup/            # tooling skill: FDK install, upgrade, downgrade
-│   ├── SKILL.md
-│   └── references/
-└── publish/              # product skill: pack and publish to marketplace
-    ├── SKILL.md
-    └── references/
+skills/app-dev/
+├── SKILL.md              # 60KB+ of Platform 3.0 guidance
+├── rules/                # Cursor rules (non-hidden for multi-IDE access)
+│   ├── security.mdc                      # Security enforcement
+│   ├── freshworks-platform3.mdc          # Platform 3.0 patterns
+│   ├── validation-workflow.mdc           # Auto-fix workflow
+│   └── [6 more .mdc files]
+├── commands/             # Slash commands
+│   ├── fdk-migrate.md    # /migrate - Platform 2.x → 3.0
+│   ├── fdk-review.md     # /review - Compliance check
+│   ├── fdk-fix.md        # /fix - Auto-fix errors
+│   └── fdk-refactor.md   # /refactor - Code improvements
+├── references/           # 200+ documentation files
+│   ├── api/              # API methods
+│   ├── architecture/     # Architecture patterns
+│   ├── errors/           # Error catalog
+│   ├── runtime/          # Runtime features
+│   └── ui/               # Crayons components (50+ docs)
+└── assets/templates/     # App skeletons
+    ├── frontend-skeleton/
+    ├── serverless-skeleton/
+    ├── hybrid-skeleton/
+    └── oauth-skeleton/
 ```
 
-Hierarchy: `app-dev` (core) → `publish` (product) → `fdk-setup` (tooling)
+**Key Features:**
+- Zero tolerance for Platform 2.x patterns
+- Auto-fix workflow (up to 6 iterations)
+- Security enforcement (input validation, XSS prevention, safe logging)
+- 25+ Crayons UI components
+- OAuth and request template support
 
-## Development
+## Upcoming Releases
 
-### Adding Skills
+### fdk-setup
+Automated FDK installation and management with Node.js 18 via nvm using subagents for autonomous multi-step operations.
 
-Create subskills that reference parent:
+### publish
+Comprehensive guide for packaging and publishing Freshworks apps to the marketplace with validation checklists and submission workflows.
 
-```markdown
 ---
-name: "freshworks-oauth-github"
-parent: app-dev
----
-
-# GitHub OAuth Apps
-
-**FIRST**: Use the parent `app-dev` skill for Platform 3.0 basics.
-
-Then apply these patterns:
-- GitHub OAuth config in oauth_config.json
-- Scopes: repo, user
-- Request templates with <%= access_token %>
-```
-
 
 ## Security
 

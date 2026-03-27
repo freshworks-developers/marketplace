@@ -1,7 +1,29 @@
 {
-  "name": "freshworks-skills",
-  "displayName": "Freshworks Skills",
-  "description": "Freshworks marketplaces kills for app development, FDK setup, and app publishing.",
+  "name": "freshworks-app-dev",
+  "displayName": "Freshworks App Development",
   "version": "1.0.0",
-  "author": "Freshworks Developers"
+  "description": "Expert-level skill for building Freshworks Platform 3.0 marketplace applications with zero tolerance for legacy patterns",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace",
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "crayons",
+    "fdk",
+    "validation",
+    "oauth",
+    "serverless"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "automation",
+    "app-development",
+    "platform"
+  ]
 }

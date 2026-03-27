@@ -1,22 +1,11 @@
 {
   "version": "1",
-  "updated_at": "2026-03-02T18:28:27Z",
+  "updated_at": "2026-03-27T09:35:25Z",
   "skills": {
     "app-dev": {
       "version": "1.0.0",
-      "updated_at": "2026-03-02T18:26:35Z",
+      "updated_at": "2026-03-27T09:10:53Z",
       "files": [
-        ".claude-plugin/plugin.json",
-        ".cursor-plugin/plugin.json",
-        ".cursor/rules/app-building-blocking-gates.mdc",
-        ".cursor/rules/app-templates.mdc",
-        ".cursor/rules/async-patterns.mdc",
-        ".cursor/rules/complexity-reduction.mdc",
-        ".cursor/rules/confusion.mdc",
-        ".cursor/rules/freshworks-platform3.mdc",
-        ".cursor/rules/platform3-modules-locations.mdc",
-        ".cursor/rules/security.mdc",
-        ".cursor/rules/validation-workflow.mdc",
         ".skillignore",
         "README.md",
         "SKILL.md",
@@ -221,41 +210,16 @@
         "references/ui/crayons-docs/toggle.md",
         "references/ui/crayons-docs/tooltip.md",
         "references/ui/crayons-docs/user.md",
+        "rules/app-building-blocking-gates.mdc",
+        "rules/app-templates.mdc",
+        "rules/async-patterns.mdc",
+        "rules/complexity-reduction.mdc",
+        "rules/confusion.mdc",
+        "rules/freshworks-platform3.mdc",
+        "rules/platform3-modules-locations.mdc",
+        "rules/security.mdc",
+        "rules/validation-workflow.mdc",
         "scripts/cleanup_old_rules.sh"
-      ]
-    },
-    "fdk-setup": {
-      "version": "1.0.0",
-      "updated_at": "2026-02-26T10:16:31Z",
-      "files": [
-        ".claude-plugin/plugin.json",
-        ".cursor-plugin/plugin.json",
-        "README.md",
-        "SKILL.md",
-        "assets/logo.svg",
-        "references/macos.md",
-        "references/windows.md"
-      ]
-    },
-    "publish": {
-      "version": "1.0.0",
-      "updated_at": "2026-02-26T10:16:31Z",
-      "files": [
-        ".claude-plugin/plugin.json",
-        ".cursor-plugin/plugin.json",
-        ".skillignore",
-        "OVERVIEW.md",
-        "README.md",
-        "SKILL.md",
-        "assets/logo.svg",
-        "references/checklist-template.md",
-        "references/coverage-requirements.md",
-        "references/marketplace-requirements.md",
-        "references/pack-command.md",
-        "references/quick-reference.md",
-        "references/submission-process.md",
-        "references/troubleshooting.md",
-        "references/workflow-diagram.md"
       ]
     }
   }

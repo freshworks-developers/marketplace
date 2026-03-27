@@ -1,7 +1,0 @@
-node_modules/
-.git/
-.DS_Store
-*.log
-coverage/
-dist/
-.fdk/

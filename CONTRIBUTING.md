@@ -40,21 +40,45 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ## Repository Structure
 
 ```
-marketplace/
+marketplace-main/
 ├── skills/
-│   ├── app-dev/              # Core app development skill
-│   │   ├── SKILL.md          # Main skill definition
-│   │   ├── README.md         # Skill documentation
-│   │   ├── commands/         # Slash commands (/migrate, /review, etc.)
-│   │   ├── references/       # Documentation loaded on-demand
-│   │   ├── assets/           # Templates and resources
-│   │   └── .cursor/
-│   │       └── rules/        # Cursor workspace rules (.mdc files)
-│   ├── fdk-setup/            # FDK installation skill
-│   └── publish/              # Marketplace publishing skill
-├── scripts/                  # Build and utility scripts
-├── CLAUDE.md                 # Claude Code workspace configuration
-├── CODE_OF_CONDUCT.MD        # Community guidelines
+│   └── app-dev/              # Freshworks App Development skill
+│       ├── SKILL.md          # Main skill file (1,372 lines, 60KB)
+│       ├── README.md         # Skill documentation
+│       ├── .skillignore      # Files to exclude from skill
+│       ├── rules/            # Cursor rules (non-hidden for multi-IDE access)
+│       │   ├── security.mdc
+│       │   ├── freshworks-platform3.mdc
+│       │   ├── validation-workflow.mdc
+│       │   └── [6 more .mdc files]
+│       ├── commands/         # Slash commands
+│       │   ├── fdk-migrate.md
+│       │   ├── fdk-review.md
+│       │   ├── fdk-fix.md
+│       │   └── fdk-refactor.md
+│       ├── references/       # Progressive disclosure docs (200+ files)
+│       │   ├── api/          # API method documentation
+│       │   ├── architecture/ # Architecture patterns
+│       │   ├── cli/          # FDK CLI documentation
+│       │   ├── errors/       # Error catalog & troubleshooting
+│       │   ├── events/       # Event reference
+│       │   ├── manifest/     # Manifest documentation
+│       │   ├── runtime/      # Runtime features
+│       │   ├── tests/        # Test patterns
+│       │   └── ui/           # Crayons components (50+ docs)
+│       ├── assets/           # Templates and resources
+│       │   ├── logo.svg
+│       │   └── templates/    # App skeletons
+│       │       ├── frontend-skeleton/
+│       │       ├── serverless-skeleton/
+│       │       ├── hybrid-skeleton/
+│       │       └── oauth-skeleton/
+│       └── scripts/          # Utility scripts
+├── scripts/                  # Repository scripts
+│   └── generate_manifest.py  # Manifest generation & validation
+├── manifest.json             # Skill discovery manifest
+├── CLAUDE.md                 # Claude Code documentation
+├── CONTRIBUTING.md           # This file
 └── README.md                 # Repository overview
 ```
 
@@ -282,6 +306,33 @@ Use conventional commit style:
 - Use tables for quick reference
 - Include concrete examples
 - Mark blocking vs non-blocking issues clearly
+
+## Manifest Management
+
+The `manifest.json` file tracks all skills, their versions, and file inventories. It's used by the CLI for skill discovery and installation.
+
+### Generate Manifest
+
+After adding or updating skills:
+
+```bash
+python3 scripts/generate_manifest.py
+```
+
+### Validate Manifest
+
+To ensure manifest is up to date (for CI):
+
+```bash
+python3 scripts/generate_manifest.py validate
+```
+
+### When to Regenerate
+
+- After moving/renaming files in `skills/`
+- After adding new documentation to `references/`
+- After updating skill versions in `SKILL.md` frontmatter
+- Before committing structural changes
 
 ## Security
 
