@@ -16,7 +16,7 @@ alwaysApply: true
 
 **BEFORE writing any code, you MUST:**
 
-1. **Determine app type:** Frontend / Serverless / Hybrid
+1. **Determine app type:** Frontend / Serverless / Hybrid — See **app-templates.mdc** for how to choose
 2. **If manifest will declare ANY `location`** (ticket_sidebar, full_page_app, asset_sidebar, etc.):
    - ✅ You MUST create the FULL frontend structure (app/, index.html, scripts/app.js, styles/style.css, styles/images/icon.svg)
    - ❌ NEVER declare a location without creating ALL referenced files

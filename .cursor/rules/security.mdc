@@ -1,7 +1,6 @@
 ---
 name: security
 description: Security enforcement rules for Freshworks Platform 3.0 app development. Apply these rules to EVERY app to prevent vulnerabilities.
-globs: ["**/server/*.js", "**/app/scripts/*.js", "**/app.js"]
 alwaysApply: true
 ---
 

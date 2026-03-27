@@ -2,6 +2,7 @@
 name: confusion
 description: Disambiguation guide for ambiguous app development prompts. Covers top 5 common ambiguities - OAuth vs API token, automatic vs manual trigger, frontend vs serverless, event selection, and error handling strategy. Load only when prompt is unclear.
 alwaysApply: false
+globs: ["**/manifest.json"]
 ---
 
 # App Development Disambiguation Guide

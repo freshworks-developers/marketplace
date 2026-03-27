@@ -32,7 +32,7 @@ def extract_version_from_skill(skill_path: Path) -> str:
     return "1.0.0"
 
 
-def get_skill_updated_at(skill_path: Path) -> str:
+def get_skill_updated_at(skill_path: Path, repo_root: Path | None = None) -> str:
     """Get the most recent modification time of any file in the skill directory."""
     latest_mtime = 0.0
     for file_path in skill_path.rglob("*"):
@@ -40,6 +40,15 @@ def get_skill_updated_at(skill_path: Path) -> str:
             mtime = file_path.stat().st_mtime
             if mtime > latest_mtime:
                 latest_mtime = mtime
+
+    # Include root .cursor/rules/ for app-dev
+    if repo_root and skill_path.name == "app-dev":
+        root_rules = repo_root / ".cursor" / "rules"
+        if root_rules.exists():
+            for rule_file in root_rules.glob("*.mdc"):
+                mtime = rule_file.stat().st_mtime
+                if mtime > latest_mtime:
+                    latest_mtime = mtime
 
     if latest_mtime == 0.0:
         return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -73,9 +82,19 @@ def generate_manifest(repo_root: Path) -> dict:
             if f.is_file()
         )
 
+        # Include root .cursor/rules/ for app-dev (plugin-based, rules at root)
+        if item.name == "app-dev":
+            root_rules = repo_root / ".cursor" / "rules"
+            if root_rules.exists():
+                for rule_file in sorted(root_rules.glob("*.mdc")):
+                    rel_path = f"../../.cursor/rules/{rule_file.name}"
+                    if rel_path not in files:
+                        files.append(rel_path)
+                files = sorted(files)
+
         skills[item.name] = {
             "version": extract_version_from_skill(item),
-            "updated_at": get_skill_updated_at(item),
+            "updated_at": get_skill_updated_at(item, repo_root),
             "files": files,
         }
 

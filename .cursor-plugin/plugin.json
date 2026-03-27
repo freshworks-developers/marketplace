@@ -1,12 +1,16 @@
 {
-  "name": "freshworks-skills",
-  "displayName": "Freshworks Skills",
-  "description": "Freshworks marketplaces kills for app development, FDK setup, and app publishing.",
+  "name": "freshworks",
+  "displayName": "Freshworks",
+  "description": "Freshworks Platform 3.0 skills: app development, FDK setup, and app publishing",
   "version": "1.0.0",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
-  "keywords": ["app-development", "app-publishing", "fdk-setup"],
-  "logo": "assets/logo.svg"
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace",
+  "license": "MIT",
+  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"],
+  "skills": "./skills/",
+  "logo": "skills/app-dev/assets/logo.svg"
 }

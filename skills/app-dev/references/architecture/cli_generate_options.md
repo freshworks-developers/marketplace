@@ -359,7 +359,7 @@ function postConfigs() {
     },
     "engines": {
         "node": "18.17.0",
-        "fdk": "9.1.0"
+        "fdk": "9.8.2"
     }
 }
 ```

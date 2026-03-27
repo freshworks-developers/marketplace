@@ -144,7 +144,7 @@ NODE_DEBUG=fdk fdk pack
 # Change engines.node to current version
 "engines": {
   "node": "18.20.8",
-  "fdk": "9.7.4"
+  "fdk": "9.8.2"
 }
 ```
 
@@ -483,7 +483,7 @@ fdk pack
 
 **Error:**
 ```
-⚠️  FDK version 9.4.0 detected. Minimum required: 9.6.0
+⚠️  FDK version 9.4.0 detected. Required: 9.8.2
 ```
 
 **Solution:**

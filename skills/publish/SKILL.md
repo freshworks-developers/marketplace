@@ -56,8 +56,8 @@ find . -name "manifest.json" -not -path "*/node_modules/*"
 # Step 2: Pre-pack validation (run in parallel)
 cd <app-directory>
 fdk validate                    # Must pass before packing
-node --version                  # Verify Node.js >= 18.0.0
-fdk version                     # Verify FDK >= 9.6.0
+node --version                  # Verify Node.js (recommended: 18)
+fdk version                     # Verify FDK (recommended: 9.8.2)
 
 # Step 3: Check test coverage (if server/ exists)
 # Coverage must be >= 80% for marketplace submission

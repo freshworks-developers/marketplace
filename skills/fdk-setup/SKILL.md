@@ -9,11 +9,13 @@ allowed-tools: ["shell", "read", "write", "task"]
 
 Complete automated FDK lifecycle management for macOS and Windows using subagents for complex multi-step operations.
 
+**RECOMMENDED VERSIONS: FDK v9.8.2, Node.js 18.** We work on apps below these too; we suggest moving to the latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
+
 ## Usage
 
 ```bash
-/fdk-setup install          # Install FDK with Node.js 18
-/fdk-setup upgrade          # Upgrade to latest
+/fdk-setup install          # Install FDK 9.8.2 with Node.js 18
+/fdk-setup upgrade          # Upgrade to FDK 9.8.2 (or latest)
 /fdk-setup downgrade 9.6.0  # Downgrade to specific version
 /fdk-setup uninstall        # Remove FDK completely
 /fdk-setup                  # Check FDK status
@@ -163,8 +165,8 @@ STEPS TO EXECUTE:
    export FDK_NODE_VERSION=18
    alias fdk-env='nvm use $FDK_NODE_VERSION'
 
-5. INSTALL FDK:
-   npm install https://cdn.freshdev.io/fdk/latest.tgz -g
+5. INSTALL FDK (recommended: v9.8.2):
+   npm install https://cdn.freshdev.io/fdk/v9.8.2.tgz -g
    
    If using Homebrew (macOS only):
    brew tap freshworks-developers/homebrew-tap
@@ -220,12 +222,12 @@ STEPS TO EXECUTE:
    If not on Node 18:
    nvm use 18 || nvm use fdk
 
-3. UPGRADE FDK:
+3. UPGRADE FDK (TO 9.8.2):
    If Homebrew installation:
    brew upgrade fdk
    
    If npm installation:
-   npm install https://cdn.freshdev.io/fdk/latest.tgz -g
+   npm install https://cdn.freshdev.io/fdk/v9.8.2.tgz -g
 
 4. VERIFY UPGRADE:
    fdk version
@@ -306,7 +308,7 @@ Execute autonomously. Report version change.`
 })
 ```
 
-**Important:** CDN URL requires `v` prefix: `https://cdn.freshdev.io/fdk/v9.7.4.tgz`
+**Important:** CDN URL requires `v` prefix: `https://cdn.freshdev.io/fdk/v9.8.2.tgz`
 
 ### 4. Uninstall (`/fdk-setup uninstall`)
 
@@ -478,7 +480,7 @@ alias fdk-env='nvm use $FDK_NODE_VERSION'
 | FDK already installed | Report version, ask if upgrade needed |
 | Permission denied | Suggest: `sudo` (macOS) or Administrator (Windows) |
 | Network error | Retry once, then report |
-| Invalid version | List common versions: 9.7.4, 9.6.0, 9.4.1 |
+| Invalid version | List common versions: 9.8.2, 9.7.4, 9.6.0 |
 | nvm install fails | Provide manual installation URL |
 
 ## Success Output
@@ -488,7 +490,7 @@ alias fdk-env='nvm use $FDK_NODE_VERSION'
 ✓ nvm installed: v0.40.1
 ✓ Node.js 18 installed: v18.20.8
 ✓ nvm alias 'fdk' → 18.20.8
-✓ FDK installed via npm: 9.7.4
+✓ FDK installed via npm: 9.8.2
 ✓ Configured PATH in ~/.zshrc
 ✓ Environment variables set
 
@@ -533,11 +535,11 @@ Task({
 
 ## Important Notes
 
-### Node.js 18 Requirement
+### Node.js 18 and FDK 9.8.2 (Recommended)
 
-- **FDK requires Node.js 18.13.0 or later**
-- Node.js 18 is LTS (Long Term Support) until April 2025
-- Recommended: Use latest 18.x version (18.20.x as of 2024)
+- **FDK v9.8.2 and Node.js 18 are recommended** for Freshworks Platform 3.0 development
+- We work on apps below these versions too; suggest moving to latest when feasible
+- **Roadmap:** Node 24 and FDK 10 after June
 
 ### nvm Benefits
 

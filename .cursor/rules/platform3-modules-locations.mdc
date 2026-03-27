@@ -1,7 +1,8 @@
 ---
 name: platform3-modules-locations
 description: Platform 3.0 Modules and Locations Reference - Complete guide for all products
-alwaysApply: true
+alwaysApply: false
+globs: ["**/manifest.json"]
 ---
 
 # Platform 3.0 Modules and Locations
@@ -97,7 +98,7 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
   },
   "engines": {
     "node": "18.18.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -170,7 +171,7 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
   },
   "engines": {
     "node": "18.18.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -235,7 +236,7 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
   },
   "engines": {
     "node": "18.18.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -287,7 +288,7 @@ You can have multiple locations in the same module:
   },
   "engines": {
     "node": "18.18.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -313,7 +314,7 @@ Background apps don't render UI but can intercept events:
   },
   "engines": {
     "node": "18.18.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   }
 }
 ```

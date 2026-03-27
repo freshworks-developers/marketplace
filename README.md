@@ -11,7 +11,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-18.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/FDK-9.6+-0052cc?style=flat-square" alt="FDK">
+  <img src="https://img.shields.io/badge/FDK-9.8.2-0052cc?style=flat-square" alt="FDK">
   <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
 </p>
 
@@ -21,17 +21,32 @@
 
 ## Installation
 
-### For Cursor:
+### Claude Code (via Plugin Marketplace)
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill
-npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill
-npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill
+# Add marketplace
+claude plugin marketplace add freshworks-developers/marketplace
+
+# Install the plugin (single plugin with all skills)
+claude plugin install freshworks@freshworks-marketplace
 ```
 
-### Or add individual skills
+### Cursor (via Plugin Marketplace)
+
+In Cursor Agent chat, add the marketplace and install:
+
+```
+/add-plugin freshworks
+```
+
+Or search for "freshworks" in the plugin marketplace.
+
+### npx skills (individual skills)
+
 ```bash
 npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill app-dev
+npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill publish
 ```
 
 
@@ -66,6 +81,18 @@ The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagen
 
 ## Structure
 
+
+```
+marketplace/
+├── .cursor/rules/     # Plugin rules (shared across skills)
+├── .claude-plugin/    # Claude Code plugin config
+├── .cursor-plugin/    # Cursor plugin config
+├── skills/
+│   ├── app-dev/       # App development skill
+│   ├── fdk-setup/     # FDK installation skill
+│   └── publish/       # Publishing skill
+```
+
 Each skill follows the Agent Skills Specification:
 
 ```
@@ -73,8 +100,7 @@ skill-name/
 ├── SKILL.md           # Main skill file with frontmatter + instructions
 ├── references/        # Additional documentation loaded on demand
 ├── assets/            # Templates, logos, etc.
-└── .cursor/
-    └── commands/      # Slash commands (optional)
+└── commands/          # Slash commands (optional)
 ```
 
 

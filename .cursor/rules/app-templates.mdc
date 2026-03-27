@@ -1,6 +1,7 @@
 ---
-description: Platform 3.0 app template selection guide. Use when creating new apps to determine which skeleton template to use based on requirements (frontend-only, serverless, hybrid, or OAuth).
+description: Platform 3.0 app template selection guide. Use when creating or fixing apps to determine which skeleton template to use based on requirements (frontend-only, serverless, hybrid, or OAuth).
 alwaysApply: false
+globs: ["**/manifest.json", "**/server/**/*.js", "**/app/**/*.js"]
 ---
 
 # Platform 3.0 App Template Selection

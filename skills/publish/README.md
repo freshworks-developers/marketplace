@@ -138,8 +138,9 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 ## Requirements
 
 - Cursor IDE
-- Node.js >= 18.0.0
-- FDK >= 9.6.0
+- Node.js 18 (recommended; we work on apps below too; suggest moving to latest)
+- FDK 9.8.2 (recommended)
+- **Roadmap:** Node 24 and FDK 10 after June
 - Completed Freshworks app with passing validation
 
 ## Pre-Pack Checklist

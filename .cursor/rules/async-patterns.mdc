@@ -1,7 +1,7 @@
 ---
 description: Fix async/await patterns for FDK validation. Use when fdk validate shows "Async function has no 'await' expression", async scoping issues, or unhandled promise rejections. Covers IIFE pattern, error handling, and race conditions.
 alwaysApply: false
-globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
+globs: ["**/server/**/*.js", "**/app/**/*.js"]
 ---
 
 # Async/Await Patterns for FDK Validation
@@ -204,7 +204,7 @@ exports = {
 2. **Use IIFE pattern in frontend** `(async function() { ... })()`
 3. **Always wrap async operations in try/catch** (prevent unhandled rejections)
 4. **Return structured responses** `{ success: boolean, data?: any, error?: string }`
-5. **Log errors with `e.message` only** (not full error objects - security)
+5. **Log errors with `e.message` only** (not full error objects) — See **security.mdc** for error logging rules
 
 ## Common Mistakes
 

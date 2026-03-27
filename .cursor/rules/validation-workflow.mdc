@@ -2,12 +2,13 @@
 name: validation-workflow
 description: Automatic validation and autofix workflow for Platform 3.0 apps. Runs fdk validate after file creation, fixes platform and lint errors iteratively (up to 6 iterations), and ensures zero errors before completion.
 alwaysApply: true
-globs: ["**/manifest.json"]
 ---
 
 # Validation & Auto-Fix Workflow
 
 **🚨 ZERO TOLERANCE: App is NEVER complete until ALL errors (platform AND lint) are fixed.**
+
+**RECOMMENDED ENVIRONMENT: FDK v9.8.2, Node.js 18.** We work on apps below these versions too. For new apps or when updating, prefer `"engines": { "node": "18", "fdk": "9.8.2" }`. We suggest moving to the latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
 
 ## Mandatory Workflow
 

@@ -1,7 +1,6 @@
 ---
 name: freshworks-platform3
 description: Platform 3.0 enforcement - ZERO TOLERANCE for Platform 2.x patterns. Immediately reject whitelisted-domains, product structure, plain HTML, and legacy APIs. Reference SKILL.md for detailed patterns.
-globs: ["**/manifest.json", "**/server.js", "**/app.js", "**/iparams.json", "**/requests.json", "**/oauth_config.json"]
 alwaysApply: true
 ---
 
@@ -24,11 +23,12 @@ alwaysApply: true
 
 ### ✅ ALWAYS Enforce These (Platform 3.0)
 
-1. **Manifest:** `"platform-version": "3.0"` with `"modules"` structure
-2. **Request Templates:** FQDN hosts only (no paths), use `<%= variable %>` syntax
-3. **Crayons Components:** All UI elements must use Crayons (fw-* components)
-4. **Request API:** Only `$request.invokeTemplate()` (never `.post()`, `.get()`, etc.)
-5. **OAuth:** Must have `integrations` wrapper in `oauth_config.json`
+1. **Engines:** `"engines": { "node": "18", "fdk": "9.8.2" }` - Recommended for new apps. We work on apps below these versions too; suggest moving to latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
+2. **Manifest:** `"platform-version": "3.0"` with `"modules"` structure
+3. **Request Templates:** FQDN hosts only (no paths), use `<%= variable %>` syntax
+4. **Crayons Components:** All UI elements must use Crayons (fw-* components)
+5. **Request API:** Only `$request.invokeTemplate()` (never `.post()`, `.get()`, etc.)
+6. **OAuth:** Must have `integrations` wrapper in `oauth_config.json`
 
 ## Critical Enforcement Rules
 

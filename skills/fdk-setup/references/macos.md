@@ -109,7 +109,7 @@ fdk version
 nvm current          # Should show v18.x.x
 node --version       # Should show v18.x.x
 npm --version        # Should show 9.x or 10.x
-fdk version          # Should show 9.4.1 or later
+fdk version          # Should show 9.8.2
 
 # Test FDK
 fdk --help

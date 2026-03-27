@@ -10,14 +10,15 @@ Complete requirements checklist for publishing apps to the Freshworks Marketplac
 - ✅ Manifest must specify: `"platform-version": "3.0"`
 
 ### FDK Version
-- ✅ **FDK >= 9.6.0** - Minimum version required
-- ✅ Manifest must specify: `"engines": { "fdk": "9.6.0" }`
+- ✅ **FDK 9.8.2** - Recommended version (we work on apps below too; suggest moving to latest)
+- ✅ Manifest should specify: `"engines": { "fdk": "9.8.2", "node": "18" }` for new apps
 - ✅ Keep FDK updated for latest features and fixes
 
 ### Node.js Version
-- ✅ **Node.js >= 18.0.0** - Minimum version required
+- ✅ **Node.js 18** - Recommended version
 - ✅ Manifest must specify: `"engines": { "node": "18.20.8" }`
 - ✅ Match your development environment version
+- **Roadmap:** Node 24 and FDK 10 after June
 
 ### Validation
 - ✅ **`fdk validate` must pass** - No fatal errors allowed
@@ -83,7 +84,7 @@ Complete requirements checklist for publishing apps to the Freshworks Marketplac
   },
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```

@@ -524,7 +524,7 @@ Agent:
 
 **Version:** 1.0.0  
 **Platform:** Freshworks Platform 3.0  
-**FDK:** >= 9.6.0  
+**FDK:** 9.8.2 (recommended; we work on apps below too; suggest moving to latest). **Roadmap:** Node 24 and FDK 10 after June.
 **Node.js:** >= 18.0.0  
 **Lines of Code:** 781 (SKILL.md) + 234 (README.md) = 1,015 lines  
 **Reference Docs:** 8 files  
@@ -551,8 +551,8 @@ npx skills add /path/to/marketplace/skills/publish
 
 **Required:**
 - Cursor IDE
-- Node.js >= 18.0.0
-- FDK >= 9.6.0
+- Node.js 18 (recommended)
+- FDK 9.8.2 (recommended)
 - Completed Freshworks app
 
 **Optional:**
