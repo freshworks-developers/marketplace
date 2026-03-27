@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-18.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   <img src="https://img.shields.io/badge/FDK-9.6+-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
+  <img src="https://img.shields.io/badge/Plugins-1-764abc?style=flat-square" alt="Plugins">
 </p>
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
@@ -24,7 +24,7 @@
 ### For Cursor:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev skill app-dev
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev -skill app-dev
 ```
 
 This installs the **app-dev** skill for building Freshworks Platform 3.0 applications.
