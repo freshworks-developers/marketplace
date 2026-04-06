@@ -14,7 +14,7 @@ In Platform 3.0, OAuth configurations **MUST** be wrapped in an `integrations` o
 ## Considerations
 
 1. Third-party application must adhere to OAuth 2.0 framework (RFC 6749)
-2. OAuth request in `config/oauth_config.json` supported from FDK 9.0.0+ and platform 2.3+
+2. OAuth request in `config/oauth_config.json` supported from FDK 10.0.0+ and platform 2.3+
 3. Supports accessing a maximum of **three** OAuth-secured resources
 4. One of the 3 OAuth configurations should facilitate agent installation
 
