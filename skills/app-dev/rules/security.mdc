@@ -1,216 +1,126 @@
 ---
 name: security
-description: Security enforcement rules for Freshworks Platform 3.0 app development. Apply these rules to EVERY app to prevent vulnerabilities.
-globs: ["**/server/*.js", "**/app/scripts/*.js", "**/app.js"]
-alwaysApply: true
+description: Security enforcement for Platform 3.0 apps. Input validation, safe logging, XSS prevention, secret handling.
+globs: ["**/server/*.js", "**/app/scripts/*.js"]
+alwaysApply: false
 ---
 
-# 🔒 Security Enforcement - ZERO TOLERANCE
+# Security Enforcement
 
-Security is as critical as Platform 3.0 compliance. Apply these rules to EVERY app.
+**ZERO TOLERANCE: Apply to EVERY app.**
 
-## 🔴 CRITICAL: Input Validation & Command Injection Prevention
+## Critical Security Rules
 
-**All SMI functions MUST validate input. Use allowlists for operations.**
+| Priority | Rule | Pattern |
+|----------|------|---------|
+| CRITICAL | Input validation | Allowlist operations, validate types, sanitize strings |
+| HIGH | Safe logging | Never log secrets, tokens, full objects |
+| MEDIUM | XSS prevention | Use `textContent`, sanitize before `innerHTML` |
+| MEDIUM | Secret handling | Use iparams, never hardcode, mask in UI |
 
-### Safe Patterns - ALWAYS USE:
+## Input Validation (CRITICAL)
+
+**MUST validate ALL SMI input. Use allowlists.**
 
 ```javascript
-// ✅ SAFE - Allowlisted operations only
-const ALLOWED_OPERATIONS = ['status', 'list', 'health'];
+// SAFE: Allowlist
+const ALLOWED_OPS = ['status', 'list', 'health'];
+if (!ALLOWED_OPS.includes(args.operation)) {
+  return { error: 'Not allowed' };
+}
 
-exports = {
-  performOperation: async function(args) {
-    if (!ALLOWED_OPERATIONS.includes(args.operation)) {
-      return { success: false, error: 'Operation not allowed' };
-    }
-    // Execute only pre-defined, safe operations
-    return await executeAllowedOperation(args.operation);
-  }
-};
+// SAFE: Type validation
+const id = parseInt(args.id, 10);
+if (isNaN(id) || id < 0) return { error: 'Invalid ID' };
 
-// ✅ SAFE - Parameterized operations with validation
-exports = {
-  getData: async function(args) {
-    const id = parseInt(args.id, 10);
-    if (isNaN(id) || id < 0) {
-      return { success: false, error: 'Invalid ID' };
-    }
-    // Use validated input
-    return await fetchDataById(id);
-  }
-};
-
-// ✅ SAFE - String sanitization
-function sanitizeInput(str) {
-  if (typeof str !== 'string') return '';
-  return str.replace(/[<>\"\'&]/g, '');
+// SAFE: String sanitization
+function sanitize(str) {
+  return String(str).replace(/[<>"'&]/g, '');
 }
 ```
 
-### Input Validation Checklist:
-- [ ] Validate all input types (string, number, boolean)
-- [ ] Sanitize strings (remove/escape special characters)
-- [ ] Use allowlists for enumerated values
-- [ ] Reject unexpected or malformed input
-- [ ] Never trust client-provided data
+**Checklist:**
+- [ ] Validate types (string, number, boolean)
+- [ ] Sanitize strings (remove special chars)
+- [ ] Use allowlists for enums
+- [ ] Reject malformed input
+- [ ] Never trust client data
 
----
+## Safe Logging (HIGH)
 
-## 🟠 HIGH: Logging Security - No Sensitive Data
-
-**Log only operation status and non-sensitive identifiers.**
-
-### Safe Logging Patterns:
+**Log only status and non-sensitive IDs.**
 
 ```javascript
-// ✅ SAFE - Log only confirmation, no sensitive data
-onAppInstallHandler: function() {
-  console.log('App installed successfully');
-}
+// SAFE
+console.log('App installed');
+console.log('Ticket created:', args.data?.ticket?.id);
+console.error('Operation failed:', e.message);
 
-// ✅ SAFE - Log only non-sensitive, specific fields
-onTicketCreateHandler: function(args) {
-  console.log('Ticket created:', args.data?.ticket?.id);
-}
-
-// ✅ SAFE - Sanitized error logging
-try {
-  await performOperation();
-} catch (e) {
-  console.error('Operation failed:', e.message);
-}
+// UNSAFE - NEVER DO
+console.log(args); // Full object
+console.log(args.iparams.api_key); // Secret
+console.log(args.oauth_token); // Token
 ```
 
-### Logging Security Checklist:
-- [ ] Never log full configuration objects
-- [ ] Never log full request objects in handlers
-- [ ] Never log tokens, passwords, API keys, or secrets
-- [ ] Log only operation status and non-sensitive identifiers
-- [ ] Sanitize error messages before logging (use e.message only)
+**Checklist:**
+- [ ] Never log full objects
+- [ ] Never log tokens, keys, passwords
+- [ ] Log only operation status + IDs
+- [ ] Use `e.message` only for errors
 
----
+## XSS Prevention (MEDIUM)
 
-## 🟡 MEDIUM: XSS Prevention - Safe DOM Manipulation
-
-**Use textContent for dynamic data. Sanitize before innerHTML.**
-
-### Safe Patterns:
+**Use `textContent` for data. Sanitize before `innerHTML`.**
 
 ```javascript
-// ✅ SAFE - Use textContent for plain text
-el.textContent = response.data;
+// SAFE
+element.textContent = userData;
+element.setAttribute('data-id', ticketId);
 
-// ✅ SAFE - Use Crayons components with safe properties
-el.innerHTML = '<fw-inline-message type="success">Operation completed</fw-inline-message>';
+// UNSAFE
+element.innerHTML = userData; // XSS risk
+element.outerHTML = `<div>${data}</div>`; // XSS risk
+```
 
-// ✅ SAFE - Sanitize dynamic content before rendering
+**Sanitize if innerHTML required:**
+```javascript
 function sanitizeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
-el.innerHTML = '<div>' + sanitizeHTML(userData) + '</div>';
-
-// ✅ SAFE - Create elements programmatically
-const div = document.createElement('div');
-div.textContent = response.data;
-container.appendChild(div);
-
-// ✅ SAFE - Display with fw-inline-message
-const msg = document.createElement('fw-inline-message');
-msg.setAttribute('type', 'success');
-msg.textContent = result.message;
-resultEl.appendChild(msg);
+element.innerHTML = sanitizeHTML(userData);
 ```
 
-### XSS Prevention Checklist:
-- [ ] Prefer `textContent` over `innerHTML` for dynamic data
-- [ ] Use Crayons components with safe string props
-- [ ] Sanitize ALL user/API data before innerHTML insertion
-- [ ] Create DOM elements programmatically when possible
+## Secret Handling (MEDIUM)
 
----
-
-## 🟡 MEDIUM: Sensitive Data Handling
-
-**Store secrets server-side. Use secure delivery for credentials.**
-
-### Safe Patterns:
+**Use iparams. Never hardcode. Mask in UI.**
 
 ```javascript
-// ✅ SAFE - Send credentials via secure channel only
-await client.request.invoke('sendSecureEmail', {
-  to: requesterEmail,
-  temporaryAccess: true,
-  expiresIn: '24h'
-});
-await client.interface.trigger('addNote', {
-  content: 'Temporary access sent to requester email. Expires in 24h.',
-  isPrivate: true
-});
+// SAFE: iparams
+const apiKey = args.iparams.api_key;
 
-// ✅ SAFE - Use server-side storage for secrets
-await $db.set('integration_config', { 
-  configured: true, 
-  timestamp: Date.now() 
-});
+// SAFE: Masked display
+const masked = '****' + apiKey.slice(-4);
 
-// ✅ SAFE - Mask sensitive display
-const maskedKey = '****' + apiKey.slice(-4);
-el.textContent = 'API Key: ' + maskedKey;
+// UNSAFE - NEVER DO
+const apiKey = 'sk-1234567890'; // Hardcoded
+console.log(apiKey); // Logged
 ```
 
-### Sensitive Data Checklist:
-- [ ] Never store secrets in ticket notes or comments
-- [ ] Never display full credentials in UI
-- [ ] Use secure delivery mechanisms (email with expiry)
-- [ ] Store secrets server-side using $db
-- [ ] Mask sensitive data in displays (show only last 4 chars)
+**Checklist:**
+- [ ] Use `config/iparams.json` for secrets
+- [ ] Never hardcode keys/tokens
+- [ ] Mask in UI (show last 4 chars)
+- [ ] Never log secrets
 
----
+## Quick Reference
 
-## 🛡️ Security Pre-Generation Checklist
+| Security Need | Safe Pattern |
+|---------------|--------------|
+| Input validation | Allowlist + type check + sanitize |
+| Logging | Status + IDs only, never secrets |
+| DOM update | `textContent` or sanitized `innerHTML` |
+| Secrets | iparams, masked display, never log |
 
-**BEFORE generating ANY app code, verify ALL security requirements:**
-
-### Input Validation
-- [ ] All SMI functions validate their arguments
-- [ ] Allowlists used for enumerated operations
-- [ ] Type checking for all numeric/boolean inputs
-- [ ] String inputs sanitized
-
-### Logging Security
-- [ ] No logging of configuration objects
-- [ ] No logging of full request objects
-- [ ] No logging of tokens, passwords, or secrets
-- [ ] Error logging uses e.message only
-
-### XSS Prevention
-- [ ] `textContent` used for dynamic text
-- [ ] `innerHTML` only with sanitized or static content
-- [ ] Crayons components used for UI
-
-### Sensitive Data
-- [ ] No secrets in ticket notes
-- [ ] Secure delivery for generated credentials
-- [ ] Secrets stored server-side only
-- [ ] Sensitive displays masked
-
-**IF ANY SECURITY RULE IS VIOLATED → STOP → REGENERATE WITH SECURE PATTERNS**
-
----
-
-## Quick Reference: Security Patterns
-
-| Category | Safe Pattern |
-|----------|-------------|
-| Input Validation | `ALLOWED_OPS.includes(args.op)` |
-| Number Validation | `parseInt(args.id, 10)` with `isNaN` check |
-| String Sanitization | `str.replace(/[<>\"\'&]/g, '')` |
-| Safe Logging | `console.log('Done:', args.data?.ticket?.id)` |
-| Error Logging | `console.error('Failed:', e.message)` |
-| Safe DOM | `el.textContent = data` |
-| Sanitized HTML | `sanitizeHTML(data)` before innerHTML |
-| Secret Storage | `$db.set('config', { ... })` |
-| Masked Display | `'****' + key.slice(-4)` |
+**Related:** `freshworks-platform3.mdc`, `validation-workflow.mdc`, `logging-debugging.mdc`

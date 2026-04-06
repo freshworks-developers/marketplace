@@ -56,11 +56,11 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 
 ## What's Included
 
-**Skills:**
-- `app-dev` - Expert-level development skill for Platform 3.0
+**Skill entrypoint:** `SKILL.md` (core). **On-demand references:** `references/skill-advanced-topics.md` (OAuth depth, reference map, extended checklists). **Maintainers:** `SKILL_REFACTOR_ROLLBACK.md` documents the token refactor and how to restore removed `SKILL.md` text via git.
 
 **Rules:**
 - `freshworks-platform3.mdc` - Platform 3.0 enforcement
+- `event-smi-handlers.mdc` - SMI `renderData()`, events, manifest ↔ server.js alignment
 - `security.mdc` - Security enforcement
 - `validation-workflow.mdc` - Auto-validation & fixes
 - `app-building-blocking-gates.mdc` - Mandatory gates

@@ -1,0 +1,47 @@
+---
+description: Lint rule enforcement for generated code. Apply during code generation to prevent common lint errors before validation. Developers can disable specific lint rules in .eslintrc if needed.
+alwaysApply: false
+globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
+---
+
+# Lint Enforcement (Code Generation)
+
+**Apply DURING code generation, BEFORE validation.**
+
+**Note:** These are FDK default lint rules. Developers can override via `.eslintrc` if needed.
+
+## Best Practice Rules
+
+1. **NEVER use `var`** - use `const` or `let`
+2. **NEVER declare unused parameters** - remove if not used
+3. **NEVER declare unused variables** - remove if not used
+4. **NEVER use `async` without `await`** - remove `async`
+5. **NEVER add helpers before `exports`** - place AFTER
+6. **NEVER exceed complexity 7** - use Sets, lookup objects, guards
+
+## Quick Patterns
+
+**Unused parameter:**
+```javascript
+// [INVALID] WRONG
+onAppInstallHandler: function(args) {
+  console.log('Installed');
+}
+
+// [VALID] CORRECT
+onAppInstallHandler: function() {
+  console.log('Installed');
+}
+```
+
+**Complexity > 7:**
+```javascript
+// [INVALID] WRONG
+if (p === '2' || p === '3' || p === 'high') return true;
+
+// [VALID] CORRECT
+const HIGH = new Set(['2', '3', 'high']);
+if (HIGH.has(p)) return true;
+```
+
+**Related:** `validation-workflow.mdc`, `complexity-reduction.mdc`

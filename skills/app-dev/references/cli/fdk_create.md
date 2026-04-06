@@ -119,10 +119,12 @@ my-serverless-app/
 exports = {
   onAppInstallHandler: async function(payload) {
     console.log('App installed');
+    renderData();
   },
 
   onTicketCreateHandler: async function(payload) {
     console.log('Ticket created:', payload.data.ticket.id);
+    renderData();
   }
 };
 ```
@@ -306,14 +308,14 @@ my-oauth-app/
 
 | Feature | Frontend | Serverless | Hybrid (SMI) | OAuth |
 |---------|----------|------------|--------------|-------|
-| `app/` folder | ✅ | ❌ | ✅ | ✅ |
-| `server/` folder | ❌ | ✅ | ✅ | ✅ |
-| `config/` folder | ❌ | ✅ | ✅ | ✅ |
-| Location in manifest | ✅ | ❌ | ✅ | ✅ |
-| Events in manifest | ❌ | ✅ | Optional | Optional |
-| Functions in manifest | ❌ | ❌ | ✅ | ✅ |
-| Requests in manifest | ❌ | ✅ | ✅ | ✅ |
-| `oauth_config.json` | ❌ | ❌ | ❌ | ✅ |
+| `app/` folder | [VALID] | [INVALID] | [VALID] | [VALID] |
+| `server/` folder | [INVALID] | [VALID] | [VALID] | [VALID] |
+| `config/` folder | [INVALID] | [VALID] | [VALID] | [VALID] |
+| Location in manifest | [VALID] | [INVALID] | [VALID] | [VALID] |
+| Events in manifest | [INVALID] | [VALID] | Optional | Optional |
+| Functions in manifest | [INVALID] | [INVALID] | [VALID] | [VALID] |
+| Requests in manifest | [INVALID] | [VALID] | [VALID] | [VALID] |
+| `oauth_config.json` | [INVALID] | [INVALID] | [INVALID] | [VALID] |
 
 ---
 
@@ -349,7 +351,7 @@ my-oauth-app/
 
 ## Common Mistakes
 
-❌ **Wrong: Missing product module**
+[INVALID] **Wrong: Missing product module**
 ```json
 {
   "modules": {
@@ -358,7 +360,7 @@ my-oauth-app/
 }
 ```
 
-✅ **Correct: At least one product module**
+[VALID] **Correct: At least one product module**
 ```json
 {
   "modules": {
@@ -368,7 +370,7 @@ my-oauth-app/
 }
 ```
 
-❌ **Wrong: Undeclared SMI function**
+[INVALID] **Wrong: Undeclared SMI function**
 ```javascript
 // server.js
 exports = {
@@ -376,7 +378,7 @@ exports = {
 }
 ```
 
-✅ **Correct: Declared in manifest**
+[VALID] **Correct: Declared in manifest**
 ```json
 {
   "modules": {
@@ -389,7 +391,7 @@ exports = {
 }
 ```
 
-❌ **Wrong: Using "product" structure**
+[INVALID] **Wrong: Using "product" structure**
 ```json
 {
   "product": {
@@ -398,7 +400,7 @@ exports = {
 }
 ```
 
-✅ **Correct: Using "modules" structure**
+[VALID] **Correct: Using "modules" structure**
 ```json
 {
   "modules": {
@@ -423,10 +425,10 @@ exports = {
 ## Platform 3.0 Enforcement
 
 When the skill sees `fdk create` or app generation requests:
-1. ✅ Use `"platform-version": "3.0"` always
-2. ✅ Use `modules` structure (NOT `product`)
-3. ❌ NEVER include `whitelisted-domains`
-4. ✅ Always include `engines` block
-5. ✅ Declare all requests, functions, and events in manifest
-6. ✅ Use correct module names (`support_ticket`, `service_ticket`, etc.)
-7. ✅ Include at least one product module even if empty
+1. [VALID] Use `"platform-version": "3.0"` always
+2. [VALID] Use `modules` structure (NOT `product`)
+3. [INVALID] NEVER include `whitelisted-domains`
+4. [VALID] Always include `engines` block
+5. [VALID] Declare all requests, functions, and events in manifest
+6. [VALID] Use correct module names (`support_ticket`, `service_ticket`, etc.)
+7. [VALID] Include at least one product module even if empty

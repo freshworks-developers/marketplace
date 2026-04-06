@@ -20,7 +20,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Fix:** Ensure `default_value` exactly matches one of the option values (case-sensitive, character-perfect)  
 **Rule:** Dropdown `default_value` must be string-exact match with an option's `value` field
 
-**⚠️ AI Agent Caution:**
+**[WARNING] AI Agent Caution:**
 - Do NOT assume first option is default
 - Do NOT use label text as default_value
 - Do NOT invent values not in options list
@@ -30,7 +30,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 
 1. **Case Mismatch**
    ```json
-   // ❌ WRONG
+   // [INVALID] WRONG
    {
      "priority": {
        "default_value": "High",  // Capital H
@@ -40,7 +40,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
      }
    }
    
-   // ✅ CORRECT
+   // [VALID] CORRECT
    {
      "priority": {
        "default_value": "high",  // Matches exactly
@@ -53,7 +53,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 
 2. **Using Label Instead of Value**
    ```json
-   // ❌ WRONG
+   // [INVALID] WRONG
    {
      "environment": {
        "default_value": "Production Server",  // This is the label!
@@ -63,7 +63,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
      }
    }
    
-   // ✅ CORRECT
+   // [VALID] CORRECT
    {
      "environment": {
        "default_value": "prod",  // Use the value field
@@ -76,7 +76,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 
 3. **Typo in Value**
    ```json
-   // ❌ WRONG
+   // [INVALID] WRONG
    {
      "mode": {
        "default_value": "automatic",  // Typo: should be "auto"
@@ -94,14 +94,14 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Fix:** Add required `default_value` field to dropdown iparam  
 **Rule:** All dropdown iparams MUST have a default_value - it is NOT optional
 
-**⚠️ AI Agent Caution:**
+**[WARNING] AI Agent Caution:**
 - Do NOT generate dropdown without default_value
 - Do NOT assume platform picks first option as default
 - ALWAYS explicitly set default_value field
 
 **Example:**
 ```json
-// ❌ WRONG - Missing default_value
+// [INVALID] WRONG - Missing default_value
 {
   "log_level": {
     "type": "dropdown",
@@ -112,7 +112,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
   }
 }
 
-// ✅ CORRECT - Has default_value
+// [VALID] CORRECT - Has default_value
 {
   "log_level": {
     "type": "dropdown",
@@ -152,11 +152,11 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 
 **Example (requests.json):**
 ```json
-// ❌ WRONG
+// [INVALID] WRONG
 { "request1": { ... } }
 { "request2": { ... } }
 
-// ✅ CORRECT
+// [VALID] CORRECT
 {
   "request1": { ... },
   "request2": { ... }
@@ -187,10 +187,10 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Error:** "Request template schema/path must start with '/'"  
 **Fix:** Ensure path starts with `/`:
 ```json
-// ❌ WRONG
+// [INVALID] WRONG
 "path": "api/endpoint"
 
-// ✅ CORRECT
+// [VALID] CORRECT
 "path": "/api/endpoint"
 ```
 
@@ -199,19 +199,19 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Cause:** `body` property in request template schema definition  
 **Fix:** Remove `body` from schema - it goes in invocation, not schema
 ```json
-// ❌ WRONG - body in schema
+// [INVALID] WRONG - body in schema
 {
   "myRequest": {
     "schema": {
       "method": "POST",
       "host": "api.example.com",
       "path": "/endpoint",
-      "body": "..."  // ❌ NOT HERE!
+      "body": "..."  // [INVALID] NOT HERE!
     }
   }
 }
 
-// ✅ CORRECT - body in invocation
+// [VALID] CORRECT - body in invocation
 {
   "myRequest": {
     "schema": {
@@ -253,7 +253,7 @@ app/
 **Cause:** Empty location object: `"location": {}`  
 **Fix:** Either add a location OR remove the location key entirely:
 ```json
-// ❌ WRONG - empty location
+// [INVALID] WRONG - empty location
 {
   "modules": {
     "common": {
@@ -262,7 +262,7 @@ app/
   }
 }
 
-// ✅ CORRECT - has location
+// [VALID] CORRECT - has location
 {
   "modules": {
     "common": {
@@ -276,7 +276,7 @@ app/
   }
 }
 
-// ✅ CORRECT - no location key (serverless app)
+// [VALID] CORRECT - no location key (serverless app)
 {
   "modules": {
     "common": {
@@ -372,7 +372,7 @@ exports = {
 ### Function complexity exceeds 7
 **Fix:** Extract helper functions:
 ```javascript
-// ✅ CORRECT
+// [VALID] CORRECT
 function process(data) {
   const validItems = getValidItems(data);
   return processItems(validItems);
@@ -386,7 +386,7 @@ function getValidItems(data) {
 ### Variable declared and assigned in different scopes
 **Fix:** Use IIFE pattern:
 ```javascript
-// ✅ CORRECT
+// [VALID] CORRECT
 (async function() {
   const client = await app.initialized();
   client.events.on('app.activated', () => {
@@ -399,7 +399,7 @@ function getValidItems(data) {
 **Error:** "Error while parsing file containing serverless functions"  
 **Fix:** Move helper functions AFTER exports block:
 ```javascript
-// ✅ CORRECT
+// [VALID] CORRECT
 exports = {
   myHandler: function(args) {
     const parsed = parseUrl(args.url);
@@ -416,7 +416,7 @@ function parseUrl(url) {
 ### whitelisted-domains is deprecated
 **Fix:** Use request templates:
 ```json
-// ✅ CORRECT
+// [VALID] CORRECT
 {
   "modules": {
     "common": {
@@ -429,7 +429,7 @@ function parseUrl(url) {
 ### post is no longer supported in Request API
 **Fix:** Use `$request.invokeTemplate()`:
 ```javascript
-// ✅ CORRECT
+// [VALID] CORRECT
 await $request.invokeTemplate('apiCall', {
   context: {},
   body: JSON.stringify({ data: 'value' })
@@ -439,7 +439,7 @@ await $request.invokeTemplate('apiCall', {
 ### Invalid platform-version
 **Fix:** Always use Platform 3.0:
 ```json
-// ✅ CORRECT
+// [VALID] CORRECT
 {
   "platform-version": "3.0",
   "modules": {
@@ -454,7 +454,7 @@ await $request.invokeTemplate('apiCall', {
 ### OAuth config must have required property 'integrations'
 **Fix:** Wrap in `integrations`:
 ```json
-// ✅ CORRECT
+// [VALID] CORRECT
 {
   "integrations": {
     "oauth_name": {
@@ -495,7 +495,7 @@ await $request.invokeTemplate('apiCall', {
 ### Plain HTML form elements not allowed
 **Fix:** Use Crayons components:
 ```html
-<!-- ✅ CORRECT -->
+<!-- [VALID] CORRECT -->
 <fw-button color="primary">Click Me</fw-button>
 <fw-input label="Name"></fw-input>
 <fw-select label="Choose">

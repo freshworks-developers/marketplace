@@ -34,15 +34,18 @@ Freshworks Product events are the events that occur in freshworks product such a
 1. Callback method / product event handler function is defined like this in in `server.js`:
 ```js
 exports = {
-  someProductEventHandlerFunction: function(payload) {
-    // App logic goes here
-
-    // for example
-    $request.invokeTemplate('some_request_method_template', {
-        // can be any request context}
-    });
-    // some logic like this if required
-    $db.set('some_key', 'some_value');
+  someProductEventHandlerFunction: async function(payload) {
+    try {
+      // App logic goes here
+      await $request.invokeTemplate('some_request_method_template', {
+        // can be any request context
+      });
+      await $db.set('some_key', 'some_value');
+      renderData();
+    } catch (e) {
+      console.error(e.message);
+      renderData();
+    }
   }
 };
 ```

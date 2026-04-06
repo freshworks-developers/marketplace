@@ -39,6 +39,6 @@ Run `fdk validate` from the app directory (the folder containing manifest.json).
 ## Step 3: Final report
 
 After 3 rounds, provide:
-- ✅ **Pass**: App validates successfully.
-- ⚠️ **Fatal errors remain**: List them with suggested fixes.
+- [VALID] **Pass**: App validates successfully.
+- [WARNING] **Fatal errors remain**: List them with suggested fixes.
 - 📋 **Lint/warnings**: List any remaining (optional to fix).

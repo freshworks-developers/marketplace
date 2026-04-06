@@ -1,119 +1,108 @@
 ---
 name: validation-workflow
-description: Automatic validation and autofix workflow for Platform 3.0 apps. Runs fdk validate after file creation, fixes platform and lint errors iteratively (up to 6 iterations), and ensures zero errors before completion.
-alwaysApply: true
-globs: ["**/manifest.json"]
+description: Auto-validation and fix workflow for Platform 3.0 apps. Runs fdk validate after file creation, fixes errors iteratively (max 6), logs all output, stops if no progress after 3 iterations.
+alwaysApply: false
+globs: ["**/manifest.json", "**/server/server.js"]
 ---
 
 # Validation & Auto-Fix Workflow
 
-**🚨 ZERO TOLERANCE: App is NEVER complete until ALL errors (platform AND lint) are fixed.**
+**ZERO TOLERANCE: App NEVER complete until ALL errors fixed.**
 
-## Mandatory Workflow
+## Mandatory Workflow Steps
 
-### Step 1: Automatic Validation After File Creation
-
+### Step 1: Automatic Validation
 **AFTER creating ALL app files, AUTOMATICALLY run:**
-
 ```bash
 cd <app-directory>
 fdk validate
 ```
-
 **DO NOT ask user to run it manually.**
 
-### Step 2: Parse Validation Output
-
+### Step 2: Parse & Log Output
 Identify ALL errors:
 - **Platform Errors:** Manifest structure, missing files, declarations
 - **Lint Errors:** Async/await, unused params, complexity, unreachable code
 
-**Both types are BLOCKING** - app cannot be complete with ANY errors.
-
-### Step 3: Auto-Fix Iterations (Up to 6)
-
-**Iteration 1-2: Common Fixes**
-
-**Platform errors:**
-- ✅ Missing `icon.svg` → Create `app/styles/images/icon.svg`
-- ✅ Missing `app/` folder → Create full app structure
-- ✅ JSON syntax errors → Fix multiple top-level objects, commas
-- ✅ FQDN issues → Separate host and path
-- ✅ Template syntax → `{{var}}` → `<%= context.var %>`
-- ✅ Missing declarations → Add to manifest
-- ✅ Empty blocks → Remove `functions: {}` or add content
-- ✅ OAuth missing `token_type` → Add `"token_type": "account"`
-- ✅ OAuth missing `display_name` → Add `"display_name": "Service"`
-- ✅ OAuth iparam missing `description` → Add description field
-
-**Lint errors:**
-- ✅ Async without await → Remove `async` keyword
-- ✅ Unused parameters → Remove parameter entirely (not `_args`)
-- ✅ Unreachable code → Remove code after return
-- ✅ Helper before exports → Move helpers AFTER exports block
-
-**Iteration 3-4: Advanced Fixes**
-
-- ✅ Manifest structure → Fix module placement
-- ✅ Request templates → Fix FQDN, path, schema
-- ✅ Function complexity > 7 → Extract helpers, use Sets
-- ✅ OAuth structure → Add `integrations` wrapper
-- ✅ Location placement → Move to correct module
-
-**Iteration 5-6: Final Fixes**
-
-- ✅ Any remaining platform errors
-- ✅ Any remaining lint errors
-- ✅ Verify file consistency
-
-**After each iteration:**
-1. Apply fixes
-2. Re-run `fdk validate`
-3. Parse new output
-4. Continue if errors remain
-
-### Step 4: Present Results
-
-**If validation passes (0 errors):**
-
+**MUST display complete output to user:**
 ```
-✅ App generated successfully in <app-directory>/
+📋 Validation Output (Iteration 1):
+Platform Errors: [count]
+Lint Errors: [count]
 
+[COMPLETE FDK OUTPUT - ALL ERRORS]
+```
+
+### Step 3: Auto-Fix Iterations (Max 6)
+**After each iteration:**
+1. Apply fixes from patterns below
+2. Re-run `fdk validate`
+3. **LOG complete validation output:**
+   ```
+   📋 Validation Output (Iteration [N]):
+   Platform Errors: [count] (was [previous])
+   Lint Errors: [count] (was [previous])
+   
+   [COMPLETE FDK OUTPUT]
+   
+   Progress: [Reduced/Unchanged/Increased]
+   ```
+4. Parse new output and count errors
+5. **STOP if iteration ≥ 3 AND error count unchanged** (not making progress)
+6. Continue if errors remain and making progress
+
+### Step 4: Report Results
+**If validation passes (0 errors):**
+```
+✅ [VALID] App generated successfully in <dir>/
 Validation: 0 platform errors, 0 lint errors
+Next: cd <dir> && fdk run
+```
 
-Next steps:
-1. cd <app-directory>
-2. fdk run
-3. Test in product with ?dev=true
+**If errors persist after 2-3 iterations with no progress:**
+```
+❌ [FAILED] Unable to auto-fix after [N] iterations
+
+BLOCKING ERRORS:
+Platform Errors ([count]):
+[LIST WITH FILE:LINE]
+
+Lint Errors ([count]):
+[LIST WITH FILE:LINE]
+
+🔧 Manual fixes required
+App NOT ready until resolved
 ```
 
 **DO NOT automatically create:**
-- ❌ Validation reports (.validation-report.md)
-- ❌ Summary documents (APPS-SUMMARY.md)
-- ❌ Detailed feature lists
-- ❌ Long documentation files
+- Validation reports (.validation-report.md)
+- Summary documents (APPS-SUMMARY.md)
+- Long documentation files
 
 **Only create these when user explicitly requests them.**
 
-**If errors persist after 6 iterations:**
+## Auto-Fix Patterns Table
 
-```
-⚠️ App generated but validation found errors:
+| Error Type | Fix | Reference |
+|------------|-----|-----------|
+| Missing icon.svg | Create `app/styles/images/icon.svg` | Example 1 below |
+| Missing app/ | Create full structure | `app-building-blocking-gates.mdc` |
+| JSON syntax | Fix commas, merge objects | Example 2 below |
+| FQDN with path | Separate `host` and `path` | Example 3 below |
+| Template syntax | `{{var}}` → `<%= context.var %>` | `api-integration-examples.md` |
+| SMI uses return | Replace with `renderData()` | `event-smi-handlers.mdc` |
+| Handler name mismatch | Match manifest exactly | `event-smi-handlers.mdc` |
+| Async without await | Remove `async` | Example below |
+| Unused parameter | Remove entirely | Example below |
+| Unused variable | Remove declaration | Example below |
+| var usage | Replace with `const`/`let` | Example below |
+| Complexity > 7 | Use Sets, guards, extract helpers | `complexity-reduction.mdc` |
+| Helper before exports | Move AFTER exports | Example below |
 
-[LIST ALL REMAINING ERRORS]
+## Full Fix Examples
 
-🔧 **Suggested Fixes:**
-[SPECIFIC FIX INSTRUCTIONS FOR EACH ERROR]
-
-After fixing, run: `fdk validate`
-```
-
-## Common Auto-Fix Patterns
-
-### Fix 1: Missing icon.svg
-
+### Example 1: Missing icon.svg
 ```bash
-# Create with mandatory SVG template
 cat > app/styles/images/icon.svg << 'EOF'
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="8" fill="#4A90D9"/>
@@ -122,78 +111,29 @@ cat > app/styles/images/icon.svg << 'EOF'
 EOF
 ```
 
-### Fix 2: Async without await
-
-```javascript
-// ❌ WRONG
-exports = {
-  onAppInstallHandler: async function() {
-    console.log('Installed');
-  }
-};
-
-// ✅ CORRECT
-exports = {
-  onAppInstallHandler: function() {
-    console.log('Installed');
-  }
-};
-```
-
-### Fix 3: Unused parameter
-
-```javascript
-// ❌ WRONG
-onAppInstallHandler: function(args) {
-  console.log('Installed');
-}
-
-// ✅ CORRECT
-onAppInstallHandler: function() {
-  console.log('Installed');
-}
-```
-
-### Fix 4: Function complexity > 7
-
-```javascript
-// ❌ WRONG: Complexity 12
-if (p === '2' || p === '3' || p === 'high' || p === 'urgent') {
-  return true;
-}
-
-// ✅ CORRECT: Complexity 3
-const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
-if (HIGH_PRIORITIES.has(p)) {
-  return true;
-}
-```
-
-### Fix 5: Multiple top-level JSON objects
-
+### Example 2: Multiple top-level JSON objects
 ```json
-// ❌ WRONG
+// WRONG
 { "request1": {...} }
 { "request2": {...} }
 
-// ✅ CORRECT
+// CORRECT
 {
   "request1": {...},
   "request2": {...}
 }
 ```
 
-### Fix 6: FQDN with path
-
+### Example 3: FQDN with path
 ```json
-// ❌ WRONG
+// WRONG
 {
   "schema": {
     "host": "api.example.com/api/v2"
   }
 }
 
-// ✅ CORRECT
+// CORRECT
 {
   "schema": {
     "host": "api.example.com",
@@ -202,59 +142,94 @@ if (HIGH_PRIORITIES.has(p)) {
 }
 ```
 
-### Fix 7: Empty blocks in manifest
-
-```json
-// ❌ WRONG
-{
-  "modules": {
-    "common": {
-      "functions": {}
-    }
+### Example 4: Async without await
+```javascript
+// WRONG
+exports = {
+  onAppInstallHandler: async function() {
+    console.log('Installed');
   }
+};
+
+// CORRECT
+exports = {
+  onAppInstallHandler: function() {
+    console.log('Installed');
+  }
+};
+```
+
+### Example 5: Unused parameter
+```javascript
+// WRONG
+onAppInstallHandler: function(args) {
+  console.log('Installed');
 }
 
-// ✅ CORRECT (Option 1: Remove empty block)
-{
-  "modules": {
-    "common": {}
-  }
+// CORRECT
+onAppInstallHandler: function() {
+  console.log('Installed');
+}
+```
+
+### Example 6: Function complexity > 7
+```javascript
+// WRONG: Complexity 12
+if (p === '2' || p === '3' || p === 'high' || p === 'urgent') {
+  return true;
 }
 
-// ✅ CORRECT (Option 2: Add content)
-{
-  "modules": {
-    "common": {
-      "functions": {
-        "myFunction": {}
-      }
-    }
-  }
+// CORRECT: Complexity 3
+const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
+if (HIGH_PRIORITIES.has(p)) {
+  return true;
 }
 ```
 
 ## Critical Rules
 
 1. **NEVER mark app complete with ANY errors** (platform OR lint)
-2. **ALWAYS run `fdk validate` automatically** (don't ask user)
-3. **ALWAYS attempt up to 6 fix iterations**
-4. **ALWAYS re-run validation after each fix**
-5. **ALWAYS fix BOTH platform AND lint errors**
-6. **Helper functions MUST be AFTER exports block**
-7. **Remove unused parameters entirely** (not `_args`)
-8. **Remove `async` if no `await`** (don't add fake await)
+2. **NEVER say "validation passed" if errors exist**
+3. **ALWAYS run `fdk validate` automatically** (don't ask user)
+4. **ALWAYS log complete validation output every iteration**
+5. **ALWAYS show error count comparison** (current vs previous)
+6. **ALWAYS re-run validation after each fix**
+7. **STOP if no progress after 3 iterations**
+8. **Fix BOTH platform AND lint errors**
+9. **Helper functions MUST be AFTER exports block**
+10. **Remove unused parameters entirely** (not `_args`)
+11. **Remove `async` if no `await`** (don't add fake await)
+12. **NEVER use `var`** - use `const` or `let`
+13. **Remove unused variables** - don't declare if not used
+14. **Fix complexity > 7** - apply patterns from `complexity-reduction.mdc`
+
+## Error Reporting Format
+
+**ALWAYS use this format when reporting failures:**
+
+```
+❌ VALIDATION FAILED
+
+Platform Errors: [count]
+1. [File:Line] [Error message]
+2. [File:Line] [Error message]
+
+Lint Errors: [count]
+1. [File:Line] [Error message]
+2. [File:Line] [Error message]
+
+Status: BLOCKED - Cannot proceed until errors fixed
+```
 
 ## Validation Success Criteria
 
-✅ **Platform Errors: 0**
-✅ **Lint Errors: 0**
-✅ **All manifest-referenced files exist**
-✅ **All templates declared in manifest**
-✅ **All functions declared in manifest**
+**App is ONLY complete when ALL met:**
+- Platform Errors: 0 (BLOCKING)
+- Lint Errors: 0 (BLOCKING)
+- All manifest-referenced files exist (BLOCKING)
 
-## Related Rules
+**If ANY fails, app is INCOMPLETE.**
 
-- **app-building-blocking-gates.mdc** - Mandatory gates before completion
-- **complexity-reduction.mdc** - Fix complexity > 7
-- **async-patterns.mdc** - Fix async/await issues
-- **freshworks-platform3.mdc** - Platform 3.0 enforcement
+**More examples:** `references/validation-examples.md`
+
+**Related:** `app-building-blocking-gates.mdc`, `complexity-reduction.mdc`, `event-smi-handlers.mdc`, `lint-enforcement.mdc`

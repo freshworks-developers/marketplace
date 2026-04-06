@@ -153,9 +153,9 @@ try {
 ## When to Ask User vs Decide
 
 **Decide automatically when:**
-- ✅ One clear interpretation based on use case
-- ✅ Default choice is safe and common
-- ✅ User can easily change later
+- [VALID] One clear interpretation based on use case
+- [VALID] Default choice is safe and common
+- [VALID] User can easily change later
 
 **Ask user when:**
 - ❓ Multiple valid interpretations with different trade-offs

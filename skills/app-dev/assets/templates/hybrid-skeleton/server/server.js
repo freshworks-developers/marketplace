@@ -1,7 +1,7 @@
 exports = {
   fetchExternalData: async function(args) {
     const { param1 } = args;
-    
+
     try {
       const response = await $request.invokeTemplate('externalApiCall', {
         context: {
@@ -9,11 +9,11 @@ exports = {
         },
         body: JSON.stringify({ query: param1 })
       });
-      
-      return { success: true, data: response.response };
+
+      renderData(null, { success: true, data: response.response });
     } catch (error) {
-      console.error('API Error:', error);
-      return { success: false, error: error.message };
+      console.error('API Error:', error.message);
+      renderData({ status: 500, message: error.message });
     }
   }
 };

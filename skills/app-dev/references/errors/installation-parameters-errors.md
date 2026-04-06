@@ -155,7 +155,7 @@ In the '<field_name>' field, specify the default value for the dropdown type.
 
 The `default_value` field must EXACTLY match one of the option's `value` fields (case-sensitive, no extra spaces).
 
-**⚠️ Critical for AI Agents:**
+**[WARNING] Critical for AI Agents:**
 When generating dropdown iparams:
 1. **Never assume** - Always verify default_value is in options list
 2. **Match exact strings** - Case, spacing, special characters must be identical
@@ -171,7 +171,7 @@ When generating dropdown iparams:
 
 **Pitfall 1: Case Mismatch**
 ```json
-// ❌ WRONG
+// [INVALID] WRONG
 {
   "environment": {
     "type": "dropdown",
@@ -182,7 +182,7 @@ When generating dropdown iparams:
   }
 }
 
-// ✅ CORRECT
+// [VALID] CORRECT
 {
   "environment": {
     "type": "dropdown",
@@ -196,7 +196,7 @@ When generating dropdown iparams:
 
 **Pitfall 2: Using Label Instead of Value**
 ```json
-// ❌ WRONG - Using label text
+// [INVALID] WRONG - Using label text
 {
   "log_level": {
     "type": "dropdown",
@@ -208,7 +208,7 @@ When generating dropdown iparams:
   }
 }
 
-// ✅ CORRECT - Using value
+// [VALID] CORRECT - Using value
 {
   "log_level": {
     "type": "dropdown",
@@ -223,7 +223,7 @@ When generating dropdown iparams:
 
 **Pitfall 3: Value Not in Options List**
 ```json
-// ❌ WRONG - "all" doesn't exist in options
+// [INVALID] WRONG - "all" doesn't exist in options
 {
   "filter": {
     "type": "dropdown",
@@ -235,7 +235,7 @@ When generating dropdown iparams:
   }
 }
 
-// ✅ CORRECT - Default exists in options
+// [VALID] CORRECT - Default exists in options
 {
   "filter": {
     "type": "dropdown",
@@ -252,7 +252,7 @@ When generating dropdown iparams:
 
 All dropdown iparams MUST have a `default_value` field.
 
-**⚠️ Critical for AI Agents:**
+**[WARNING] Critical for AI Agents:**
 - **Never generate dropdown without default_value** - It is mandatory
 - **Do NOT assume** platform picks first option as default
 - **Do NOT assume** user will set it later
@@ -260,7 +260,7 @@ All dropdown iparams MUST have a `default_value` field.
 
 **Example - WRONG:**
 ```json
-// ❌ Missing default_value (mandatory field)
+// [INVALID] Missing default_value (mandatory field)
 {
   "report_type": {
     "type": "dropdown",
@@ -275,7 +275,7 @@ All dropdown iparams MUST have a `default_value` field.
 
 **Example - CORRECT:**
 ```json
-// ✅ Has default_value (required)
+// [VALID] Has default_value (required)
 {
   "report_type": {
     "type": "dropdown",

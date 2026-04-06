@@ -324,20 +324,21 @@ function triggerGitHubSync() {
 ## Step 3: Backend Job Processing in server.js
 
 Implement job logic through exported functions in server.js that handle the actual asynchronous processing. Job functions execute the core business logic including external API calls and data operations.
-The job function uses async/await patterns for external API calls and includes comprehensive error handling. The implementation fetches GitHub data, processes it for Freshservice integration, and returns appropriate success or error responses through renderData.
+Jobs do **not** return responses through `renderData()` — use `$job.updateStatusMessage(...)` for progress and rely on normal completion or logged errors.
 
 ```js
 exports = {
   syncGitHubUser: async function (args) {
     try {
+      await $job.updateStatusMessage("Fetching GitHub user...");
       const githubUser = await getGitHubUserData();
       console.log("GitHub User Data:", githubUser.response);
-      
+
       await createFreshserviceRequester();
-      renderData(null, { message: "GitHub user synced successfully." });
+      await $job.updateStatusMessage("GitHub user synced successfully.");
     } catch (error) {
-      console.error("Error syncing GitHub user:", error);
-      renderData(error, null);
+      console.error("Error syncing GitHub user:", error.message);
+      await $job.updateStatusMessage("Sync failed. Check logs.");
     }
   }
 };

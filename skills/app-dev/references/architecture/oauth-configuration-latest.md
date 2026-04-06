@@ -252,7 +252,7 @@ You can have up to 3 OAuth integrations:
 ### Error: "OAuth config must have required property 'integrations'"
 **Cause:** Missing `integrations` wrapper in `config/oauth_config.json`
 
-**❌ Wrong (Platform 2.x format):**
+**[INVALID] Wrong (Platform 2.x format):**
 ```json
 {
   "client_id": "...",
@@ -262,7 +262,7 @@ You can have up to 3 OAuth integrations:
 }
 ```
 
-**✅ Correct (Platform 3.0 format):**
+**[VALID] Correct (Platform 3.0 format):**
 ```json
 {
   "integrations": {
@@ -361,10 +361,10 @@ You can have up to 3 OAuth integrations:
 ```
 
 **Key Differences:**
-1. ✅ Wrapped in `integrations` object
-2. ✅ Each OAuth config has a unique name
-3. ✅ Added `display_name` attribute
-4. ✅ Supports multiple OAuth configurations
+1. [VALID] Wrapped in `integrations` object
+2. [VALID] Each OAuth config has a unique name
+3. [VALID] Added `display_name` attribute
+4. [VALID] Supports multiple OAuth configurations
 
 ## Best Practices
 

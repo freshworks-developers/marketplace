@@ -17,7 +17,7 @@ globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
 **Problem:** Each `||` or `===` adds +1 complexity
 
 ```javascript
-// ❌ WRONG: Complexity 12
+// [INVALID] WRONG: Complexity 12
 function matchesPriority(ticket, filter) {
   const p = (ticket.priority || ticket.urgency || 0).toString();
   if (filter.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) {
@@ -26,7 +26,7 @@ function matchesPriority(ticket, filter) {
   return false;
 }
 
-// ✅ CORRECT: Complexity 3
+// [VALID] CORRECT: Complexity 3
 const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
 
 function matchesPriority(ticket, filter) {
@@ -41,7 +41,7 @@ function matchesPriority(ticket, filter) {
 ### 2. Lookup Objects (Replace if/else chains)
 
 ```javascript
-// ❌ WRONG: Complexity 6+
+// [INVALID] WRONG: Complexity 6+
 function getPriorityLabel(priority) {
   if (priority === 1) return 'Low';
   else if (priority === 2) return 'Medium';
@@ -50,7 +50,7 @@ function getPriorityLabel(priority) {
   else return 'Unknown';
 }
 
-// ✅ CORRECT: Complexity 1
+// [VALID] CORRECT: Complexity 1
 const PRIORITY_LABELS = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Urgent' };
 
 function getPriorityLabel(priority) {
@@ -61,7 +61,7 @@ function getPriorityLabel(priority) {
 ### 3. Guard Clauses (Reduce nesting)
 
 ```javascript
-// ❌ WRONG: Complexity 5+ (nested conditions)
+// [INVALID] WRONG: Complexity 5+ (nested conditions)
 function processTicket(ticket) {
   if (ticket) {
     if (ticket.status === 'open') {
@@ -75,7 +75,7 @@ function processTicket(ticket) {
   return null;
 }
 
-// ✅ CORRECT: Complexity 4 (early returns)
+// [VALID] CORRECT: Complexity 4 (early returns)
 function processTicket(ticket) {
   if (!ticket) return null;
   if (ticket.status !== 'open') return null;
@@ -88,7 +88,7 @@ function processTicket(ticket) {
 ### 4. Extract Helper Functions
 
 ```javascript
-// ❌ WRONG: Complexity > 7 (nested logic)
+// [INVALID] WRONG: Complexity > 7 (nested logic)
 exports = {
   onConversationCreateHandler: async function(args) {
     if (condition1) {
@@ -101,7 +101,7 @@ exports = {
   }
 };
 
-// ✅ CORRECT: Extract helpers
+// [VALID] CORRECT: Extract helpers
 exports = {
   onConversationCreateHandler: async function(args) {
     const messageType = getMessageType(args);
@@ -122,7 +122,7 @@ async function handleByType(type, args) {
 ### 5. Functional Patterns (Replace loops with conditions)
 
 ```javascript
-// ❌ WRONG: Complexity 6+ (loop + conditions)
+// [INVALID] WRONG: Complexity 6+ (loop + conditions)
 function getUrgentTicketIds(tickets) {
   const result = [];
   for (let i = 0; i < tickets.length; i++) {
@@ -135,7 +135,7 @@ function getUrgentTicketIds(tickets) {
   return result;
 }
 
-// ✅ CORRECT: Complexity 1 (functional chain)
+// [VALID] CORRECT: Complexity 1 (functional chain)
 function getUrgentTicketIds(tickets) {
   return tickets
     .filter(t => t.status === 'open' && t.priority >= 3)
@@ -146,7 +146,7 @@ function getUrgentTicketIds(tickets) {
 ## Real-World Example: Filtering Tickets
 
 ```javascript
-// ❌ WRONG: Complexity 15+
+// [INVALID] WRONG: Complexity 15+
 function filterTickets(tickets, filters) {
   const result = [];
   for (let i = 0; i < tickets.length; i++) {
@@ -175,7 +175,7 @@ function filterTickets(tickets, filters) {
   return result;
 }
 
-// ✅ CORRECT: Complexity 3
+// [VALID] CORRECT: Complexity 3
 const VALID_PRIORITIES = new Set(['1', '2', '3', '4']);
 
 function filterTickets(tickets, filters) {

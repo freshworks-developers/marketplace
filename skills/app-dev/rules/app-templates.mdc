@@ -35,13 +35,40 @@ alwaysApply: false
 
 ## Template Usage Instructions
 
-### 1. Copy Template Files
+### 1. Analyze Requirements BEFORE Copying Template
+
+**CRITICAL: Do NOT blindly copy templates. Analyze what the app actually needs:**
+
+**Ask these questions:**
+- Does the app need to respond to product events? (e.g., onTicketCreate, onContactUpdate)
+- Does the app need app lifecycle handlers? (onAppInstall, onAppUninstall)
+- Does the app need SMI functions? (frontend calling backend)
+- Does the app need external API calls?
+- Does the app need OAuth?
+
+**Only include handlers that are actually needed for the use case.**
+
+### 2. Copy Template Files
 
 ```bash
 cp -r assets/templates/<template-name>/* <new-app-directory>/
 ```
 
-### 2. Customize for Product
+### 3. Remove Unnecessary Handlers
+
+**Templates contain EXAMPLE handlers. Remove handlers not needed for the use case:**
+
+**Example: "Display ticket details in sidebar"**
+- KEEP: SMI functions (if fetching data)
+- REMOVE: onTicketCreateHandler (not listening to events)
+- REMOVE: onAppInstall/onAppUninstall (unless storing config)
+
+**Example: "Send webhook when ticket is created"**
+- KEEP: onTicketCreateHandler
+- REMOVE: SMI functions (no frontend interaction)
+- REMOVE: onAppInstall/onAppUninstall (unless needed)
+
+### 4. Customize for Product
 
 Update `manifest.json` module names based on target product:
 
@@ -49,36 +76,36 @@ Update `manifest.json` module names based on target product:
 - **Freshservice:** `service_ticket`, `service_asset`, `service_change`
 - **Freshsales:** `deal`, `contact`, `account`, `lead`
 
-### 3. Verify Mandatory Files
+### 5. Verify Mandatory Files
 
 **Frontend apps MUST have:**
-- ✅ `app/index.html` with Crayons CDN
-- ✅ `app/scripts/app.js`
-- ✅ `app/styles/style.css`
-- ✅ `app/styles/images/icon.svg` (CRITICAL - validation fails without it)
-- ✅ `config/iparams.json` (can be empty `{}`)
+- [VALID] `app/index.html` with Crayons CDN
+- [VALID] `app/scripts/app.js`
+- [VALID] `app/styles/style.css`
+- [VALID] `app/styles/images/icon.svg` (CRITICAL - validation fails without it)
+- [VALID] `config/iparams.json` (can be empty `{}`)
 
 **Serverless apps MUST have:**
-- ✅ `server/server.js`
-- ✅ `config/iparams.json` (can be empty `{}`)
+- [VALID] `server/server.js`
+- [VALID] `config/iparams.json` (can be empty `{}`)
 
 **Hybrid apps MUST have:**
-- ✅ All frontend files
-- ✅ All serverless files
-- ✅ `config/requests.json` (if external APIs used)
+- [VALID] All frontend files
+- [VALID] All serverless files
+- [VALID] `config/requests.json` (if external APIs used)
 
 **OAuth apps MUST have:**
-- ✅ All hybrid files
-- ✅ `config/oauth_config.json` with `integrations` wrapper
+- [VALID] All hybrid files
+- [VALID] `config/oauth_config.json` with `integrations` wrapper
 
 ## Critical Template Rules
 
 ### Platform 3.0 Enforcement
 
-- ✅ Use `"platform-version": "3.0"`
-- ✅ Use `"modules"` structure (NOT `"product"`)
-- ✅ Use Crayons components (NOT plain HTML)
-- ✅ Use `$request.invokeTemplate()` (NOT `$request.post()`)
+- [VALID] Use `"platform-version": "3.0"`
+- [VALID] Use `"modules"` structure (NOT `"product"`)
+- [VALID] Use Crayons components (NOT plain HTML)
+- [VALID] Use `$request.invokeTemplate()` (NOT `$request.post()`)
 
 ### Mandatory Patterns
 
@@ -140,12 +167,57 @@ assets/templates/
 - **app-building-blocking-gates.mdc** - Validation gates before completion
 - **freshworks-platform3.mdc** - Platform 3.0 enforcement patterns
 - **security.mdc** - Security requirements for all templates
+- **lint-enforcement.mdc** - Lint rules for generated code
 
 ## Template Modification Guidelines
 
 When customizing templates:
 
-1. **Keep the base structure** - Don't remove mandatory files
-2. **Follow naming conventions** - Use kebab-case for directories
-3. **Validate early** - Run `fdk validate` after template copy
-4. **Reference, don't duplicate** - Point to these templates instead of copying code into other rules
+1. **Remove unnecessary handlers** - Templates are examples, not requirements
+2. **Keep the base structure** - Don't remove mandatory files
+3. **Follow naming conventions** - Use kebab-case for directories
+4. **Validate early** - Run `fdk validate` after template copy
+5. **Reference, don't duplicate** - Point to these templates instead of copying code into other rules
+
+## Handler Necessity Checklist
+
+**Before adding ANY handler to server.js, verify it's needed:**
+
+| Handler Type | When to Include | When to Remove |
+|--------------|----------------|----------------|
+| `onAppInstallHandler` | App needs to store config, create external resources, or validate setup | App has no setup requirements |
+| `onAppUninstallHandler` | App needs to clean up external resources or revoke tokens | App has no cleanup requirements |
+| `onTicketCreateHandler` | App responds to ticket creation events | App doesn't listen to ticket events |
+| `onContactUpdateHandler` | App responds to contact update events | App doesn't listen to contact events |
+| SMI functions (e.g., `fetchData`) | Frontend needs to call backend for data/processing | App is frontend-only or serverless-only |
+| Job functions | App needs scheduled background tasks | App has no scheduled tasks |
+
+## Parameter Requirements Validation
+
+**CRITICAL: Only declare parameters that the handler actually uses:**
+
+```javascript
+// [INVALID] WRONG: Declares args but never uses it
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('App installed');
+    renderData();
+  }
+};
+
+// [VALID] CORRECT: No parameter if not used
+exports = {
+  onAppInstallHandler: function() {
+    console.log('App installed');
+    renderData();
+  }
+};
+
+// [VALID] CORRECT: Parameter used
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('Installed for account:', args.iparams.account_id);
+    renderData();
+  }
+};
+```

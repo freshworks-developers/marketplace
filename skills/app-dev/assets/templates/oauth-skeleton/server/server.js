@@ -4,11 +4,11 @@ exports = {
       const response = await $request.invokeTemplate('getOAuthResource', {
         context: {}
       });
-      
-      return { success: true, data: response.response };
+
+      renderData(null, { success: true, data: response.response });
     } catch (error) {
-      console.error('OAuth API Error:', error);
-      return { success: false, error: error.message };
+      console.error('OAuth API Error:', error.message);
+      renderData({ status: 500, message: error.message });
     }
   }
 };

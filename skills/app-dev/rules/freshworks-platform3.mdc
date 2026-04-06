@@ -11,7 +11,7 @@ alwaysApply: true
 
 ## Immediate Rejection Patterns
 
-### ❌ NEVER Generate These (Platform 2.x)
+### [INVALID] NEVER Generate These (Platform 2.x)
 
 | Pattern | Platform 2.x (FORBIDDEN) | Platform 3.0 (REQUIRED) |
 |---------|--------------------------|-------------------------|
@@ -22,7 +22,7 @@ alwaysApply: true
 | UI components | `<button>`, `<input>`, `<select>` | `<fw-button>`, `<fw-input>`, `<fw-select>` |
 | OAuth structure | Flat config | `{ "integrations": { "service": {...} } }` |
 
-### ✅ ALWAYS Enforce These (Platform 3.0)
+### [VALID] ALWAYS Enforce These (Platform 3.0)
 
 1. **Manifest:** `"platform-version": "3.0"` with `"modules"` structure
 2. **Request Templates:** FQDN hosts only (no paths), use `<%= variable %>` syntax
@@ -35,7 +35,7 @@ alwaysApply: true
 ### Rule 1: Manifest Structure
 
 ```json
-// ❌ FORBIDDEN (Platform 2.x)
+// [INVALID] FORBIDDEN (Platform 2.x)
 {
   "platform-version": "2.3",
   "product": {
@@ -45,7 +45,7 @@ alwaysApply: true
   }
 }
 
-// ✅ REQUIRED (Platform 3.0)
+// [VALID] REQUIRED (Platform 3.0)
 {
   "platform-version": "3.0",
   "modules": {
@@ -60,12 +60,12 @@ alwaysApply: true
 ### Rule 2: Request Templates
 
 ```json
-// ❌ FORBIDDEN (whitelisted-domains)
+// [INVALID] FORBIDDEN (whitelisted-domains)
 {
   "whitelisted-domains": ["https://api.example.com"]
 }
 
-// ✅ REQUIRED (request templates)
+// [VALID] REQUIRED (request templates)
 // config/requests.json
 {
   "apiCall": {
@@ -90,12 +90,12 @@ alwaysApply: true
 ### Rule 3: Request API
 
 ```javascript
-// ❌ FORBIDDEN (Platform 2.x)
+// [INVALID] FORBIDDEN (Platform 2.x)
 const result = await $request.post('https://api.example.com/data', {
   headers: { 'Authorization': 'Bearer token' }
 });
 
-// ✅ REQUIRED (Platform 3.0)
+// [VALID] REQUIRED (Platform 3.0)
 const result = await $request.invokeTemplate('apiCall', {
   body: JSON.stringify({ data: 'value' })
 });
@@ -104,14 +104,14 @@ const result = await $request.invokeTemplate('apiCall', {
 ### Rule 4: UI Components
 
 ```html
-<!-- ❌ FORBIDDEN (Plain HTML) -->
+<!-- [INVALID] FORBIDDEN (Plain HTML) -->
 <button onclick="handleClick()">Click Me</button>
 <input type="text" id="name" />
 <select id="priority">
   <option value="1">Low</option>
 </select>
 
-<!-- ✅ REQUIRED (Crayons) -->
+<!-- [VALID] REQUIRED (Crayons) -->
 <fw-button id="btn">Click Me</fw-button>
 <fw-input id="name" placeholder="Enter name"></fw-input>
 <fw-select id="priority">
@@ -122,14 +122,14 @@ const result = await $request.invokeTemplate('apiCall', {
 ### Rule 5: OAuth Structure
 
 ```json
-// ❌ FORBIDDEN (Flat structure)
+// [INVALID] FORBIDDEN (Flat structure)
 {
   "client_id": "...",
   "client_secret": "...",
   "authorize_url": "..."
 }
 
-// ✅ REQUIRED (Integrations wrapper)
+// [VALID] REQUIRED (Integrations wrapper)
 {
   "integrations": {
     "service_name": {
@@ -157,20 +157,21 @@ const result = await $request.invokeTemplate('apiCall', {
 **App building MUST NOT complete without passing ALL gates:**
 
 ### Gate 1: Manifest Validation
-- ✅ `"platform-version": "3.0"`
-- ✅ `"modules"` structure (NOT `"product"`)
-- ✅ No `"whitelisted-domains"`
-- ✅ All locations/functions/requests declared
+- [VALID] `"platform-version": "3.0"`
+- [VALID] `"modules"` structure (NOT `"product"`)
+- [VALID] No `"whitelisted-domains"`
+- [VALID] All locations/functions/requests declared
 
 ### Gate 2: File Consistency
-- ✅ If manifest has `location` → Files MUST exist (app/, index.html, icon.svg)
-- ✅ If manifest has `functions` → server/server.js MUST exist with implementations
-- ✅ If manifest has `requests` → config/requests.json MUST exist
+- [VALID] If manifest has `location` → Files MUST exist (app/, index.html, icon.svg)
+- [VALID] If manifest has `functions` → server/server.js MUST exist with implementations
+- [VALID] If manifest has `requests` → config/requests.json MUST exist
+- [VALID] If manifest has `functions` or `events` → Every declared name MUST match `exports` in server.js; SMI MUST use `renderData()` (see `event-smi-handlers.mdc`)
 
 ### Gate 3: FDK Validation
-- ✅ `fdk validate` shows 0 platform errors
-- ✅ `fdk validate` shows 0 lint errors
-- ✅ No missing files, no structure errors
+- [VALID] `fdk validate` shows 0 platform errors
+- [VALID] `fdk validate` shows 0 lint errors
+- [VALID] No missing files, no structure errors
 
 ## Quick Decision Tree
 
@@ -189,6 +190,7 @@ Is this Platform 2.x pattern?
 - `app-building-blocking-gates.mdc` - Mandatory validation gates
 - `app-templates.mdc` - Template selection guide
 - `security.mdc` - Security enforcement
+- `event-smi-handlers.mdc` - SMI `renderData()`, events, manifest handler alignment
 - `validation-workflow.mdc` - Validation and auto-fix
 
 **This rule provides only critical enforcement. Reference SKILL.md for detailed patterns, examples, and API documentation.**
@@ -197,8 +199,10 @@ Is this Platform 2.x pattern?
 
 **You are NOT a tutor. You are a STRICT ENFORCEMENT LAYER.**
 
-- ❌ NEVER explain why Platform 2.x is wrong - just reject it
-- ❌ NEVER offer to "migrate" inline - reject and require Platform 3.0
-- ✅ ALWAYS enforce Platform 3.0 patterns
-- ✅ ALWAYS reference templates from `assets/templates/`
-- ✅ ALWAYS validate before marking complete
+- [INVALID] NEVER explain why Platform 2.x is wrong - just reject it
+- [INVALID] NEVER offer to "migrate" inline - reject and require Platform 3.0
+- [VALID] ALWAYS enforce Platform 3.0 patterns
+- [VALID] ALWAYS reference templates from `assets/templates/`
+- [VALID] ALWAYS validate before marking complete
+
+**Related:** `security.mdc`, `validation-workflow.mdc`, `app-building-blocking-gates.mdc`, `event-smi-handlers.mdc`, `lint-enforcement.mdc`

@@ -3,10 +3,10 @@
 ## Critical Requirements
 
 ### Must Have
-1. ✅ `"platform-version": "3.0"` - Always use 3.0, never 2.3 or 2.x
-2. ✅ `"modules"` structure - Never use legacy `"product"` structure  
-3. ✅ At least ONE product module in addition to `common` (even if empty `{}`)
-4. ✅ `"engines"` block with node and fdk versions
+1. [VALID] `"platform-version": "3.0"` - Always use 3.0, never 2.3 or 2.x
+2. [VALID] `"modules"` structure - Never use legacy `"product"` structure  
+3. [VALID] At least ONE product module in addition to `common` (even if empty `{}`)
+4. [VALID] `"engines"` block with node and fdk versions
 
 ### Example Minimal Manifest
 ```json
@@ -245,14 +245,14 @@ Required in all Platform 3.0 apps:
 
 When you run `fdk validate`, it checks:
 
-1. ✅ `platform-version` is "3.0"
-2. ✅ `modules` structure is present (not `product`)
-3. ✅ At least one product module exists
-4. ✅ `engines` block is defined
-5. ✅ All requests are declared in `modules.common.requests`
-6. ✅ All functions are declared in `modules.common.functions`
-7. ✅ Event handlers match declared events
-8. ✅ Locations are in correct modules (common vs product-specific)
+1. [VALID] `platform-version` is "3.0"
+2. [VALID] `modules` structure is present (not `product`)
+3. [VALID] At least one product module exists
+4. [VALID] `engines` block is defined
+5. [VALID] All requests are declared in `modules.common.requests`
+6. [VALID] All functions are declared in `modules.common.functions`
+7. [VALID] Event handlers match declared events
+8. [VALID] Locations are in correct modules (common vs product-specific)
 
 ## Common Validation Errors
 
@@ -270,7 +270,7 @@ When you run `fdk validate`, it checks:
 ### Error: "Invalid location(s) mentioned in modules"
 **Solution:** Move product-specific locations from `common` to product module:
 ```json
-❌ Wrong:
+[INVALID] Wrong:
 {
   "modules": {
     "common": {
@@ -281,7 +281,7 @@ When you run `fdk validate`, it checks:
   }
 }
 
-✅ Correct:
+[VALID] Correct:
 {
   "modules": {
     "common": {},

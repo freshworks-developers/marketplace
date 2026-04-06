@@ -321,10 +321,10 @@ exports = {
 **Cause:** Using deprecated `$request.post()` method  
 **Solution:** Use `$request.invokeTemplate()` instead:
 ```javascript
-// ❌ Wrong
+// [INVALID] Wrong
 $request.post('https://api.example.com/endpoint', options)
 
-// ✅ Correct
+// [VALID] Correct
 $request.invokeTemplate('templateName', { context: {}, body: JSON.stringify(data) })
 ```
 
@@ -336,7 +336,7 @@ $request.invokeTemplate('templateName', { context: {}, body: JSON.stringify(data
 
 ### Before (Platform 2.x - Deprecated)
 ```javascript
-// ❌ This no longer works
+// [INVALID] This no longer works
 $request.post('https://api.example.com/endpoint', {
   headers: {
     'Authorization': 'Bearer ' + apiKey

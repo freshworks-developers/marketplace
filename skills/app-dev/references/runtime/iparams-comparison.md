@@ -12,11 +12,11 @@ Every Freshworks Platform 3.0 app requires installation parameters configuration
 ## Default iparams (config/iparams.json)
 
 ### When to Use
-- ✅ Simple text fields, numbers, dropdowns, checkboxes
-- ✅ Basic validation with regex patterns
-- ✅ No dynamic behavior needed
-- ✅ Standard Settings form is sufficient
-- ✅ **Most common approach** - use this by default
+- [VALID] Simple text fields, numbers, dropdowns, checkboxes
+- [VALID] Basic validation with regex patterns
+- [VALID] No dynamic behavior needed
+- [VALID] Standard Settings form is sufficient
+- [VALID] **Most common approach** - use this by default
 
 ### Structure
 ```json
@@ -81,12 +81,12 @@ exports = {
 ## Custom iparams (config/iparams.html)
 
 ### When to Use
-- ✅ Rich UI needed (nested fields, mappers, sliders, date pickers)
-- ✅ Dynamic behavior (pre-fill from API, show/hide sections)
-- ✅ Custom validation logic
-- ✅ Different UI per product/module
-- ✅ "Test connection" or "Pick workspace" buttons
-- ✅ Call request templates from Settings page
+- [VALID] Rich UI needed (nested fields, mappers, sliders, date pickers)
+- [VALID] Dynamic behavior (pre-fill from API, show/hide sections)
+- [VALID] Custom validation logic
+- [VALID] Different UI per product/module
+- [VALID] "Test connection" or "Pick workspace" buttons
+- [VALID] Call request templates from Settings page
 
 ### Structure
 ```
@@ -197,10 +197,10 @@ Same as default iparams:
 
 ## Common Mistakes
 
-1. ❌ **Having both `iparams.json` AND `iparams.html`** → FDK validation error
-2. ❌ **Forgetting `postConfigs()` in custom iparams** → Settings won't save
-3. ❌ **Not marking sensitive fields in `__meta.secure`** → Credentials exposed to frontend
-4. ❌ **Using `iparam.json` filename** → Should be `iparams.json` (plural)
+1. [INVALID] **Having both `iparams.json` AND `iparams.html`** → FDK validation error
+2. [INVALID] **Forgetting `postConfigs()` in custom iparams** → Settings won't save
+3. [INVALID] **Not marking sensitive fields in `__meta.secure`** → Credentials exposed to frontend
+4. [INVALID] **Using `iparam.json` filename** → Should be `iparams.json` (plural)
 
 ## References
 
