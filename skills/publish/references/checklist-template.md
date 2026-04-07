@@ -335,8 +335,8 @@ Use this checklist to ensure your app is ready for marketplace submission.
 
 **Technical:**
 - Platform 3.0
-- Node.js 18 (recommended; we work on apps below too; suggest moving to latest)
-- FDK 9.8.2 (recommended)
+- Node.js 24 (recommended; we work on apps below too; suggest moving to latest)
+- FDK 10.8.2 (recommended)
 - **Roadmap:** Node 24 and FDK 10 after June
 - Validation passes
 - Coverage >= 80% (serverless)

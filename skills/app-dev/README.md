@@ -94,9 +94,8 @@ Invoke with `@app-dev` in chat, or it activates automatically when working on Fr
 ## Requirements
 
 - Cursor IDE
-- Node.js 18 (recommended; we work on apps below too; suggest moving to latest)
-- FDK 9.8.2 (recommended)
-- **Roadmap:** Node 24 and FDK 10 after June
+- Node.js 24 (recommended; we work on apps below too; suggest moving to latest)
+- FDK 10.0.0 (recommended)
 
 ## Support
 

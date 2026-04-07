@@ -132,8 +132,8 @@ NODE_DEBUG=fdk fdk pack
 **Error:**
 ```
 ⚠️  Node.js version mismatch
-   Current: 18.20.8
-   Manifest: 18.13.0
+   Current: 24.20.8
+   Manifest: 24.13.0
 ```
 
 **Cause:** Current Node.js version doesn't match manifest.json engines.node.
@@ -151,10 +151,10 @@ NODE_DEBUG=fdk fdk pack
 **Solution B: Switch Node.js version**
 ```bash
 # Using nvm
-nvm use 18.13.0
+nvm use 24.13.0
 
 # Or install specific version
-nvm install 18.13.0
+nvm install 24.13.0
 ```
 
 **Note:** FDK will prompt to update manifest automatically. If you continue, it will:

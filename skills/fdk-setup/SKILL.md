@@ -9,14 +9,14 @@ allowed-tools: ["shell", "read", "write", "task"]
 
 Complete automated FDK lifecycle management for macOS and Windows using subagents for complex multi-step operations.
 
-**RECOMMENDED VERSIONS: FDK v9.8.2, Node.js 18.** We work on apps below these too; we suggest moving to the latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
+**RECOMMENDED VERSIONS: FDK v9.8.2, Node.js 24.** We work on apps below these too; we suggest moving to the latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
 
 ## Usage
 
 ```bash
-/fdk-setup install          # Install FDK 9.8.2 with Node.js 18
+/fdk-setup install          # Install FDK 9.8.2 with Node.js 24
 /fdk-setup upgrade          # Upgrade to FDK 9.8.2 (or latest)
-/fdk-setup downgrade 9.6.0  # Downgrade to specific version
+/fdk-setup downgrade 10.0.0  # Downgrade to specific version
 /fdk-setup uninstall        # Remove FDK completely
 /fdk-setup                  # Check FDK status
 ```
@@ -31,7 +31,7 @@ Complete automated FDK lifecycle management for macOS and Windows using subagent
 4. Report results when subagent completes
 
 **Why Subagents:**
-- Complex multi-step operations (nvm + Node.js 18 + FDK setup)
+- Complex multi-step operations (nvm + Node.js 24 + FDK setup)
 - Parallel execution of independent checks
 - Isolated error handling per operation
 - Better progress tracking and logging
@@ -46,7 +46,7 @@ When user requests FDK setup, immediately call the Task tool:
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Install FDK with Node.js 18",
+  description: "Install FDK with Node.js 24",
   prompt: "..." // See operation-specific prompts below
 })
 ```
@@ -89,7 +89,7 @@ switch(operation) {
     // Spawn downgrade subagent with version (see Operation 3)
     if (!version) {
       // Ask user for version before spawning
-      return "Please specify version: /fdk-setup downgrade 9.6.0";
+      return "Please specify version: /fdk-setup downgrade 10.0.0";
     }
     break;
   case 'uninstall':
@@ -112,13 +112,13 @@ switch(operation) {
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Install FDK with Node.js 18",
-  prompt: `Install Freshworks Development Kit (FDK) with complete Node.js 18 setup.
+  description: "Install FDK with Node.js 24",
+  prompt: `Install Freshworks Development Kit (FDK) with complete Node.js 24 setup.
 
 REQUIREMENTS:
 1. Install nvm (Node Version Manager) if not present
-2. Install Node.js 18 (latest 18.x version) via nvm
-3. Set Node.js 18 as default for FDK (keep other versions intact)
+2. Install Node.js 24 (latest 24.x version) via nvm
+3. Set Node.js 24 as default for FDK (keep other versions intact)
 4. Install FDK CLI via npm
 5. Configure PATH and shell environment
 6. Verify installation
@@ -154,14 +154,14 @@ STEPS TO EXECUTE:
    nvm alias fdk 18
    nvm use 18
    
-   Verify: node --version (should show v18.x.x)
+   Verify: node --version (should show v24.x.x)
 
 4. CONFIGURE NVM FOR FDK:
    Create/update ~/.nvmrc in the FDK project directories with:
    18
    
    Add to shell config (~/.zshrc or ~/.bash_profile):
-   # FDK uses Node.js 18
+   # FDK uses Node.js 24
    export FDK_NODE_VERSION=18
    alias fdk-env='nvm use $FDK_NODE_VERSION'
 
@@ -184,7 +184,7 @@ STEPS TO EXECUTE:
 
 ERROR HANDLING:
 - If nvm install fails, provide manual installation URL
-- If Node.js 18 install fails, check disk space and network
+- If Node.js 24 install fails, check disk space and network
 - If FDK install fails, try alternative method (Homebrew vs npm)
 - If PATH issues, provide manual PATH configuration
 
@@ -206,7 +206,7 @@ Task({
 REQUIREMENTS:
 1. Check current FDK version
 2. Detect installation method (Homebrew vs npm)
-3. Ensure Node.js 18 is active
+3. Ensure Node.js 24 is active
 4. Upgrade FDK
 5. Verify upgrade success
 
@@ -215,11 +215,11 @@ STEPS TO EXECUTE:
 1. CHECK CURRENT STATE (parallel):
    - fdk version
    - brew list fdk 2>/dev/null (check if Homebrew install)
-   - node --version (ensure 18.x)
+   - node --version (ensure 24.x)
    - nvm current (check active Node version)
 
 2. ENSURE NODE.JS 18 ACTIVE:
-   If not on Node 18:
+   If not on Node 24:
    nvm use 18 || nvm use fdk
 
 3. UPGRADE FDK (TO 9.8.2):
@@ -247,7 +247,7 @@ Execute autonomously. Report old and new versions.`
 
 ### 3. Downgrade (`/fdk-setup downgrade <version>`)
 
-**Arguments:** Version number required (e.g., `9.6.0`, `9.7.4`)
+**Arguments:** Version number required (e.g., `10.0.0`, `10.0.0`)
 
 **Launch subagent with Task tool:**
 
@@ -261,7 +261,7 @@ Task({
 REQUIREMENTS:
 1. Parse target version from arguments
 2. Check current FDK version
-3. Ensure Node.js 18 is active
+3. Ensure Node.js 24 is active
 4. Uninstall current FDK
 5. Install target version
 6. Verify downgrade success
@@ -274,7 +274,7 @@ STEPS TO EXECUTE:
 
 2. CHECK CURRENT STATE (parallel):
    - fdk version (get current)
-   - node --version (ensure 18.x)
+   - node --version (ensure 24.x)
    - nvm current (check active Node)
 
 3. ENSURE NODE.JS 18 ACTIVE:
@@ -288,8 +288,8 @@ STEPS TO EXECUTE:
    IMPORTANT: CDN URL requires 'v' prefix
    npm install https://cdn.freshdev.io/fdk/v${VERSION}.tgz -g
    
-   Example: For version 9.6.0, use:
-   npm install https://cdn.freshdev.io/fdk/v9.6.0.tgz -g
+   Example: For version 10.0.0, use:
+   npm install https://cdn.freshdev.io/fdk/v10.0.0.tgz -g
 
 6. VERIFY DOWNGRADE:
    fdk version
@@ -362,7 +362,7 @@ STEPS TO EXECUTE:
 
 6. OUTPUT SUMMARY:
    Report: FDK uninstalled successfully
-   Note: Node.js 18 and nvm remain installed
+   Note: Node.js 24 and nvm remain installed
 
 ERROR HANDLING:
 - If permission denied, suggest sudo
@@ -412,18 +412,18 @@ STEPS TO EXECUTE:
 4. ANALYZE AND REPORT:
    ✓ FDK: version X.X.X
    ✓ Node.js: vX.X.X (via nvm)
-   ✓ Active nvm alias: fdk → 18.x.x
+   ✓ Active nvm alias: fdk → 24.x.x
    ✓ PATH configured correctly
    
    Or report issues:
    ✗ FDK not found
-   ✗ Node.js version < 18.13.0
+   ✗ Node.js version < 24.13.0
    ⚠ Multiple Node versions but no nvm
    
 5. RECOMMENDATIONS:
    If issues found, suggest:
    - Run /fdk-setup install
-   - Upgrade Node.js to 18.x
+   - Upgrade Node.js to 24.x
    - Configure nvm
 
 Execute autonomously. Report comprehensive status.`
@@ -441,24 +441,24 @@ Use Maestro template variables for context:
 
 Example: `/fdk-setup install` in project at `{{AGENT_PATH}}`
 
-## Node.js 18 and nvm Strategy
+## Node.js 24 and nvm Strategy
 
 **Why nvm:**
-- FDK requires Node.js 18.13.0 or later
+- FDK requires Node.js 24.13.0 or later
 - Users may have other Node versions for different projects
 - nvm allows switching between versions seamlessly
 - Keeps existing Node installations intact
 
 **Implementation:**
 1. Install nvm if not present
-2. Install Node.js 18 (latest 18.x) via nvm
-3. Create nvm alias `fdk` pointing to Node 18
-4. Set Node 18 as default when working with FDK
+2. Install Node.js 24 (latest 24.x) via nvm
+3. Create nvm alias `fdk` pointing to Node 24
+4. Set Node 24 as default when working with FDK
 5. Keep other Node versions available (20, 22, etc.)
 
 **Usage after setup:**
 ```bash
-nvm use fdk          # Switch to Node 18 for FDK work
+nvm use fdk          # Switch to Node 24 for FDK work
 nvm use 20           # Switch to Node 20 for other projects
 nvm use default      # Switch to system default
 ```
@@ -466,7 +466,7 @@ nvm use default      # Switch to system default
 **Shell Configuration:**
 Add to `~/.zshrc` or `~/.bash_profile`:
 ```bash
-# FDK uses Node.js 18
+# FDK uses Node.js 24
 export FDK_NODE_VERSION=18
 alias fdk-env='nvm use $FDK_NODE_VERSION'
 ```
@@ -476,11 +476,11 @@ alias fdk-env='nvm use $FDK_NODE_VERSION'
 | Error | Action |
 |-------|--------|
 | nvm not installed | Install nvm automatically via curl script |
-| Node.js < 18.13.0 | Install Node 18 via nvm |
+| Node.js < 24.13.0 | Install Node 24 via nvm |
 | FDK already installed | Report version, ask if upgrade needed |
 | Permission denied | Suggest: `sudo` (macOS) or Administrator (Windows) |
 | Network error | Retry once, then report |
-| Invalid version | List common versions: 9.8.2, 9.7.4, 9.6.0 |
+| Invalid version | List common versions: 9.8.2, 10.0.0, 10.0.0 |
 | nvm install fails | Provide manual installation URL |
 
 ## Success Output
@@ -488,8 +488,8 @@ alias fdk-env='nvm use $FDK_NODE_VERSION'
 ```
 ✓ Detected: macOS (darwin)
 ✓ nvm installed: v0.40.1
-✓ Node.js 18 installed: v18.20.8
-✓ nvm alias 'fdk' → 18.20.8
+✓ Node.js 24 installed: v24.20.8
+✓ nvm alias 'fdk' → 24.20.8
 ✓ FDK installed via npm: 9.8.2
 ✓ Configured PATH in ~/.zshrc
 ✓ Environment variables set
@@ -497,7 +497,7 @@ alias fdk-env='nvm use $FDK_NODE_VERSION'
 FDK Setup Complete!
 
 Node.js versions available:
-  → v18.20.8 (default for FDK)
+  → v24.20.8 (default for FDK)
     v20.11.0
     v22.1.0
 
@@ -535,30 +535,30 @@ Task({
 
 ## Important Notes
 
-### Node.js 18 and FDK 9.8.2 (Recommended)
+### Node.js 24 and FDK 9.8.2 (Recommended)
 
-- **FDK v9.8.2 and Node.js 18 are recommended** for Freshworks Platform 3.0 development
+- **FDK v9.8.2 and Node.js 24 are recommended** for Freshworks Platform 3.0 development
 - We work on apps below these versions too; suggest moving to latest when feasible
 - **Roadmap:** Node 24 and FDK 10 after June
 
 ### nvm Benefits
 
-- **Version isolation** - Keep Node 18 for FDK, other versions for other projects
+- **Version isolation** - Keep Node 24 for FDK, other versions for other projects
 - **Easy switching** - `nvm use 18` vs `nvm use 20`
 - **No conflicts** - Each version has its own global npm packages
 - **Project-specific** - `.nvmrc` files auto-switch versions per project
 
 ### PATH and Environment
 
-After nvm + Node 18 + FDK installation:
+After nvm + Node 24 + FDK installation:
 
 **macOS/Linux:**
-- nvm manages Node.js binaries in `~/.nvm/versions/node/v18.x.x/bin/`
-- npm global packages in `~/.nvm/versions/node/v18.x.x/lib/node_modules/`
-- FDK binary at `~/.nvm/versions/node/v18.x.x/bin/fdk`
+- nvm manages Node.js binaries in `~/.nvm/versions/node/v24.x.x/bin/`
+- npm global packages in `~/.nvm/versions/node/v24.x.x/lib/node_modules/`
+- FDK binary at `~/.nvm/versions/node/v24.x.x/bin/fdk`
 
 **Windows:**
-- nvm-windows manages Node.js in `C:\Users\<User>\AppData\Roaming\nvm\v18.x.x\`
+- nvm-windows manages Node.js in `C:\Users\<User>\AppData\Roaming\nvm\v24.x.x\`
 - npm global packages in `%APPDATA%\npm\`
 - FDK binary at `%APPDATA%\npm\fdk.cmd`
 
@@ -567,12 +567,12 @@ After nvm + Node 18 + FDK installation:
 The subagent will:
 - **Never remove** existing Node installations
 - **Never change** default Node version (unless user has no default)
-- **Create alias** `fdk` pointing to Node 18
+- **Create alias** `fdk` pointing to Node 24
 - **Keep** Node 20, 22, or any other versions intact
 
 Users can switch anytime:
 ```bash
-nvm use fdk    # Node 18 for FDK
+nvm use fdk    # Node 24 for FDK
 nvm use 20     # Node 20 for other work
 nvm use 22     # Node 22 for cutting-edge projects
 ```

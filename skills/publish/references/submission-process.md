@@ -287,8 +287,8 @@ Complete guide to submitting apps to the Freshworks Marketplace.
 
 ### Technical Requirements
 - ✅ Platform 3.0
-- ✅ FDK 9.8.2 (recommended; we work on apps below too; suggest moving to latest)
-- ✅ Node.js 18 (recommended)
+- ✅ FDK 10.8.2 (recommended; we work on apps below too; suggest moving to latest)
+- ✅ Node.js 24 (recommended)
 - ✅ Validation passes
 - ✅ Coverage >= 80% (serverless)
 - ✅ Package < 50 MB (recommended)

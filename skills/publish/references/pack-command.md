@@ -70,8 +70,8 @@ fdk pack --skip-coverage
 ## Prerequisites
 
 ### Required
-- ✅ Node.js 18 (recommended)
-- ✅ FDK 9.8.2 (recommended; we work on apps below too; suggest moving to latest)
+- ✅ Node.js 24 (recommended)
+- ✅ FDK 10.8.2 (recommended; we work on apps below too; suggest moving to latest)
 - ✅ Valid manifest.json (Platform 3.0)
 - ✅ App passes `fdk validate`
 
