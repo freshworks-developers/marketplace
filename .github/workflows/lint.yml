@@ -17,6 +17,7 @@ jobs:
       - name: Lint Markdown files
         uses: DavidAnson/markdownlint-cli2-action@v18
         with:
+          config: .github/linters/.markdownlint.json
           globs: |
             **/*.md
             !node_modules
@@ -33,7 +34,7 @@ jobs:
         uses: ibiqlik/action-yamllint@v3
         with:
           file_or_dir: .github/workflows/
-          config_file: .yamllint.yml
+          config_file: .github/linters/.yamllint.yml
           strict: true
 
   shellcheck:
