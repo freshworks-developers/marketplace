@@ -52,8 +52,7 @@ marketplace/
 │   │   ├── commands/         # Slash commands (/migrate, /review, etc.)
 │   │   ├── references/       # Documentation loaded on-demand
 │   │   └── assets/           # Templates and resources
-│   ├── fdk-setup/            # FDK installation skill
-│   └── publish/              # Marketplace publishing skill
+│   └── app-dev/              # App development skill
 ├── scripts/                  # Build and utility scripts
 ├── CLAUDE.md                 # Claude Code workspace configuration
 ├── CODE_OF_CONDUCT.MD        # Community guidelines

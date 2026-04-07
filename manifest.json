@@ -221,36 +221,6 @@
         "references/ui/crayons-docs/user.md",
         "scripts/cleanup_old_rules.sh"
       ]
-    },
-    "fdk-setup": {
-      "version": "1.0.0",
-      "updated_at": "2026-02-26T10:16:31Z",
-      "files": [
-        "README.md",
-        "SKILL.md",
-        "assets/logo.svg",
-        "references/macos.md",
-        "references/windows.md"
-      ]
-    },
-    "publish": {
-      "version": "1.0.0",
-      "updated_at": "2026-02-26T10:16:31Z",
-      "files": [
-        ".skillignore",
-        "OVERVIEW.md",
-        "README.md",
-        "SKILL.md",
-        "assets/logo.svg",
-        "references/checklist-template.md",
-        "references/coverage-requirements.md",
-        "references/marketplace-requirements.md",
-        "references/pack-command.md",
-        "references/quick-reference.md",
-        "references/submission-process.md",
-        "references/troubleshooting.md",
-        "references/workflow-diagram.md"
-      ]
     }
   }
 }

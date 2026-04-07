@@ -6,13 +6,13 @@
   <img src="https://img.shields.io/badge/Platform-3.0-blue?style=for-the-badge" alt="Platform 3.0">
   <img src="https://img.shields.io/badge/Cursor-Skill-00a67e?style=for-the-badge" alt="Cursor Skill">
   <img src="https://img.shields.io/badge/Crayons-4.x-00a67e?style=for-the-badge" alt="Crayons">
-  <img src="https://img.shields.io/badge/FDK-9.x-0052cc?style=for-the-badge" alt="FDK">
+  <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=for-the-badge" alt="FDK">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-18.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/FDK-9.8.2-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
+  <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/FDK-10.0.0-0052cc?style=flat-square" alt="FDK">
+  <img src="https://img.shields.io/badge/Multi_IDE-Support-764abc?style=flat-square" alt="Multi-IDE">
 </p>
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
@@ -41,42 +41,31 @@ In Cursor Agent chat, add the marketplace and install:
 
 Or search for "freshworks" in the plugin marketplace.
 
-### npx skills (individual skills)
+### npx skills
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill app-dev
-npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill fdk-setup
-npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill publish
+npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
 ```
 
 
-## Available Skills
+## App Development Skill
 
-| Skill | Description | Execution Mode |
-|-------|-------------|----------------|
-| [**freshworks-app-dev-skill**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
-| [**freshworks-fdk-setup-skill**](skills/fdk-setup/) | Automated FDK installation with Node.js 18 via nvm using subagents | **Subagent-Based** |
-| [**freshworks-publish-skill**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
-
-### Subagent-Based Skills
-
-The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations:
+[**freshworks-app-dev-skill**](skills/app-dev/) - Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications.
 
 **Features:**
-- ✅ **nvm Integration** - Manages Node.js 18 alongside other versions
-- ✅ **Version Isolation** - FDK uses Node 18, other projects keep their versions
-- ✅ **Autonomous Execution** - No user intervention required
-- ✅ **Parallel Checks** - Fast prerequisite validation
-- ✅ **Error Recovery** - Automatic retry and fallback strategies
-- ✅ **Progress Tracking** - Real-time status updates
+- ✅ **Platform 3.0 Enforcement** - Zero tolerance for legacy patterns
+- ✅ **Validation-Driven** - Iterates until `fdk validate` shows zero errors
+- ✅ **Manifest Generation** - Auto-generates correct Platform 3.0 manifests
+- ✅ **OAuth Integration** - Full support for OAuth 2.0 configuration
+- ✅ **Request Templates** - Proper request template syntax and validation
+- ✅ **Crayons UI** - Integrated Crayons 4.x component support
 
-**Operations:**
+**Commands:**
 ```bash
-/fdk-setup install          # Spawns subagent: nvm → Node 18 → FDK
-/fdk-setup upgrade          # Spawns subagent: ensure Node 18 → upgrade FDK
-/fdk-setup downgrade 9.6.0  # Spawns subagent: ensure Node 18 → downgrade FDK only
-/fdk-setup uninstall        # Spawns subagent: remove FDK (keep Node/nvm)
-/fdk-setup                  # Spawns subagent: status check
+/app-dev                    # General app development assistance
+/fdk-fix                    # Fix validation errors
+/fdk-migrate                # Migrate Platform 2.x to 3.0
+/fdk-review                 # Review manifest and configs
 ```
 
 ## Structure
@@ -84,13 +73,13 @@ The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagen
 
 ```
 marketplace/
-├── .cursor/rules/     # Plugin rules (shared across skills)
+├── .cursor/
+│   ├── rules/         # Platform 3.0 enforcement rules
+│   └── agents/        # Specialized agents
 ├── .claude-plugin/    # Claude Code plugin config
 ├── .cursor-plugin/    # Cursor plugin config
-├── skills/
-│   ├── app-dev/       # App development skill
-│   ├── fdk-setup/     # FDK installation skill
-│   └── publish/       # Publishing skill
+└── skills/
+    └── app-dev/       # App development skill
 ```
 
 Each skill follows the Agent Skills Specification:
