@@ -1,5 +1,5 @@
 >title: toggle - Usage in HTML
->tags: 
+>tags:
 >context: toggle
 >content:
 
@@ -13,7 +13,7 @@
 
 ---
 >title: toggle - Usage in React
->tags: 
+>tags:
 >context: toggle, react
 >content:
 
@@ -34,7 +34,7 @@ return (<div>
 
 ---
 >title: Usage in toggle
->tags: 
+>tags:
 >context: toggle
 >content:
 
@@ -44,7 +44,7 @@ return (<div>
 <!-- Auto Generated Below -->
 ---
 >title: Properties in toggle
->tags: 
+>tags:
 >context: toggle
 >content:
 
@@ -95,7 +95,7 @@ Type: `"large" \| "medium" \| "small"`
 Default: `'medium'`
 ---
 >title: Events in toggle
->tags: 
+>tags:
 >context: toggle
 >content:
 
@@ -109,12 +109,12 @@ Description: Triggered when the input control is selected or deselected.
 Type: `CustomEvent<any>`
 ---
 >title: How to use toggle in crayons ?
->tags: 
+>tags:
 >context: toggle
 >content:
 
 # Toggle (fw-toggle)
-fw-toggle displays an input control that enables modifying an element’s state between two settings. 
+fw-toggle displays an input control that enables modifying an element’s state between two settings.
 ## Demo
 ```html live
 <fw-toggle size="small"></fw-toggle><br><br>

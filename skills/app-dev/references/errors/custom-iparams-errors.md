@@ -362,12 +362,12 @@ Since client.interface object is not accessible on iparams.html, this error migh
 
 ---
 
->title: Why am I facing Uncaught TypeError: Cannot read properties of undefined while using client.request.invokeTemplate method. 
+>title: Why am I facing Uncaught TypeError: Cannot read properties of undefined while using client.request.invokeTemplate method.
 >tags: custom-iparams,custom-installation-parameters
 >context: app.js, server.js
 >code:
 
-# Why am I facing Uncaught TypeError: Cannot read properties of undefined while using client.request.invokeTemplate method. 
+# Why am I facing Uncaught TypeError: Cannot read properties of undefined while using client.request.invokeTemplate method.
 
 This error might occur if app is not initialized. Please refer to the sample code given below to initialise the app:
 

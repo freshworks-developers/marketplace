@@ -1,11 +1,11 @@
 >title: what is support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk
->context: 
+>context:
 >content:
 
 # what is support portal module in Freshdesk
 
-An app user with a stand-alone Freshdesk subscription or a subscription to any SKU that has Freshdesk as one of the products can use this module. Using this module you can build a front end app, a serverless app and also a full stack SMI app for Freshdesk Ticket feature. The front end and SMI apps is deployed on the supported product’s left-navigation pane. The app cannot be deployed on any other pages of the product.	 
+An app user with a stand-alone Freshdesk subscription or a subscription to any SKU that has Freshdesk as one of the products can use this module. Using this module you can build a front end app, a serverless app and also a full stack SMI app for Freshdesk Ticket feature. The front end and SMI apps is deployed on the supported product’s left-navigation pane. The app cannot be deployed on any other pages of the product.
 
 ---
 
@@ -31,7 +31,7 @@ It supports following Common placeholders. In the app manifest, configure these 
 
 # how to use placeholders supported for support portal module in Freshdesk
 
-To use the placeholders modify your `manifest.json` as below 
+To use the placeholders modify your `manifest.json` as below
 ```json
 {
   "platform-version": "3.0",
@@ -57,7 +57,7 @@ To use the placeholders modify your `manifest.json` as below
 
 >title: data methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, data_method
->context: 
+>context:
 >content:
 
 # data methods supported for support portal module in Freshdesk
@@ -73,7 +73,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk
->context: 
+>context:
 >content:
 
 # example of data method usage supported for support portal module in Freshdesk
@@ -114,7 +114,7 @@ getLoggedInUserData();
 
 >title: what are events methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for support portal module in Freshdesk
@@ -132,7 +132,7 @@ An app deployed at cti_global_sidebar can react to the `cti.triggerDialer` event
 
 >title: how to use events methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # how to use events methods supported for support portal module in Freshdesk
@@ -156,7 +156,7 @@ To use `cti.triggerDialer` use the following code:
 
 >title: what are interface methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for support portal module in Freshdesk
@@ -174,7 +174,7 @@ The following methods are supported
 
 >title: how to use interface methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for support portal module in Freshdesk
@@ -185,7 +185,7 @@ The following methods are supported
 try {
   let data = client.interface.trigger('showDialog', {
     title: 'Sample Dialog',
-    template: 'dialog.html' 
+    template: 'dialog.html'
   });
   console.log(data); // success message
 } catch (error) {
@@ -209,7 +209,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for support portal module in Freshdesk
@@ -225,7 +225,7 @@ client.interface.trigger("showNotify", {
 
 >title: how to use instance methods supported for support portal module in Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for support portal module in Freshdesk
@@ -530,7 +530,7 @@ exports = {
 
 >title: what are the REST APIs supported by support portal module of Freshdesk
 >tags: module=support_portal, support_portal, freshdesk, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by support portal module of Freshdesk

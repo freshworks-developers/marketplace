@@ -1,6 +1,6 @@
 >title: what is support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk
->context: 
+>context:
 >content:
 
 # What is support company module in Freshdesk
@@ -37,7 +37,7 @@ It supports following Module-specific placeholders. In the app manifest, configu
 
 # How to use placeholders supported for support company module in Freshdesk
 
-To use the Support ticket placeholder modify your `manifest.json` as below 
+To use the Support ticket placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -164,7 +164,7 @@ client.events.on('app.activated', () => {
 
 >title: data methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, data_method
->context: 
+>context:
 >content:
 
 # Data methods supported for support company module in Freshdesk
@@ -177,7 +177,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk
->context: 
+>context:
 >content:
 
 # Example of data method usage supported for support company module in Freshdesk
@@ -218,7 +218,7 @@ getLoggedInUserData();
 
 >title: what are events methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # What are events methods supported for support company module in Freshdesk
@@ -234,7 +234,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 
 >title: how to use events methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # How to use events methods supported for support company module in Freshdesk
@@ -258,7 +258,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 
 >title: what are interface methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # What are interface methods supported for support company module in Freshdesk
@@ -281,7 +281,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 
 >title: how to use interface methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # How to use interface methods supported for support company module in Freshdesk
@@ -328,7 +328,7 @@ client.interface.trigger("show", {id: "<element-name>"})
 
 >title: what are instance methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # What are instance methods supported for support company module in Freshdesk
@@ -342,7 +342,7 @@ Communicate between instances - Use the `context()`, `send()`, `receive()`, or `
 
 >title: how to use instance methods supported for support company module in Freshdesk
 >tags: module=support_company, support_company, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # How to use instance methods supported for support company module in Freshdesk
@@ -619,7 +619,7 @@ exports = {
 
 >title: what are the REST APIs supported by support company module of Freshdesk
 >tags: module=support_company, support_company, freshdesk, rest_api
->context: 
+>context:
 >content:
 
 # What are the REST APIs supported by support company module of Freshdesk

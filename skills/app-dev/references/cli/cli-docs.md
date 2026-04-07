@@ -10,7 +10,7 @@ When the request method invokes APIs that are slow and require longer timeouts b
 Specify the time in milliseconds after which a Request Method call times out during local testing.
 
 While configuring the request timeout locally, the valid values for timeout are 15000 (default value), 20000, 25000 and 30000.
-If you specify a `REQUEST_TIMEOUT` value that breaches the min or max limits, the timeout is defaulted to the min or max value and a warning message is displayed. 
+If you specify a `REQUEST_TIMEOUT` value that breaches the min or max limits, the timeout is defaulted to the min or max value and a warning message is displayed.
 
 ```sh
 [REQUEST_TIMEOUT=<timeout in milliseconds>] fdk run

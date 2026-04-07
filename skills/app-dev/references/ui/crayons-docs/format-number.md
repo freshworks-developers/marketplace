@@ -1,5 +1,5 @@
 >title: format-number - Usage in HTML
->tags: 
+>tags:
 >context: format-number
 >content:
 
@@ -31,7 +31,7 @@ CNY: <fw-format-number type="currency" currency="CNY" value="5000" locale="zh-cn
 
 ---
 >title: format-number - Usage in React
->tags: 
+>tags:
 >context: format-number, react
 >content:
 
@@ -70,17 +70,17 @@ German: <FwFormatNumber value={2000} locale="de" minimum-fraction-digits={2}></F
 
 ---
 >title: Usage in format-number
->tags: 
+>tags:
 >context: format-number
 >content:
 
 # Format Number (fw-format-number)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in format-number
->tags: 
+>tags:
 >context: format-number
 >content:
 
@@ -173,7 +173,7 @@ Type: `number`
 Default: `0`
 ---
 >title: How to use format-number in crayons ?
->tags: 
+>tags:
 >context: format-number
 >content:
 
@@ -205,7 +205,7 @@ You should also specify `locale` attribute to ensure the the number is formatted
 <div>GBP: <fw-format-number type="currency" currency="GBP" value="5000" locale="en-GB"></fw-format-number><br></div>
 <div>EUR: <fw-format-number type="currency" currency="EUR" value="5000" locale="de"></fw-format-number><br></div>
 <div>CNY: <fw-format-number type="currency" currency="CNY" value="5000" locale="zh-cn"></fw-format-number></div>
-  
+
 ```
 <!-- Auto Generated Below -->
 

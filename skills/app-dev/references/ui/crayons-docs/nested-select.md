@@ -1,5 +1,5 @@
 >title: nested-select - Usage in HTML
->tags: 
+>tags:
 >context: nested-select
 >content:
 
@@ -91,7 +91,7 @@ nestedSelectEl.selectProps = selectProps;
 
 ---
 >title: nested-select - Usage in React
->tags: 
+>tags:
 >context: nested-select, react
 >content:
 
@@ -189,17 +189,17 @@ selectProps={selectProps}
 
 ---
 >title: Usage in nested-select
->tags: 
+>tags:
 >context: nested-select
 >content:
 
 # fw-nested-select
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in nested-select
->tags: 
+>tags:
 >context: nested-select
 >content:
 
@@ -292,7 +292,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in nested-select
->tags: 
+>tags:
 >context: nested-select
 >content:
 
@@ -306,7 +306,7 @@ Description: Triggered when nested selection doesn't have choices
 Type: `CustomEvent<any>`
 ---
 >title: How to use nested-select in crayons ?
->tags: 
+>tags:
 >context: nested-select
 >content:
 
@@ -319,7 +319,7 @@ fw-nested-select allows to display nested dropdown choices
   name='country'
   label='Country'
   placeholder='select Country'
-  
+
 ></fw-nested-select>
 <script type="application/javascript">
   var nestedChoicesSource = [{
@@ -386,7 +386,7 @@ fw-nested-select allows to display nested dropdown choices
       },
     ],
   }];
-  
+
   // Initialize default values
   var selectProps = (name) => ({ value: initialValues[name] || '' });
   var nestedSelectEl = document.getElementById('nestedSelect');
@@ -395,6 +395,6 @@ fw-nested-select allows to display nested dropdown choices
 </script>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

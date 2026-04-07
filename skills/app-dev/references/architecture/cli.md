@@ -1,6 +1,6 @@
 >title: Detailed instructions for Installing the Freshworks CLI
 >tags: cli, fdk, instructions
->context: 
+>context:
 >content:
 
 # Detailed instructions for Installing the Freshworks CLI
@@ -10,7 +10,7 @@ For detailed instructions to install the Freshworks CLI, kindly follow the steps
 ---
 >title: Install the Freshworks CLI
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # Install the Freshworks CLI
@@ -30,7 +30,7 @@ For detailed instructions to install the Freshworks CLI, kindly follow the steps
 ---
 >title: what are Freshworks CLI commands
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # what are Freshworks CLI commands
@@ -49,7 +49,7 @@ The general commands are `create`, `generate`, `run`, `validate`, `pack`, `versi
 ---
 >title: the command help section for fdk
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # the command help section for fdk
@@ -71,7 +71,7 @@ $ fdk create --app-dir ./myfirstapp --template serverless-starter-template
 ---
 >title: how to get detailed logs or skip version updates
 >tags: cli, fdk, commands, logs
->context: 
+>context:
 >content:
 
 # how to get detailed logs or skip version updates
@@ -99,7 +99,7 @@ fdk -u run
 ---
 >title: The Create Command
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # The Create Command
@@ -121,7 +121,7 @@ fdk create --app-dir /Users/user/myfirstapp --template serverless-starter-templa
 ---
 >title: The FDK CLI Generate Command and its attributes
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # The FDK CLI Generate Command and its attributes
@@ -145,7 +145,7 @@ fdk generate
 ---
 >title: The `fdk run` command to run and test an app
 >tags: cli, fdk, commands, run
->context: 
+>context:
 >content:
 
 # The `fdk run` command to run and test an app
@@ -175,7 +175,7 @@ Open the respective page of the Freshworks products to open the app. Add `?dev=t
 ---
 >title: Run fdk in local with configured request time out
 >tags: cli, fdk, request, run
->context: 
+>context:
 >content:
 
 # Run fdk in local with configured request time out
@@ -197,7 +197,7 @@ REQUEST_TIMEOUT=20000 fdk run
 ---
 >title: The fdk validate command
 >tags: cli, fdk, commands
->context: 
+>context:
 >content:
 
 # The fdk validate command
@@ -216,7 +216,7 @@ fdk validate -fix
 ---
 >title: Conditions of validate command
 >tags: cli, fdk-validate, commands, validate
->context: 
+>context:
 >content:
 
 # Conditions of validate command
@@ -232,7 +232,7 @@ fdk validate -fix
 ---
 >title: how to pack or bundle your application
 >tags: cli, fdk, commands, pack
->context: 
+>context:
 >content:
 
 # how to pack or bundle your application
@@ -251,7 +251,7 @@ fdk pack -d /user/myFirstApp
 ---
 >title: Usage of version check, search, test
 >tags: cli, fdk, commands, check, search, test
->context: 
+>context:
 >content:
 
 # Usage of version check, search, test

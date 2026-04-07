@@ -121,18 +121,18 @@ config/
    ```javascript
    (async function() {
      const client = await app.initialized();
-     
+
      // Load saved values
      client.instance.context().then(context => {
        document.getElementById('apiKey').value = context.api_key || '';
      });
-     
+
      // Test connection button
      document.getElementById('testConnection').addEventListener('fwClick', async () => {
        const apiKey = document.getElementById('apiKey').value;
        // Call request template or validation logic
      });
-     
+
      // Save values - REQUIRED
      function postConfigs() {
        return {

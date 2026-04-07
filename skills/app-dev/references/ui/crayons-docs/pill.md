@@ -1,5 +1,5 @@
 >title: Styling Pills with custom icons or images in pill
->tags: 
+>tags:
 >context: pill
 >content:
 
@@ -14,14 +14,14 @@ Crayons custom icon
 ```
 ---
 >title: Styling Pills with custom CSS in pill
->tags: 
+>tags:
 >context: pill
 >content:
 
 # Pill (fw-pill)
 ## Demo
 ### Styling Pills with custom CSS
-Pill can be customized with custom colors by using custom CSS properties listed further below in the page.  
+Pill can be customized with custom colors by using custom CSS properties listed further below in the page.
 ```html live
 <fw-pill
 style="--fw-pill-background-color: #fff;--fw-pill-border: 1px solid gray;--fw-pill-padding: 4px 12px 4px 8px;"
@@ -32,7 +32,7 @@ Custom Styled Pill
 ```
 ---
 >title: pill - Usage in HTML
->tags: 
+>tags:
 >context: pill
 >content:
 
@@ -68,7 +68,7 @@ Archived
 
 ---
 >title: pill - Usage in React
->tags: 
+>tags:
 >context: pill, react
 >content:
 
@@ -87,21 +87,21 @@ Meta Information
 </FwPill>
 </div>);
 }
-````  
+````
 
 ---
 >title: Usage in pill
->tags: 
+>tags:
 >context: pill
 >content:
 
 # Pill (fw-pill)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in pill
->tags: 
+>tags:
 >context: pill
 >content:
 
@@ -117,7 +117,7 @@ Type: `"blue" \| "green" \| "grey" \| "red" \| "yellow"`
 Default: `undefined`
 ---
 >title: CSS Custom Properties in pill
->tags: 
+>tags:
 >context: pill
 >content:
 
@@ -146,7 +146,7 @@ Name: `--fw-pill-padding`
 Description: Pill padding
 ---
 >title: How to use pill in crayons ?
->tags: 
+>tags:
 >context: pill
 >content:
 

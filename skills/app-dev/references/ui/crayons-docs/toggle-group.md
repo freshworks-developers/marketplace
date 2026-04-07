@@ -1,5 +1,5 @@
 >title: toggle-group - Usage in HTML
->tags: 
+>tags:
 >context: toggle-group
 >content:
 
@@ -53,7 +53,7 @@ type="icon"></fw-toggle-group-button>
 
 ---
 >title: toggle-group - Usage in React
->tags: 
+>tags:
 >context: toggle-group, react
 >content:
 
@@ -77,17 +77,17 @@ return (<div>
 
 ---
 >title: Usage in toggle-group
->tags: 
+>tags:
 >context: toggle-group
 >content:
 
 # Toggle Group (fw-toggle-group)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in toggle-group
->tags: 
+>tags:
 >context: toggle-group
 >content:
 
@@ -124,7 +124,7 @@ Type: `any`
 Default: `null`
 ---
 >title: Events in toggle-group
->tags: 
+>tags:
 >context: toggle-group
 >content:
 
@@ -138,7 +138,7 @@ Description: Triggered when an option in the Toggle Group is selected or deselec
 Type: `CustomEvent<any>`
 ---
 >title: How to use toggle-group in crayons ?
->tags: 
+>tags:
 >context: toggle-group
 >content:
 

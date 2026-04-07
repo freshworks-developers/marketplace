@@ -1,5 +1,5 @@
 >title: label - Usage in HTML
->tags: 
+>tags:
 >context: label
 >content:
 
@@ -17,7 +17,7 @@
 
 ---
 >title: label - Usage in React
->tags: 
+>tags:
 >context: label, react
 >content:
 
@@ -42,17 +42,17 @@ return (<div>
 
 ---
 >title: Usage in label
->tags: 
+>tags:
 >context: label
 >content:
 
 # Label (fw-label)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in label
->tags: 
+>tags:
 >context: label
 >content:
 
@@ -75,7 +75,7 @@ Type: `string`
 Default: `''`
 ---
 >title: CSS Custom Properties in label
->tags: 
+>tags:
 >context: label
 >content:
 
@@ -92,12 +92,12 @@ Name: `--fw-label-padding-vertical`
 Description: Top - bottom padding for label
 ---
 >title: How to use label in crayons ?
->tags: 
+>tags:
 >context: label
 >content:
 
 # Label (fw-label)
-fw-label displays an informational text component that identifies other components on the user interface. 
+fw-label displays an informational text component that identifies other components on the user interface.
 ## Demo
 ```html live
 <fw-label value="Meta Information"></fw-label>

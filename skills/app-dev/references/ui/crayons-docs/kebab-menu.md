@@ -1,5 +1,5 @@
 >title: kebab-menu - Usage in HTML
->tags: 
+>tags:
 >context: kebab-menu
 >content:
 
@@ -61,13 +61,13 @@ console.log('icon variant fwSelect event', e.detail);
 
 ---
 >title: kebab-menu - Usage in React
->tags: 
+>tags:
 >context: kebab-menu, react
 >content:
 
 # Kebab Menu (fw-kebab-menu)
 ## Usage in React
-  
+
 ```jsx
 import React from "react";
 import { FwKebabMenu } from "@freshworks/crayons/react";
@@ -112,21 +112,21 @@ return (
 </>
 );
 }
-```  
+```
 
 ---
 >title: Usage in kebab-menu
->tags: 
+>tags:
 >context: kebab-menu
 >content:
 
 # Kebab Menu (fw-kebab-menu)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in kebab-menu
->tags: 
+>tags:
 >context: kebab-menu
 >content:
 
@@ -149,7 +149,7 @@ Type: `"icon" \| "standard"`
 Default: `'standard'`
 ---
 >title: Events in kebab-menu
->tags: 
+>tags:
 >context: kebab-menu
 >content:
 
@@ -163,7 +163,7 @@ Description: fwSelect event is emitted when an option is clicked from the list.
 Type: `CustomEvent<any>`
 ---
 >title: How to use kebab-menu in crayons ?
->tags: 
+>tags:
 >context: kebab-menu
 >content:
 
@@ -223,6 +223,6 @@ fw-kebab-menu displays a kebab icon which on clicking displays a list or drop-do
 </script>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

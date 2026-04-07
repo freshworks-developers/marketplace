@@ -228,4 +228,4 @@ Supported APIs
 The Freshcaller Call module supports following APIs
 
 -  `GET /api/v1/calls`
--  `GET /api/v1/calls/{call_id}` 
+-  `GET /api/v1/calls/{call_id}`

@@ -1,5 +1,5 @@
 >title: data-table - Basic Usage in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -9,7 +9,7 @@
 ```html
 <fw-data-table id="datatable" is-selectable="true" label="Data table 1">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -47,13 +47,13 @@ datatable.rows = data.persons;
 
 ---
 >title: data-table - Basic Usage in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Basic Usage in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -98,7 +98,7 @@ return (
 
 ---
 >title: Basic Usage in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -142,11 +142,11 @@ var datatable = document.getElementById('datatable');
 datatable.columns = data.columns;
 datatable.rows = data.persons;
 </script>
-```  
+```
 
 ---
 >title: data-table - Anchor column variant in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -158,7 +158,7 @@ datatable.rows = data.persons;
 ```html
 <fw-data-table id="datatable-2" label="Data table 2">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -193,7 +193,7 @@ datatable.rows = data.rows;
 
 ---
 >title: data-table - Anchor column variant in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
@@ -201,7 +201,7 @@ datatable.rows = data.rows;
 ## Custom cells
 ### Crayons provided variants
 #### Anchor column variant in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -243,7 +243,7 @@ return (
 
 ---
 >title: Anchor column variant in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -259,7 +259,7 @@ Row value for this column variant should be an object with the following propert
 - \_self - Opens the linked document in the same frame as it was clicked (this is default).
 - \_parent - Opens the linked document in the parent frame.
 - \_top - Opens the linked document in the full body of the window.
-- framename - Opens the linked document in the named iframe.  
+- framename - Opens the linked document in the named iframe.
 ```html live
 <fw-data-table id="datatable-2" label="Data table 2">
 </fw-data-table>
@@ -295,11 +295,11 @@ var datatable = document.getElementById('datatable-2');
 datatable.columns = data.columns;
 datatable.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - User column variant in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -311,7 +311,7 @@ datatable.rows = data.rows;
 ```html
 <fw-data-table id="datatable-3" label="Data table 3">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -361,7 +361,7 @@ datatable.rows = data.rows;
 
 ---
 >title: data-table - User column variant in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
@@ -369,7 +369,7 @@ datatable.rows = data.rows;
 ## Custom cells
 ### Crayons provided variants
 #### User column variant in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -426,7 +426,7 @@ return (
 
 ---
 >title: User column variant in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -437,8 +437,8 @@ return (
 Row value for this column variant should be an object with the following properties:
 1. name - Name of the user
 2. email - email of the user
-3. image (optional) - url of the user image to be displayed in the avatar  
-*If image property is not present, user's initials from the name property will be shown inside the avatar.*  
+3. image (optional) - url of the user image to be displayed in the avatar
+*If image property is not present, user's initials from the name property will be shown inside the avatar.*
 ```html live
 <fw-data-table id="datatable-3" label="Data table 3">
 </fw-data-table>
@@ -489,11 +489,11 @@ var datatable = document.getElementById('datatable-3');
 datatable.columns = data.columns;
 datatable.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Icon column variant in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -505,7 +505,7 @@ datatable.rows = data.rows;
 ```html
 <fw-data-table id="datatable-31" label="Data table 31">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -536,7 +536,7 @@ datatable.rows = data.rows;
 
 ---
 >title: data-table - Icon column variant in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
@@ -544,7 +544,7 @@ datatable.rows = data.rows;
 ## Custom cells
 ### Crayons provided variants
 #### Icon column variant in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -582,7 +582,7 @@ return (
 
 ---
 >title: Icon column variant in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -621,11 +621,11 @@ var datatable = document.getElementById('datatable-31');
 datatable.columns = data.columns;
 datatable.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Paragraph column variant in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -637,7 +637,7 @@ datatable.rows = data.rows;
 ```html
 <fw-data-table id="datatable-32" label="Data table 32">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -667,7 +667,7 @@ datatable.rows = data.rows;
 
 ---
 >title: data-table - Paragraph column variant in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
@@ -675,7 +675,7 @@ datatable.rows = data.rows;
 ## Custom cells
 ### Crayons provided variants
 #### Paragraph column variant in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -712,7 +712,7 @@ return (
 
 ---
 >title: Paragraph column variant in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -720,8 +720,8 @@ return (
 ## Custom cells
 ### Crayons provided variants
 #### Paragraph column variant
-We can use this column variant when we have a bigger text and we need to trim/show this text. Row value for this column variant should be an object with the following properties:  
-1. text: Paragraph to trim. Only first three lines from this paragraph would be visible initially. User has to expand to see the full text.  
+We can use this column variant when we have a bigger text and we need to trim/show this text. Row value for this column variant should be an object with the following properties:
+1. text: Paragraph to trim. Only first three lines from this paragraph would be visible initially. User has to expand to see the full text.
 ```html live
 <fw-data-table id="datatable-32" label="Data table 32">
 </fw-data-table>
@@ -752,19 +752,19 @@ var datatable = document.getElementById('datatable-32');
 datatable.columns = data.columns;
 datatable.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: Custom templates in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Custom cells
 ### Custom templates
-This codeblock shows how to use custom cell function to display HTML content in a cell.  
-*To have custom table headers, we can use 'customHeader' property. This will take in a function with parameters same as customTemplate.*  
+This codeblock shows how to use custom cell function to display HTML content in a cell.
+*To have custom table headers, we can use 'customHeader' property. This will take in a function with parameters same as customTemplate.*
 ``` js{4-6}
 var columns = [{
 "key": "bookname",
@@ -773,7 +773,7 @@ var columns = [{
 return createElement('b', {}, props.text);
 }
 }]
-```  
+```
 ``` js
 // Usage examples for createElement:
 // Params should be either (tagName, children) or (tagName, properties, children)
@@ -784,7 +784,7 @@ createElement('div', {className: 'greeting'}, [createElement('h2', 'Hello')]);
 ```
 ---
 >title: data-table - Column text alignment in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -794,7 +794,7 @@ createElement('div', {className: 'greeting'}, [createElement('h2', 'Hello')]);
 ```html
 <fw-data-table id="datatable-40" label="Data table 40">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -832,13 +832,13 @@ datatable.rows = data.rows;
 
 ---
 >title: data-table - Column text alignment in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Column text alignment in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -883,13 +883,13 @@ return (
 
 ---
 >title: Column text alignment in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Column text alignment
-You can set text alignment in the column by passing the textAlign in column configuration. In the below example, column 'Icon' is center aligned.  
+You can set text alignment in the column by passing the textAlign in column configuration. In the below example, column 'Icon' is center aligned.
 ```html live
 <fw-data-table id="data-table-40" label="Data table 40">
 </fw-data-table>
@@ -928,21 +928,21 @@ var datatable = document.getElementById('data-table-40');
 datatable.columns = data.columns;
 datatable.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Row Actions in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions in HTML
-  
+
 ```html
 <fw-data-table id="datatable-4"  is-selectable="true" is-all-selectable="true" label="Data table 4">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -994,17 +994,17 @@ var datatable4 = document.getElementById('datatable-4');
 datatable4.columns = data.columns;
 datatable4.rows = data.rows;
 datatable4.rowActions = data.rowActions;
-```  
+```
 
 ---
 >title: data-table - Row Actions in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1062,17 +1062,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Row Actions in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions
-You can easily add an actions column by passing in rowActions prop to the component.  
+You can easily add an actions column by passing in rowActions prop to the component.
 ```html live
 <fw-data-table id="datatable-4"  is-selectable="true" is-all-selectable="true" label="Data table 4">
 </fw-data-table>
@@ -1129,21 +1129,21 @@ datatable4.columns = data.columns;
 datatable4.rows = data.rows;
 datatable4.rowActions = data.rowActions;
 </script>
-```  
+```
 
 ---
 >title: data-table - Using icons in row actions in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Using icons in row actions in HTML
-  
+
 ```html
 <fw-data-table id="datatable-icon-actions"  is-selectable="true" is-all-selectable="true" label="Data table Icon Actions">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -1199,17 +1199,17 @@ var datatableIcon = document.getElementById('datatable-icon-actions');
 datatableIcon.columns = data.columns;
 datatableIcon.rows = data.rows;
 datatableIcon.rowActions = data.rowActions;
-```  
+```
 
 ---
 >title: data-table - Using icons in row actions in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Using icons in row actions in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1271,17 +1271,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Using icons in row actions in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Using icons in row actions
-You can also use icons instead of text in buttons. You can either pass the props for the icon as an object via the 'graphicsProps' or pass 'iconName' and 'iconLibrary' properties as part of configuration.  
+You can also use icons instead of text in buttons. You can either pass the props for the icon as an object via the 'graphicsProps' or pass 'iconName' and 'iconLibrary' properties as part of configuration.
 ```html live
 <fw-data-table id="datatable-icon-actions"  is-selectable="true" is-all-selectable="true" label="Data table Icon Actions">
 </fw-data-table>
@@ -1342,21 +1342,21 @@ datatableIcon.columns = data.columns;
 datatableIcon.rows = data.rows;
 datatableIcon.rowActions = data.rowActions;
 </script>
-```  
+```
 
 ---
 >title: data-table - Row Actions as Menu in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions as Menu in HTML
-  
+
 ```html
 <fw-data-table id="datatable-actions"  is-selectable="true" is-all-selectable="true" label="Data table Row Actions">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -1413,17 +1413,17 @@ datatableActions.rowActions = data.rowActions;
 datatableActions.showRowActionsAsMenu = true;
 datatableActions.rowActionsMenuVariant = "icon";
 datatableActions.rowActionsHeaderLabel = "";
-```  
+```
 
 ---
 >title: data-table - Row Actions as Menu in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions as Menu in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1483,19 +1483,19 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Row Actions as Menu in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Row Actions as Menu
-You can display row actions as a menu by setting the property **showRowActionsAsMenu** to true.  
-*You can use icons along with text in the menu dropdown by passing **rowActionsMenuVariant** as 'icon'. Pass the props for the icon as an object via the 'graphicsProps' as part of configuration.*  
-*You can modify the header label of the row actions column by using the prop **rowActionsHeaderLabel**.*  
+You can display row actions as a menu by setting the property **showRowActionsAsMenu** to true.
+*You can use icons along with text in the menu dropdown by passing **rowActionsMenuVariant** as 'icon'. Pass the props for the icon as an object via the 'graphicsProps' as part of configuration.*
+*You can modify the header label of the row actions column by using the prop **rowActionsHeaderLabel**.*
 ```html live
 <fw-data-table id="datatable-actions"  is-selectable="true" is-all-selectable="true" label="Data table Row Actions">
 </fw-data-table>
@@ -1557,21 +1557,21 @@ datatableActions.showRowActionsAsMenu = true;
 datatableActions.rowActionsMenuVariant = "icon";
 datatableActions.rowActionsHeaderLabel = "";
 </script>
-```  
+```
 
 ---
 >title: data-table - Hide columns in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Hide columns in HTML
-  
+
 ```html
 <fw-data-table id="datatable-5" label="Data table 5">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -1596,17 +1596,17 @@ rows: [{
 var datatable5 = document.getElementById('datatable-5');
 datatable5.columns = data.columns;
 datatable5.rows = data.rows;
-```  
+```
 
 ---
 >title: data-table - Hide columns in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Hide columns in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1638,17 +1638,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Hide columns in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Hide columns
-To hide certain columns, we can pass the 'hide' property set to true in the column's configuration.  
+To hide certain columns, we can pass the 'hide' property set to true in the column's configuration.
 ```html live
 <span>'Role' column hidden in below table.</span> <br><br>
 <fw-data-table id="datatable-5" label="Data table 5">
@@ -1679,21 +1679,21 @@ var datatable5 = document.getElementById('datatable-5');
 datatable5.columns = data.columns;
 datatable5.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Column lock in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Column lock in HTML
-  
+
 ```html
 <fw-data-table id="datatable-51" label="Data table 51" show-settings="true">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -1714,17 +1714,17 @@ rows: [{
 var datatable51 = document.getElementById('datatable-51');
 datatable51.columns = data.columns;
 datatable51.rows = data.rows;
-```  
+```
 
 ---
 >title: data-table - Column lock in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Column lock in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1752,17 +1752,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Column lock in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Column lock
-We can lock column using 'lock' in column's configuration.  
+We can lock column using 'lock' in column's configuration.
 ```html live
 <fw-data-table id="datatable-51" label="Data table 51" show-settings="true">
 </fw-data-table>
@@ -1788,21 +1788,21 @@ var datatable51 = document.getElementById('datatable-51');
 datatable51.columns = data.columns;
 datatable51.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Column width in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Column width in HTML
-  
+
 ```html
 <fw-data-table id="datatable-6" label="Data table 6">
 </fw-data-table>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -1837,17 +1837,17 @@ rows: [{
 var datatable6 = document.getElementById('datatable-6');
 datatable6.columns = data.columns;
 datatable6.rows = data.rows;
-```  
+```
 
 ---
 >title: data-table - Column width in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Column width in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1889,17 +1889,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Column width in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Column width
-We can pass width for every column using 'widthProperties' in column's configuration. Every column has a minimum width of 40px and maximum width of 1000px by default. We can override min/max width for every column using the 'widthProperties' too.  
+We can pass width for every column using 'widthProperties' in column's configuration. Every column has a minimum width of 40px and maximum width of 1000px by default. We can override min/max width for every column using the 'widthProperties' too.
 ```html live
 <span>'Name' column has 400px width and 'Role' column has 200px width.</span> <br><br>
 <fw-data-table id="datatable-6" label="Data table 6">
@@ -1940,21 +1940,21 @@ var datatable6 = document.getElementById('datatable-6');
 datatable6.columns = data.columns;
 datatable6.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Formatting data in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Formatting data in HTML
-  
+
 ```html
 <fw-data-table id="datatable-7" label="Data table 7">
 </fw-data-table>
-```  
+```
 ```javascript
 var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 var data = {
@@ -1991,17 +1991,17 @@ rows: [{
 var datatable7 = document.getElementById('datatable-7');
 datatable7.columns = data.columns;
 datatable7.rows = data.rows;
-```  
+```
 
 ---
 >title: data-table - Formatting data in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Formatting data in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -2045,18 +2045,18 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Formatting data in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Formatting data
-We can format row's data before rendering into a cell by passing 'formatData' in column's configuration.  
-*This option wont work when using this with 'variant' or 'customTemplate' properties in column's configuration.*  
+We can format row's data before rendering into a cell by passing 'formatData' in column's configuration.
+*This option wont work when using this with 'variant' or 'customTemplate' properties in column's configuration.*
 ```html live
 <fw-data-table id="datatable-7" label="Data table 7">
 </fw-data-table>
@@ -2098,21 +2098,21 @@ var datatable7 = document.getElementById('datatable-7');
 datatable7.columns = data.columns;
 datatable7.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Table settings in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Table settings in HTML
-  
+
 ```html
 <fw-data-table id="datatable-8" label="Data table 8" show-settings="true">
 </fw-data-table>
-```  
+```
 ```javascript
 var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 var data = {
@@ -2149,17 +2149,17 @@ rows: [{
 var datatable8 = document.getElementById('datatable-8');
 datatable8.columns = data.columns;
 datatable8.rows = data.rows;
-```  
+```
 
 ---
 >title: data-table - Table settings in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Table settings in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -2203,17 +2203,17 @@ return (
 </FwDataTable>
 );
 }
-```  
+```
 
 ---
 >title: Table settings in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Table settings
-Table settings help with reordering and hide/show of columns. To enable table settings, pass the 'show-settings' prop to the table.  
+Table settings help with reordering and hide/show of columns. To enable table settings, pass the 'show-settings' prop to the table.
 ```html live
 <fw-data-table id="datatable-8" label="Data table 8" show-settings="true">
 </fw-data-table>
@@ -2255,17 +2255,17 @@ var datatable8 = document.getElementById('datatable-8');
 datatable8.columns = data.columns;
 datatable8.rows = data.rows;
 </script>
-```  
+```
 
 ---
 >title: data-table - Loading table in HTML
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Loading table in HTML
-  
+
 ```html
 <div style="width: 590px;">
 <span>
@@ -2276,7 +2276,7 @@ datatable8.rows = data.rows;
 <fw-data-table id="datatable-9"  is-selectable="true" is-all-selectable="true" label="Data table 9">
 </fw-data-table>
 </div>
-```  
+```
 ```javascript
 var data = {
 columns: [{
@@ -2331,17 +2331,17 @@ var toggle = document.getElementById('toggle-table');
 toggle.addEventListener('fwChange', (event) => {
 datatable9.loadTable(event.detail.checked);
 });
-```  
+```
 
 ---
 >title: data-table - Loading table in React
->tags: 
+>tags:
 >context: data-table, react
 >content:
 
 # DataTable (fw-data-table)
 ## Loading table in React
-  
+
 ```jsx
 import React, { useRef } from "react";
 import ReactDOM from "react-dom";
@@ -2406,17 +2406,17 @@ return (
 </>
 );
 }
-```  
+```
 
 ---
 >title: Loading table in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 ## Loading table
-We can load a table using the 'loadTable' method available on the table.  
+We can load a table using the 'loadTable' method available on the table.
 ```html live
 <div style="width: 590px;">
 <span>
@@ -2485,11 +2485,11 @@ toggle.addEventListener('fwChange', (event) => {
 datatable9.loadTable(event.detail.checked);
 });
 </script>
-```  
+```
 
 ---
 >title: Properties in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -2596,7 +2596,7 @@ Type: `boolean`
 Default: `false`
 ---
 >title: Events in data-table
->tags: 
+>tags:
 >context: data-table
 >content:
 
@@ -2615,27 +2615,27 @@ Description: fwSelectionChange Emits this event when row is selected/unselected.
 Type: `CustomEvent<any>`
 ---
 >title: How to use data-table in crayons ?
->tags: 
+>tags:
 >context: data-table
 >content:
 
 # DataTable (fw-data-table)
 fw-data-table are used for data visualization.
-## Custom cells 
+## Custom cells
 ### Crayons provided variants
 ## Saving column configuration
 For auto saving configuration into localStorage, you can add 'autoSaveSettings' prop to the table.
 ```html
-  <data-table id="data-table-10" label="data table 10" auto-save-settings="true"> 
+  <data-table id="data-table-10" label="data table 10" auto-save-settings="true">
   </data-table>
 ```
 Data table exposes couple of method to get and set column configuration.
 ``` js{2-3}
   let dataTable = document.querySelector('data-table#config');
   // getColumnConfig helps retrive configuration in JSON format
-  let dataTableConfiguration = dataTable.getTableSettings(); 
-  // setColumnConfig helps set the configuration. 
-  dataTable.setTableSettings(dataTableConfiguration); 
+  let dataTableConfiguration = dataTable.getTableSettings();
+  // setColumnConfig helps set the configuration.
+  dataTable.setTableSettings(dataTableConfiguration);
 ```
 <!-- Auto Generated Below -->
 ## Methods

@@ -1,5 +1,5 @@
 >title: format-date - Usage in HTML
->tags: 
+>tags:
 >context: format-date
 >content:
 
@@ -46,7 +46,7 @@ Great Britain: <fw-format-date locale="en-GB"></fw-format-date>
 
 ---
 >title: format-date - Usage in React
->tags: 
+>tags:
 >context: format-date, react
 >content:
 
@@ -95,18 +95,18 @@ Great Britain: <FwFormatDate locale="en-GB"></FwFormatDate><br/>
 
 export default App;
 
-````  
+````
 
 ---
 >title: DateFormatController in format-date
->tags: 
+>tags:
 >context: format-date
 >content:
 
 # Format Date (fw-format-date)
 ## Usage
 ### DateFormatController
-You can use `DateFormatController` to format date by passing the below set of [DateFormatOptions](#dateformatoptions).  
+You can use `DateFormatController` to format date by passing the below set of [DateFormatOptions](#dateformatoptions).
 ```js
 Javascript - import { DateFormatController } from "@freshworks/crayons"
 React - import { DateFormatController } from "@freshworks/crayons/react"
@@ -119,7 +119,7 @@ locale: // defaults to browser's default locale
 ```
 ---
 >title: DateFormatOptions in format-date
->tags: 
+>tags:
 >context: format-date
 >content:
 
@@ -158,11 +158,11 @@ timeZoneName?: 'short' | 'long';
 /** The time zone to express the time in. */
 timeZone?: string;
 }
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in format-date
->tags: 
+>tags:
 >context: format-date
 >content:
 
@@ -255,7 +255,7 @@ Type: `"2-digit" \| "numeric"`
 Default: `undefined`
 ---
 >title: How to use format-date in crayons ?
->tags: 
+>tags:
 >context: format-date
 >content:
 

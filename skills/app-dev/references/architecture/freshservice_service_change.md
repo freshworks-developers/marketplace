@@ -1,6 +1,6 @@
 >title: what is service change module in Freshservice
 >tags: module=service_change, service_change, freshservice
->context: 
+>context:
 >content:
 
 # what is service change module in Freshservice
@@ -67,7 +67,7 @@ To use the Support change placeholder modify your `manifest.json` as below:
         },
         "change_background": {
           "url": "change_background.html",
-          "icon": "styles/images/icon.svg"          
+          "icon": "styles/images/icon.svg"
         }
       }
     }
@@ -79,7 +79,7 @@ To use the Support change placeholder modify your `manifest.json` as below:
 
 >title: what are data methods supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for service change module in Freshservice
@@ -197,7 +197,7 @@ client.events.on('app.activated', () => {
 
 >title: example of data method usage supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice
->context: 
+>context:
 >content:
 
 # example of data method usage supported for service change module in Freshservice
@@ -252,7 +252,7 @@ getchangeReason();
 
 >title: what are events methods supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for service change module in Freshservice
@@ -302,7 +302,7 @@ getchangeReason();
 
 >title: how to use events methods supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice, events_method
->context: 
+>context:
 >content:
 
 # how to use events methods supported for service change module in Freshservice
@@ -339,7 +339,7 @@ getchangeReason();
 
 >title: what are interface methods supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for service change module in Freshservice
@@ -365,7 +365,7 @@ For more information checkout [interface methods docs](https://freshworks.dev/do
 
 >title: how to use interface methods supported for service change module in Freshservice
 >tags: module=service_change, service_change, freshservice, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for service change module in Freshservice
@@ -417,20 +417,20 @@ title: what are instance methods supported for service change module in Freshser
 
 ## Summary of instance methods supported
 
-1. **Resize Instance:**  
+1. **Resize Instance:**
 - To resize the instance used as `client.instance.resize({ height: "<height in pixels>" });`
 
-2. **Close Instance:**  
+2. **Close Instance:**
 -To close the instance as  `client.instance.close();`
 
-3. **Inter-Instance Communication:**  
+3. **Inter-Instance Communication:**
 Use the `context()`, `send()`, `receive()`, or `get()` methods to
    - Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    - Send data from a modal to a parent placeholder and get the data in the parent.
    - Send data from one instance to another instance and receive data at the destination.
 
-4. **Retrieve Context:**   
-- To retrieve contextual information about a current app instance. 
+4. **Retrieve Context:**
+- To retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves,
       - The (modal’s) instance id
       - The placeholder name of the app instance

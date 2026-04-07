@@ -1,7 +1,7 @@
 >title: app is not defined
 >tags: frontend-errors
 >context: manifest.json, app.js
->content:  
+>content:
 
 # App is not defined
 
@@ -15,7 +15,7 @@ Modify the document.onreadystatechange function in app.js to ensure the app init
 >title: require is not defined
 >tags: frontend-errors
 >context: manifest.json, app.js
->content:  
+>content:
 
 # Require is not defined
 
@@ -48,7 +48,7 @@ CORS errors occur when a web application attempts to access a resource on a diff
 >title: validation errors during app submission
 >tags: frontend-error
 >context: manifest.json, app.js
->content:  
+>content:
 
 # Validation errors during app submission
 
@@ -167,7 +167,7 @@ Inside App Content Not Loading: If the app loads but the content doesn’t, cont
 >title: app is not defined
 >tags: frontend-errors
 >context: manifest.json, app.js
->content:  
+>content:
 
 # App is not defined
 
@@ -181,7 +181,7 @@ Modify the document.onreadystatechange function in app.js to ensure the app init
 >title: require is not defined
 >tags: frontend-errors
 >context: manifest.json, app.js
->content:  
+>content:
 
 # Require is not defined
 
@@ -214,7 +214,7 @@ CORS errors occur when a web application attempts to access a resource on a diff
 >title: validation errors during app submission
 >tags: frontend-error
 >context: manifest.json, app.js
->content:  
+>content:
 
 # Validation errors during app submission
 

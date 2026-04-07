@@ -1,6 +1,6 @@
 >title: what is caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller
->context: 
+>context:
 >content:
 
 # what is caller notification module in Freshcaller
@@ -11,13 +11,13 @@ It Allows users to build:
 
 ## 1. Front-end apps
    - Cannot build a full-page app.
-  
+
 ## 2. Serverless apps
-   - The app reacts to app set-up events, external events, or scheduled events. 
+   - The app reacts to app set-up events, external events, or scheduled events.
    - The app cannot react to product-specific events such as, creating a call, updating a call, updating an agent, and so on.
 
 ## 3. Full stack SMI apps
-   - The app’s serverless component reacts to app set-up events, external events, or scheduled events. 
+   - The app’s serverless component reacts to app set-up events, external events, or scheduled events.
    - The app cannot react to product-specific events.
 
 ---
@@ -43,7 +43,7 @@ It supports following Module-specific placeholders. In the app manifest, configu
 
 # how to use placeholders supported for caller notification module in Freshcaller
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -72,7 +72,7 @@ To use the supported placeholder modify your `manifest.json` as below
 
 >title: what are data methods supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for caller notification module in Freshcaller
@@ -89,7 +89,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller
->context: 
+>context:
 >content:
 
 # example of data method usage supported for caller notification module in Freshcaller
@@ -130,7 +130,7 @@ getcurrentCallerData();
 
 >title: what are interface methods supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for caller notification module in Freshcaller
@@ -147,7 +147,7 @@ Freshcaller caller notification module supports following interface methods:
 
 >title: how to use interface methods supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for caller notification module in Freshcaller
@@ -186,7 +186,7 @@ try {
 
 >title: what are instance methods supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for caller notification module in Freshcaller
@@ -197,7 +197,7 @@ try {
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
 
 ## If a modal is the app instance where context() is used, it retrieves:
    1. The (modal’s) instance id
@@ -213,7 +213,7 @@ try {
 
 >title: how to use instance methods supported for caller notification module in Freshcaller
 >tags: module=notification, notification, freshcaller, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for caller notification module in Freshcaller
@@ -348,7 +348,7 @@ try {
 
 An app built for this module can react to the following events.
 
-## Common events: 
+## Common events:
 In the app manifest, configure these events at `modules.common`.
 
 ## App set-up events

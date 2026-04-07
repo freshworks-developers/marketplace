@@ -266,7 +266,7 @@ Use conventional commit style:
   ```javascript
   // ❌ WRONG
   $request.post(url, options);
-  
+
   // ✅ CORRECT
   $request.invokeTemplate('templateName', { context, body });
   ```

@@ -27,17 +27,17 @@ To enable your app to react to front-end events in your `app.js` file:
 
 Below are the three main types of front-end events:
 
-1. **Click events**  
-   These occur when a user clicks a button or link on the page.  
+1. **Click events**
+   These occur when a user clicks a button or link on the page.
    - For most click events, `event.helper.getData()` returns an empty JSON, unless additional data is provided (for example, timer events)
 
-2. **Change events**  
-   These occur when a user changes the value of a field on the UI.  
+2. **Change events**
+   These occur when a user changes the value of a field on the UI.
    - Merely changing the value triggers the event; no submission is required.
 
-3. **Intercept events**  
-   These are events that are paused while the event listener and the corresponding callback run.  
-   - The app can allow the original event to complete or block it.  
+3. **Intercept events**
+   These are events that are paused while the event listener and the corresponding callback run.
+   - The app can allow the original event to complete or block it.
    - Intercepting is enabled by passing `{ intercept: true }` when subscribing to the event.
 
 ---

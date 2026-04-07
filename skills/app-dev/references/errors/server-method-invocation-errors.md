@@ -5,7 +5,7 @@
 
 # Fixing function invalid name error
 
-## FDK validation failed with the error 
+## FDK validation failed with the error
 ```
 Function "<name>" for <productModuleNamespace> "<product>" has invalid name
 ```
@@ -23,7 +23,7 @@ Function "<name>" for <productModuleNamespace> "<product>" has invalid name
 
 # Fixing function name is not defined for product
 
-## FDK validation failed with the error 
+## FDK validation failed with the error
 ```
 Function <name> is not defined for <productModuleNamespace> <product>
 ```

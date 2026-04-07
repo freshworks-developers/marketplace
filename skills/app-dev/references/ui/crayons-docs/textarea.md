@@ -1,5 +1,5 @@
 >title: textarea - Usage in HTML
->tags: 
+>tags:
 >context: textarea
 >content:
 
@@ -37,7 +37,7 @@ state="normal">
 
 ---
 >title: textarea - Usage in React
->tags: 
+>tags:
 >context: textarea, react
 >content:
 
@@ -82,17 +82,17 @@ state="normal">
 
 ---
 >title: Usage in textarea
->tags: 
+>tags:
 >context: textarea
 >content:
 
 # Textarea (fw-textarea)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in textarea
->tags: 
+>tags:
 >context: textarea
 >content:
 
@@ -234,7 +234,7 @@ Type: `"hard" \| "soft"`
 Default: `'soft'`
 ---
 >title: Events in textarea
->tags: 
+>tags:
 >context: textarea
 >content:
 
@@ -258,7 +258,7 @@ Description: Triggered when a value is entered in the input box.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in textarea
->tags: 
+>tags:
 >context: textarea
 >content:
 
@@ -295,7 +295,7 @@ Name: `--fw-warning-color`
 Description: Color of the warning text.
 ---
 >title: How to use textarea in crayons ?
->tags: 
+>tags:
 >context: textarea
 >content:
 
@@ -365,6 +365,6 @@ fw-textarea displays an input box on the user interface and enables assigning mu
 Sets focus on a specific `fw-textarea`. Use this method instead of the global `input.focus()`.
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

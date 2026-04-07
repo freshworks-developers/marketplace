@@ -1,5 +1,5 @@
 >title: Properties in menu-item
->tags: 
+>tags:
 >context: menu-item
 >content:
 
@@ -22,7 +22,7 @@ Type: `boolean`
 Default: `false`
 ---
 >title: CSS Custom Properties in menu-item
->tags: 
+>tags:
 >context: menu-item
 >content:
 
@@ -47,7 +47,7 @@ Name: `--fw-menu-item-box-shadow`
 Description: Box Shadow of the fw-menu-item popover content.
 ---
 >title: How to use menu-item in crayons ?
->tags: 
+>tags:
 >context: menu-item
 >content:
 

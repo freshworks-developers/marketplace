@@ -1,5 +1,5 @@
 >title: Properties in drag-container
->tags: 
+>tags:
 >context: drag-container
 >content:
 
@@ -43,7 +43,7 @@ Type: `boolean`
 Default: `true`
 ---
 >title: Events in drag-container
->tags: 
+>tags:
 >context: drag-container
 >content:
 
@@ -67,7 +67,7 @@ Description: Triggered when a draggable item is dropped inside the container.
 Type: `CustomEvent<void>`
 ---
 >title: How to use drag-container in crayons ?
->tags: 
+>tags:
 >context: drag-container
 >content:
 
@@ -210,6 +210,6 @@ drop.addEventListener('fwDrop', (e) => {
 });
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

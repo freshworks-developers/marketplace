@@ -1,6 +1,6 @@
 >title: What FDK CLI generate command options
 >tags: cli, fdk, instructions
->context: 
+>context:
 >content:
 
 # What FDK CLI generate command options
@@ -44,7 +44,7 @@ The following files can be generated. Select a file and enter the appropriate pa
 ? Enter token_url <Enter OAuth Token URL>
 ? Select token_type <Select Account or Agent>
 ? Want to enter another oauth (just hit enter for YES)? Yes
-? Enter oauth name 
+? Enter oauth name
 ```
 
 ### Example Output
@@ -267,7 +267,7 @@ function postConfigs() {
 ? Choose module: support_email
 ? Add placeholders? Yes
 ? Choose placeholders: new_email_requester_info
-? Add serverless events? 
+? Add serverless events?
 ? Want to add another module (just hit enter for YES)? Yes
 ? Choose module: support_ticket
 ? Add placeholders? Yes

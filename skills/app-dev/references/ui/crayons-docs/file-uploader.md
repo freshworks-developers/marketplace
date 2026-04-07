@@ -1,11 +1,11 @@
 >title: file-uploader - File uploader as a standalone (without a form and with action url) in HTML
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader as a standalone (without a form and with action url) in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader
@@ -20,23 +20,23 @@ accept=".csv"
 <br/>
 <fw-button file-uploader-id="file-uploader-1">Upload file</fw-button>
 </div>
-```  
+```
 ```javascript
 const fileUploader = document.querySelector('#file-uploader-1');
 fileUploader.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
-```  
+```
 
 ---
 >title: file-uploader - File uploader as a standalone (without a form and with action url) in React
->tags: 
+>tags:
 >context: file-uploader, react
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader as a standalone (without a form and with action url) in React
-  
+
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom";
@@ -63,11 +63,11 @@ onFilesUploaded={(event) => updateState(event)}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File uploader as a standalone (without a form and with action url) in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -96,17 +96,17 @@ fileUploader1.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader - File uploader inside a form. in HTML
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader inside a form. in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <form class="fw-flex fw-flex-column fw-justify-center" id="sample-form" action="https://mocktarget.apigee.net/echo" method="post" onsubmit>
@@ -125,7 +125,7 @@ multiple="true"
 <fw-button type="submit">Upload file</fw-button>
 </form>
 </div>
-```  
+```
 ```javascript
 const sampleForm = document.getElementById("sample-form");
 const fileUploader2 = document.getElementById("file-uploader-2");
@@ -135,17 +135,17 @@ const files = await fileUploader2.getFiles();
 console.log(files); // Perform action to send file to a server
 fileUploader2.reset(); // reset the form to initial state
 });
-```  
+```
 
 ---
 >title: file-uploader - File uploader inside a form. in React
->tags: 
+>tags:
 >context: file-uploader, react
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader inside a form. in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader, FwButton } from "@freshworks/crayons/react";
@@ -179,11 +179,11 @@ ref={fileUploader}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File uploader inside a form. in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -218,17 +218,17 @@ console.log(files); // Perform action to send file to a server
 fileUploader2.reset(); // reset the form to initial state
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader - File uploader - upload failure and reupload example in HTML
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - upload failure and reupload example in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <div>
@@ -248,7 +248,7 @@ action-u-r-l="/no-api"
 <br/>
 <fw-button file-uploader-id="file-uploader-3">Upload file</fw-button>
 </div>
-```  
+```
 ```javascript
 const fileUploader3 = document.querySelector('#file-uploader-3');
 const succeedToggle = document.querySelector('#succeed-toggle');
@@ -267,17 +267,17 @@ console.log(event); // Will be called when all file requests are sent.
 fileUploader3.addEventListener('fwFileReuploaded', (event) => {
 console.log(event); // Will be called a retry attempt request is sent.
 });
-```  
+```
 
 ---
 >title: file-uploader - File uploader - upload failure and reupload example in React
->tags: 
+>tags:
 >context: file-uploader, react
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - upload failure and reupload example in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwToggle, FwFileUploader, FwButton } from "@freshworks/crayons/react";
@@ -333,11 +333,11 @@ ref={fileUploader}
 );
 
 }
-```  
+```
 
 ---
 >title: File uploader - upload failure and reupload example in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -382,17 +382,17 @@ fileUploader3.addEventListener('fwFileReuploaded', (event) => {
 console.log(event); // Will be called a retry attempt request is sent.
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader - File uploader - Modify header tokens in the request in HTML
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - Modify header tokens in the request in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader
@@ -409,7 +409,7 @@ action-u-r-l="https://mocktarget.apigee.net/echo"
 <br/>
 <fw-button file-uploader-id="file-uploader-4">Upload file</fw-button>
 </div>
-```  
+```
 ```javascript
 const fileUploader4 = document.querySelector('#file-uploader-4');
 fileUploader4.modifyRequest = (xhr) => {
@@ -420,17 +420,17 @@ return xhr;
 fileUploader4.addEventListener('fwFilesUploaded', (event) => {
 console.log(JSON.parse(event.detail.response).headers.authorization); // Will be called the first time when all file requests are sent.
 });
-```  
+```
 
 ---
 >title: file-uploader - File uploader - Modify header tokens in the request in React
->tags: 
+>tags:
 >context: file-uploader, react
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - Modify header tokens in the request in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader, FwButton } from "@freshworks/crayons/react";
@@ -469,17 +469,17 @@ ref={fileUploader}
 );
 
 }
-```  
+```
 
 ---
 >title: File uploader - Modify header tokens in the request in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - Modify header tokens in the request
-Modify the header using the 'modifyHeader' prop. We will receive the XHR request as the first param in the modifyHeader function call.  
+Modify the header using the 'modifyHeader' prop. We will receive the XHR request as the first param in the modifyHeader function call.
 ```html live
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader
@@ -508,17 +508,17 @@ fileUploader4.addEventListener('fwFilesUploaded', (event) => {
 console.log(JSON.parse(event.detail.response).headers.authorization); // Will be called the first time when all file requests are sent.
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader - File uploader - custom buttons to upload / reset in HTML
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - custom buttons to upload / reset in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader
@@ -537,7 +537,7 @@ action-u-r-l="https://mocktarget.apigee.net/echo"
 <br/>
 <button id="custom-reset">Reset</button>
 </div>
-```  
+```
 ```javascript
 const fileUploader5 = document.querySelector("#file-uploader-5");
 const customButton = document.querySelector("#custom-submit");
@@ -551,17 +551,17 @@ fileUploader5.reset(); // To return component to initial state
 fileUploader5.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
-```  
+```
 
 ---
 >title: file-uploader - File uploader - custom buttons to upload / reset in React
->tags: 
+>tags:
 >context: file-uploader, react
 >content:
 
 # File uploader (fw-file-uploader)
 #### File uploader - custom buttons to upload / reset in React
-  
+
 ```jsx
 import { useRef } from 'react'
 import { FwFileUploader } from "@freshworks/crayons/react";
@@ -593,11 +593,11 @@ ref={fileUploader}
 </div>
 );
 }
-```  
+```
 
 ---
 >title: File uploader - custom buttons to upload / reset in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -636,12 +636,12 @@ fileUploader5.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
 </script>
-```  
-  
+```
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -755,7 +755,7 @@ Type: `any`
 Default: `undefined`
 ---
 >title: Events in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -779,7 +779,7 @@ Description: stageChanged - event that gets emitted when component stage changes
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in file-uploader
->tags: 
+>tags:
 >context: file-uploader
 >content:
 
@@ -792,7 +792,7 @@ Name: `--fw-file-uploader-border`
 Description: border color for file uploader
 ---
 >title: How to use file-uploader in crayons ?
->tags: 
+>tags:
 >context: file-uploader
 >content:
 

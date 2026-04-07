@@ -1,5 +1,5 @@
 >title: toggle-group-button - Usage in HTML
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 
@@ -19,7 +19,7 @@ value="aa">
 
 ---
 >title: toggle-group-button - Usage in React
->tags: 
+>tags:
 >context: toggle-group-button, react
 >content:
 
@@ -40,17 +40,17 @@ return (<div>
 
 ---
 >title: Usage in toggle-group-button
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 
 # Toggle Group Button (fw-toggle-group-button)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in toggle-group-button
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 
@@ -136,7 +136,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in toggle-group-button
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 
@@ -150,7 +150,7 @@ Description: Triggered when the card in focus is selected.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in toggle-group-button
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 
@@ -183,7 +183,7 @@ Name: `--fw-toggle-group-button-icon-button-width`
 Description: defines the width of the icon toggle button - default is 42px
 ---
 >title: How to use toggle-group-button in crayons ?
->tags: 
+>tags:
 >context: toggle-group-button
 >content:
 

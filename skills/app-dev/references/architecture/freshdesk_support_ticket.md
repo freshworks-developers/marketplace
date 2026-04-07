@@ -1,6 +1,6 @@
 >title: what is support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk
->context: 
+>context:
 >content:
 
 # what is support ticket module in Freshdesk
@@ -78,7 +78,7 @@ To use the Support ticket placeholder modify your `manifest.json` as below:
         },
         "ticket_conversation_editor": {
           "url": "ticket_conversation_editor.html",
-          "icon": "styles/images/icon.svg"          
+          "icon": "styles/images/icon.svg"
         }
       }
     }
@@ -182,7 +182,7 @@ client.events.on('app.activated', () => {
 
 >title: data methods or objects supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, data_method
->context: 
+>context:
 >content:
 
 # Data Methods or objects Supported for Support Ticket Module in Freshdesk
@@ -209,7 +209,7 @@ When operating within a specific placeholder, you can retrieve additional data:
 
 >title: example of data method usage supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk
->context: 
+>context:
 >content:
 
 # example of data method usage supported for support ticket module in Freshdesk
@@ -269,7 +269,7 @@ getStatusOptions();
 
 >title: what are events methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for support ticket module in Freshdesk
@@ -310,7 +310,7 @@ An app deployed in the New email page can react to the following front-end event
     2. `ticket.statusChanged` - the status of a ticket.
     3. `ticket.groupChanged` - the group to which a ticket is assigned.
     4. `ticket.agentChanged` - the agent to whom the ticket is assigned.
-    5. `ticket.typeChanged` - the type of the ticket.      
+    5. `ticket.typeChanged` - the type of the ticket.
 3. **Intercept Events** are triggered when user clicks following options:
     1. `ticket.closeTicketClick` - Close button located on the top navigation bar
     2. `ticket.deleteTicketClick` - Delete button located on the top navigation bar
@@ -330,7 +330,7 @@ An app deployed in the New email page can react to the following front-end event
 
 >title: how to use events methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # how to use events methods supported for support ticket module in Freshdesk
@@ -369,7 +369,7 @@ An app deployed in the New email page can react to the following front-end event
 
 >title: what are interface methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for support ticket module in Freshdesk
@@ -387,7 +387,7 @@ An app deployed in the New email page can react to the following front-end event
 
 >title: how to use interface methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for support ticket module in Freshdesk
@@ -421,7 +421,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for support ticket module in Freshdesk
@@ -439,7 +439,7 @@ Instance methods supported are
 
 >title: how to use instance methods supported for support ticket module in Freshdesk
 >tags: module=support_ticket, support_ticket, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for support ticket module in Freshdesk
@@ -668,8 +668,8 @@ exports = {
 # how to configure ticket events supported by support ticket module of Freshdesk
 
 ## Summary
-1. Subscribe to ticket events in `manifest.json`  
-2. Define the event callback in `server.js`  
+1. Subscribe to ticket events in `manifest.json`
+2. Define the event callback in `server.js`
 3. Use the payload structure in your handler
 
 ## Step 1: Subscribe to ticket events
@@ -759,20 +759,20 @@ Your handler receives a payload with this structure:
 
 ---
 
->title: what are the REST APIs supported by support ticket module of Freshdesk  
->tags: module=support_ticket, support_ticket, freshdesk, rest_api  
->context:  
+>title: what are the REST APIs supported by support ticket module of Freshdesk
+>tags: module=support_ticket, support_ticket, freshdesk, rest_api
+>context:
 >content:
 
 # what are the REST APIs supported by support ticket module of Freshdesk
 
 ## Summary
-1. Tickets Endpoints  
-2. Admin Endpoints  
-3. Ticket Forms Endpoints  
-4. Conversation Endpoints  
-5. Canned Response Endpoints  
-6. Time Entry Endpoints  
+1. Tickets Endpoints
+2. Admin Endpoints
+3. Ticket Forms Endpoints
+4. Conversation Endpoints
+5. Canned Response Endpoints
+6. Time Entry Endpoints
 
 ## 1. Tickets Endpoints
 - `POST   /api/v2/tickets`

@@ -36,7 +36,7 @@
 
 ### Step 5: Test in Freshworks Product
 - **Log In:** Sign in to the Freshworks account where you want to test the app.
-- **Modify URL:** Append `?dev=true` to the default account URL shown in the address bar.  
+- **Modify URL:** Append `?dev=true` to the default account URL shown in the address bar.
   _Example:_ `https://domain.myfreshworks.com/crm/sales/contacts/view/401033886912?dev=true`
 - **Verify:** Navigate to the location where the app is expected to be deployed and verify that the app renders correctly while testing its functionality.
 

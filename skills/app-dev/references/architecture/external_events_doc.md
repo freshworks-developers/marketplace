@@ -4,7 +4,7 @@
 >content:
 
 # How to use External Events in Freshworks Global app
-External events are events that occur in an external product or a third-party service. External events enable developers to create serverless apps that can consume events from third-party services. This integration enables developers to build apps that can subscribe to external events and create tickets, contacts, or any other resource in Freshworks products. 
+External events are events that occur in an external product or a third-party service. External events enable developers to create serverless apps that can consume events from third-party services. This integration enables developers to build apps that can subscribe to external events and create tickets, contacts, or any other resource in Freshworks products.
 
 ## Steps to use External Events
 1. Generate a target URL - link to where the app receives webhook data.
@@ -16,7 +16,7 @@ External events are events that occur in an external product or a third-party se
 ---
 >title: Considerations for External Events
 >tags: external-events, serverless, webhooks, integration
->context: 
+>context:
 >content:
 
 # Considerations for External Events
@@ -40,7 +40,7 @@ External events are events that occur in an external product or a third-party se
 # How to generate webhook URL for External Events in Freshworks Global app
 
 ## Steps to generate and register a webhook URL
-1. Navigate to the `manifest.json` file. 
+1. Navigate to the `manifest.json` file.
 2. Subscribe to the onAppInstall event by using the following sample `manifest.json` content
    ```json
     {
@@ -124,7 +124,7 @@ External events are events that occur in an external product or a third-party se
 ---
 >title: payload description for External Events in Freshworks Global app
 >tags: external-events, serverless, webhooks, integration
->context: 
+>context:
 >content:
 
 # payload description for External Events in Freshworks Global app
@@ -171,7 +171,7 @@ External events are events that occur in an external product or a third-party se
 ---
 >title: payload example for External Events in Freshworks Global app
 >tags: external-events, serverless, webhooks, integration
->context: 
+>context:
 >content:
 
 # payload example for External Events in Freshworks Global app

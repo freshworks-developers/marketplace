@@ -1,5 +1,5 @@
 >title: progress-loader - Usage in HTML
->tags: 
+>tags:
 >context: progress-loader
 >content:
 
@@ -29,7 +29,7 @@ document.querySelector('#root').done();
 
 ---
 >title: progress-loader - Usage in React
->tags: 
+>tags:
 >context: progress-loader, react
 >content:
 
@@ -72,7 +72,7 @@ return (<div>
 
 ---
 >title: Styling Loader in progress-loader
->tags: 
+>tags:
 >context: progress-loader
 >content:
 
@@ -83,15 +83,15 @@ You can style progress loader by targetting `class="bar"` selector.
 You can also use `--progress-loader-color` and `--progress-loader-height` **css variables** to use custom color and height for the progress loader.
 ---
 >title: ProgressLoaderController in progress-loader
->tags: 
+>tags:
 >context: progress-loader
 >content:
 
 # Progress Loader (fw-progress-loader)
 ## Usage
 ### ProgressLoaderController
-You can use `ProgressLoaderController` to create loaders by passing the below set of [ProgressLoaderOptions](#progressloaderoptions).  
-You can use the below mentioned [Methods](#methods) to manage loaders  
+You can use `ProgressLoaderController` to create loaders by passing the below set of [ProgressLoaderOptions](#progressloaderoptions).
+You can use the below mentioned [Methods](#methods) to manage loaders
 ```js
 Javascript - import { ProgressLoaderController } from "@freshworks/crayons"
 React - import { ProgressLoaderController } from "@freshworks/crayons/react"
@@ -102,7 +102,7 @@ const loaderCustom= ProgressLoaderController({
 ```
 ---
 >title: ProgressLoaderOptions in progress-loader
->tags: 
+>tags:
 >context: progress-loader
 >content:
 
@@ -142,11 +142,11 @@ parent?: string;
 */
 template?: string;
 }
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in progress-loader
->tags: 
+>tags:
 >context: progress-loader
 >content:
 
@@ -211,7 +211,7 @@ Type: `number`
 Default: `200`
 ---
 >title: How to use progress-loader in crayons ?
->tags: 
+>tags:
 >context: progress-loader
 >content:
 

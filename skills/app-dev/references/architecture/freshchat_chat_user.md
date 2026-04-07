@@ -1,6 +1,6 @@
 >title: what is caller agent module in Freshsales Suite
 >tags: module=chat_user, chat_user, freshchat
->context: 
+>context:
 >content:
 
 # What is caller agent module in Freshsales Suite
@@ -174,7 +174,7 @@ In the app manifest, configure these events at `modules.chat_user`.
 
 >title: what are the REST APIs supported by caller agent module of Freshsales Suite
 >tags: module=chat_user, chat_user, freshchat, rest_api
->context: 
+>context:
 >content:
 
 # What are the REST APIs supported by caller agent module of Freshsales Suite

@@ -104,7 +104,7 @@ exports = {
 // [VALID] CORRECT: Standard frontend pattern
 (async function() {
   const client = await app.initialized();
-  
+
   document.getElementById('btn').addEventListener('fwClick', async () => {
     try {
       const response = await client.request.invoke('getData', {});

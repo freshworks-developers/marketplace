@@ -66,7 +66,7 @@
 client.events.on('EVENT_NAME', async function(event) {
   // Validation logic
   const isValid = await validateCondition();
-  
+
   if (!isValid) {
     // Show error and block action
     await client.interface.trigger('showNotify', {
@@ -75,7 +75,7 @@ client.events.on('EVENT_NAME', async function(event) {
     });
     return; // Blocks the action
   }
-  
+
   // Action proceeds if we don't return
 }, { intercept: true }); // ← CRITICAL
 ```
@@ -97,7 +97,7 @@ function validateRequiredFields(entity, requiredFields) {
     return value === null || value === undefined || value === '' ||
            (Array.isArray(value) && value.length === 0);
   });
-  
+
   return {
     valid: missing.length === 0,
     message: missing.length > 0 ? `Required: ${missing.join(', ')}` : ''

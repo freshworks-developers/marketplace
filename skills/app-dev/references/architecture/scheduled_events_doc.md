@@ -171,7 +171,7 @@ try {
 
 >title: how to test Scheduled Events
 >tags: serverless, scheduled-events, scheduler, cron
->context: 
+>context:
 >content:
 
 # how to test Scheduled Events

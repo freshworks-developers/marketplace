@@ -16,25 +16,25 @@ SKUs are bundles of Freshworks products. Customers subscribe to SKU plans to acc
 # How different subscriptions affect the functionality of an app with multiple modules
 
 ## Summary
-1. Impact Factors  
-2. Scenarios  
-3. Important Points  
+1. Impact Factors
+2. Scenarios
+3. Important Points
 
 ## Impact Factors
-1. **Module Mapping:**  
-   - Each module corresponds to specific functionalities and product access.  
+1. **Module Mapping:**
+   - Each module corresponds to specific functionalities and product access.
    - The user's subscription determines which modules are functional.
-2. **App Logic Distribution:**  
+2. **App Logic Distribution:**
    - If an essential feature relies on a module not included in the subscription, that feature is unavailable.
-3. **Common Module Usage:**  
+3. **Common Module Usage:**
    - When used alongside other modules, the subscription compatibility of those modules determines available features.
 
 ## Scenarios
-1. **App Designed for a Specific Product:**  
+1. **App Designed for a Specific Product:**
    - Subscribing to only that product's SKU activates all relevant features.
-2. **App with Modules Across Products:**  
+2. **App with Modules Across Products:**
    - Features depend on the user's subscription for each respective product.
-3. **App Using the Common Module:**  
+3. **App Using the Common Module:**
    - Subscription restrictions apply to both common and additional modules.
 
 ## Important Points
@@ -89,11 +89,11 @@ The common module allows developers to build apps that work across multiple Fres
 
 You can build the following types of apps with the common module:
 
-1. **Front-end App:**  
+1. **Front-end App:**
    - As long as the only other module(s) in the manifest are not: caller_agent, call, caller_metrics, notification, caller_conversation, or chat_user.
-2. **Serverless App:**  
+2. **Serverless App:**
    - The app reacts to app setup events, external events, scheduled events, or product-specific events as defined by the other modules.
-3. **Full-stack SMI App:**  
+3. **Full-stack SMI App:**
    - Provided the other modules are not among: caller_agent, call, caller_metrics, notification, caller_conversation, or chat_user.
 
 ---
@@ -164,9 +164,9 @@ Below is an example `manifest.json` snippet defining modules for a global app:
 ```
 
 ---
->title: How to use common module placeholders  
->tags: common_module  
->context: manifest.json  
+>title: How to use common module placeholders
+>tags: common_module
+>context: manifest.json
 >content:
 
 # How to use common module placeholders

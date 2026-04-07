@@ -1,5 +1,5 @@
 >title: Properties in form-control
->tags: 
+>tags:
 >context: form-control
 >content:
 
@@ -43,18 +43,18 @@ Type: `any`
 Default: `undefined`
 ---
 >title: How to use form-control in crayons ?
->tags: 
+>tags:
 >context: form-control
 >content:
 
 # Form Control (fw-form-control)
-`Form Control` component used with `fw-form` component. Please refer [fw-form](../form/#demo-static-form) for usage 
+`Form Control` component used with `fw-form` component. Please refer [fw-form](../form/#demo-static-form) for usage
 <!-- Auto Generated Below -->
 ## Methods
 ### `setFocus() => Promise<void>`
 Set Focus on the child
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

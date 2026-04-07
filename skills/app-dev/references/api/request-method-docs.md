@@ -80,13 +80,13 @@ The request `schema` contains attributes such as `protocol`, `method`, `host`, `
 - `method`: A required attribute with the valid values - `GET`, `POST`, `PUT`, `DELETE` and `PATCH`.
 - `host`: A required attribute which is an absolute domain name of the domain to which the app sends the HTTP request. Must not be an IP address; must be a Fully Qualified Domain Name. Ensure not to specify the protocol nor to append a trailing slash as part of the host value. This value can be substituted with installation parameters (iparams) or context for installation page requests and Serverless.
 - `path`: Path to the resource on the host domain. Ensure to construct the path with a leading slash. Default value is `/` if no path is specified.
-- `headers`: A valid HTTP headers (such as Authorization, Content-Type, and so on) and the corresponding values, specified as key-value pairs of `<header-name>:<header-value>`. 
+- `headers`: A valid HTTP headers (such as Authorization, Content-Type, and so on) and the corresponding values, specified as key-value pairs of `<header-name>:<header-value>`.
   - The supported `Content-Type` headers are `application/json`, `application/xml`, `text/html`, `text/xml`, `application/jsonp`, `text/plain`, `text/javascript` and `application/vnd.api+json`.
   - Authorization headers value can be substituted with secure and non-secure installation parameters (iparams) or context for installation page requests and Serverless.
 
 Additionally, the request `options` allow you to specify additional attributes like `maxAttempts` and `retryDelay`.
 - `maxAttempts` - Maximum number of times that a request can be resent if a network or 429/5xx HTTP error occurs. The default value is `1` and valid options ranges from minimum value `1` to maximum value `5`.
-- `retryDelay` - Time in milliseconds after which a request can be resent. The default value is `0` and valid values are multiple of `100` upto maximum `1500`. 
+- `retryDelay` - Time in milliseconds after which a request can be resent. The default value is `0` and valid values are multiple of `100` upto maximum `1500`.
 
 ---
 
@@ -738,7 +738,7 @@ Context variable substitution in request templates is supported only in -
 3. `schema.header`: Supported in installation page and Serverless apps.
 4. `schema.query`: Supported in all templates.
 
---- 
+---
 
 >title: Support of installation parameters (iparams) substitution in request templates
 >tags: request-method, http, api, context
@@ -783,7 +783,7 @@ The below request template uses non-secure value in `schema.host` and secure val
 
 # What has changed with request method from platform version 2.2 and before to platform version 2.3 and later?
 
-1. In platform version 2.3 and later, `requests.json` is introduced to define the snapshots of the request. 
+1. In platform version 2.3 and later, `requests.json` is introduced to define the snapshots of the request.
 2. `request.post()`, `request.get()` methods are deprecated for both front-end and serverless, and `request.invokeTemplate()` has been introduced to invoke the defined template.
 And `fdk run` or `fdk validate` results in the following error:
 ```

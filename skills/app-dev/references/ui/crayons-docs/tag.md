@@ -1,5 +1,5 @@
 >title: tag - Usage in HTML
->tags: 
+>tags:
 >context: tag
 >content:
 
@@ -59,7 +59,7 @@ image:
 
 ---
 >title: tag - Usage in React
->tags: 
+>tags:
 >context: tag, react
 >content:
 
@@ -112,21 +112,21 @@ image:
 
 export default App;
 
-````  
+````
 
 ---
 >title: Usage in tag
->tags: 
+>tags:
 >context: tag
 >content:
 
 # Tag (fw-tag)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in tag
->tags: 
+>tags:
 >context: tag
 >content:
 
@@ -219,7 +219,7 @@ Type: `"avatar" \| "standard"`
 Default: `'standard'`
 ---
 >title: Events in tag
->tags: 
+>tags:
 >context: tag
 >content:
 
@@ -233,7 +233,7 @@ Description: Triggered when the tag is deselected.
 Type: `CustomEvent<any>`
 ---
 >title: How to use tag in crayons ?
->tags: 
+>tags:
 >context: tag
 >content:
 
@@ -287,6 +287,6 @@ fw-tag provides a child component that is used to enable selecting multiple opti
 ### `setFocus() => Promise<any>`
 #### Returns
 Type: `Promise<any>`
- 
+
 
 ---

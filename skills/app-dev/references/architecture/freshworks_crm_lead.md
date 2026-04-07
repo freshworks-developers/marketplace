@@ -84,7 +84,7 @@ To use the supported placeholder modify your `manifest.json` as below:
 ---
 >title: what are data methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for lead module in Freshsales Classic
@@ -104,7 +104,7 @@ An app deployed in the Deal details page can retrieve the following objects.
 ---
 >title: example of data method usage supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales
->context: 
+>context:
 >content:
 
 # example of data method usage supported for lead module in Freshsales Classic
@@ -129,7 +129,7 @@ getCurrentEntityInfo();
 ---
 >title: what are events methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for lead module in Freshsales Classic
@@ -203,7 +203,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 ---
 >title: what are interface methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for lead module in Freshsales Classic
@@ -224,7 +224,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 ---
 >title: how to use interface methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for lead module in Freshsales Classic
@@ -263,7 +263,7 @@ try {
 ---
 >title: what are instance methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for lead module in Freshsales Classic
@@ -276,7 +276,7 @@ try {
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves,
       1. The (modal’s) instance id
       2. The placeholder name of the app instance
@@ -289,7 +289,7 @@ try {
 ---
 >title: how to use instance methods supported for lead module in Freshsales Classic
 >tags: module=lead, lead, freshsales, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for lead module in Freshsales Classic
@@ -462,7 +462,7 @@ In the app manifest, configure these events at `modules.lead`.
 ## Steps
 
 ### Step 1. Subscribe to an event by configuring an event listener in `manifest.json`
-    
+
   ```json
   {
     "events": {
@@ -520,7 +520,7 @@ In the app manifest, configure these events at `modules.lead`.
 ## Steps
 
 ### Step 1. Subscribe to lead by configuring an event listener in `manifest.json`
-  
+
   ```json
   {
     "events": {
@@ -532,7 +532,7 @@ In the app manifest, configure these events at `modules.lead`.
   ```
 
 ### Step 2. In `server.js` file under the exports block, enter the callback function definition as follows:
-  
+
   ```js
   exports = {
     onLeadCreateCallback: function(payload) {
@@ -542,7 +542,7 @@ In the app manifest, configure these events at `modules.lead`.
   ```
 
 ### Step 3. Use the appropriate payload attribute for callback with below syntax
-  
+
   ```json
   {
     "currentHost": {
@@ -585,7 +585,7 @@ In the app manifest, configure these events at `modules.lead`.
 ---
 >title: what are the REST APIs supported by lead module of Freshsales Classic
 >tags: module=lead, lead, freshsales, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by lead module of Freshsales Classic

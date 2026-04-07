@@ -1,6 +1,6 @@
 >title: what is task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is task module in Freshsales Suite
@@ -75,7 +75,7 @@ To use the supported placeholder modify your `manifest.json` as below:
 
 >title: what are data methods supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for task module in Freshsales Suite
@@ -88,7 +88,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm
->context: 
+>context:
 >content:
 
 # example of data method usage supported for task module in Freshsales Suite
@@ -127,7 +127,7 @@ getLoggedInUserData();
 
 >title: what are events methods supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for task module in Freshsales Suite
@@ -175,7 +175,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: what are interface methods supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for task module in Freshsales Suite
@@ -192,7 +192,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: how to use interface methods supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for task module in Freshsales Suite
@@ -224,7 +224,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for task module in Freshsales Suite
 >tags: module=task, task, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for task module in Freshsales Suite
@@ -235,7 +235,7 @@ client.interface.trigger("showNotify", {
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves,
       1. The (modal’s) instance id
       2. The placeholder name of the app instance
@@ -400,7 +400,7 @@ An app built for this module can react to the following events:
 ## Steps:
 
 ### Step 1. Subscribe to an event by configuring an event listener in `manifest.json`:
-    
+
   ```json
   {
   "events": {
@@ -412,7 +412,7 @@ An app built for this module can react to the following events:
   ```
 
 ### Step 2. In `server.js` file under the exports block, enter the callback function definition as follows:
-    
+
   ```js
   exports = {
   // args is a JSON block containing the payload information
@@ -424,7 +424,7 @@ An app built for this module can react to the following events:
   ```
 
 ### Step 3. Use the appropriate payload attribute for callback with below syntax:
-    
+
   ```json
   {
     "currentHost": {
@@ -458,7 +458,7 @@ An app built for this module can react to the following events:
 ## Steps:
 
 ### Step 1. Subscribe to task by configuring an event listener in `manifest.json`:
-  
+
   ```json
   {
     "events": {
@@ -470,7 +470,7 @@ An app built for this module can react to the following events:
   ```
 
 ### Step 2. In `server.js` file under the exports block, enter the callback function definition as follows:
-  
+
   ```js
   exports = {
     onTaskCreateCallback: function(payload) {
@@ -480,7 +480,7 @@ An app built for this module can react to the following events:
   ```
 
 ### Step 3. Use the appropriate payload attribute for callback with below syntax:
-  
+
   ```json
   {
     "currentHost": {

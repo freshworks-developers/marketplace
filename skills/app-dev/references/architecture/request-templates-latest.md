@@ -186,7 +186,7 @@ try {
 Installation parameters substitution is supported in:
 
 1. **schema.host** - Only non-secure values
-2. **schema.path** - Only non-secure values  
+2. **schema.path** - Only non-secure values
 3. **schema.headers** - Both secure and non-secure values
 4. **schema.query** - Only non-secure values
 
@@ -303,7 +303,7 @@ exports = {
 ## Common Errors
 
 ### Error: "Requested function not found or registered"
-**Cause:** Request template not declared in manifest  
+**Cause:** Request template not declared in manifest
 **Solution:** Add to `modules.common.requests`:
 ```json
 {
@@ -318,7 +318,7 @@ exports = {
 ```
 
 ### Error: "post is no longer supported in Request API"
-**Cause:** Using deprecated `$request.post()` method  
+**Cause:** Using deprecated `$request.post()` method
 **Solution:** Use `$request.invokeTemplate()` instead:
 ```javascript
 // [INVALID] Wrong
@@ -329,7 +329,7 @@ $request.invokeTemplate('templateName', { context: {}, body: JSON.stringify(data
 ```
 
 ### Error: "Invalid iparam substitution"
-**Cause:** Using secure iparam in unsupported field  
+**Cause:** Using secure iparam in unsupported field
 **Solution:** Secure iparams only work in `schema.headers`
 
 ## Migration from Platform 2.x

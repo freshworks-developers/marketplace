@@ -1,5 +1,5 @@
 >title: Properties in progress
->tags: 
+>tags:
 >context: progress
 >content:
 
@@ -36,7 +36,7 @@ Type: `number`
 Default: `0`
 ---
 >title: Events in progress
->tags: 
+>tags:
 >context: progress
 >content:
 
@@ -50,12 +50,12 @@ Description: retryUpload event to emit in case of a retry
 Type: `CustomEvent<any>`
 ---
 >title: How to use progress in crayons ?
->tags: 
+>tags:
 >context: progress
 >content:
 
 # fw-file-uploader-progress
 <!-- Auto Generated Below -->
- 
+
 
 ---

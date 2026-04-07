@@ -1,6 +1,6 @@
 >title: what are Freshworks Serverless Offerings
 >tags: serverless, serverless-offerings
->context: 
+>context:
 >content:
 
 # what are Freshworks Serverless Offerings
@@ -13,7 +13,7 @@ The serverless events are in contrast to front-end apps which run in response to
 
 >title: what are the usecases to use Freshworks Serverless Offerings
 >tags: serverless, serverless-offerings
->context: 
+>context:
 >content:
 
 # what are the usecases to use Freshworks Serverless Offerings
@@ -29,7 +29,7 @@ Following are the usecases in which serverless apps can be used
 
 >title: what are Freshworks Serverless Offerings considerations
 >tags: serverless, serverless-offerings
->context: 
+>context:
 >content:
 
 # what are Freshworks Serverless Offerings considerations
@@ -48,7 +48,7 @@ The app execution timeout is 20 seconds.
 
 >title: Steps to create a serverless app from FDK CLI
 >tags: serverless, serverless-offerings
->context: 
+>context:
 >content:
 
 # Steps to create a serverless app from FDK CLI

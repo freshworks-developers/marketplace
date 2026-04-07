@@ -1,5 +1,5 @@
 >title: tab - Usage in HTML
->tags: 
+>tags:
 >context: tab
 >content:
 
@@ -13,7 +13,7 @@
 
 ---
 >title: tab - Usage in React
->tags: 
+>tags:
 >context: tab, react
 >content:
 
@@ -34,7 +34,7 @@ return (<div>
 
 ---
 >title: Usage in tab
->tags: 
+>tags:
 >context: tab
 >content:
 
@@ -44,7 +44,7 @@ return (<div>
 <!-- Auto Generated Below -->
 ---
 >title: Properties in tab
->tags: 
+>tags:
 >context: tab
 >content:
 
@@ -88,7 +88,7 @@ Type: `string`
 Default: `undefined`
 ---
 >title: CSS Custom Properties in tab
->tags: 
+>tags:
 >context: tab
 >content:
 
@@ -101,7 +101,7 @@ Name: `--fw-tab-border-block-end`
 Description: border bottom style of tab
 ---
 >title: How to use tab in crayons ?
->tags: 
+>tags:
 >context: tab
 >content:
 

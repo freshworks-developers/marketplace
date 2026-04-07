@@ -24,9 +24,7 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --debug --only-verified
+          extra_args: --since-commit HEAD~1 --debug --only-verified
 
   dependency-scan:
     name: Dependency Vulnerability Scan

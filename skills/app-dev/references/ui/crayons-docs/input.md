@@ -1,5 +1,5 @@
 >title: input - Usage in HTML
->tags: 
+>tags:
 >context: input
 >content:
 
@@ -92,7 +92,7 @@ hint-text="Select singluar option"
 
 ---
 >title: input - Usage in React
->tags: 
+>tags:
 >context: input, react
 >content:
 
@@ -178,18 +178,18 @@ hint-text="Select singluar option"
 </FwSelect>
 </div>
 </div>);
-````  
+````
 
 ---
 >title: Slots in input
->tags: 
+>tags:
 >context: input
 >content:
 
 # Input (fw-input)
 ## Usage
 ### Slots
-Slots can be used to create complex use cases.  
+Slots can be used to create complex use cases.
 ```html live
 <template>
 <div>
@@ -254,11 +254,11 @@ fw-tag {
 margin: 0 4px;
 }
 </style>
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in input
->tags: 
+>tags:
 >context: input
 >content:
 
@@ -414,7 +414,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in input
->tags: 
+>tags:
 >context: input
 >content:
 
@@ -448,7 +448,7 @@ Description: Triggered on key down in the input box.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in input
->tags: 
+>tags:
 >context: input
 >content:
 
@@ -477,7 +477,7 @@ Name: `--fw-warning-color`
 Description: Color of the warning text.
 ---
 >title: How to use input in crayons ?
->tags: 
+>tags:
 >context: input
 >content:
 
@@ -578,6 +578,6 @@ Type: `Promise<void>`
 | ---------------------------- | ----------- |
 | `"fw-input-container"`       |             |
 | `"fw-input-inner-container"` |             |
- 
+
 
 ---

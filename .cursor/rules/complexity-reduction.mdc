@@ -152,22 +152,22 @@ function filterTickets(tickets, filters) {
   for (let i = 0; i < tickets.length; i++) {
     const ticket = tickets[i];
     let matches = true;
-    
+
     if (filters.status && ticket.status !== filters.status) {
       matches = false;
     }
-    
+
     if (filters.priority) {
       const p = ticket.priority.toString();
       if (!(p === '1' || p === '2' || p === '3' || p === '4')) {
         matches = false;
       }
     }
-    
+
     if (filters.assignee && ticket.assignee_id !== filters.assignee) {
       matches = false;
     }
-    
+
     if (matches) {
       result.push(ticket);
     }

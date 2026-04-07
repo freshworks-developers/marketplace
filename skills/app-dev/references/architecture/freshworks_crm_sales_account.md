@@ -1,6 +1,6 @@
 >title: what is sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is sales account module in Freshsales Suite
@@ -102,7 +102,7 @@ To use the supported placeholder modify your `manifest.json` as below:
 
 >title: what are data methods supported for sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for sales account module in Freshsales Suite
@@ -119,7 +119,7 @@ To use the supported placeholder modify your `manifest.json` as below:
 
 >title: example of data method usage supported for sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm
->context: 
+>context:
 >content:
 
 # example of data method usage supported for sales account module in Freshsales Suite
@@ -181,7 +181,7 @@ getCurrentEntityInfo();
 
 >title: what are events methods supported for sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for sales account module in Freshsales Suite
@@ -252,7 +252,7 @@ To use `account.update` event, use the following code:
 
 >title: what are interface methods supported for sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for sales account module in Freshsales Suite
@@ -310,7 +310,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for sales account module in Freshsales Suite
 >tags: module=sales_account, sales_account, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for sales account module in Freshsales Suite

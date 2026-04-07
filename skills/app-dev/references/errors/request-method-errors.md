@@ -58,7 +58,7 @@ Declaring the `getContacts` request template in `manifest.json` to associate the
 # Fixing the FDK validation errors with request templates defined
 
 ## Error message during fdk validation:
-Fixing the FDK validate error with request templates in `requests.json` and `manifest.json` for the below error - 
+Fixing the FDK validate error with request templates in `requests.json` and `manifest.json` for the below error -
 ```
 Validation failed due to the following issue(s):
 ✖ Request template 'request_template_API' is not defined in config/requests.json"

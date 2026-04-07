@@ -1,6 +1,6 @@
 >title: what is service asset module in Freshservice
 >tags: module=service_asset, service_asset, freshservice
->context: 
+>context:
 >content:
 
 # what is service asset module in Freshservice
@@ -66,7 +66,7 @@ To use the service asset placeholder modify your `manifest.json` as below:
         },
         "asset_background": {
           "url": "asset_background.html",
-          "icon": "styles/images/icon.svg"          
+          "icon": "styles/images/icon.svg"
         }
       }
     }
@@ -169,7 +169,7 @@ client.events.on('app.activated', () => {
 
 >title: what are data methods supported for service asset module in Freshservice
 >tags: module=service_asset, service_asset, freshservice, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for service asset module in Freshservice
@@ -181,7 +181,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 1. currentHost
 2. loggedInUser
 
-## Placeholder-specific objects 
+## Placeholder-specific objects
 
 An app deployed in the New email page can retrieve the following objects.
 
@@ -191,7 +191,7 @@ An app deployed in the New email page can retrieve the following objects.
 
 >title: example of data method usage supported for service asset module in Freshservice
 >tags: module=service_asset, service_asset, freshservice
->context: 
+>context:
 >content:
 
 # example of data method usage supported for service asset module in Freshservice
@@ -217,7 +217,7 @@ getAssetDetails();
 
 >title: what are interface methods supported for service asset module in Freshservice
 >tags: module=service_asset, service_asset, freshservice, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for service asset module in Freshservice
@@ -273,7 +273,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for service asset module in Freshservice
 >tags: module=service_asset, service_asset, freshservice, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for service asset module in Freshservice
@@ -289,7 +289,7 @@ client.interface.trigger("showNotify", {
 
 ## Retrieve contextual information
 
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves:
       1. The (modal’s) instance id
       2. The placeholder name of the app instance
@@ -426,7 +426,7 @@ An app built for this module can react to the following events. In the app manif
 
 >title: what are the REST APIs supported by service asset module of Freshservice
 >tags: module=service_asset, service_asset, freshservice, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by service asset module of Freshservice

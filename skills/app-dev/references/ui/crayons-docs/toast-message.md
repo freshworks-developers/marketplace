@@ -1,5 +1,5 @@
 >title: toast-message - Usage in HTML
->tags: 
+>tags:
 >context: toast-message
 >content:
 
@@ -44,7 +44,7 @@ line-height: 16px;"
 
 ---
 >title: toast-message - Usage in React
->tags: 
+>tags:
 >context: toast-message, react
 >content:
 
@@ -97,17 +97,17 @@ custom html contents can be added
 
 ---
 >title: Usage in toast-message
->tags: 
+>tags:
 >context: toast-message
 >content:
 
 # Toast Message (fw-toast-message)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in toast-message
->tags: 
+>tags:
 >context: toast-message
 >content:
 
@@ -165,7 +165,7 @@ Type: `"error" \| "inprogress" \| "success" \| "warning"`
 Default: `'warning'`
 ---
 >title: Events in toast-message
->tags: 
+>tags:
 >context: toast-message
 >content:
 
@@ -184,7 +184,7 @@ Description: Triggered on closing the toast message. This event gets used by the
 Type: `CustomEvent<any>`
 ---
 >title: How to use toast-message in crayons ?
->tags: 
+>tags:
 >context: toast-message
 >content:
 
@@ -249,6 +249,6 @@ Toast Message used internally by Toast component to render toast message.
 </fw-toast-message>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

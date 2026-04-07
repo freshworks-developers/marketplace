@@ -1,5 +1,5 @@
 >title: Properties in file
->tags: 
+>tags:
 >context: file
 >content:
 
@@ -22,7 +22,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in file
->tags: 
+>tags:
 >context: file
 >content:
 
@@ -36,12 +36,12 @@ Description: removeFile - event that gets triggered on file removal
 Type: `CustomEvent<any>`
 ---
 >title: How to use file in crayons ?
->tags: 
+>tags:
 >context: file
 >content:
 
 # fw-file-uploader-file
 <!-- Auto Generated Below -->
- 
+
 
 ---

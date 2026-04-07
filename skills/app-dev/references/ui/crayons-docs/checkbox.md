@@ -1,5 +1,5 @@
 >title: checkbox - Usage in HTML
->tags: 
+>tags:
 >context: checkbox
 >content:
 
@@ -13,7 +13,7 @@
 
 ---
 >title: checkbox - Usage in React
->tags: 
+>tags:
 >context: checkbox, react
 >content:
 
@@ -34,17 +34,17 @@ return (<div>
 
 ---
 >title: Usage in checkbox
->tags: 
+>tags:
 >context: checkbox
 >content:
 
 # Checkbox (fw-checkbox)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in checkbox
->tags: 
+>tags:
 >context: checkbox
 >content:
 
@@ -130,7 +130,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in checkbox
->tags: 
+>tags:
 >context: checkbox
 >content:
 
@@ -154,7 +154,7 @@ Description: Triggered when the check box comes into focus.
 Type: `CustomEvent<void>`
 ---
 >title: CSS Custom Properties in checkbox
->tags: 
+>tags:
 >context: checkbox
 >content:
 
@@ -175,12 +175,12 @@ Name: `--fw-warning-color`
 Description: Color of the warning text.
 ---
 >title: How to use checkbox in crayons ?
->tags: 
+>tags:
 >context: checkbox
 >content:
 
 # Checkbox (fw-checkbox)
-fw-checkbox displays a check box on the user interface and enables assigning a state (selected or deselected) to it. In the selected state, the check box displayed on the UI is highlighted and contains a check mark. 
+fw-checkbox displays a check box on the user interface and enables assigning a state (selected or deselected) to it. In the selected state, the check box displayed on the UI is highlighted and contains a check mark.
 ## Demo
 ```html live
 <fw-checkbox checked description="Agree or Disagree">Select to agree</fw-checkbox><br><br>
@@ -192,6 +192,6 @@ fw-checkbox displays a check box on the user interface and enables assigning a s
 Sets focus on a `fw-checkbox`.
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

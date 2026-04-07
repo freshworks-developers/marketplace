@@ -79,7 +79,7 @@ Data Methods
 
 >title: example of data method usage supported for caller metrics module in Freshcaller
 >tags: module=caller_metrics, caller_metrics, freshcaller
->context: 
+>context:
 >content:
 
 # example of data method usage supported for caller metrics module in Freshcaller

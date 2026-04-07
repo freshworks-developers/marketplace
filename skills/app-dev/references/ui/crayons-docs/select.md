@@ -1,11 +1,11 @@
 >title: select - Usage in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage in HTML
-  
+
 ```html
 <fw-select
 label="House Name"
@@ -52,17 +52,17 @@ state="error"
 <fw-select-option value="1">Starks</fw-select-option>
 <fw-select-option value="2">Lannisters</fw-select-option>
 </fw-select>
-```  
+```
 
 ---
 >title: select - Usage in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage in React
-  
+
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -122,11 +122,11 @@ state="error"
 </div>
 );
 }
-```  
+```
 
 ---
 >title: Demo with datasource in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -183,14 +183,14 @@ iconVariant.options = iconDataSource;
 ```
 ---
 >title: select - Usage with datasource in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage with datasource in HTML
-  
+
 ```html
 <fw-select
 label="Names"
@@ -239,18 +239,18 @@ graphicsProps: { name: 'ecommerce' },
 var iconVariant = document.getElementById('complexSelect');
 iconVariant.options = iconDataSource;
 </script>
-```  
+```
 
 ---
 >title: select - Usage with datasource in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage with datasource in React
-  
+
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -304,20 +304,20 @@ options={iconDataSource}
 </div>
 );
 }
-```  
+```
 
 ---
 >title: Demo for setting/getting selected options in select
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Demo for setting/getting selected options
-To set the default selected value following methods can be used set `setSelectedOptions` or `setSelectedValues` or by directly modifying the `value` prop.  
-> NOTE: The value will be of type `string` for single select and `string[]` for multi-select. The params for the function `setSelectedValues` will be of type `string` for single select and `string[]` for multi-select.  
-To get the selected values the consuming app can listen to `fwChange` event for `detail` attribute or by calling the method `getSelectedItem` which can be resolved to get the selected value.  
+To set the default selected value following methods can be used set `setSelectedOptions` or `setSelectedValues` or by directly modifying the `value` prop.
+> NOTE: The value will be of type `string` for single select and `string[]` for multi-select. The params for the function `setSelectedValues` will be of type `string` for single select and `string[]` for multi-select.
+To get the selected values the consuming app can listen to `fwChange` event for `detail` attribute or by calling the method `getSelectedItem` which can be resolved to get the selected value.
 ```html live
 <fw-select
 label="Pick one character"
@@ -413,14 +413,14 @@ console.log(e.detail);
 ```
 ---
 >title: select - Usage for setting/getting selected options in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for setting/getting selected options in HTML
-  
+
 ```html
 <fw-select
 label="Pick one character"
@@ -513,18 +513,18 @@ methodOptionSelect.addEventListener('fwChange', (e) => {
 console.log(e.detail);
 });
 </script>
-```  
+```
 
 ---
 >title: select - Usage for setting/getting selected options in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for setting/getting selected options in React
-  
+
 ```jsx
 import React, { useEffect, useRef } from 'react';
 import { FwSelect, FwSelectOption } from '@freshworks/crayons/react';
@@ -619,11 +619,11 @@ optionsVariant='icon'
 );
 }
 export default App;
-```  
+```
 
 ---
 >title: Demo with dynamic filter option in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -679,14 +679,14 @@ graphicsProps: { image: x.image },
 ```
 ---
 >title: select - Usage of dynamic filter option in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage of dynamic filter option in HTML
-  
+
 ```html
 <fw-select
 id="dynamicSelect"
@@ -733,18 +733,18 @@ graphicsProps: { image: x.image },
 });
 };
 </script>
-```  
+```
 
 ---
 >title: select - Usage of dynamic filter option in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage of dynamic filter option in React
-  
+
 ```jsx
 function Select() {
 var baseURL = 'https://api.sampleapis.com/rickandmorty/characters';
@@ -792,11 +792,11 @@ image: 'https://rickandmortyapi.com/api/character/avatar/1.jpeg',
 );
 }
 export default Select;
-```  
+```
 
 ---
 >title: Demo with select variants in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -840,14 +840,14 @@ graphicsProps: { image: x.image },
 ```
 ---
 >title: select - Usage for select variants in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for select variants in HTML
-  
+
 ```html
 <fw-label value="Mail Variant" color="blue"></fw-label>
 <fw-select
@@ -882,18 +882,18 @@ graphicsProps: { image: x.image },
 });
 };
 </script>
-```  
+```
 
 ---
 >title: select - Usage for select variants in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for select variants in React
-  
+
 ```jsx
 import React from 'react';
 import { FwSelect } from '@freshworks/crayons/react';
@@ -930,11 +930,11 @@ search={searchFn}
 );
 }
 export default Select;
-```  
+```
 
 ---
 >title: Demo with creatable select in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -1013,14 +1013,14 @@ option.subText.toLowerCase().includes(filterText.toLowerCase())
 ```
 ---
 >title: select - Usage for select variants in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for select variants in HTML
-  
+
 ```html
 <fw-label value="Creatable Mail Variant" color="blue"></fw-label>
 <fw-select
@@ -1090,18 +1090,18 @@ option.subText.toLowerCase().includes(filterText.toLowerCase())
 });
 };
 </script>
-```  
+```
 
 ---
 >title: select - Usage for select variants in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for select variants in React
-  
+
 ```jsx
 import React from 'react';
 import { FwSelect } from '@freshworks/crayons/react';
@@ -1173,11 +1173,11 @@ validateNewOption: (email) => validateEmail(email),
 );
 }
 export default Select;
-```  
+```
 
 ---
 >title: Navigation Demo with large option in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -1211,7 +1211,7 @@ longSelectMulti.options = yearsData;
 ```
 ---
 >title: Demo with option-label-path and option-value-path in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -1316,14 +1316,14 @@ graphicsProps: { image: x.image },
 ```
 ---
 >title: select - Usage for option-label-path and option-value-path in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for option-label-path and option-value-path in HTML
-  
+
 ```html
 <fw-label value="With predefined options" color="blue"></fw-label>
 <fw-select
@@ -1419,18 +1419,18 @@ graphicsProps: { image: x.image },
 });
 };
 </script>
-```  
+```
 
 ---
 >title: Using maxHeight property in select
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Using maxHeight property
-`maxHeight` property can be used to set the maximum height of select when there are multiple choices selected. If the content overflows the specified height, it adds a scroll bar.  
+`maxHeight` property can be used to set the maximum height of select when there are multiple choices selected. If the content overflows the specified height, it adds a scroll bar.
 ```html live
 <fw-select
 id="maxHeightSelect"
@@ -1456,14 +1456,14 @@ console.log(e.detail);
 ```
 ---
 >title: select - Usage for max-height property in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for max-height property in HTML
-  
+
 ```html
 <fw-select
 id="maxHeightSelect"
@@ -1486,18 +1486,18 @@ maxHeightSelect.addEventListener('fwChange', (e) => {
 console.log(e.detail);
 });
 </script>
-```  
+```
 
 ---
 >title: select - Usage for max-height property in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for max-height property in React
-  
+
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -1519,18 +1519,18 @@ maxHeight='100px'
 </div>
 );
 }
-```  
+```
 
 ---
 >title: Using showDropdown and hideDropdown methods in select
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Using showDropdown and hideDropdown methods
-The dropdown panel can be manually shown using `showDropdown` method and can be manually hidden using `hideDropdown` method  
+The dropdown panel can be manually shown using `showDropdown` method and can be manually hidden using `hideDropdown` method
 ```html live
 <div>
 <fw-button id="show-dropdown">Show Dropdown</fw-button>
@@ -1564,14 +1564,14 @@ manualSelect.hideDropdown();
 ```
 ---
 >title: select - Usage for showDropdown and hideDropdown methods in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for showDropdown and hideDropdown methods in HTML
-  
+
 ```html
 <div>
 <fw-button id="show-dropdown">Show Dropdown</fw-button>
@@ -1602,18 +1602,18 @@ hideBtn.addEventListener('fwClick', () => {
 manualSelect.hideDropdown();
 });
 </script>
-```  
+```
 
 ---
 >title: select - Usage for showDropdown and hideDropdown methods in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for showDropdown and hideDropdown methods in React
-  
+
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -1649,18 +1649,18 @@ hintText='Select singluar option'
 </div>
 );
 }
-```  
+```
 
 ---
 >title: Using tagProps property in select
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Using tagProps property
-`tagProps` property can be used to set the properties of fw-tag component when there are multiple choices selected.  
+`tagProps` property can be used to set the properties of fw-tag component when there are multiple choices selected.
 ```html live
 <fw-select
 id="tagPropsSelect"
@@ -1690,14 +1690,14 @@ console.log(e.detail);
 ```
 ---
 >title: select - Usage for tagProps property in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for tagProps property in HTML
-  
+
 ```html
 <fw-select
 id="tagPropsSelect"
@@ -1724,18 +1724,18 @@ maxHeightSelect.addEventListener('fwChange', (e) => {
 console.log(e.detail);
 });
 </script>
-```  
+```
 
 ---
 >title: select - Usage for tagProps property in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage for tagProps property in React
-  
+
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -1761,11 +1761,11 @@ closable: false
 </div>
 );
 }
-```  
+```
 
 ---
 >title: Demo with search variant in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -1823,14 +1823,14 @@ graphicsProps: { image: x.image },
 ```
 ---
 >title: select - Usage of search variant in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage of search variant in HTML
-  
+
 ```html
 <fw-select
 id="search"
@@ -1883,7 +1883,7 @@ graphicsProps: { image: x.image },
 
 ---
 >title: select - Demo with conversation variant in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -1956,18 +1956,18 @@ conversationOptionsSelect.addEventListener('fwChange', (e) => {
 console.log(e.detail);
 });
 </script>
-```  
+```
 
 ---
 >title: select - Demo with conversation variant in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Demo with conversation variant in React
-  
+
 ```jsx
 function Select() {
 var baseURL = 'https://api.sampleapis.com/rickandmorty/characters';
@@ -2016,20 +2016,20 @@ caret={false}
 );
 }
 export default Select;
-```  
+```
 
 ---
 >title: Demo with virtual scroll in select
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Demo with virtual scroll
-**This feature is experimental, it needs to be explicitly activated using the `enableVirtualScroll` feature flag.**  
+**This feature is experimental, it needs to be explicitly activated using the `enableVirtualScroll` feature flag.**
 `enableVirtualScroll` property can be used to enable virtualisation of long list of options.
-`estimatedSize` property is used to set estimated size of items in the list box to ensure smooth-scrolling.  
+`estimatedSize` property is used to set estimated size of items in the list box to ensure smooth-scrolling.
 ```html live
 <fw-label value="With Virtual Scroll" color="blue"></fw-label><br /><br />
 <fw-select
@@ -2052,14 +2052,14 @@ console.log(e.detail);
 ```
 ---
 >title: select - Usage of Virtual scroll in HTML
->tags: 
+>tags:
 >context: select
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage of Virtual scroll in HTML
-  
+
 ```html
 <fw-label value="With Virtual Scroll" color="blue"></fw-label><br /><br />
 <fw-select
@@ -2083,14 +2083,14 @@ console.log(e.detail);
 
 ---
 >title: select - Usage of Virtual scroll in React
->tags: 
+>tags:
 >context: select, react
 >content:
 
 # Select (fw-select)
 ## Usage
 ### Usage of Virtual scroll in React
-  
+
 ```jsx
 function Select() {
 const longListOptions = Array.from(Array(50000), (_,i) => ({
@@ -2107,11 +2107,11 @@ estimatedSize={90}
 );
 }
 export default Select;
-```  
+```
 
 ---
 >title: Properties in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -2407,7 +2407,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -2431,7 +2431,7 @@ Description: Triggered when the list box comes into focus.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in select
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -2464,7 +2464,7 @@ Name: `--fw-warning-color`
 Description: Color of the warning text.
 ---
 >title: How to use select in crayons ?
->tags: 
+>tags:
 >context: select
 >content:
 
@@ -2549,6 +2549,6 @@ Type: `Promise<any>`
 | Part                          | Description |
 | ----------------------------- | ----------- |
 | `"fw-select-input-container"` |             |
- 
+
 
 ---

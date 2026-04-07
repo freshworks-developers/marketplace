@@ -1,5 +1,5 @@
 >title: Properties in user
->tags: 
+>tags:
 >context: user
 >content:
 
@@ -8,12 +8,12 @@
 
 ---
 >title: How to use user in crayons ?
->tags: 
+>tags:
 >context: user
 >content:
 
 # fw-custom-cell-user
 <!-- Auto Generated Below -->
- 
+
 
 ---

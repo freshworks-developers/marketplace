@@ -11,8 +11,8 @@ Caller Agent Module Usage is allowed for following subscriptions
 
 1. A stand-alone Freshcaller subscription.
 2. A Freshsales suite subscription with:
-   - Freshsales Classic  
-   - Freshchat  
+   - Freshsales Classic
+   - Freshchat
    - Freshcaller.
 3. A Freshsales suite subscription with:
    -. Freshchat.
@@ -33,23 +33,23 @@ It Allows users to build only Serverless apps.
 
 An app built for this module can react to the following events.
 
-## Common events  
+## Common events
 In the app manifest, configure these events at `modules.common`.
 
-## App set-up events 
-1. `onAppInstall`  
-2. `afterAppUpdate`  
+## App set-up events
+1. `onAppInstall`
+2. `afterAppUpdate`
 3. `onAppUninstall`
 
 ## External events
-1. `onAppInstall`  
-2. `onExternalEvent`  
+1. `onAppInstall`
+2. `onExternalEvent`
 3. `onAppUninstall`
 
 ## Scheduled events
 
-## Product-specific events 
-In the app manifest, configure these events at `modules.caller_agent`.  
+## Product-specific events
+In the app manifest, configure these events at `modules.caller_agent`.
 - `onAgentUpdate`
 
 ---
@@ -60,9 +60,9 @@ In the app manifest, configure these events at `modules.caller_agent`.
 
 # How to configure product events supported by caller agent module of Freshsales Suite
 
-## Summary of steps 
-- Subscribe to an event by configuring an event listener in `manifest.json`.  
-- Enter the callback function definition in `server.js`.  
+## Summary of steps
+- Subscribe to an event by configuring an event listener in `manifest.json`.
+- Enter the callback function definition in `server.js`.
 - Use the appropriate payload attribute for callback.
 
 ### Step 1: Subscribe to an event
@@ -122,9 +122,9 @@ In server.js under the exports block:
 
 # how to configure events supported by caller agent module of Freshsales Suite
 
-## In `manifest.json`: 
+## In `manifest.json`:
 
-- Subscribe to caller_agent by configuring an event listener 
+- Subscribe to caller_agent by configuring an event listener
   ```json
   "events": {
     "onAgentUpdate": {

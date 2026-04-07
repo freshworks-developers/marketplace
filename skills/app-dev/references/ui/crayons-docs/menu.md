@@ -1,5 +1,5 @@
 >title: CSS Custom Properties in menu
->tags: 
+>tags:
 >context: menu
 >content:
 
@@ -36,7 +36,7 @@ Name: `--fw-menu-min-width`
 Description: Minimum width of the menu content.
 ---
 >title: How to use menu in crayons ?
->tags: 
+>tags:
 >context: menu
 >content:
 

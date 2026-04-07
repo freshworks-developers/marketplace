@@ -150,9 +150,9 @@ await client.interface.trigger('addNote', {
 });
 
 // ✅ SAFE - Use server-side storage for secrets
-await $db.set('integration_config', { 
-  configured: true, 
-  timestamp: Date.now() 
+await $db.set('integration_config', {
+  configured: true,
+  timestamp: Date.now()
 });
 
 // ✅ SAFE - Mask sensitive display

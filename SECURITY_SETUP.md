@@ -189,10 +189,10 @@ chmod +x .git/hooks/pre-commit
    ```bash
    # Validate JSON
    find . -name "*.json" | xargs -I {} node -e "JSON.parse(require('fs').readFileSync('{}'))"
-   
+
    # Check for large files
    find . -type f -size +1M
-   
+
    # Run pre-commit hook manually
    .git/hooks/pre-commit
    ```

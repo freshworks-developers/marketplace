@@ -1,5 +1,5 @@
 >title: Basic demo in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -28,7 +28,7 @@ Sed pulvinar orci in lacus semper, nec volutpat lectus pellentesque. Aliquam dic
 ```
 ---
 >title: modal - Basic usage in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -50,7 +50,7 @@ Hello, Welcome to Crayons
 
 ---
 >title: modal - Basic usage in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -79,7 +79,7 @@ Hello, Welcome to Crayons
 
 ---
 >title: Simple composition Demo in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -96,7 +96,7 @@ Hello, Welcome to Crayons
 ```
 ---
 >title: modal - Simple composition Usage in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -115,7 +115,7 @@ Hello, Welcome to Crayons
 
 ---
 >title: modal - Simple composition Usage in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -141,7 +141,7 @@ return (<div>
 
 ---
 >title: Custom composition Demo in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -161,7 +161,7 @@ return (<div>
 ```
 ---
 >title: modal - Custom composition Usage in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -183,7 +183,7 @@ return (<div>
 
 ---
 >title: modal - Custom composition Usage in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -212,7 +212,7 @@ return (<div>
 
 ---
 >title: Hide footer of the modal Demo in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -232,7 +232,7 @@ return (<div>
 ```
 ---
 >title: modal - Hide footer of the modal Usage in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -254,7 +254,7 @@ return (<div>
 
 ---
 >title: modal - Hide footer of the modal Usage in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -283,14 +283,14 @@ return (<div>
 
 ---
 >title: Slider in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
 # Modal (fw-modal)
 ## Demo & Usage
 #### Slider
-This is a variation of model that takes the entire viewport as height and slides from right of the screen when entering. Properties and composition are same as modal with the exception of size property. Slider has only one standard size.  
+This is a variation of model that takes the entire viewport as height and slides from right of the screen when entering. Properties and composition are same as modal with the exception of size property. Slider has only one standard size.
 ```html live
 <fw-button modal-trigger-id='modal-slider'> Open slider </fw-button>
 <fw-modal id='modal-slider' slider='true'>
@@ -318,7 +318,7 @@ Sed pulvinar orci in lacus semper, nec volutpat lectus pellentesque. Aliquam dic
 ```
 ---
 >title: modal - Slider Usage in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -345,7 +345,7 @@ Context text.
 
 ---
 >title: modal - Slider Usage in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -379,7 +379,7 @@ Context text.
 
 ---
 >title: modal - Using modal methods in HTML
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -401,7 +401,7 @@ Context text.
 <fw-button>OK</fw-button>
 </fw-modal-footer>
 </fw-modal>
-```  
+```
 ```js
 document.querySelector('fw-modal#modal-slider').open();
 document.querySelector('fw-modal#modal-slider').close()
@@ -409,7 +409,7 @@ document.querySelector('fw-modal#modal-slider').close()
 
 ---
 >title: modal - Using modal methods in React
->tags: 
+>tags:
 >context: modal, react
 >content:
 
@@ -445,18 +445,18 @@ Context text.
 
 ---
 >title: Using modal methods in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
 # Modal (fw-modal)
 ## Demo & Usage
 #### Using modal methods
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -549,7 +549,7 @@ Type: `string`
 Default: `undefined`
 ---
 >title: Events in modal
->tags: 
+>tags:
 >context: modal
 >content:
 
@@ -573,7 +573,7 @@ Description: Triggered when the default action button is clicked.
 Type: `CustomEvent<void>`
 ---
 >title: How to use modal in crayons ?
->tags: 
+>tags:
 >context: modal
 >content:
 

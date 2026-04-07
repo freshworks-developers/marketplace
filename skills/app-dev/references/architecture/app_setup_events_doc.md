@@ -1,6 +1,6 @@
 >title: What are App Setup Events
 >tags: Freshworks, app-setup-events, installation, update, uninstallation
->context: 
+>context:
 >content:
 
 # What are App Setup Events
@@ -11,7 +11,7 @@ App setup events are events which allow you to automate tasks or update external
 
 >title: Considerations when using App Setup Events
 >tags: Freshworks, app-setup-events, installation, update, uninstallation
->context: 
+>context:
 >content:
 
 # Considerations when using App Setup Events
@@ -60,7 +60,7 @@ manifest.json
 
 >title: What are the Payload attributes?
 >tags: freshworks, app-setup-events, serverless
->context: 
+>context:
 >content:
 
 # What are the Payload attributes?

@@ -1,6 +1,6 @@
 # SKILL refactor rollback log
 
-**Date:** 2026-03-30  
+**Date:** 2026-03-30
 **Goal:** Token reduction (items 1–4). Use this file to see what changed and how to restore.
 
 **Approximate size change:** `SKILL.md` reduced from **~1,377 lines → ~572 lines** (remainder split into `references/skill-advanced-topics.md` or deferred to `rules/` + existing `references/`). Exact pre-image: `git show <commit-before-refactor>:skills/app-dev/SKILL.md`.

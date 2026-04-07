@@ -1,5 +1,5 @@
 >title: radio - Usage in HTML
->tags: 
+>tags:
 >context: radio
 >content:
 
@@ -13,7 +13,7 @@
 
 ---
 >title: radio - Usage in React
->tags: 
+>tags:
 >context: radio, react
 >content:
 
@@ -34,17 +34,17 @@ return (<div>
 
 ---
 >title: Usage in radio
->tags: 
+>tags:
 >context: radio
 >content:
 
 # Radio (fw-radio)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in radio
->tags: 
+>tags:
 >context: radio
 >content:
 
@@ -102,7 +102,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in radio
->tags: 
+>tags:
 >context: radio
 >content:
 
@@ -136,12 +136,12 @@ Description: /**   Triggered when the radio button in focus is selected.
 Type: `CustomEvent<any>`
 ---
 >title: How to use radio in crayons ?
->tags: 
+>tags:
 >context: radio
 >content:
 
 # Radio (fw-radio)
-fw-radio displays a radio button on the user interface and enables assigning a state (selected or deselected) to it. In the selected state, the button displayed is highlighted. fw-radio provides child elements for fw-radio-group, to populate the Radio Group component’s list. 
+fw-radio displays a radio button on the user interface and enables assigning a state (selected or deselected) to it. In the selected state, the button displayed is highlighted. fw-radio provides child elements for fw-radio-group, to populate the Radio Group component’s list.
 ## Demo
 ```html live
 <fw-radio checked description="Select to agree">Agree or Disagree</fw-radio><br><br>
@@ -153,6 +153,6 @@ fw-radio displays a radio button on the user interface and enables assigning a s
 Sets focus on a specific `fw-radio`.
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

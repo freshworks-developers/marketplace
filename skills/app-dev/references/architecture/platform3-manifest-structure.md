@@ -4,7 +4,7 @@
 
 ### Must Have
 1. [VALID] `"platform-version": "3.0"` - Always use 3.0, never 2.3 or 2.x
-2. [VALID] `"modules"` structure - Never use legacy `"product"` structure  
+2. [VALID] `"modules"` structure - Never use legacy `"product"` structure
 3. [VALID] At least ONE product module in addition to `common` (even if empty `{}`)
 4. [VALID] `"engines"` block with node and fdk versions
 

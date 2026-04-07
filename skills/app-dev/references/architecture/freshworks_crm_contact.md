@@ -1,6 +1,6 @@
 >title: what is contact module in Freshsales Suite
 >tags: module=contact, contact, freshworks_crm
->context: 
+>context:
 >content:
 
 # What is contact module in Freshsales Suite
@@ -93,12 +93,12 @@ To use the supported placeholder modify your `manifest.json` as below:
 
 >title: what are data methods supported for contact module in Freshsales Suite
 >tags: module=contact, contact, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # What are data methods supported for contact module in Freshsales Suite
 
-You can use the `client.data.get()` data method to retrieve the following objects. 
+You can use the `client.data.get()` data method to retrieve the following objects.
 
 ### Objects accessible regardless of the placeholders:
 1. `currentHost`
@@ -112,7 +112,7 @@ An app deployed in the Contact details page can retrieve the following objects.
 
 >title: example of data method usage supported for contact module in Freshsales Suite
 >tags: module=contact, contact, freshworks_crm
->context: 
+>context:
 >content:
 
 # Example of data method usage supported for contact module in Freshsales Suite
@@ -138,7 +138,7 @@ getCurrentEntityInfo();
 
 >title: what are events methods supported for contact module in Freshsales Suite
 >tags: module=contact, contact, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # What are events methods supported for contact module in Freshsales Suite
@@ -273,7 +273,7 @@ Freshsales Suite contact module supports following interface methods
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves,
       1. The (modal’s) instance id
       2. The placeholder name of the app instance
@@ -494,7 +494,7 @@ An app built for this module can react to the following events.
 
 ## Steps to configure events:
 1. Subscribe to contact by configuring an event listener in `manifest.json`
-2. In `server.js` file under the exports block, enter the callback function definition 
+2. In `server.js` file under the exports block, enter the callback function definition
 3. Use the appropriate payload attribute for callback with below syntax
 
 ### Subscribe to contact by configuring an event listener in `manifest.json`

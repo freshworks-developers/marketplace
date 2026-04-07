@@ -1,5 +1,5 @@
 >title: Properties in modal-footer
->tags: 
+>tags:
 >context: modal-footer
 >content:
 
@@ -50,12 +50,12 @@ Type: `string`
 Default: `''`
 ---
 >title: How to use modal-footer in crayons ?
->tags: 
+>tags:
 >context: modal-footer
 >content:
 
 # Modal Footer (fw-modal-footer)
 <!-- Auto Generated Below -->
- 
+
 
 ---

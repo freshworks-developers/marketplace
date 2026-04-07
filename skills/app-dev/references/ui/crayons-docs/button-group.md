@@ -1,5 +1,5 @@
 >title: button-group - Usage in HTML
->tags: 
+>tags:
 >context: button-group
 >content:
 
@@ -26,7 +26,7 @@
 
 ---
 >title: button-group - Usage in React
->tags: 
+>tags:
 >context: button-group, react
 >content:
 
@@ -57,17 +57,17 @@ return (<div>
 
 ---
 >title: Usage in button-group
->tags: 
+>tags:
 >context: button-group
 >content:
 
 # Button Group (fw-button-group)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in button-group
->tags: 
+>tags:
 >context: button-group
 >content:
 
@@ -76,7 +76,7 @@ return (<div>
 
 ---
 >title: How to use button-group in crayons ?
->tags: 
+>tags:
 >context: button-group
 >content:
 
@@ -107,6 +107,6 @@ Button groups can be used to group related buttons into sections.
 </section>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

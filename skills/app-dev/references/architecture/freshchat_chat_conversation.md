@@ -51,7 +51,7 @@ This module allows users to build:
 
 # how to use placeholders supported for chat conversation in Freshcaller
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -136,7 +136,7 @@ In your `manifest.json`, under the `chat_conversation,` module, add the backgrou
   },
   "location": {
     "conversation_background": {
-    "url": "conversation_background.html" 
+    "url": "conversation_background.html"
     }
   }
 }
@@ -188,18 +188,18 @@ client.events.on('app.activated', () => {
 # what are data methods supported for chat conversation in Freshcaller
 
 ## Summary
-1. **Global Data Methods**  
+1. **Global Data Methods**
 2. **Placeholder-Specific Data Methods**
 
 ## Global Data Methods
 Use `client.data.get()` to retrieve objects regardless of where the app is deployed:
-- **`currentHost`** – The current host configuration.  
-- **`loggedInAgent`** – Information about the agent logged into the Freshworks UI or widget.  
+- **`currentHost`** – The current host configuration.
+- **`loggedInAgent`** – Information about the agent logged into the Freshworks UI or widget.
 - **`loggedInUser`** – Information about the user (only available for apps on Freshsales Suite).
 
 ## Placeholder-Specific Data Methods
 Use `client.data.get()` to retrieve conversation context:
-- **`user`** – Retrieves information about the conversation participant.  
+- **`user`** – Retrieves information about the conversation participant.
 - **`conversation`** – Retrieves details about the current chat conversation.
 
 ---
@@ -331,10 +331,10 @@ client.events.on("conversation.onAttachImageClick", eventCallback);
 # what are interface methods supported for chat conversation in Freshcaller
 
 ## Summary
-1. Display UI Elements  
-2. Show Confirmation Messages  
-3. Display Notifications  
-4. Control UI Element Visibility & State  
+1. Display UI Elements
+2. Show Confirmation Messages
+3. Display Notifications
+4. Control UI Element Visibility & State
 5. Set Field Values
 
 ## 1. Display UI Elements
@@ -347,12 +347,12 @@ client.events.on("conversation.onAttachImageClick", eventCallback);
 - **`showNotify`** – Show notifications with types: `info`, `success`, `warning`, `danger`, `alert`.
 
 ## 4. Control UI Element Visibility & State
-- **`client.interface.trigger("<method-name>", {id: "<element-name>"})`**  
-  - `<method-name>`: `hide`, `show`, `enable`, `disable`  
+- **`client.interface.trigger("<method-name>", {id: "<element-name>"})`**
+  - `<method-name>`: `hide`, `show`, `enable`, `disable`
   - Control elements in the Conversation window, Contact Info widget, or Custom Contact Properties widget.
 
 ## 5. Set Field Values
-- **`client.interface.trigger("setValue", {id: "<element-name>", value: "<value>"})`**  
+- **`client.interface.trigger("setValue", {id: "<element-name>", value: "<value>"})`**
   - Programmatically set the value of a UI field.
 
 ---
@@ -365,7 +365,7 @@ client.events.on("conversation.onAttachImageClick", eventCallback);
 # how to use interface methods supported for chat conversation in Freshcaller
 
 ## Summary
-1. Show Add Attachment Option  
+1. Show Add Attachment Option
 2. Show CoBrowse Option
 
 ## Example 1: Show Add Attachment Option
@@ -394,17 +394,17 @@ try {
 
 ---
 
->title: what are instance methods supported for chat conversation in Freshcaller  
->tags: chat_conversation, freshchat, instance_methods  
->context: apps.js  
+>title: what are instance methods supported for chat conversation in Freshcaller
+>tags: chat_conversation, freshchat, instance_methods
+>context: apps.js
 >content:
 
 # what are instance methods supported for chat conversation in Freshcaller
 
 ## Summary
-1. Resize Instance  
-2. Close Instance  
-3. Inter-Instance Communication  
+1. Resize Instance
+2. Close Instance
+3. Inter-Instance Communication
 4. Retrieve Instance Context
 
 ## 1. Resize Instance
@@ -414,14 +414,14 @@ try {
 - **`client.instance.close()`** – Programmatically close the app instance.
 
 ## 3. Inter-Instance Communication
-- **`context()`, `send()`, `receive()`, `get()`** –  
-  1. Send data from parent placeholder to modal and retrieve context there.  
-  2. Send data from modal back to parent.  
+- **`context()`, `send()`, `receive()`, `get()`** –
+  1. Send data from parent placeholder to modal and retrieve context there.
+  2. Send data from modal back to parent.
   3. Send data between any two instances.
 
 ## 4. Retrieve Instance Context
 - **`client.instance.context()`** – Returns:
-  - **In Modal:** Modal’s instance ID, placeholder name, parent instance ID, passed data.  
+  - **In Modal:** Modal’s instance ID, placeholder name, parent instance ID, passed data.
   - **In Parent:** Parent instance ID and placeholder name.
 
 ---
@@ -433,8 +433,8 @@ try {
 # how to use instance methods supported for chat conversation in Freshcaller
 
 ## Summary
-1. Parent → Modal Communication  
-2. Modal → Parent Communication  
+1. Parent → Modal Communication
+2. Modal → Parent Communication
 3. Instance → Instance Communication
 
 ## Example 1: Parent → Modal Communication
@@ -511,9 +511,9 @@ client.instance.receive(function(event) {
 
 ---
 
->title: what are the serverless events supported by chat conversation of Freshcaller  
->tags: module=chat_conversation, chat_conversation, freshchat, serverless_events  
->context: manifest.json  
+>title: what are the serverless events supported by chat conversation of Freshcaller
+>tags: module=chat_conversation, chat_conversation, freshchat, serverless_events
+>context: manifest.json
 >content:
 
 # what are the serverless events supported by chat conversation of Freshcaller
@@ -593,9 +593,9 @@ exports = {
 
 ---
 
->title: how to configure events supported by chat conversation of Freshcaller  
->tags: module=chat_conversation, chat_conversation, freshchat, product_events  
->context: manifest.json, server.js  
+>title: how to configure events supported by chat conversation of Freshcaller
+>tags: module=chat_conversation, chat_conversation, freshchat, product_events
+>context: manifest.json, server.js
 >content:
 
 # how to configure events supported by chat conversation of Freshcaller
@@ -671,9 +671,9 @@ exports = {
 
 ---
 
->title: what are the REST APIs supported by chat conversation module of Freshdesk  
->tags: module=chat_conversation, chat_conversation, freshchat, rest_api  
->context: manifest.json  
+>title: what are the REST APIs supported by chat conversation module of Freshdesk
+>tags: module=chat_conversation, chat_conversation, freshchat, rest_api
+>context: manifest.json
 >content:
 
 # what are the REST APIs supported by chat conversation module of Freshdesk

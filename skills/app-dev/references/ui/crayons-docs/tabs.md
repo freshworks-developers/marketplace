@@ -1,5 +1,5 @@
 >title: tabs - Usage in HTML
->tags: 
+>tags:
 >context: tabs
 >content:
 
@@ -39,7 +39,7 @@ clear-input>
 
 ---
 >title: tabs - Usage in React
->tags: 
+>tags:
 >context: tabs, react
 >content:
 
@@ -88,17 +88,17 @@ clearInput>
 
 ---
 >title: Usage in tabs
->tags: 
+>tags:
 >context: tabs
 >content:
 
 # Tabs (fw-tabs)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in tabs
->tags: 
+>tags:
 >context: tabs
 >content:
 
@@ -135,7 +135,7 @@ Type: `"box" \| "normal"`
 Default: `'normal'`
 ---
 >title: Events in tabs
->tags: 
+>tags:
 >context: tabs
 >content:
 
@@ -149,7 +149,7 @@ Description: Triggered when a the view switches to a new tab.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in tabs
->tags: 
+>tags:
 >context: tabs
 >content:
 
@@ -186,7 +186,7 @@ Name: `--fw-tabs-width`
 Description: width of the tab container.
 ---
 >title: How to use tabs in crayons ?
->tags: 
+>tags:
 >context: tabs
 >content:
 

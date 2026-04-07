@@ -1,5 +1,5 @@
 >title: skeleton - Usage in HTML
->tags: 
+>tags:
 >context: skeleton
 >content:
 
@@ -35,7 +35,7 @@ el.count = 2;
 
 ---
 >title: skeleton - Usage in React
->tags: 
+>tags:
 >context: skeleton, react
 >content:
 
@@ -111,21 +111,21 @@ ref={skeletonCardRef}
 
 </div>);
 }
-````  
+````
 
 ---
 >title: Usage in skeleton
->tags: 
+>tags:
 >context: skeleton
 >content:
 
 # Skeleton (fw-skeleton)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in skeleton
->tags: 
+>tags:
 >context: skeleton
 >content:
 
@@ -183,7 +183,7 @@ Type: `string`
 Default: `null`
 ---
 >title: CSS Custom Properties in skeleton
->tags: 
+>tags:
 >context: skeleton
 >content:
 
@@ -216,7 +216,7 @@ Name: `--fw-skeleton-width`
 Description: Skeleton width: Default: 100% for the text and rect, 32px for the circle
 ---
 >title: How to use skeleton in crayons ?
->tags: 
+>tags:
 >context: skeleton
 >content:
 
@@ -292,6 +292,6 @@ Multi Para Layout
 | Part     | Description |
 | -------- | ----------- |
 | `"base"` |             |
- 
+
 
 ---

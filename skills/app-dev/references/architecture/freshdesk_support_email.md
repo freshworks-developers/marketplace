@@ -1,6 +1,6 @@
 >title: what is support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk
->context: 
+>context:
 >content:
 
 # What is Support Email Module in Freshdesk
@@ -11,7 +11,7 @@ An app user with a stand-alone Freshdesk subscription or a subscription to any S
 
 >title: what are the placeholders supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk
->context: 
+>context:
 >content:
 
 # What are the Placeholders Supported for Support Email Module in Freshdesk
@@ -157,7 +157,7 @@ client.events.on('app.activated', () => {
 
 >title: data methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, data_method
->context: 
+>context:
 >content:
 
 # Data Methods Supported for Support Email Module in Freshdesk
@@ -182,7 +182,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk
->context: 
+>context:
 >content:
 
 # Example of Data Method Usage Supported for Support Email Module in Freshdesk
@@ -241,7 +241,7 @@ getEmailConfig();
 
 >title: what are events methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # What are the Events Methods Supported for Support Email Module in Freshdesk
@@ -273,7 +273,7 @@ An app deployed in the New Email page can react to the following front-end event
 
 >title: how to use events methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # How to Use Events Methods Supported for Support Email Module in Freshdesk
@@ -314,7 +314,7 @@ An app deployed in the New Email page can react to the following front-end event
 
 >title: what are interface methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # What are the Interface Methods Supported for Support Email Module in Freshdesk
@@ -350,7 +350,7 @@ An app deployed in the New Email page can react to the following front-end event
 
 >title: how to use interface methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # How to Use Interface Methods Supported for Support Email Module in Freshdesk
@@ -418,7 +418,7 @@ try {
 
 >title: what are instance methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # What are the Instance Methods Supported for Support Email Module in Freshdesk
@@ -441,7 +441,7 @@ try {
 
 >title: how to use instance methods supported for support email module in Freshdesk
 >tags: module=support_email, support_email, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # How to Use Instance Methods Supported for Support Email Module in Freshdesk
@@ -599,7 +599,7 @@ In the app manifest, configure these events at `modules.common`.
 
 >title: what are the REST APIs supported by support email module of Freshdesk
 >tags: module=support_email, support_email, freshdesk, rest_api
->context: 
+>context:
 >content:
 
 # What are the REST APIs Supported by Support Email Module of Freshdesk

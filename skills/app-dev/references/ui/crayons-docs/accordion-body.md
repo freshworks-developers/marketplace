@@ -1,5 +1,5 @@
 >title: CSS Custom Properties in accordion-body
->tags: 
+>tags:
 >context: accordion-body
 >content:
 
@@ -24,7 +24,7 @@ Name: `--fw-accordion-body-padding`
 Description: Accordion body padding
 ---
 >title: How to use accordion-body in crayons ?
->tags: 
+>tags:
 >context: accordion-body
 >content:
 

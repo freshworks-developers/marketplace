@@ -138,7 +138,7 @@ let data = await client.request.invoke("serverMethod", {
 
 1. SMIs invoked from custom installating page has restrictions with key-value store or entity storage access (`$db`) and access to schedule events (`$schedule`) as this is availabe only post installation of the app.
 2. SMIs have a payload restriction of 100 KB.
-3. SMIs have a rate limit of 50 triggers per minute but can be increased on a case-by-case basis via Dev Assist. 
+3. SMIs have a rate limit of 50 triggers per minute but can be increased on a case-by-case basis via Dev Assist.
 4. The default app execution timeout is 20 seconds. If the request timeout is increased to 20, 25, or 30 seconds, the app execution timeout is extended to 40 seconds.
 5. SMI logs for functions invoked from custom installation page are not available as logs are available post install.
 
@@ -565,10 +565,10 @@ Yes it has iparams as part of the payload, so that it can utilized.
 
 # How do I debug or test my SMI functions locally?
 
-1. **`fdk run`**: Start the local server with `fdk run` in your app directory.  
-2. **System Settings**: Open `http://localhost:10001/system_settings`. If your app uses product modules, specify your test account domain (e.g., `https://mydomain.freshdesk.com`).  
-3. **Custom Configs**: If your app has iparams, they appear at `http://localhost:10001/custom_configs`.  
-4. **Simulate SMI**: In your front-end, ensure you append `?dev=true` to your product URL so the local version of your app loads. Then, perform the action that triggers `client.request.invoke()`.  
+1. **`fdk run`**: Start the local server with `fdk run` in your app directory.
+2. **System Settings**: Open `http://localhost:10001/system_settings`. If your app uses product modules, specify your test account domain (e.g., `https://mydomain.freshdesk.com`).
+3. **Custom Configs**: If your app has iparams, they appear at `http://localhost:10001/custom_configs`.
+4. **Simulate SMI**: In your front-end, ensure you append `?dev=true` to your product URL so the local version of your app loads. Then, perform the action that triggers `client.request.invoke()`.
 5. **Logs**: Check your terminal or console logs for debugging messages from serverless code. Errors, success responses, or timeouts appear here.
 
 ---

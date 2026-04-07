@@ -331,7 +331,7 @@ The attributes object passed to remove action should be of type array is display
 ```
 
 ## How to fix this error
-Please ensure that the attributes object passed to remove action should be of type array. Here is an example : 
+Please ensure that the attributes object passed to remove action should be of type array. Here is an example :
 ```js
 client.db.update("agent_id: 1234762398","remove", ["logs.ticket_id:11233", "logs.ticket_id:12312"]).then(function(data) {
   // success operation
@@ -353,7 +353,7 @@ Remove operation removes one or more attributes of the specified key, value pair
 # Fixing invalid_attribute_key while using key-value store
 
 ## How to fix this error
-Please ensure that the keys or paths inside attributes object cannot be blank. Here is an example : 
+Please ensure that the keys or paths inside attributes object cannot be blank. Here is an example :
 ```js
 client.db.update("agent_id: 1234762398","set", {"logs.ticket_id:11233.TimeLog": 500}).then(
     function(data) {
@@ -379,12 +379,12 @@ You can mock the DB operations to happen beyond the 50 requests per minute to te
 
 ---
 
->title: How to fix client is not undefined error 
+>title: How to fix client is not undefined error
 >tags: key-value-storage, data-storage
 >context: app.js, server.js
 >code:
 
-# How to fix client is not undefined error 
+# How to fix client is not undefined error
 
 This error occurs if the app is not initialised. Use the `app.initialised()` method as shown below to fix it :
 
@@ -393,6 +393,6 @@ let client;
 init();
 async function init() {
   client = await app.initialized();
- 
+
 }
 ```

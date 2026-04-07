@@ -1,5 +1,5 @@
 >title: Demo with option-label-path and option-value-path in options-list
->tags: 
+>tags:
 >context: options-list
 >content:
 
@@ -105,13 +105,13 @@ graphicsProps: { image: x.image },
 ```
 ---
 >title: options-list - Usage for option-label-path and option-value-path in HTML
->tags: 
+>tags:
 >context: options-list
 >content:
 
 # Usage
 ### Usage for option-label-path and option-value-path in HTML
-  
+
 ```html
 <fw-label value="With predefined options" color="blue"></fw-label>
 <fw-popover same-width="false">
@@ -209,19 +209,19 @@ graphicsProps: { image: x.image },
 });
 };
 </script>
-```  
+```
 
 ---
 >title: Demo with virtual scroll in options-list
->tags: 
+>tags:
 >context: options-list
 >content:
 
 # Usage
 ### Demo with virtual scroll
-**This feature is experimental, it needs to be explicitly activated using the `enableVirtualScroll` feature flag.**  
+**This feature is experimental, it needs to be explicitly activated using the `enableVirtualScroll` feature flag.**
 `enableVirtualScroll` property can be used to enable virtualisation of long list of options.
-`estimatedSize` property is used to set estimated size of items in the list box to ensure smooth-scrolling.  
+`estimatedSize` property is used to set estimated size of items in the list box to ensure smooth-scrolling.
 ```html live
 <fw-label value="With Virtual Scroll" color="blue"></fw-label>
 <fw-popover>
@@ -248,13 +248,13 @@ console.log(e.detail);
 ```
 ---
 >title: options-list - Usage of Virtual scroll in HTML
->tags: 
+>tags:
 >context: options-list
 >content:
 
 # Usage
 ### Usage of Virtual scroll in HTML
-  
+
 ```html
 <fw-label value="With Virtual Scroll" color="blue"></fw-label>
 <fw-popover>
@@ -282,13 +282,13 @@ console.log(e.detail);
 
 ---
 >title: options-list - Usage of Virtual scroll in React
->tags: 
+>tags:
 >context: options-list, react
 >content:
 
 # Usage
 ### Usage of Virtual scroll in React
-  
+
 ```jsx
 function ListOptions() {
 const longListOptions = Array.from(Array(50000), (_,i) => ({
@@ -309,21 +309,21 @@ estimatedSize={52}
 );
 }
 export default ListOptions;
-```  
+```
 
 ---
 >title: Usage of Virtual scroll in options-list
->tags: 
+>tags:
 >context: options-list
 >content:
 
 # Usage
 ### Usage of Virtual scroll
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in options-list
->tags: 
+>tags:
 >context: options-list
 >content:
 
@@ -507,7 +507,7 @@ Type: `"avatar" \| "conversation" \| "icon" \| "standard"`
 Default: `'standard'`
 ---
 >title: Events in options-list
->tags: 
+>tags:
 >context: options-list
 >content:
 
@@ -526,7 +526,7 @@ Description: Triggered when the options list is in loading state processing the 
 Type: `CustomEvent<any>`
 ---
 >title: How to use options-list in crayons ?
->tags: 
+>tags:
 >context: options-list
 >content:
 
@@ -660,6 +660,6 @@ Type: `Promise<any>`
 | Part                          | Description |
 | ----------------------------- | ----------- |
 | `"fw-list-options-container"` |             |
- 
+
 
 ---

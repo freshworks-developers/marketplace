@@ -1,5 +1,5 @@
 >title: Properties in modal-title
->tags: 
+>tags:
 >context: modal-title
 >content:
 
@@ -29,12 +29,12 @@ Type: `string`
 Default: `undefined`
 ---
 >title: How to use modal-title in crayons ?
->tags: 
+>tags:
 >context: modal-title
 >content:
 
 # Modal Title (fw-modal-title)
 <!-- Auto Generated Below -->
- 
+
 
 ---

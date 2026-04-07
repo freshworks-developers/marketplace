@@ -1,6 +1,6 @@
 >title: what is support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk
->context: 
+>context:
 >content:
 
 # what is support contact module in Freshdesk
@@ -237,7 +237,7 @@ getCompanyDetails();
 ---
 >title: what are events methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for support contact module in Freshdesk
@@ -253,7 +253,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 ---
 >title: how to use events methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # how to use events methods supported for support contact module in Freshdesk
@@ -276,7 +276,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 ---
 >title: what are interface methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for support contact module in Freshdesk
@@ -298,7 +298,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 ---
 >title: how to use interface methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for support contact module in Freshdesk
@@ -344,7 +344,7 @@ client.interface.trigger("show", { id: "<element-name>" })
 ---
 >title: what are instance methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for support contact module in Freshdesk
@@ -358,7 +358,7 @@ Communicate between instances - Use the `context()`, `send()`, `receive()`, or `
 ---
 >title: how to use instance methods supported for support contact module in Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for support contact module in Freshdesk
@@ -645,7 +645,7 @@ exports = {
 ---
 >title: what are the REST APIs supported by support contact module of Freshdesk
 >tags: module=support_contact, support_contact, freshdesk, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by support contact module of Freshdesk

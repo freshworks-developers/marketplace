@@ -1,5 +1,5 @@
 >title: country-phone - Usage in HTML
->tags: 
+>tags:
 >context: country-phone
 >content:
 
@@ -77,7 +77,7 @@ state="error"
 
 ---
 >title: country-phone - Usage in React
->tags: 
+>tags:
 >context: country-phone, react
 >content:
 
@@ -149,17 +149,17 @@ state="error">
 
 ---
 >title: Usage in country-phone
->tags: 
+>tags:
 >context: country-phone
 >content:
 
 # CountryPhone(fw-country-phone)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in country-phone
->tags: 
+>tags:
 >context: country-phone
 >content:
 
@@ -287,7 +287,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in country-phone
->tags: 
+>tags:
 >context: country-phone
 >content:
 
@@ -316,7 +316,7 @@ Description: Triggered when clear icon is clicked.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in country-phone
->tags: 
+>tags:
 >context: country-phone
 >content:
 
@@ -329,7 +329,7 @@ Name: `--fw-select-width`
 Description: Adjust country code select dropdown width
 ---
 >title: How to use country-phone in crayons ?
->tags: 
+>tags:
 >context: country-phone
 >content:
 

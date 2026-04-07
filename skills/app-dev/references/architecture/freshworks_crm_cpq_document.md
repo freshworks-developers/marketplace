@@ -1,6 +1,6 @@
 >title: what is cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is cpq_document module in Freshsales Suite
@@ -44,7 +44,7 @@ Appointment Module Usage is allowed for following subscriptions
 
 # how to use placeholders supported for cpq_document module in Freshsales Suite
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -74,12 +74,12 @@ To use the supported placeholder modify your `manifest.json` as below
 
 >title: what are data methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for cpq_document module in Freshsales Suite
 
-You can use the `client.data.get()` data method to retrieve the following objects. 
+You can use the `client.data.get()` data method to retrieve the following objects.
 
 ## Objects
 1. The objects accessible regardless of the placeholders
@@ -90,7 +90,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm
->context: 
+>context:
 >content:
 
 # example of data method usage supported for cpq_document module in Freshsales Suite
@@ -116,7 +116,7 @@ getCurrentHostData();
 
 >title: what are events methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for cpq_document module in Freshsales Suite
@@ -164,7 +164,7 @@ To use `calling` event use following code:
 
 >title: what are interface methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for cpq_document module in Freshsales Suite
@@ -182,7 +182,7 @@ Freshsales Suite cpq_document module supports following interface methods:
 
 >title: how to use interface methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for cpq_document module in Freshsales Suite
@@ -193,7 +193,7 @@ Freshsales Suite cpq_document module supports following interface methods:
     try {
       let data = client.interface.trigger('showModal', {
         title: 'Sample App Form',
-        template: './views/modal.html' 
+        template: './views/modal.html'
       });
       console.log(data); // success message
     } catch (error) {
@@ -206,7 +206,7 @@ Freshsales Suite cpq_document module supports following interface methods:
 
 >title: what are instance methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for cpq_document module in Freshsales Suite
@@ -218,7 +218,7 @@ Freshsales Suite cpq_document module supports following interface methods:
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves:
       1. The (modal’s) instance id
       2. The placeholder name of the app instance
@@ -232,7 +232,7 @@ Freshsales Suite cpq_document module supports following interface methods:
 
 >title: how to use instance methods supported for cpq_document module in Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for cpq_document module in Freshsales Suite
@@ -438,7 +438,7 @@ An app built for this module can react to the following events.
 ## Steps
 
 ### Step 1. Subscribe to cpq_document by configuring an event listener in `manifest.json`
-  
+
   ```json
   {
     "events": {
@@ -460,7 +460,7 @@ An app built for this module can react to the following events.
   ```
 
 ### Step 3. Use the appropriate payload attribute for callback with below syntax:
-  
+
   ```json
   {
     "currentHost": {
@@ -504,7 +504,7 @@ An app built for this module can react to the following events.
 
 >title: what are the REST APIs supported by cpq_document module of Freshsales Suite
 >tags: module=cpq_document, cpq_document, freshworks_crm, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by cpq_document module of Freshsales Suite

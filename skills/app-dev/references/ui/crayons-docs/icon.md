@@ -1,5 +1,5 @@
 >title: Properties in icon
->tags: 
+>tags:
 >context: icon
 >content:
 
@@ -8,12 +8,12 @@
 
 ---
 >title: How to use icon in crayons ?
->tags: 
+>tags:
 >context: icon
 >content:
 
 # fw-custom-cell-icon
 <!-- Auto Generated Below -->
- 
+
 
 ---

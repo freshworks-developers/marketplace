@@ -1,6 +1,6 @@
 >title: what is sales activites module in Freshsales Suite
 >tags: module=sales_activities, sales_activities, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is sales activites module in Freshsales Suite
@@ -89,7 +89,7 @@ To use the supported placeholder modify your `manifest.json` as below to include
 
 >title: what are data methods supported for sales activites module in Freshsales Suite
 >tags: module=sales_activities, sales_activities, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for sales activites module in Freshsales Suite
@@ -146,9 +146,9 @@ getLoggedInUserData();
 
 # what are events methods supported for sales activites module in Freshsales Suite
 
-The sales activites module supports following events. 
-1. **Common events**: If your app is built to be deployed on the `left_nav_cti` placeholder, the app can react to the `calling` event when the corresponding event trigger occurs. 
-2. **Conversation editor page events**: 
+The sales activites module supports following events.
+1. **Common events**: If your app is built to be deployed on the `left_nav_cti` placeholder, the app can react to the `calling` event when the corresponding event trigger occurs.
+2. **Conversation editor page events**:
    1. `chatConversation.onSendMessage` - When an agent clicks the Send button. The event payload is the chatConversation.onSendMessage object.
    2. `chatConversation.propertiesLoaded` - When an agent,
       1. collapses and then reopens the conversation properties widget.
@@ -223,7 +223,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: what are interface methods supported for sales activites module in Freshsales Suite
 >tags: module=sales_activities, sales_activities, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for sales activites module in Freshsales Suite
@@ -240,7 +240,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: how to use interface methods supported for sales activites module in Freshsales Suite
 >tags: module=sales_activities, sales_activities, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for sales activites module in Freshsales Suite
@@ -283,7 +283,7 @@ client.interface.trigger("showNotify", {
    1. Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    2. Send data from a modal to a parent placeholder and get the data in the parent.
    3. Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    1. If a modal is the app instance where context() is used, it retrieves,
       1. The (modal’s) instance id
       2. The placeholder name of the app instance

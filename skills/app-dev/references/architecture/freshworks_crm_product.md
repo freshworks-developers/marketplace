@@ -43,7 +43,7 @@ In the app manifest, configure these placeholders at `modules.common`:
 
 # how to use placeholders supported for product module in Freshsales Suite
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 ```json
 {
   "platform-version": "3.0",
@@ -73,7 +73,7 @@ To use the supported placeholder modify your `manifest.json` as below
 
 >title: what are data methods supported for product module in Freshsales Suite
 >tags: module=product, product, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for product module in Freshsales Suite

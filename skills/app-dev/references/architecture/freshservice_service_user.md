@@ -1,6 +1,6 @@
 >title: what is service user module in Freshservice
 >tags: module=service_user, service_user, freshservice
->context: 
+>context:
 >content:
 
 # what is service user module in Freshservice
@@ -31,7 +31,7 @@ An app user with a stand-alone Freshservice subscription or a subscription to an
 
 # how to use placeholders supported for service user module in Freshservice
 
-To use the Support user placeholder modify your `manifest.json` as below 
+To use the Support user placeholder modify your `manifest.json` as below
 ```json
 {
   "platform-version": "3.0",
@@ -117,7 +117,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 ---
 >title: what are events methods supported for service user module in Freshservice
 >tags: module=service_user, service_user, freshservice, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for service user module in Freshservice
@@ -192,7 +192,7 @@ Freshservice supports following interface methods
    - Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    - Send data from a modal to a parent placeholder and get the data in the parent.
    - Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    - If a modal is the app instance where context() is used, it retrieves,
       - The (modal’s) instance id
       - The placeholder name of the app instance
@@ -401,7 +401,7 @@ In the app manifest, configure these events at `modules.service_user`
 ---
 >title: what are the REST APIs supported by service user module of Freshservice
 >tags: module=service_user, service_user, freshservice, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by service user module of Freshservice

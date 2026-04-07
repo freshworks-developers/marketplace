@@ -1,6 +1,6 @@
 >title: what is phone_call module in Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm
->context: 
+>context:
 >content:
 
 # What is phone_call module in Freshsales Suite
@@ -75,7 +75,7 @@ To use the supported placeholders, modify your `manifest.json` as below:
 
 >title: what are data methods supported for phone_call module in Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # What are data methods supported for phone_call module in Freshsales Suite
@@ -117,7 +117,7 @@ getCurrentHostData();
 
 >title: what are events methods supported for phone_call module in Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # What are events methods supported for phone_call module in Freshsales Suite
@@ -163,7 +163,7 @@ To use the `calling` event, use the following code:
 
 >title: what are interface methods supported for phone_call module in Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # What are interface methods supported for phone_call module in Freshsales Suite
@@ -191,7 +191,7 @@ To use the `calling` event, use the following code:
 try {
   let data = client.interface.trigger('showModal', {
     title: 'Sample App Form',
-    template: './views/modal.html' 
+    template: './views/modal.html'
   });
   console.log(data); // success message
 } catch (error) {
@@ -204,7 +204,7 @@ try {
 
 >title: what are instance methods supported for phone_call module in Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # What are instance methods supported for phone_call module in Freshsales Suite
@@ -265,7 +265,7 @@ try {
       instanceId: "4",
       location: "modal",
       parentId: "1",
-      modalData: {name: "James", email: "James@freshworks.com"} 
+      modalData: {name: "James", email: "James@freshworks.com"}
     }
     */
    } catch (error) {
@@ -514,7 +514,7 @@ try {
 
 >title: what are the REST APIs supported by phone_call module of Freshsales Suite
 >tags: module=phone, phone_call, freshworks_crm, rest_api
->context: 
+>context:
 >content:
 
 # What are the REST APIs supported by phone_call module of Freshsales Suite

@@ -1,5 +1,5 @@
 >title: Basic demo in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -13,7 +13,7 @@
 ```
 ---
 >title: tooltip - Basic usage in HTML
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -29,7 +29,7 @@
 
 ---
 >title: tooltip - Basic usage in React
->tags: 
+>tags:
 >context: tooltip, react
 >content:
 
@@ -52,7 +52,7 @@ return (<div>
 
 ---
 >title: Placement demo in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -157,7 +157,7 @@ justify-content: center;
 ```
 ---
 >title: Triggers demo in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -197,7 +197,7 @@ document.getElementById("tooltip").show();
 ```
 ---
 >title: tooltip - Triggers usage in HTML
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -239,7 +239,7 @@ document.getElementById("tooltip").show();
 
 ---
 >title: tooltip - Triggers usage in React
->tags: 
+>tags:
 >context: tooltip, react
 >content:
 
@@ -285,7 +285,7 @@ Activating through manual trigger outside tooltip:
 
 ---
 >title: HTML in Tooltip in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -302,7 +302,7 @@ This tooltip has <b>HTML</b> content.
 ```
 ---
 >title: tooltip - HTML in tooltip Usage in HTML
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -321,7 +321,7 @@ This tooltip has <b>HTML</b> content.
 
 ---
 >title: tooltip - HTML in tooltip Usage in React
->tags: 
+>tags:
 >context: tooltip, react
 >content:
 
@@ -347,7 +347,7 @@ This tooltip has <b>HTML</b> content.
 
 ---
 >title: Hoisting in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -376,7 +376,7 @@ padding: 15px 0px;
 ```
 ---
 >title: tooltip - Hoisting usage in HTML
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -407,18 +407,18 @@ padding: 15px 0px;
 
 ---
 >title: Hoisting usage in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
 # Tooltip (fw-tooltip)
 ## Demo & Usage
 #### Hoisting usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in tooltip
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -476,7 +476,7 @@ Type: `"click" \| "hover" \| "manual"`
 Default: `'hover'`
 ---
 >title: How to use tooltip in crayons ?
->tags: 
+>tags:
 >context: tooltip
 >content:
 
@@ -495,6 +495,6 @@ Shows the tooltip.
 #### Returns
 Type: `Promise<boolean>`
 promise that resolves to true
- 
+
 
 ---

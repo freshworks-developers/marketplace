@@ -1,5 +1,5 @@
 >title: toast - Usage in HTML
->tags: 
+>tags:
 >context: toast
 >content:
 
@@ -54,7 +54,7 @@ line-height: 16px;"
 
 ---
 >title: toast - Usage in React
->tags: 
+>tags:
 >context: toast, react
 >content:
 
@@ -129,11 +129,11 @@ custom html contents can be added
 <FwButton onClick={() => toast.trigger({contentref:'#custom-toast1'})}>trigger custom 1 </FwButton>
 </div>);
 }
-````  
+````
 
 ---
 >title: Custom template event naming in toast
->tags: 
+>tags:
 >context: toast
 >content:
 
@@ -141,7 +141,7 @@ custom html contents can be added
 ## ToastOptions
 ### Custom template event naming
 Please make sure when using event handler inside `custom template` in a `React app`, the event handler name is in `lowercase`. For example use `onclick` instead of `onClick`. This helps in cloning the event handlers used in the template when displaying multiple toast messages.
-Refer [usage](#usage)  
+Refer [usage](#usage)
 ```js
 useEffect(() => {
 el1.current.onclick = function() {
@@ -150,11 +150,11 @@ console.log("custom action handled here");
 },[])
 <FwButton onclick={()=> console.log("custom action here")}>Action button</FwButton>
 <FwButton ref={el1}>In Typescript apps</FwButton>
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in toast
->tags: 
+>tags:
 >context: toast
 >content:
 
@@ -219,7 +219,7 @@ Type: `"error" \| "inprogress" \| "success" \| "warning"`
 Default: `'warning'`
 ---
 >title: How to use toast in crayons ?
->tags: 
+>tags:
 >context: toast
 >content:
 

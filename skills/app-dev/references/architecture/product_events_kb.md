@@ -1,6 +1,6 @@
 >title: Product event handling in FDK
->tags: events, product, serverless 
->context: manifest.json, server.js 
+>tags: events, product, serverless
+>context: manifest.json, server.js
 >content:
 
 Freshworks Product events are the events that occur in freshworks product such as ticket creation, ticket updation, creating conversations, etc.

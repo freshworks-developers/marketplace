@@ -1,18 +1,18 @@
 >title: What is the Settings page and installation parameters in Freshworks apps
 >tags: custom-iparams, usage
->context: 
+>context:
 >content:
 
 # What is the Settings page and installation parameters in Freshworks apps
 
-Your app typically requires, from the app’s user, certain data that is necessary to process the app logic. It might not be possible to include this data in your app code due to reasons such as - exposinging secure information or simply the unavailability of the data with you during app building. At times, your app can also be user-scoped - meaning, it can work based on the user’s needs. To do this, it is essential for the app to retrieve user-input data and at times, persist the data. 
+Your app typically requires, from the app’s user, certain data that is necessary to process the app logic. It might not be possible to include this data in your app code due to reasons such as - exposinging secure information or simply the unavailability of the data with you during app building. At times, your app can also be user-scoped - meaning, it can work based on the user’s needs. To do this, it is essential for the app to retrieve user-input data and at times, persist the data.
 
 The developer platform enables you to configure either a default Settings page or a custom Settings page to collect data from the app user. Installation params or iparams are parameters whose values app users can set when they install an app. These parameters are presented to the app users through the Settings page.
 
 ---
 >title: What are custom iparams in Freshworks apps
 >tags: custom-iparams, usage
->context: 
+>context:
 >content:
 
 # What are custom iparams in Freshworks apps
@@ -26,7 +26,7 @@ Installation params or iparams are parameters whose values app users can set whe
 
 >title: How should I choose between iparams and custom iparams in my Freshworks apps
 >tags: custom-iparams, iparams
->context: 
+>context:
 >content:
 
 # How should I choose between iparams and custom iparams in my Freshworks apps
@@ -42,7 +42,7 @@ If the answer is yes, to more than one of the above questions then custom iparam
 
 >title: How to create a custom settings page in my Freshworks apps
 >tags: custom-iparams, how-to
->context: 
+>context:
 >content:
 
 # How to create a custom settings page in my Freshworks apps
@@ -73,7 +73,7 @@ To create and use a custom Settings page:
 
 Given below are the steps involved in creating the html file for custom iparams:
 1. Navigate to the config directory and create an iparams.html file. Ensure that the config directory contains only one of the two files - iparams.json or iparams.html.
-2. In the iparams.html file: 
+2. In the iparams.html file:
     a. Include the required HTML, CSS, and JS dependencies. By default, when you use the generate command and generate the iparams.html file, the freshworks css (https://static.freshdev.io/fdk/2.0/assets/freshworks.css) is included in the file.
     b. Include the appclient through <script src="{{{appclient}}}"></script>
     c. Include the logic to render the installation page UI components.
@@ -488,7 +488,7 @@ document.onreadystatechange = function () {
 
 # How to build an custom iparam page requesting for user's information
 
-To create the custom iparam page, you would need to create iparams.html. The sample code for iparams.html has been shared below. 
+To create the custom iparam page, you would need to create iparams.html. The sample code for iparams.html has been shared below.
 ```html
 <html>
   <head>
@@ -517,7 +517,7 @@ To create the custom iparam page, you would need to create iparams.html. The sam
   <script nomodule src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.js"></script>
 </html>
 ```
-To store the installation parameter values entered in the custom installation page, include the postconfigs method in the iparams.js file. 
+To store the installation parameter values entered in the custom installation page, include the postconfigs method in the iparams.js file.
 ```js
 function postConfigs() {
   return {

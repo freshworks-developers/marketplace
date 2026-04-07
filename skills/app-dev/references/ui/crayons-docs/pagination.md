@@ -1,5 +1,5 @@
 >title: pagination - Usage in HTML
->tags: 
+>tags:
 >context: pagination
 >content:
 
@@ -18,7 +18,7 @@ total="50"
 
 ---
 >title: pagination - Usage in React
->tags: 
+>tags:
 >context: pagination, react
 >content:
 
@@ -42,17 +42,17 @@ total="50"></FwPagination>
 
 ---
 >title: Usage in pagination
->tags: 
+>tags:
 >context: pagination
 >content:
 
 # Pagination (fw-pagination)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in pagination
->tags: 
+>tags:
 >context: pagination
 >content:
 
@@ -110,7 +110,7 @@ Type: `number`
 Default: `undefined`
 ---
 >title: Events in pagination
->tags: 
+>tags:
 >context: pagination
 >content:
 
@@ -124,7 +124,7 @@ Description: Triggered when either previous or next button is clicked.
 Type: `CustomEvent<any>`
 ---
 >title: How to use pagination in crayons ?
->tags: 
+>tags:
 >context: pagination
 >content:
 

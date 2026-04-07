@@ -93,7 +93,7 @@ To use the supported placeholder modify your `manifest.json` as below:
 
 >title: what are data methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # What are data methods supported for deal module in Freshsales Suite
@@ -113,7 +113,7 @@ An app deployed in the Deal details page can retrieve the following objects:
 
 >title: example of data method usage supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm
->context: 
+>context:
 >content:
 
 # Example of data method usage supported for deal module in Freshsales Suite
@@ -139,7 +139,7 @@ getCurrentEntityInfo();
 
 >title: what are events methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # What are events methods supported for deal module in Freshsales Suite
@@ -207,7 +207,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: what are interface methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # What are interface methods supported for deal module in Freshsales Suite
@@ -230,7 +230,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: how to use interface methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # How to use interface methods supported for deal module in Freshsales Suite
@@ -267,7 +267,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: what are instance methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # What are instance methods supported for deal module in Freshsales Suite
@@ -279,7 +279,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
    - Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    - Send data from a modal to a parent placeholder and get the data in the parent.
    - Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    - If a modal is the app instance where context() is used, it retrieves:
      - The (modal’s) instance id
      - The placeholder name of the app instance
@@ -293,7 +293,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: how to use instance methods supported for deal module in Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # How to use instance methods supported for deal module in Freshsales Suite
@@ -423,7 +423,7 @@ client.instance.receive(
 An app built for this module can react to the following events.
 
 ## Events:
-1. Common events: 
+1. Common events:
    In the app manifest, configure these events at `modules.common`.
    - App set-up events:
      - `onAppInstall`
@@ -434,7 +434,7 @@ An app built for this module can react to the following events.
      - `onExternalEvent`
      - `onAppUninstall`
    - Scheduled events
-2. Product-specific events: 
+2. Product-specific events:
    In the app manifest, configure these events at `modules.deal`.
    - `onDealCreate`
    - `onDealUpdate`
@@ -563,7 +563,7 @@ exports = {
 
 >title: what are the REST APIs supported by deal module of Freshsales Suite
 >tags: module=deal, deal, freshworks_crm, rest_api
->context: 
+>context:
 >content:
 
 # What are the REST APIs supported by deal module of Freshsales Suite

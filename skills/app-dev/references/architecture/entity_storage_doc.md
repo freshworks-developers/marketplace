@@ -35,11 +35,11 @@ You can use the custom objects feature to define new entities (object types). On
 Entity definition comprises the following steps:
 
 ## Components of an Entity Definition
-1. **Custom Object Schema:**  
+1. **Custom Object Schema:**
    - Define the schema specification, including all object attribute definitions.
-2. **Entity Storage Initialization:**  
+2. **Entity Storage Initialization:**
    - Initiate the storage mechanism for the entity.
-3. **Entity Reference Acquisition:**  
+3. **Entity Reference Acquisition:**
    - Obtain a reference to the entity for schema and record operations.
 
 ---
@@ -87,9 +87,9 @@ Entity definition comprises the following steps:
 
 ---
 
->title: What are considerations while using entity schema?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: What are considerations while using entity schema?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # What are considerations while using entity schema?
@@ -107,10 +107,10 @@ Entity definition comprises the following steps:
 
 # What are the attributes of entity schema?
 
-1. **`<entity-name>`**  
+1. **`<entity-name>`**
    - Mandatory object type; used to create and process records.
    - Example: For a custom object called "restaurants", `<entity-name>` is `restaurants`.
-2. **`fields`**  
+2. **`fields`**
    - Mandatory array containing field objects that define the attributes of the entity.
 
 ---
@@ -123,11 +123,11 @@ Entity definition comprises the following steps:
 # What are the attributes of field object
 
 ## Field Object Attributes
-1. **name:**  
+1. **name:**
    - Type: String; identifier for the attribute (alphanumeric, starting with an alphabet, underscores allowed).
-2. **label:**  
+2. **label:**
    - Type: String; default display name for the attribute (front-end overrides are allowed).
-3. **type:**  
+3. **type:**
    - Type: String; indicates the data type. Possible values:
      - `text` (up to 64 characters)
      - `paragraph` (long text, max 2048 characters)
@@ -138,7 +138,7 @@ Entity definition comprises the following steps:
      - `enum` (dropdown list; options in `choices`)
      - `date` (YYYY-MM-DD format)
      - `section` (for grouping fields; not countable as mandatory)
-4. **choices:**  
+4. **choices:**
    - Mandatory for `enum` type; an array of option objects. Each option contains:
      - `id` (integer)
      - `value` (string)
@@ -173,9 +173,9 @@ The developer platform provides a `client.db` or `$db` interface for data storag
 
 ---
 
->title: how to obtain a reference to an entity  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: how to obtain a reference to an entity
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # how to obtain a reference to an entity
@@ -208,9 +208,9 @@ A successful call returns an interface with static methods such as:
 
 ---
 
->title: how to create entities in Freshworks apps  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: config/entities.json  
+>title: how to create entities in Freshworks apps
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: config/entities.json
 >content:
 
 # how to create entities in Freshworks apps
@@ -234,9 +234,9 @@ A successful call returns the entity object with meta-data such as:
 
 ---
 
->title: how to modify entity definition specification?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: config/entities.json  
+>title: how to modify entity definition specification?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: config/entities.json
 >content:
 
 # how to modify entity definition specification?
@@ -342,9 +342,9 @@ try {
 
 ---
 
->title: How to update a record inside an entity store  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: How to update a record inside an entity store
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # How to update a record inside an entity store
@@ -366,16 +366,16 @@ entReference.update("<display-id>", {
 
 ---
 
->title: how to update a record in entity store of a serverless apps  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to update a record in entity store of a serverless apps
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to update a record in entity store of a serverless apps
 
 ## Summary
-1. Call the `update` method on your entity reference in `server.js`.  
-2. Pass the record’s display ID and the fields to update.  
+1. Call the `update` method on your entity reference in `server.js`.
+2. Pass the record’s display ID and the fields to update.
 3. Check `record.data` for the updated record details.
 
 ## Step: Update a Record
@@ -419,9 +419,9 @@ The updated record is returned in `record.data`:
 
 ---
 
->title: how to retrieve a record from an entity store  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: how to retrieve a record from an entity store
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # how to retrieve a record from an entity store
@@ -460,9 +460,9 @@ restaurant.get("scshv-2");
 
 ---
 
->title: how to retrieve an entity record with the display id in serverless apps?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to retrieve an entity record with the display id in serverless apps?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to retrieve an entity record with the display id in serverless apps?
@@ -480,9 +480,9 @@ const record = await $entity
 
 ---
 
->title: how to retrieve all records of an entity?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: app.js  
+>title: how to retrieve all records of an entity?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: app.js
 >content:
 
 # how to retrieve all records of an entity
@@ -524,9 +524,9 @@ async function loadRestaurants() {
 
 ---
 
->title: how to apply filters and retrieve specific records from entity storage  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to apply filters and retrieve specific records from entity storage
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to apply filters and retrieve specific records from entity storage
@@ -546,9 +546,9 @@ async function loadRestaurants() {
 
 ---
 
->title: how to retrieve records with $or query filter?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to retrieve records with $or query filter?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to retrieve records with $or query filter?
@@ -578,9 +578,9 @@ Records matching either condition are returned with pagination links.
 
 ---
 
->title: how to retrieve the next set of records with $or filter with marker?  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to retrieve the next set of records with $or filter with marker?
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to retrieve the next set of records with $or filter with marker?
@@ -603,9 +603,9 @@ const data = await restaurant.getAll({
 
 ---
 
->title: example payload for section fields  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: config/entities.json  
+>title: example payload for section fields
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: config/entities.json
 >content:
 
 # example payload for section fields
@@ -655,9 +655,9 @@ In this example, a `location` section groups two fields and a sub-section.
 ```
 
 ---
->title: Error responses for entity methods  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: Error responses for entity methods
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # Error responses for entity methods
@@ -684,9 +684,9 @@ If a call fails, you receive an error object:
 
 ---
 
->title: how to test the app with entity storage locally  
->tags: entity-storage, storage, app-storage, data-persistance, test  
->context:  
+>title: how to test the app with entity storage locally
+>tags: entity-storage, storage, app-storage, data-persistance, test
+>context:
 >content:
 
 # how to test the app with entity storage locally
@@ -704,9 +704,9 @@ If a call fails, you receive an error object:
 
 ---
 
->title: how to retrieve or delete a record of an entity in a serverless app  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to retrieve or delete a record of an entity in a serverless app
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to retrieve or delete a record of an entity in a serverless app
@@ -733,9 +733,9 @@ const record = await restaurant.delete("scshv-2");
 
 ---
 
->title: what is entity storage and how to delete a record of an entity from a frontend app  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: app.js  
+>title: what is entity storage and how to delete a record of an entity from a frontend app
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: app.js
 >content:
 
 # what is entity storage and how to delete a record of an entity from a frontend app
@@ -756,9 +756,9 @@ restaurant.delete("scshv-2");
 
 ---
 
->title: how to create a record in serverless apps  
->tags: entity-storage, storage, app-storage, data-persistance  
->context: server.js  
+>title: how to create a record in serverless apps
+>tags: entity-storage, storage, app-storage, data-persistance
+>context: server.js
 >content:
 
 # how to create a record in serverless apps
@@ -781,18 +781,18 @@ const records = await <entReference>.getAll({});
 
 ---
 
->title: What are the considerations for entity storage and how to delete entities  
->tags: entity-storage, storage, app-storage, data-persistance  
->context:  
+>title: What are the considerations for entity storage and how to delete entities
+>tags: entity-storage, storage, app-storage, data-persistance
+>context:
 >content:
 
 # What are the considerations for entity storage and how to delete entities
 
 ## Considerations
-1. **Pricing Plans:** Only available on Enterprise or Forest/Estate plans.  
-2. **Entity Limits:** Max 5 entities per account; 20 fields per entity.  
-3. **Record Limits:** Unlimited records; each ≤100 KB.  
-4. **No Bulk Create:** Batch operations not supported.  
+1. **Pricing Plans:** Only available on Enterprise or Forest/Estate plans.
+2. **Entity Limits:** Max 5 entities per account; 20 fields per entity.
+3. **Record Limits:** Unlimited records; each ≤100 KB.
+4. **No Bulk Create:** Batch operations not supported.
 5. **Uninstall Behavior:** Removing the app deletes all entities and their data.
 
 ---

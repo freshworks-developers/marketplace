@@ -50,7 +50,7 @@ Before generating ANY code, verify these are NEVER present:
    - [REQUIRED] Use the SVG template below - copy exactly as shown
    - **VALIDATION ERROR IF VIOLATED:** "Icon 'app/styles/images/icon.svg' not found in app folder"
    - **THIS IS THE #1 CAUSE OF FDK VALIDATION FAILURES - ALWAYS CREATE IT**
-   
+
    **MANDATORY icon.svg content (copy this exactly):**
    ```svg
    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
@@ -69,7 +69,7 @@ Before generating ANY code, verify these are NEVER present:
    - **EVERY template in `config/requests.json` MUST be declared in `manifest.json`**
    - [INVALID] Template in requests.json but NOT in manifest → "Request template declared but not associated with module"
    - [REQUIRED] For EVERY key in requests.json, add matching entry to `modules.common.requests`
-   
+
    **MANDATORY SYNC PATTERN:**
    ```
    config/requests.json:           manifest.json:
@@ -91,7 +91,7 @@ Before generating ANY code, verify these are NEVER present:
      - **NO** → Use `function(args)` without `async` keyword
    - [VALID] OR remove `async` keyword if no await is needed
    - **LINT ERROR:** "Async function has no 'await' expression"
-   
+
    **Handler pattern (minimal examples):**
    ```javascript
    // [INVALID] async without await → lint error
@@ -107,7 +107,7 @@ Before generating ANY code, verify these are NEVER present:
    - [VALID] **ONLY SOLUTION: REMOVE parameter ENTIRELY from function signature**
    - **LINT ERROR:** "'args' is defined but never used" or "'_args' is defined but never used"
    - **CRITICAL:** Apps with unused parameters CANNOT pass `fdk validate`
-   
+
    ```javascript
    // [INVALID] unused args (and _args) → remove parameter entirely
    onAppInstallHandler: function(args) { console.log('Installed'); }
@@ -123,7 +123,7 @@ Before generating ANY code, verify these are NEVER present:
    - [VALID] Use early returns instead of nested if-else
    - **WARNING:** "Function has complexity X. Maximum allowed is 7."
    - **CRITICAL:** Apps with complexity > 7 CANNOT pass `fdk validate`
-   
+
    **REFACTORING PATTERN 1: Multiple OR comparisons → Sets (MOST COMMON)**
    ```javascript
    // [INVALID] WRONG - complexity 12 (each || and === adds +1)
@@ -132,7 +132,7 @@ Before generating ANY code, verify these are NEVER present:
      if (filter.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) return true;
      return false;
    }
-   
+
    // [VALID] CORRECT - complexity 3 (Set.has() is single operation)
    const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
    function matchesPriority(ticket, filter) {

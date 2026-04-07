@@ -1,5 +1,5 @@
 >title: Properties in drag-item
->tags: 
+>tags:
 >context: drag-item
 >content:
 
@@ -29,7 +29,7 @@ Type: `boolean`
 Default: `true`
 ---
 >title: How to use drag-item in crayons ?
->tags: 
+>tags:
 >context: drag-item
 >content:
 

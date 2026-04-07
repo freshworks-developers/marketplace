@@ -7,7 +7,7 @@
 
 ## FDK validation fails with the error
 ```
-Config directory has invalid file(s) - oauth.json  
+Config directory has invalid file(s) - oauth.json
 ```
 
 ## Steps to fix the `oauth` configurations

@@ -1,5 +1,5 @@
 >title: avatar - Usage in HTML
->tags: 
+>tags:
 >context: avatar
 >content:
 
@@ -32,7 +32,7 @@ image="https://images.unsplash.com/photo-1529778873920-4da4926a72c2?ixlib=rb-1.2
 
 ---
 >title: avatar - Usage in React
->tags: 
+>tags:
 >context: avatar, react
 >content:
 
@@ -63,7 +63,7 @@ return (<div>
 
 ---
 >title: Usage in avatar
->tags: 
+>tags:
 >context: avatar
 >content:
 
@@ -73,7 +73,7 @@ return (<div>
 <!-- Auto Generated Below -->
 ---
 >title: Properties in avatar
->tags: 
+>tags:
 >context: avatar
 >content:
 
@@ -82,7 +82,7 @@ return (<div>
 
 ---
 >title: How to use avatar in crayons ?
->tags: 
+>tags:
 >context: avatar
 >content:
 
@@ -120,7 +120,7 @@ Avatar with different modes
   <fw-avatar mode="error" initials="PT"></fw-avatar>
 </section>
 ```
-Avatar with default avatar icons 
+Avatar with default avatar icons
 ```html live
 <section>
   <fw-avatar size="xsmall"></fw-avatar>
@@ -133,6 +133,6 @@ Avatar with default avatar icons
 | ------------ | ----------- |
 | `"image"`    |             |
 | `"initials"` |             |
- 
+
 
 ---

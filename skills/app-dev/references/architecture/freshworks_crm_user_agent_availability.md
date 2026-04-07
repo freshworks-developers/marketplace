@@ -1,6 +1,6 @@
 >title: what is user agent availability module in Freshsales Suite
 >tags: module=user_agent_availability, user_agent_availability, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is user agent availability module in Freshsales Suite
@@ -74,7 +74,7 @@ To use the module modify your `manifest.json` as below:
 
 >title: what are data methods supported for user agent availability module in Freshsales Suite
 >tags: module=user_agent_availability, user_agent_availability, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for user agent availability module in Freshsales Suite
@@ -85,7 +85,7 @@ Since the module doesn't support frontend apps no data methods are available.
 
 >title: what are events methods supported for user agent availability module in Freshsales Suite
 >tags: module=user_agent_availability, user_agent_availability, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for user agent availability module in Freshsales Suite
@@ -107,7 +107,7 @@ Since the module doesn't support frontend apps no events methods are available.
 
 >title: how to use instance methods supported for user agent availability module in Freshsales Suite
 >tags: module=user_agent_availability, user_agent_availability, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for user agent availability module in Freshsales Suite
@@ -199,7 +199,7 @@ An app built for this module can react to the following events:
 ## Steps:
 
 ### Step 1. Subscribe to task by configuring an event listener in `manifest.json`:
-  
+
   ```json
   {
     "events": {

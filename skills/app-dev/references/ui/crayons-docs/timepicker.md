@@ -1,5 +1,5 @@
 >title: timepicker - Usage in HTML
->tags: 
+>tags:
 >context: timepicker
 >content:
 
@@ -15,7 +15,7 @@
 
 ---
 >title: timepicker - Usage in React
->tags: 
+>tags:
 >context: timepicker, react
 >content:
 
@@ -38,17 +38,17 @@ return (<div>
 
 ---
 >title: Usage in timepicker
->tags: 
+>tags:
 >context: timepicker
 >content:
 
 # Timepicker (fw-timepicker)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in timepicker
->tags: 
+>tags:
 >context: timepicker
 >content:
 
@@ -197,7 +197,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in timepicker
->tags: 
+>tags:
 >context: timepicker
 >content:
 
@@ -221,7 +221,7 @@ Description: Triggered when the list box comes into focus.
 Type: `CustomEvent<any>`
 ---
 >title: How to use timepicker in crayons ?
->tags: 
+>tags:
 >context: timepicker
 >content:
 
@@ -243,6 +243,6 @@ fw-timepicker displays a list or drop-down box with prepopulated time values and
 Sets focus on a specific `fw-timepicker`.
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

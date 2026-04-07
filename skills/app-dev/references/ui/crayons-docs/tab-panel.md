@@ -1,5 +1,5 @@
 >title: tab-panel - Usage in HTML
->tags: 
+>tags:
 >context: tab-panel
 >content:
 
@@ -12,7 +12,7 @@
 
 ---
 >title: tab-panel - Usage in React
->tags: 
+>tags:
 >context: tab-panel, react
 >content:
 
@@ -32,17 +32,17 @@ return (<div>
 
 ---
 >title: Usage in tab-panel
->tags: 
+>tags:
 >context: tab-panel
 >content:
 
 # Tab Panel (fw-tab-panel)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in tab-panel
->tags: 
+>tags:
 >context: tab-panel
 >content:
 
@@ -65,7 +65,7 @@ Type: `string`
 Default: `''`
 ---
 >title: CSS Custom Properties in tab-panel
->tags: 
+>tags:
 >context: tab-panel
 >content:
 
@@ -82,7 +82,7 @@ Name: `--fw-tab-panel-width`
 Description: width of the tab container.
 ---
 >title: How to use tab-panel in crayons ?
->tags: 
+>tags:
 >context: tab-panel
 >content:
 
@@ -93,6 +93,6 @@ fw-tab-panel is used inside fw-tabs to show tabbed content.
   <fw-tab-panel active>This is sample panel content</fw-tab-panel>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

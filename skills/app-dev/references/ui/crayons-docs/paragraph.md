@@ -1,5 +1,5 @@
 >title: Properties in paragraph
->tags: 
+>tags:
 >context: paragraph
 >content:
 
@@ -15,12 +15,12 @@ Type: `string`
 Default: `''`
 ---
 >title: How to use paragraph in crayons ?
->tags: 
+>tags:
 >context: paragraph
 >content:
 
 # fw-custom-cell-paragraph
 <!-- Auto Generated Below -->
- 
+
 
 ---

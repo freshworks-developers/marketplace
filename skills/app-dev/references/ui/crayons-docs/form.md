@@ -1,12 +1,12 @@
 >title: Basic example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Demo Dynamic Form
 ### Basic example
-Pass [formSchema](#form-schema) to render Dynamic Form. You can also pass `initialValues` to the form.  
+Pass [formSchema](#form-schema) to render Dynamic Form. You can also pass `initialValues` to the form.
 ```html live
 <div id="form-container">
 <fw-button id="submit">Submit</fw-button>
@@ -356,16 +356,16 @@ form.initialValues = initialValues;
 ```
 ---
 >title: FormSchema with field type 'DATE' in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Demo Dynamic Form
 ### FormSchema with field type 'DATE'
-Datepicker by default will be highlighted and alert icon will be displayed when invalid value is entered in the date input field. To switch it off, set the property 'showErrorOnInvalidDate' to false.  
-showErrorOnInvalidDate - Setting the prop to false will not highlight the datepicker in error state when user enters invalid input and will not display the error msg in the tooltip. However, the invalid value will not be submitted to backend on clicking 'Update' button.  
-Example form schema,  
+Datepicker by default will be highlighted and alert icon will be displayed when invalid value is entered in the date input field. To switch it off, set the property 'showErrorOnInvalidDate' to false.
+showErrorOnInvalidDate - Setting the prop to false will not highlight the datepicker in error state when user enters invalid input and will not display the error msg in the tooltip. However, the invalid value will not be submitted to backend on clicking 'Update' button.
+Example form schema,
 ```javascript
 var formSchema = {
 name: 'Test Form',
@@ -387,15 +387,15 @@ showErrorOnInvalidDate: false,
 ```
 ---
 >title: FormSchema with field type 'DATE' to occupy full width of the container in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Demo Dynamic Form
 ### FormSchema with field type 'DATE' to occupy full width of the container
-Datepicker by default will not occupy full width of the container. To make the datepicker occupy full width, set 'fullWidth' prop as true in the form schema.  
-Example form schema,  
+Datepicker by default will not occupy full width of the container. To make the datepicker occupy full width, set 'fullWidth' prop as true in the form schema.
+Example form schema,
 ```javascript
 var formSchema = {
 name: 'Test Form',
@@ -417,14 +417,14 @@ fullWidth: true,
 ```
 ---
 >title: Basic example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## form schema
 ### Basic example
-form schema should follow the below structure:  
+form schema should follow the below structure:
 ```{
 name: '', // Name of the form.
 fields: [ // Each item in this array corresponds to a crayons input component.
@@ -450,7 +450,7 @@ value: '', // Value for the option.
 ```
 ---
 >title: Info in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -461,7 +461,7 @@ In a `Dynamic form`, to disable any form field set `editable` to `false` in the 
 In a `Static form` set `disabled` attribute on the `fw-form-control` to disable the form field.
 ---
 >title: form - Usage Dynamic Form in HTML
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -819,11 +819,11 @@ form.formSchema = formSchema1;
 form.initialValues = initialValues;
 </script>
 
-````  
+````
 
 ---
 >title: form - Usage Dynamic Form in React
->tags: 
+>tags:
 >context: form, react
 >content:
 
@@ -1190,19 +1190,19 @@ Reset Form
 </div>);
 }
 
-````  
+````
 
 ---
 >title: Text and Value indicators for select (DROPDOWN/MULTI_SELECT) component choices in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Disable form fields
 ### Text and Value indicators for select (DROPDOWN/MULTI_SELECT) component choices
-The choices for select component(`dropdown/multi_select`) can follow any of the below formats.  
-1. Using `field_options` object. Pass the key name that needs to be displayed as the dropdown option's text using, `option_label_path` and the key name that needs to to be processed in the backend using, `option_value_path`.  
+The choices for select component(`dropdown/multi_select`) can follow any of the below formats.
+1. Using `field_options` object. Pass the key name that needs to be displayed as the dropdown option's text using, `option_label_path` and the key name that needs to to be processed in the backend using, `option_value_path`.
 ```
 {
 id: '420oib8f-25cf-47ce-89c6-5410fe3d4315',
@@ -1235,7 +1235,7 @@ dependent_ids: {},
 ```
 ---
 >title: Usage with field_options in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -1351,7 +1351,7 @@ form_2.initialValues = initialValues;
 ```
 ---
 >title: Using `text` and `value` as key names in choices in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -1386,7 +1386,7 @@ dependent_ids: {},
 ```
 ---
 >title: Usage with `text` and `value` as keys in `choices` in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -1498,18 +1498,18 @@ form_3.initialValues = initialValues;
 ```
 ---
 >title: Basic Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Demo Static Form
 ### Basic Example
-You can pass `initialValues` to the form. Wrap all the form controls with `form-control` under `fw-form`.  
-For `Crayons` controls just pass the `type`, `name`, `placeholder`,`required`, `label` properties to `fw-form-control`.  
-For `custom` input controls, pass the custom input as `slot` to `fw-form-control`. You can pass the `type`, `name`, `required`, `label` properties to `fw-form-control`. For setting its value in the form, use the method like `handleCustomInput` shown in the below example.  
+You can pass `initialValues` to the form. Wrap all the form controls with `form-control` under `fw-form`.
+For `Crayons` controls just pass the `type`, `name`, `placeholder`,`required`, `label` properties to `fw-form-control`.
+For `custom` input controls, pass the custom input as `slot` to `fw-form-control`. You can pass the `type`, `name`, `required`, `label` properties to `fw-form-control`. For setting its value in the form, use the method like `handleCustomInput` shown in the below example.
 You can use `fieldProps` to pass any crayons input control related properties.
-Set `fieldProps: { maxlength: 5 }` to `fw-form-control`  
+Set `fieldProps: { maxlength: 5 }` to `fw-form-control`
 ```html live
 <div id="static-form-container">
 <fw-form id="fw-static-form">
@@ -1592,7 +1592,7 @@ document.querySelector('#cin').addEventListener('blur', handleCustomInput);
 ```
 ---
 >title: form - Usage Static Form in HTML
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -1675,11 +1675,11 @@ document.querySelector('#cin').addEventListener('change', handleCustomInput);
 document.querySelector('#cin').addEventListener('blur', handleCustomInput);
 </script>
 
-````  
+````
 
 ---
 >title: form - Usage Static Form in React
->tags: 
+>tags:
 >context: form, react
 >content:
 
@@ -1762,18 +1762,18 @@ formRef.current.setFieldValue("cin", e.target.value, true)
 </div>);
 }
 
-````  
+````
 
 ---
 >title: Basic Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Demo - Form inside an accordion
 ### Basic Example
-Form can be created inside an accordion by passing the form to accordion body.  
+Form can be created inside an accordion by passing the form to accordion body.
 ```html live
 <div style="width: 300px;">
 <fw-accordion expanded style="--fw-accordion-border: 1px solid #ccc">
@@ -1928,7 +1928,7 @@ accForm.formSchema = accFormSchema1;
 ```
 ---
 >title: form - Example in HTML
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -2025,7 +2025,7 @@ accForm_2.formSchema = accFormSchema2;
 
 ---
 >title: form - Example in React
->tags: 
+>tags:
 >context: form, react
 >content:
 
@@ -2132,18 +2132,18 @@ return {
 </div>
 )
 }
-````  
+````
 
 ---
 >title: Info in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## FORMSERV - mapperType
 ### Info
-Set `FORMSERV` to `mapperType` prop to use `FORMSERV` schema instead of default `LEGO` schema.  
+Set `FORMSERV` to `mapperType` prop to use `FORMSERV` schema instead of default `LEGO` schema.
 ```html live
 <div id="form-container-fs">
 <fw-button id="submit-fs">Submit</fw-button>
@@ -2407,14 +2407,14 @@ formFs.initialValues = initialValues;
 ```
 ---
 >title: Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Filter Display of Form Fields
 ### Example
-Invoke `setFieldSearchText` method on the `form` passing a text that filters the display of the form fields matching the field's label.  
+Invoke `setFieldSearchText` method on the `form` passing a text that filters the display of the form fields matching the field's label.
 ```html live
 <fw-input
 search
@@ -2689,14 +2689,14 @@ formSearch.initialValues = initialValues;
 ```
 ---
 >title: Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Dynamically Set Field Choices
 ### Example
-Invoke `setFieldChoices` method on the `form` passing the `name` of the field and `choices` array to update the choices in the `DROPDOWN/MULTI_SELECT` form's field-control.  
+Invoke `setFieldChoices` method on the `form` passing the `name` of the field and `choices` array to update the choices in the `DROPDOWN/MULTI_SELECT` form's field-control.
 ```html live
 <div id="form-container-fchoices">
 <fw-button id="submit-fchoices">Submit</fw-button>
@@ -2993,26 +2993,26 @@ formFieldChoices.initialValues = initialValuesFChoices;
 ```
 ---
 >title: Explanation with Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Set Required Status on the Form Fields
 ### Explanation with Example
-Use `setFieldsRequiredStatus` method to set required status on the form fields dynamically.  
-param: **requiredStatusObj** - Object with key as form `field name` and value denoting if the field should be marked as required or not  
+Use `setFieldsRequiredStatus` method to set required status on the form fields dynamically.
+param: **requiredStatusObj** - Object with key as form `field name` and value denoting if the field should be marked as required or not
 Example: `setFieldsRequiredStatus({ first_name: true, last_name: true })`
 ---
 >title: Validations Usage in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Validations
 ### Validations Usage
-You can use `validationSchema` prop to do `Yup` based validation. Please use `0.32` version of `Yup`.  
+You can use `validationSchema` prop to do `Yup` based validation. Please use `0.32` version of `Yup`.
 ```js
 const validationSchema = Yup.object().shape({
 first_name: Yup.string()
@@ -3021,8 +3021,8 @@ first_name: Yup.string()
 .nullable(),
 });
 // get reference to fw-form and set validationSchema prop.
-```  
-You can also use `validate` async function prop to do any custom validation.  
+```
+You can also use `validate` async function prop to do any custom validation.
 ```js
 const validate = async (values: any) => {
 // do custom validation and return error or {}
@@ -3031,22 +3031,22 @@ return {
 };
 };
 // get reference to fw-form and set validate function prop.
-```  
+```
 Both `validationSchema` and `validate` prop can be used together.
 ---
 >title: Steps with Example in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Validation using `Yup` schema
 ### Steps with Example
-Install `Yup` via CDN as below:  
+Install `Yup` via CDN as below:
 ```js
 import * as Yup from 'https://cdn.skypack.dev/yup@0.32';
 window.Yup = Yup;
-```  
+```
 ```html live
 <!-- Uncomment the below to import Yup via CDN in your code
 
@@ -3324,7 +3324,7 @@ formvalidation.validationSchema = validationSchema;
 ```
 ---
 >title: FormValues in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3338,7 +3338,7 @@ type FormValues = {
 ```
 ---
 >title: FormSubmit in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3354,7 +3354,7 @@ isValid: boolean,
 ```
 ---
 >title: FormErrors in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3368,7 +3368,7 @@ type FormErrors = {
 ```
 ---
 >title: FormRequired in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3382,14 +3382,14 @@ type FormRequired = {
 ```
 ---
 >title: Form Value Change Event in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Interfaces
 ### Form Value Change Event
-`fwFormValueChanged` event gets emitted whenever there is a change in the value of any of the form field.  
+`fwFormValueChanged` event gets emitted whenever there is a change in the value of any of the form field.
 ```javascript
 var form = document.querySelector('fw-form');
 form.addEventListener('fwFormValueChanged', (e) => {
@@ -3399,24 +3399,24 @@ console.log('value', e.detail.value);
 ```
 ---
 >title: Form Values Change Event in form
->tags: 
+>tags:
 >context: form
 >content:
 
 # Form (fw-form)
 ## Interfaces
 ### Form Values Change Event
-`fwFormValuesChanged` event gets emitted whenever there is a change in the value of any of the form field. Returns the current form state with the value of all the form fields.  
+`fwFormValuesChanged` event gets emitted whenever there is a change in the value of any of the form field. Returns the current form state with the value of all the form fields.
 ```javascript
 var form = document.querySelector('fw-form');
 form.addEventListener('fwFormValuesChanged', (e) => {
 console.log('current form value', e.detail.value);
 });
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3495,7 +3495,7 @@ Type: `number`
 Default: `200`
 ---
 >title: Events in form
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3514,7 +3514,7 @@ Description: fwFormValuesChanged - event that gets emitted when values change.
 Type: `CustomEvent<any>`
 ---
 >title: How to use form in crayons ?
->tags: 
+>tags:
 >context: form
 >content:
 
@@ -3522,8 +3522,8 @@ Type: `CustomEvent<any>`
 **Dynamic Form** - Render dynamic form based on the schema passed as a prop.\
 **Static Form** - Render form based on the children passed as slots.
 ## Demo Dynamic Form
-  
-  
+
+
 ## form schema
 ## Disable form fields
 ### Text and Value indicators for select (DROPDOWN/MULTI_SELECT) component choices

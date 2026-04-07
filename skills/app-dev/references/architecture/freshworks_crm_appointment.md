@@ -1,6 +1,6 @@
 >title: what is appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm
->context: 
+>context:
 >content:
 
 # what is appointment module in Freshsales Suite
@@ -47,7 +47,7 @@ It supports the following Common placeholders. In the app manifest, configure th
 
 # how to use placeholders supported for appointment module in Freshsales Suite
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -78,7 +78,7 @@ To use the supported placeholder modify your `manifest.json` as below
 
 >title: what are data methods supported for appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm, data_method
->context: 
+>context:
 >content:
 
 # what are data methods supported for appointment module in Freshsales Suite
@@ -93,7 +93,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 >title: example of data method usage supported for appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm
->context: 
+>context:
 >content:
 
 # example of data method usage supported for appointment module in Freshsales Suite
@@ -134,7 +134,7 @@ getLoggedInUserData();
 
 >title: what are events methods supported for appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for appointment module in Freshsales Suite
@@ -186,7 +186,7 @@ When the event occurs, a payload is passed to the callback method. Let us call t
 
 >title: what are interface methods supported for appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for appointment module in Freshsales Suite
@@ -216,7 +216,7 @@ Freshsales Suite appointment module supports following interface methods
 try {
   let data = client.interface.trigger('showModal', {
     title: 'Sample App Form',
-    template: './views/modal.html' 
+    template: './views/modal.html'
   });
   console.log(data); // success message
 } catch (error) {
@@ -240,7 +240,7 @@ client.interface.trigger("showNotify", {
 
 >title: what are instance methods supported for appointment module in Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for appointment module in Freshsales Suite
@@ -253,7 +253,7 @@ client.interface.trigger("showNotify", {
    - Send data from a parent placeholder to a modal and retrieve the context/data in the modal.
    - Send data from a modal to a parent placeholder and get the data in the parent.
    - Send data from one instance to another instance and receive data at the destination.
-4. `client.instance.context()` to retrieve contextual information about a current app instance. 
+4. `client.instance.context()` to retrieve contextual information about a current app instance.
    - If a modal is the app instance where context() is used, it retrieves:
       - The (modal’s) instance id
       - The placeholder name of the app instance
@@ -303,7 +303,7 @@ try {
     instanceId: "4",
     location: "modal",
     parentId: "1",
-    modalData: {name: "James", email: "James@freshworks.com"} 
+    modalData: {name: "James", email: "James@freshworks.com"}
   }*/
 } catch (error) {
   console.error(error);
@@ -569,7 +569,7 @@ exports = {
 
 >title: what are the REST APIs supported by appointment module of Freshsales Suite
 >tags: module=appointment, appointment, freshworks_crm, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by appointment module of Freshsales Suite

@@ -1,5 +1,5 @@
 >title: Properties in file-2
->tags: 
+>tags:
 >context: file-2
 >content:
 
@@ -85,7 +85,7 @@ Type: `any`
 Default: `undefined`
 ---
 >title: Events in file-2
->tags: 
+>tags:
 >context: file-2
 >content:
 
@@ -109,12 +109,12 @@ Description: Event triggered to reupload
 Type: `CustomEvent<any>`
 ---
 >title: How to use file-2 in crayons ?
->tags: 
+>tags:
 >context: file-2
 >content:
 
 # fw-attachment
 <!-- Auto Generated Below -->
- 
+
 
 ---

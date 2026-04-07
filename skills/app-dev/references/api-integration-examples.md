@@ -44,20 +44,20 @@ exports = {
     const allUsers = [];
     let offset = 0;
     const limit = 100;
-    
+
     try {
       while (true) {
         const response = await $request.invokeTemplate('getUsers', {
           context: { offset: offset }
         });
-        
+
         const data = JSON.parse(response.response);
         allUsers.push(...data.users);
-        
+
         if (data.users.length < limit) break;
         offset += limit;
       }
-      
+
       renderData(null, { users: allUsers, total: allUsers.length });
     } catch (error) {
       console.error('[fetchAllUsers] Error:', error.message);
@@ -95,19 +95,19 @@ exports = {
   fetchTicketsWithCursor: async function(args) {
     const allTickets = [];
     let cursor = null;
-    
+
     try {
       do {
         const response = await $request.invokeTemplate('getTickets', {
           context: { cursor: cursor || '' }
         });
-        
+
         const data = JSON.parse(response.response);
         allTickets.push(...data.tickets);
         cursor = data.next_cursor;
-        
+
       } while (cursor);
-      
+
       renderData(null, { tickets: allTickets, count: allTickets.length });
     } catch (error) {
       console.error('[fetchTicketsWithCursor] Error:', error.message);
@@ -146,20 +146,20 @@ exports = {
     const allContacts = [];
     let page = 1;
     let hasMore = true;
-    
+
     try {
       while (hasMore) {
         const response = await $request.invokeTemplate('getContacts', {
           context: { page: page }
         });
-        
+
         const data = JSON.parse(response.response);
         allContacts.push(...data.contacts);
-        
+
         hasMore = data.contacts.length === 100;
         page++;
       }
-      
+
       renderData(null, { contacts: allContacts });
     } catch (error) {
       console.error('[fetchContactsByPage] Error:', error.message);
@@ -202,11 +202,11 @@ async function retryWithBackoff(fn, maxRetries = 3, baseDelay = 1000) {
     } catch (error) {
       const isLastAttempt = attempt === maxRetries - 1;
       const isRateLimited = error.status === 429;
-      
+
       if (isLastAttempt || !isRateLimited) {
         throw error;
       }
-      
+
       const delay = baseDelay * Math.pow(2, attempt);
       console.warn(`[Retry] Attempt ${attempt + 1} failed, retrying in ${delay}ms`);
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -226,7 +226,7 @@ exports = {
           })
         });
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(result.response) });
     } catch (error) {
       console.error('[createTicketWithRetry] Failed after retries:', error.message);
@@ -272,22 +272,22 @@ exports = {
     const batchSize = 100;
     const batches = chunkArray(records, batchSize);
     const results = [];
-    
+
     try {
       for (let i = 0; i < batches.length; i++) {
         console.info(`[batchUpdate] Processing batch ${i + 1}/${batches.length}`);
-        
+
         const response = await $request.invokeTemplate('batchUpdate', {
           body: JSON.stringify({ records: batches[i] })
         });
-        
+
         results.push(JSON.parse(response.response));
       }
-      
-      renderData(null, { 
-        success: true, 
+
+      renderData(null, {
+        success: true,
         batches: batches.length,
-        results: results 
+        results: results
       });
     } catch (error) {
       console.error('[batchUpdateRecords] Error:', error.message);
@@ -331,21 +331,21 @@ exports = {
   handleWebhook: async function(args) {
     const { payload, signature } = args;
     const secret = args.iparams.webhook_secret;
-    
+
     try {
       if (!verifyWebhookSignature(JSON.stringify(payload), signature, secret)) {
         console.error('[handleWebhook] Invalid signature');
         renderData({ status: 401, message: 'Invalid signature' });
         return;
       }
-      
+
       console.info('[handleWebhook] Signature verified');
-      
+
       // Process webhook payload
       const response = await $request.invokeTemplate('verifyWebhook', {
         body: JSON.stringify(payload)
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       console.error('[handleWebhook] Error:', error.message);
@@ -380,7 +380,7 @@ exports = {
 exports = {
   uploadDocument: async function(args) {
     const { fileName, fileContent, fileType } = args;
-    
+
     try {
       const formData = {
         file: {
@@ -391,14 +391,14 @@ exports = {
           }
         }
       };
-      
+
       const response = await $request.invokeTemplate('uploadFile', {
         body: formData
       });
-      
+
       const data = JSON.parse(response.response);
       console.info('[uploadDocument] File uploaded:', data.file_id);
-      
+
       renderData(null, { success: true, fileId: data.file_id });
     } catch (error) {
       console.error('[uploadDocument] Upload failed:', error.message);
@@ -432,20 +432,20 @@ exports = {
 exports = {
   downloadDocument: async function(args) {
     const { fileId } = args;
-    
+
     try {
       const response = await $request.invokeTemplate('downloadFile', {
         context: { file_id: fileId }
       });
-      
+
       // Response contains binary data
       const fileBuffer = Buffer.from(response.response, 'binary');
       const base64Content = fileBuffer.toString('base64');
-      
-      renderData(null, { 
-        success: true, 
+
+      renderData(null, {
+        success: true,
         content: base64Content,
-        size: fileBuffer.length 
+        size: fileBuffer.length
       });
     } catch (error) {
       console.error('[downloadDocument] Download failed:', error.message);
@@ -465,7 +465,7 @@ exports = {
 // server/server.js
 function handleHttpError(error, operation) {
   const statusCode = error.status || 500;
-  
+
   const errorMap = {
     400: { message: 'Bad request - check your parameters', retry: false },
     401: { message: 'Unauthorized - check your API key', retry: false },
@@ -477,14 +477,14 @@ function handleHttpError(error, operation) {
     503: { message: 'Service unavailable - retry later', retry: true },
     504: { message: 'Gateway timeout - retry later', retry: true }
   };
-  
-  const errorInfo = errorMap[statusCode] || { 
-    message: 'Unknown error occurred', 
-    retry: false 
+
+  const errorInfo = errorMap[statusCode] || {
+    message: 'Unknown error occurred',
+    retry: false
   };
-  
+
   console.error(`[${operation}] HTTP ${statusCode}: ${errorInfo.message}`);
-  
+
   return {
     status: statusCode,
     message: errorInfo.message,
@@ -499,7 +499,7 @@ exports = {
       const response = await $request.invokeTemplate('getData', {
         context: { id: args.id }
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       const errorDetails = handleHttpError(error, 'fetchData');
@@ -538,18 +538,18 @@ exports = {
 exports = {
   fetchWithTimeout: async function(args) {
     const timeoutMs = 25000;
-    
+
     try {
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Request timeout')), timeoutMs);
       });
-      
+
       const requestPromise = $request.invokeTemplate('slowApi', {
         context: {}
       });
-      
+
       const response = await Promise.race([requestPromise, timeoutPromise]);
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       if (error.message === 'Request timeout') {
@@ -593,11 +593,11 @@ exports = {
       const response = await $request.invokeTemplate('getData', {
         context: { id: args.id }
       });
-      
+
       const data = parseJsonSafely(response.response, 'fetchValidatedData');
-      
+
       validateResponseSchema(data, ['id', 'name', 'status'], 'fetchValidatedData');
-      
+
       renderData(null, { success: true, data: data });
     } catch (error) {
       console.error('[fetchValidatedData] Validation error:', error.message);
@@ -648,20 +648,20 @@ exports = {
       const response = await $request.invokeTemplate('getDataV2', {
         context: { id: args.id }
       });
-      
+
       const data = JSON.parse(response.response);
       console.info('[fetchWithVersionFallback] Using API v2');
-      
+
       renderData(null, { success: true, data: data, version: 'v2' });
     } catch (error) {
       if (error.status === 404 || error.status === 410) {
         console.warn('[fetchWithVersionFallback] v2 unavailable, falling back to v1');
-        
+
         try {
           const fallbackResponse = await $request.invokeTemplate('getDataV1Fallback', {
             context: { id: args.id }
           });
-          
+
           const data = JSON.parse(fallbackResponse.response);
           renderData(null, { success: true, data: data, version: 'v1' });
         } catch (fallbackError) {
@@ -761,12 +761,12 @@ exports = {
     const username = args.iparams.username;
     const password = args.iparams.password;
     const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-    
+
     try {
       const response = await $request.invokeTemplate('getDataWithBasicAuth', {
         context: { basic_auth: credentials }
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       console.error('[fetchWithBasicAuth] Error:', error.message);
@@ -835,12 +835,12 @@ exports = {
       args.iparams.auth_token,
       timestamp
     );
-    
+
     try {
       const response = await $request.invokeTemplate('getDataWithCustomAuth', {
         context: { signature: signature }
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       console.error('[fetchWithCustomAuth] Error:', error.message);
@@ -887,21 +887,21 @@ let tokenExpiry = null;
 
 async function getValidAccessToken(refreshToken) {
   const now = Date.now();
-  
+
   if (cachedAccessToken && tokenExpiry && now < tokenExpiry) {
     return cachedAccessToken;
   }
-  
+
   console.info('[getValidAccessToken] Refreshing token');
-  
+
   const response = await $request.invokeTemplate('refreshToken', {
     body: `grant_type=refresh_token&refresh_token=${refreshToken}`
   });
-  
+
   const data = JSON.parse(response.response);
   cachedAccessToken = data.access_token;
   tokenExpiry = now + (data.expires_in * 1000);
-  
+
   return cachedAccessToken;
 }
 
@@ -909,11 +909,11 @@ exports = {
   fetchWithTokenRefresh: async function(args) {
     try {
       const accessToken = await getValidAccessToken(args.iparams.refresh_token);
-      
+
       const response = await $request.invokeTemplate('getData', {
         context: { access_token: accessToken }
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       if (error.status === 401) {
@@ -979,11 +979,11 @@ exports = {
         $request.invokeTemplate('getFromServiceB', { context: {} }),
         $request.invokeTemplate('getFromServiceC', { context: {} })
       ]);
-      
+
       const dataA = JSON.parse(responseA.response);
       const dataB = JSON.parse(responseB.response);
       const dataC = JSON.parse(responseC.response);
-      
+
       renderData(null, {
         success: true,
         data: {
@@ -1048,7 +1048,7 @@ exports = {
 exports = {
   syncTicketToGitHub: async function(args) {
     const { ticketId, ticketSubject, ticketDescription } = args.data.ticket;
-    
+
     try {
       const response = await $request.invokeTemplate('createGitHubIssue', {
         context: {
@@ -1061,14 +1061,14 @@ exports = {
           labels: ['freshdesk-sync']
         })
       });
-      
+
       const issue = JSON.parse(response.response);
       console.info('[syncTicketToGitHub] Created issue:', issue.number);
-      
-      renderData(null, { 
-        success: true, 
+
+      renderData(null, {
+        success: true,
         issueNumber: issue.number,
-        issueUrl: issue.html_url 
+        issueUrl: issue.html_url
       });
     } catch (error) {
       console.error('[syncTicketToGitHub] Error:', error.message);
@@ -1117,7 +1117,7 @@ exports = {
 exports = {
   notifySlackOnTicket: async function(args) {
     const { ticket } = args.data;
-    
+
     try {
       const message = {
         channel: args.iparams.slack_channel_id,
@@ -1142,14 +1142,14 @@ exports = {
           }
         ]
       };
-      
+
       const response = await $request.invokeTemplate('sendSlackMessage', {
         body: JSON.stringify(message)
       });
-      
+
       const data = JSON.parse(response.response);
       console.info('[notifySlackOnTicket] Message sent:', data.ts);
-      
+
       renderData(null, { success: true, messageId: data.ts });
     } catch (error) {
       console.error('[notifySlackOnTicket] Error:', error.message);
@@ -1198,7 +1198,7 @@ exports = {
 exports = {
   syncTicketToSheets: async function(args) {
     const { ticket } = args.data;
-    
+
     try {
       const row = [
         ticket.id,
@@ -1208,7 +1208,7 @@ exports = {
         ticket.requester.name,
         ticket.created_at
       ];
-      
+
       const response = await $request.invokeTemplate('writeGoogleSheet', {
         context: {
           spreadsheet_id: args.iparams.spreadsheet_id,
@@ -1218,10 +1218,10 @@ exports = {
           values: [row]
         })
       });
-      
+
       const data = JSON.parse(response.response);
       console.info('[syncTicketToSheets] Row added:', data.updates.updatedRows);
-      
+
       renderData(null, { success: true, rowsAdded: data.updates.updatedRows });
     } catch (error) {
       console.error('[syncTicketToSheets] Error:', error.message);
@@ -1267,7 +1267,7 @@ exports = {
 exports = {
   createPaymentIntent: async function(args) {
     const { amount, currency, customerId } = args;
-    
+
     try {
       const body = new URLSearchParams({
         amount: amount,
@@ -1275,14 +1275,14 @@ exports = {
         customer: customerId,
         'metadata[ticket_id]': args.ticketId
       }).toString();
-      
+
       const response = await $request.invokeTemplate('createStripePayment', {
         body: body
       });
-      
+
       const payment = JSON.parse(response.response);
       console.info('[createPaymentIntent] Payment created:', payment.id);
-      
+
       renderData(null, {
         success: true,
         paymentId: payment.id,
@@ -1324,22 +1324,22 @@ exports = {
     const accountSid = args.iparams.twilio_account_sid;
     const authToken = args.iparams.twilio_auth_token;
     const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
-    
+
     try {
       const body = new URLSearchParams({
         To: phoneNumber,
         From: args.iparams.twilio_phone_number,
         Body: message
       }).toString();
-      
+
       const response = await $request.invokeTemplate('sendTwilioSMS', {
         context: { basic_auth: credentials },
         body: body
       });
-      
+
       const data = JSON.parse(response.response);
       console.info('[sendSMSNotification] SMS sent:', data.sid);
-      
+
       renderData(null, { success: true, messageSid: data.sid });
     } catch (error) {
       console.error('[sendSMSNotification] Error:', error.message);
@@ -1388,22 +1388,22 @@ exports = {
 exports = {
   syncContactToSalesforce: async function(args) {
     const { contact } = args.data;
-    
+
     try {
       // Check if contact exists
       const query = `SELECT Id FROM Contact WHERE Email = '${contact.email}' LIMIT 1`;
       const searchResponse = await $request.invokeTemplate('querySalesforce', {
         context: { soql_query: query }
       });
-      
+
       const searchData = JSON.parse(searchResponse.response);
-      
+
       if (searchData.totalSize > 0) {
         console.info('[syncContactToSalesforce] Contact exists:', searchData.records[0].Id);
         renderData(null, { success: true, contactId: searchData.records[0].Id, action: 'found' });
         return;
       }
-      
+
       // Create new contact
       const contactData = {
         FirstName: contact.first_name,
@@ -1411,15 +1411,15 @@ exports = {
         Email: contact.email,
         Phone: contact.phone
       };
-      
+
       const createResponse = await $request.invokeTemplate('createSalesforceRecord', {
         context: { object_type: 'Contact' },
         body: JSON.stringify(contactData)
       });
-      
+
       const createData = JSON.parse(createResponse.response);
       console.info('[syncContactToSalesforce] Contact created:', createData.id);
-      
+
       renderData(null, { success: true, contactId: createData.id, action: 'created' });
     } catch (error) {
       console.error('[syncContactToSalesforce] Error:', error.message);
@@ -1559,14 +1559,14 @@ exports = {
       const response = await $request.invokeTemplate('getData', {
         context: { id: args.id }
       });
-      
+
       const data = JSON.parse(response.response);
       renderData(null, { success: true, data: data });
     } catch (error) {
       console.error('[goodFetch] Error:', error.message);
-      renderData({ 
-        status: error.status || 500, 
-        message: error.message || 'Request failed' 
+      renderData({
+        status: error.status || 500,
+        message: error.message || 'Request failed'
       });
     }
   }
@@ -1600,12 +1600,12 @@ exports = {
 exports = {
   searchWithEncoding: async function(args) {
     const encodedTerm = encodeURIComponent(args.searchTerm);
-    
+
     try {
       const response = await $request.invokeTemplate('searchApi', {
         context: { search_term: encodedTerm }
       });
-      
+
       renderData(null, { success: true, data: JSON.parse(response.response) });
     } catch (error) {
       console.error('[searchWithEncoding] Error:', error.message);

@@ -1,5 +1,5 @@
 >title: Controlling the width of the popover-content in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
@@ -7,7 +7,7 @@
 ## Usage
 ### Controlling the width of the popover-content
 If we want the content width to be different from the trigger then pass the `sameWidth` prop as false.
-Also the width of the content can be modified via the css variables as shown below.  
+Also the width of the content can be modified via the css variables as shown below.
 ```html live
 <fw-popover
 same-width="false"
@@ -34,14 +34,14 @@ units.options = unitsData;
 ```
 ---
 >title: popover - Keyboard navigation in HTML
->tags: 
+>tags:
 >context: popover
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Keyboard navigation in HTML
-  
+
 ```html
 <fw-popover
 id="status-popover"
@@ -76,18 +76,18 @@ statusPopover.addEventListener('fwHide', () => {
 statusIcon.setFocus();
 });
 </script>
-```  
+```
 
 ---
 >title: popover - Keyboard navigation in React
->tags: 
+>tags:
 >context: popover, react
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Keyboard navigation in React
-  
+
 ```jsx
 import React, { useRef } from 'react';
 import {
@@ -130,19 +130,19 @@ slot='popover-content'
 };
 
 export default Popover;
-```  
+```
 
 ---
 >title: Keyboard navigation in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Keyboard navigation
-Set the `autoFocusOnContent` prop as true to shift the focus to the content on popover open.  
-> NOTE: Make sure content or trigger is focusable element, Or use the focus() or the setFocus() method on both to handle focus manually.  
+Set the `autoFocusOnContent` prop as true to shift the focus to the content on popover open.
+> NOTE: Make sure content or trigger is focusable element, Or use the focus() or the setFocus() method on both to handle focus manually.
 ```html live
 <fw-popover
 same-width="false"
@@ -166,8 +166,8 @@ var paymentData = [
 var payment = document.getElementById('payment');
 payment.options = paymentData;
 </script>
-```  
-The above event can be handled manually via the listeners.  
+```
+The above event can be handled manually via the listeners.
 ```html live
 <fw-popover
 id="status-popover"
@@ -202,18 +202,18 @@ statusPopover.addEventListener('fwHide', () => {
 statusIcon.setFocus();
 });
 </script>
-```  
+```
 
 ---
 >title: popover - Complex Dropdown example in HTML
->tags: 
+>tags:
 >context: popover
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Complex Dropdown example in HTML
-  
+
 ```html
 <fw-popover same-width="false" placement="bottom-start">
 <fw-button slot="popover-trigger" color="secondary" show-caret-icon>
@@ -308,18 +308,18 @@ selectedOptions.length > 0
 buttonIcon.name = iconName;
 });
 </script>
-```  
+```
 
 ---
 >title: popover - Complex Dropdown example in React
->tags: 
+>tags:
 >context: popover, react
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Complex Dropdown example in React
-  
+
 ```jsx
 import React, { useState } from 'react';
 import {
@@ -424,18 +424,18 @@ variant='icon'
 };
 
 export default Popover;
-```  
+```
 
 ---
 >title: Complex Dropdown example in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Complex Dropdown example
-Even a complex dropdown can be created via popover. Below example contains two different fw-list-options inside a single fw-popover.  
+Even a complex dropdown can be created via popover. Below example contains two different fw-list-options inside a single fw-popover.
 ```html live
 <fw-popover same-width="false" placement="bottom-start">
 <fw-button slot="popover-trigger" color="secondary" show-caret-icon>
@@ -530,18 +530,18 @@ selectedOptions.length > 0
 buttonIcon.name = iconName;
 });
 </script>
-```  
+```
 
 ---
 >title: Simple Dropdown Example in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
 # Popover (fw-popover)
 ## Usage
 ### Simple Dropdown Example
-A simple dropdown button can be achieved as shown below.  
+A simple dropdown button can be achieved as shown below.
 ```html live
 <fw-popover
 trigger="manual"
@@ -591,11 +591,11 @@ sports.options = [
 { value: 4, text: 'Kabadi' },
 ];
 </script>
-```  
+```
 <!-- Auto Generated Below -->
 ---
 >title: Properties in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
@@ -709,7 +709,7 @@ Type: `"date-picker" \| "select"`
 Default: `'select'`
 ---
 >title: Events in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
@@ -728,7 +728,7 @@ Description: Triggered whenever the popover contents is open/displayed.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in popover
->tags: 
+>tags:
 >context: popover
 >content:
 
@@ -761,7 +761,7 @@ Name: `--fw-popover-min-width`
 Description: Minimum width of the popover content.
 ---
 >title: How to use popover in crayons ?
->tags: 
+>tags:
 >context: popover
 >content:
 
@@ -795,6 +795,6 @@ Type: `Promise<void>`
 ### `show() => Promise<void>`
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

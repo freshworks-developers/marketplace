@@ -33,7 +33,7 @@ It supports following Module-specific placeholders. In the app manifest, configu
 >context:
 >code:
 
-To use the supported placeholder modify your `manifest.json` as below 
+To use the supported placeholder modify your `manifest.json` as below
 
 ```json
 {
@@ -76,7 +76,7 @@ You can use the `client.data.get()` data method to retrieve the following object
 
 ---
 
->title: example of data method usage supported for caller conversation module in Freshcaller 
+>title: example of data method usage supported for caller conversation module in Freshcaller
 >tags: module=caller_conversation, caller_conversation, freshcaller
 >context:
 >code:
@@ -129,7 +129,7 @@ The caller conversation module supports following events for `conversation_card`
 1. Click events
 `call.holdToggled` - When an agent holds or releases a call.
 `call.muteToggled` - When an agent mutes or unmutes a call.
-`call.recordingStarted` - When an agent manually starts call recording. 
+`call.recordingStarted` - When an agent manually starts call recording.
 `call.recordingPaused` - When an agent pauses call recording.
 `call.recordingResumed` - When an agent resumes call recording.
 
@@ -155,7 +155,7 @@ To enable your app to react to front-end events, in the app.js file,
 
 1. Subscribe to the app.initialized event, through an event listener. When the app is initialized, the parent application passes a client reference to the app.
 2. After app initialization,
-  a. Use the client reference, subscribe to `<Event name>` and register a callback method to be executed when the event occurs. 
+  a. Use the client reference, subscribe to `<Event name>` and register a callback method to be executed when the event occurs.
   b. Define the callback method.
 
 When the event occurs, a payload is passed to the callback method. Let us call this payload event. `event.type` returns the name of the event. The `event.helper.getData()` helper method returns a JSON object that contains information pertaining to the event. Your app logic can process this data into meaningful results.
@@ -392,7 +392,7 @@ client.instance.receive(
 ```
 
 ---
->title: what are the serverless events supported by caller conversation module of Freshcaller 
+>title: what are the serverless events supported by caller conversation module of Freshcaller
 >tags: module=caller_conversation, caller_conversation, freshcaller, serverless_events
 >context:
 >content:
@@ -417,7 +417,7 @@ An app built for this module can react to the following events.
   b. `onCallUpdate`
 
 ---
->title: how to configure product events supported by caller conversation module of Freshcaller 
+>title: how to configure product events supported by caller conversation module of Freshcaller
 >tags: module=caller_conversation, caller_conversation, freshcaller, product_events
 >context:
 >code:

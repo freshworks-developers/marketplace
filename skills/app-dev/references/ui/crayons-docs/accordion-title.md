@@ -1,5 +1,5 @@
 >title: Properties in accordion-title
->tags: 
+>tags:
 >context: accordion-title
 >content:
 
@@ -22,7 +22,7 @@ Type: `boolean`
 Default: `true`
 ---
 >title: CSS Custom Properties in accordion-title
->tags: 
+>tags:
 >context: accordion-title
 >content:
 
@@ -59,7 +59,7 @@ Name: `--fw-accordion-title-line-height`
 Description: Accordion title line height
 ---
 >title: How to use accordion-title in crayons ?
->tags: 
+>tags:
 >context: accordion-title
 >content:
 

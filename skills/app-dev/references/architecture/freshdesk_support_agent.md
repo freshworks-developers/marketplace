@@ -1,10 +1,10 @@
 >title: what is support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk
->context: 
+>context:
 >content:
 
 # what is support agent module in Freshdesk
-An app user with a stand-alone Freshdesk subscription or a subscription to any SKU that has Freshdesk as one of the products can use this module. Using this module you can build a front end app, a serverless app and also a full stack SMI app for Freshdesk Ticket feature. The front end and SMI apps is deployed on the supported product’s left-navigation pane. The app cannot be deployed on any other pages of the product.	 
+An app user with a stand-alone Freshdesk subscription or a subscription to any SKU that has Freshdesk as one of the products can use this module. Using this module you can build a front end app, a serverless app and also a full stack SMI app for Freshdesk Ticket feature. The front end and SMI apps is deployed on the supported product’s left-navigation pane. The app cannot be deployed on any other pages of the product.
 
 ---
 >title: what are the placeholders supported for support agent module in Freshdesk
@@ -24,7 +24,7 @@ An app user with a stand-alone Freshdesk subscription or a subscription to any S
 >content:
 
 # how to use placeholders supported for support agent module in Freshdesk
-To use the placeholder modify your `manifest.json` as below 
+To use the placeholder modify your `manifest.json` as below
 ```json
 {
   "platform-version": "3.0",
@@ -49,7 +49,7 @@ To use the placeholder modify your `manifest.json` as below
 ---
 >title: data methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, data_method
->context: 
+>context:
 >content:
 
 # data methods supported for support agent module in Freshdesk
@@ -61,7 +61,7 @@ Objects accessible regardless of the placeholders
 ---
 >title: example of data method usage supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk
->context: 
+>context:
 >content:
 
 # example of data method usage supported for support agent module in Freshdesk
@@ -98,7 +98,7 @@ Objects accessible regardless of the placeholders
 ---
 >title: what are events methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # what are events methods supported for support agent module in Freshdesk
@@ -112,7 +112,7 @@ Common event: An app deployed at cti_global_sidebar can react to the `cti.trigge
 ---
 >title: how to use events methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, events_method
->context: 
+>context:
 >content:
 
 # how to use events methods supported for support agent module in Freshdesk
@@ -133,7 +133,7 @@ To use `cti.triggerDialer` use following code
 ---
 >title: what are interface methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # what are interface methods supported for support agent module in Freshdesk
@@ -147,7 +147,7 @@ To use `cti.triggerDialer` use following code
 ---
 >title: how to use interface methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, interface_methods
->context: 
+>context:
 >content:
 
 # how to use interface methods supported for support agent module in Freshdesk
@@ -177,7 +177,7 @@ To use `cti.triggerDialer` use following code
 ---
 >title: what are instance methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # what are instance methods supported for support agent module in Freshdesk
@@ -191,7 +191,7 @@ To use `cti.triggerDialer` use following code
 ---
 >title: how to use instance methods supported for support agent module in Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, instance_methods
->context: 
+>context:
 >content:
 
 # how to use instance methods supported for support agent module in Freshdesk
@@ -473,7 +473,7 @@ An app built for this module can react to the following events.
 ---
 >title: what are the REST APIs supported by support agent module of Freshdesk
 >tags: module=support_agent, support_agent, freshdesk, rest_api
->context: 
+>context:
 >content:
 
 # what are the REST APIs supported by support agent module of Freshdesk

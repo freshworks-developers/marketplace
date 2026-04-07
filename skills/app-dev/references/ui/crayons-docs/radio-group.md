@@ -1,5 +1,5 @@
 >title: radio-group - Usage in HTML
->tags: 
+>tags:
 >context: radio-group
 >content:
 
@@ -16,7 +16,7 @@
 
 ---
 >title: radio-group - Usage in React
->tags: 
+>tags:
 >context: radio-group, react
 >content:
 
@@ -40,17 +40,17 @@ return (<div>
 
 ---
 >title: Usage in radio-group
->tags: 
+>tags:
 >context: radio-group
 >content:
 
 # Radio Group (fw-radio-group)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in radio-group
->tags: 
+>tags:
 >context: radio-group
 >content:
 
@@ -129,7 +129,7 @@ Type: `string`
 Default: `''`
 ---
 >title: Events in radio-group
->tags: 
+>tags:
 >context: radio-group
 >content:
 
@@ -143,12 +143,12 @@ Description: Triggered when an option in the Radio Group is selected or deselect
 Type: `CustomEvent<any>`
 ---
 >title: How to use radio-group in crayons ?
->tags: 
+>tags:
 >context: radio-group
 >content:
 
 # Radio Group (fw-radio-group)
-fw-radio-group displays a group of options with radio buttons and enables selection of one option from the list. 
+fw-radio-group displays a group of options with radio buttons and enables selection of one option from the list.
 ## Demo
 ```html live
 <fw-radio-group name="Profile" value="au" allow-empty>
@@ -163,6 +163,6 @@ fw-radio-group displays a group of options with radio buttons and enables select
 Sets focus on a specific `fw-radio`.
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

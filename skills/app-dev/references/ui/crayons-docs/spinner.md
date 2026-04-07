@@ -1,5 +1,5 @@
 >title: spinner - Usage in HTML
->tags: 
+>tags:
 >context: spinner
 >content:
 
@@ -15,7 +15,7 @@
 
 ---
 >title: spinner - Usage in React
->tags: 
+>tags:
 >context: spinner, react
 >content:
 
@@ -38,17 +38,17 @@ return (<div>
 
 ---
 >title: Usage in spinner
->tags: 
+>tags:
 >context: spinner
 >content:
 
 # Spinner (fw-spinner)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in spinner
->tags: 
+>tags:
 >context: spinner
 >content:
 
@@ -71,7 +71,7 @@ Type: `"default" \| "large" \| "medium" \| "micro" \| "small"`
 Default: `'default'`
 ---
 >title: CSS Custom Properties in spinner
->tags: 
+>tags:
 >context: spinner
 >content:
 
@@ -84,7 +84,7 @@ Name: `--fw-spinner-color`
 Description: Color of the spinner
 ---
 >title: How to use spinner in crayons ?
->tags: 
+>tags:
 >context: spinner
 >content:
 
@@ -98,6 +98,6 @@ fw-spinner displays a continuous loader on the user interface, to indicate that 
 <fw-spinner size="medium" color="green"></fw-spinner>
 ```
 <!-- Auto Generated Below -->
- 
+
 
 ---

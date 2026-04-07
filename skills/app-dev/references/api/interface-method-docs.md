@@ -108,7 +108,7 @@ Considerations while using display modals or dialog boxes
 
 # How to display modals without background
 
-The modal without backdrop is a beta feature and not available for all Freshdesk accounts. 
+The modal without backdrop is a beta feature and not available for all Freshdesk accounts.
 
 ## Sample code to create a default modal without backdrop:
 ```js
@@ -350,7 +350,7 @@ try {
     // failure operation
     console.error(error);
 }
-``` 
+```
 ## Considerations while displaying notifications
 1. type is mandatory. Possible values: info, success, warning, danger, alert. If an incorrect value is entered or if no value is specified, an error message is displayed at run time.
 2. title is optional. Max characters: 30; value is truncated beyond 30.
@@ -529,7 +529,7 @@ try {
 >context: app.js
 >code:
 
-# How to display or hide CTI dialler    
+# How to display or hide CTI dialler
 
 To enable an app deployed at the cti_global_sidebar to open or hide a phone dialler,
 1. Navigate to the app.js file. Subscribe to the app.initialized event, through an event listener. When the app is initialized, the parent application (product on which the app is deployed) passes a client reference to the app.

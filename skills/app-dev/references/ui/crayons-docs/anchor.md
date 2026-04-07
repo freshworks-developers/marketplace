@@ -1,5 +1,5 @@
 >title: Properties in anchor
->tags: 
+>tags:
 >context: anchor
 >content:
 
@@ -8,12 +8,12 @@
 
 ---
 >title: How to use anchor in crayons ?
->tags: 
+>tags:
 >context: anchor
 >content:
 
 # fw-custom-cell-anchor
 <!-- Auto Generated Below -->
- 
+
 
 ---

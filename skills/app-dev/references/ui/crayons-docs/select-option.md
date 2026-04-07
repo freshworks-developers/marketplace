@@ -1,5 +1,5 @@
 >title: select-option - Usage in HTML
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -14,7 +14,7 @@
 
 ---
 >title: select-option - Usage in React
->tags: 
+>tags:
 >context: select-option, react
 >content:
 
@@ -36,7 +36,7 @@ return (<div>
 
 ---
 >title: Demo - Variants in select-option
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -63,7 +63,7 @@ sub-text="This is multiline checkbox element"
 ```
 ---
 >title: select-option - Usage - Variants in HTML
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -86,7 +86,7 @@ sub-text="This is multiline checkbox element"
 
 ---
 >title: select-option - Usage - Variants in React
->tags: 
+>tags:
 >context: select-option, react
 >content:
 
@@ -116,18 +116,18 @@ subText="This is multiline checkbox element"
 
 ---
 >title: Usage - Variants in select-option
->tags: 
+>tags:
 >context: select-option
 >content:
 
 # Select Option (fw-select-option)
 ## Usage
 #### Usage - Variants
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in select-option
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -248,7 +248,7 @@ Type: `"avatar" \| "conversation" \| "icon" \| "standard"`
 Default: `'standard'`
 ---
 >title: Events in select-option
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -277,7 +277,7 @@ Description: Triggered when an option is selected.
 Type: `CustomEvent<any>`
 ---
 >title: How to use select-option in crayons ?
->tags: 
+>tags:
 >context: select-option
 >content:
 
@@ -294,6 +294,6 @@ fw-select-option provides child elements for fw-select, to populate the Select c
 ### `setFocus() => Promise<any>`
 #### Returns
 Type: `Promise<any>`
- 
+
 
 ---

@@ -1,5 +1,5 @@
 >title: Default Accordion in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -23,7 +23,7 @@ like Aldus PageMaker including versions of Lorem Ipsum
 ```
 ---
 >title: Accordion Title icon size in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -75,7 +75,7 @@ like Aldus PageMaker including versions of Lorem Ipsum
 ```
 ---
 >title: Accordion with custom toggle icons in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -100,15 +100,15 @@ Lorem Ipsum passages, and more recently with desktop publishing software
 like Aldus PageMaker including versions of Lorem Ipsum
 </fw-accordion-body>
 </fw-accordion>
-```  
-Toggle icons can be customized using named slots.  
+```
+Toggle icons can be customized using named slots.
 | Icon           | Slot Name      |
 | -------------- | -------------- |
 | Expanded Icon  | expanded-icon  |
 | Collapsed Icon | collapsed-icon |
 ---
 >title: No Bounding Box Accordion (Borders at top and bottom only) in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -132,7 +132,7 @@ like Aldus PageMaker including versions of Lorem Ipsum
 ```
 ---
 >title: Accordion with custom CSS properties in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -165,7 +165,7 @@ like Aldus PageMaker including versions of Lorem Ipsum
 ```
 ---
 >title: accordion - Usage in HTML
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -190,7 +190,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 ---
 >title: accordion - Usage in React
->tags: 
+>tags:
 >context: accordion, react
 >content:
 
@@ -215,17 +215,17 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 ---
 >title: Usage in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
 # Accordion (fw-accordion)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -248,7 +248,7 @@ Type: `"default" \| "no_bounding_box"`
 Default: `'default'`
 ---
 >title: Events in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -262,7 +262,7 @@ Description: Triggered when the accordion is expanded or collapsed
 Type: `CustomEvent<AccordionToggleEvent>`
 ---
 >title: CSS Custom Properties in accordion
->tags: 
+>tags:
 >context: accordion
 >content:
 
@@ -283,7 +283,7 @@ Name: `--fw-accordion-box-shadow`
 Description: Accordion box shadow
 ---
 >title: How to use accordion in crayons ?
->tags: 
+>tags:
 >context: accordion
 >content:
 

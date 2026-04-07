@@ -131,7 +131,7 @@ In your `manifest.json`, under the `service_ticket` module, add the background p
   },
   "location": {
     "ticket_background": {
-    "url": "ticket_background.html" 
+    "url": "ticket_background.html"
     }
   }
 }
@@ -175,9 +175,9 @@ client.events.on('app.activated', () => {
 
 ---
 
->title: what are data methods supported for service ticket module in Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, data_method  
->context:  
+>title: what are data methods supported for service ticket module in Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, data_method
+>context:
 >content:
 
 # what are data methods supported for service ticket module in Freshservice
@@ -252,9 +252,9 @@ getAssociatedProblem();
 ```
 
 ---
->title: what are events methods supported for service ticket module in Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, events_method  
->context:  
+>title: what are events methods supported for service ticket module in Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, events_method
+>context:
 >content:
 
 # what are events methods supported for service ticket module in Freshservice
@@ -342,9 +342,9 @@ var eventCallback = function (event) {
 
 ---
 
->title: what are interface methods supported for service ticket module in Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, interface_methods  
->context: apps.js  
+>title: what are interface methods supported for service ticket module in Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, interface_methods
+>context: apps.js
 >content:
 
 # what are interface methods supported for service ticket module in Freshservice
@@ -361,13 +361,13 @@ Using interface methods, an app can on the product UI:
 1. **Modals & Dialogs:** `showModal`, `showDialog`
 2. **Confirmations:** `showConfirm`
 3. **Notifications:** `showNotify` (supports types: info, success, warning, danger, alert)
-4. **UI Element Control:**  
+4. **UI Element Control:**
    Use `client.interface.trigger("<method-name>", {id: "<element-name>"})` where `<method-name>` can be:
    - `hideElement`
    - `showElement`
    - `enableElement`
    - `disableElement`
-5. **Editor Window Control:**  
+5. **Editor Window Control:**
    Use `client.interface.trigger("<method-name>", {id: "<window-name>", field: "<element-name>"})` where `<method-name>` can be `enableElement` or `disableElement` and `<window-name>` is either `reply` or `forward`.
 
 For more details, refer to the [interface methods docs](https://freshworks.dev/docs/app-sdk/v3.0/service_ticket/front-end-apps/interface-methods/)._
@@ -432,23 +432,23 @@ try {
 
 ---
 
->title: what are instance methods supported for service ticket module in Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, instance_methods  
->context: apps.js  
+>title: what are instance methods supported for service ticket module in Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, instance_methods
+>context: apps.js
 >content:
 
 # what are instance methods supported for service ticket module in Freshservice
 
 ## Summary of Instance Methods
-1. **Resize Instance:**  
+1. **Resize Instance:**
    `client.instance.resize({ height: "<height in pixels>" });`
-2. **Close Instance:**  
+2. **Close Instance:**
    `client.instance.close();`
-3. **Inter-Instance Communication:**  
+3. **Inter-Instance Communication:**
    Use methods such as `context()`, `send()`, `receive()`, and `get()`.
    - Send data from a parent to a modal and vice versa.
    - Send data between two different instances.
-4. **Retrieve Context:**  
+4. **Retrieve Context:**
    `client.instance.context();` returns contextual info about the current app instance.
 
 ---
@@ -550,9 +550,9 @@ client.instance.receive(function(event) {
 
 ---
 
->title: what are the serverless events supported by service ticket module of Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, serverless_events  
->context: manifest.json  
+>title: what are the serverless events supported by service ticket module of Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, serverless_events
+>context: manifest.json
 >content:
 
 # what are the serverless events supported by service ticket module of Freshservice
@@ -633,9 +633,9 @@ exports = {
 
 ---
 
->title: how to configure ticket events supported by service ticket module in Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, product_events, ticket_events  
->context: manifest.json, server.js  
+>title: how to configure ticket events supported by service ticket module in Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, product_events, ticket_events
+>context: manifest.json, server.js
 >content:
 
 # how to configure ticket events supported by service ticket module of Freshservice
@@ -697,9 +697,9 @@ exports = {
 
 ---
 
->title: what are the REST APIs supported by service ticket module of Freshservice  
->tags: module=service_ticket, service_ticket, freshservice, rest_api  
->context:  
+>title: what are the REST APIs supported by service ticket module of Freshservice
+>tags: module=service_ticket, service_ticket, freshservice, rest_api
+>context:
 >content:
 
 # what are the REST APIs supported by service ticket module of Freshservice

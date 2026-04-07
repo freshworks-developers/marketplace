@@ -5,8 +5,8 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 ## FDK Validation Errors
 
 ### iparams.json is mandatory
-**Error:** "iparams.json is mandatory"  
-**Fix:** Create either `config/iparams.json` OR `config/iparams.html` (not both)  
+**Error:** "iparams.json is mandatory"
+**Fix:** Create either `config/iparams.json` OR `config/iparams.html` (not both)
 **Rule:** Every app MUST have installation parameters configuration
 
 **Two Options:**
@@ -16,8 +16,8 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Cannot use both in same app** - Choose one approach
 
 ### Dropdown default value not listed in options
-**Error:** "The default value specified for the '<field_name>' dropdown type is not listed in the options."  
-**Fix:** Ensure `default_value` exactly matches one of the option values (case-sensitive, character-perfect)  
+**Error:** "The default value specified for the '<field_name>' dropdown type is not listed in the options."
+**Fix:** Ensure `default_value` exactly matches one of the option values (case-sensitive, character-perfect)
 **Rule:** Dropdown `default_value` must be string-exact match with an option's `value` field
 
 **[WARNING] AI Agent Caution:**
@@ -39,7 +39,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
        ]
      }
    }
-   
+
    // [VALID] CORRECT
    {
      "priority": {
@@ -62,7 +62,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
        ]
      }
    }
-   
+
    // [VALID] CORRECT
    {
      "environment": {
@@ -90,8 +90,8 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Note:** Platform does NOT support `"default": true` inside option objects - must use top-level `default_value` field
 
 ### Missing default value for dropdown
-**Error:** "In the '<field_name>' field, specify the default value for the dropdown type."  
-**Fix:** Add required `default_value` field to dropdown iparam  
+**Error:** "In the '<field_name>' field, specify the default value for the dropdown type."
+**Fix:** Add required `default_value` field to dropdown iparam
 **Rule:** All dropdown iparams MUST have a default_value - it is NOT optional
 
 **[WARNING] AI Agent Caution:**
@@ -126,28 +126,28 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 ```
 
 ### icon.svg not found
-**Error:** "icon.svg not found"  
-**Fix:** Create `app/styles/images/icon.svg`  
+**Error:** "icon.svg not found"
+**Fix:** Create `app/styles/images/icon.svg`
 **Rule:** Frontend apps MUST have icon.svg in correct location
 
 ### Invalid location(s) mentioned in modules
-**Error:** "Invalid location(s) mentioned in modules"  
+**Error:** "Invalid location(s) mentioned in modules"
 **Fix:** Move location to correct module:
 - `full_page_app`, `cti_global_sidebar` → `modules.common.location`
-- `ticket_sidebar`, `asset_sidebar`, etc. → `modules.<product_module>.location`  
+- `ticket_sidebar`, `asset_sidebar`, etc. → `modules.<product_module>.location`
 **Rule:** Product-specific locations CANNOT be in `common` module
 
 ### Request template not found
-**Error:** "Request template not found"  
+**Error:** "Request template not found"
 **Fix:** Ensure request template name matches in:
 1. `manifest.json` → `modules.common.requests.templateName`
 2. `config/requests.json` → `templateName`
-3. Code → `$request.invokeTemplate('templateName', {})`  
+3. Code → `$request.invokeTemplate('templateName', {})`
 **Rule:** All three must match exactly
 
 ### Multiple top-level JSON objects
-**Error:** "Unexpected token { in JSON" or "Multiple top-level JSON objects"  
-**Cause:** JSON file contains multiple top-level objects instead of single object  
+**Error:** "Unexpected token { in JSON" or "Multiple top-level JSON objects"
+**Cause:** JSON file contains multiple top-level objects instead of single object
 **Fix:** Merge into single top-level object with proper commas
 
 **Example (requests.json):**
@@ -166,8 +166,8 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Rule:** All JSON files MUST have single top-level object. Use commas to separate properties.
 
 ### Request template schema/host must not have path
-**Error:** "Request template schema/host must not have path"  
-**Cause:** Host contains URL path or encoded characters  
+**Error:** "Request template schema/host must not have path"
+**Cause:** Host contains URL path or encoded characters
 **Fix:** Use context variables with `<%= %>` syntax:
 ```json
 {
@@ -184,7 +184,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 **Rule:** Host must be FQDN only. Use `<%= context.variable %>` for dynamic values
 
 ### Request template schema/path must start with '/'
-**Error:** "Request template schema/path must start with '/'"  
+**Error:** "Request template schema/path must start with '/'"
 **Fix:** Ensure path starts with `/`:
 ```json
 // [INVALID] WRONG
@@ -195,8 +195,8 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 ```
 
 ### Request template schema must NOT have additional properties 'body'
-**Error:** "Request template 'X' schema must NOT have additional properties 'body'"  
-**Cause:** `body` property in request template schema definition  
+**Error:** "Request template 'X' schema must NOT have additional properties 'body'"
+**Cause:** `body` property in request template schema definition
 **Fix:** Remove `body` from schema - it goes in invocation, not schema
 ```json
 // [INVALID] WRONG - body in schema
@@ -226,7 +226,7 @@ Complete reference for FDK validation errors, code quality errors, and Platform 
 }
 
 // Pass body when invoking:
-$request.invokeTemplate('myRequest', { 
+$request.invokeTemplate('myRequest', {
   context: {},
   body: JSON.stringify({ data: 'value' })
 })
@@ -234,7 +234,7 @@ $request.invokeTemplate('myRequest', {
 **Rule:** Schema defines the template. Body is passed during invocation.
 
 ### Mandatory folder(s) missing: app
-**Error:** "Mandatory folder(s) missing: app"  
+**Error:** "Mandatory folder(s) missing: app"
 **Fix:** Create `app/` folder with required structure:
 ```
 app/
@@ -249,8 +249,8 @@ app/
 **Rule:** Frontend apps (with location) MUST have `app/` folder. Serverless-only apps don't need it.
 
 ### Location must NOT have fewer than 1 properties
-**Error:** "/modules/common/location must NOT have fewer than 1 properties"  
-**Cause:** Empty location object: `"location": {}`  
+**Error:** "/modules/common/location must NOT have fewer than 1 properties"
+**Cause:** Empty location object: `"location": {}`
 **Fix:** Either add a location OR remove the location key entirely:
 ```json
 // [INVALID] WRONG - empty location
@@ -289,7 +289,7 @@ app/
 **Rule:** Don't create empty location objects. Either define a location or omit the key.
 
 ### Must have required property 'engines'
-**Error:** "must have required property 'engines' in manifest.json"  
+**Error:** "must have required property 'engines' in manifest.json"
 **Fix:** Add engines block to manifest:
 ```json
 {
@@ -304,14 +304,14 @@ app/
 **Rule:** All Platform 3.0 apps MUST declare node and fdk versions in engines block.
 
 ### SMI function not found
-**Error:** "SMI function not found"  
+**Error:** "SMI function not found"
 **Fix:** Ensure function name matches in:
 1. `manifest.json` → `modules.common.functions.functionName`
 2. `server/server.js` → `exports.functionName`
 3. Frontend → `client.request.invoke('functionName', {})`
 
 ### Invalid event for module
-**Error:** "Invalid event: 'onScheduledSync' for module: common"  
+**Error:** "Invalid event: 'onScheduledSync' for module: common"
 **Fix:** Remove scheduled events from manifest. Create dynamically:
 ```javascript
 exports = {
@@ -333,7 +333,7 @@ exports = {
 ## Code Quality Errors
 
 ### Async function has no 'await' expression
-**CRITICAL:** Mandatory lint requirement - ZERO TOLERANCE  
+**CRITICAL:** Mandatory lint requirement - ZERO TOLERANCE
 **Fix Option 1:** Add `await`:
 ```javascript
 exports = {
@@ -396,7 +396,7 @@ function getValidItems(data) {
 ```
 
 ### Helper function parsing error
-**Error:** "Error while parsing file containing serverless functions"  
+**Error:** "Error while parsing file containing serverless functions"
 **Fix:** Move helper functions AFTER exports block:
 ```javascript
 // [VALID] CORRECT

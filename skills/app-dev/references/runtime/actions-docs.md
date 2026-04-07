@@ -14,7 +14,7 @@ Actions can be defined as the following:
 3. **How**: Actions are triggered by apps (events, workflow automator).
 4. **Consumption**: Typically used to run business logic when a platform event or automation requires it.
 5. **Where**: Defined in actions.json, the invocation would happen from the flow consuming the actions.json specifications.
-6. **Invocation**: 
+6. **Invocation**:
   - Events auto-invoke handler (e.g., onTicketCreate)
   - Calling the action configured in the flow
 
@@ -52,7 +52,7 @@ Actions can be defined as the following:
 ## In `server.js`, define the actionmethod called from the front-end component
 
 - Place the app logic inside `server.js`.
-- The `functionCallBackName` object contains the function definition.<functionCallBackName> acts as the key that identifies the corresponding callback method defined in server.js. 
+- The `functionCallBackName` object contains the function definition.<functionCallBackName> acts as the key that identifies the corresponding callback method defined in server.js.
 - The function name is case-sensitive and can be alphanumeric ([a-z], [A-Z], [0-9]) with underscores ( _ ). It must not start with a number, contain spaces, and be 2 to 40 characters long.
 - Use the `renderData(error, data)` method to return a response.
 ---

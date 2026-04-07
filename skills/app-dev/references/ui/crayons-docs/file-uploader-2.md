@@ -1,11 +1,11 @@
 >title: file-uploader-2 - Default auto upload file uploader in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### Default auto upload file uploader in HTML
-  
+
 ```html
 <fw-file-uploader-2
 name="sample"
@@ -17,17 +17,17 @@ action-u-r-l="https://mocktarget.apigee.net/echo"
 multiple="true"
 >
 </fw-file-uploader-2>
-```  
+```
 
 ---
 >title: file-uploader-2 - Default auto upload file uploader in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### Default auto upload file uploader in React
-  
+
 ```jsx
 import { FwFileUploader2 } from "@freshworks/crayons/react";
 function App() {
@@ -46,11 +46,11 @@ multiple="true"
 </>
 );
 }
-```  
+```
 
 ---
 >title: Default auto upload file uploader in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -67,17 +67,17 @@ action-u-r-l="https://mocktarget.apigee.net/echo"
 multiple="true"
 >
 </fw-file-uploader-2>
-```  
+```
 
 ---
 >title: file-uploader-2 - File uploader with initial values set in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File uploader with initial values set in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader-2
@@ -92,7 +92,7 @@ style="width: 400px;"
 >
 </fw-file-uploader-2>
 </div>
-```  
+```
 ```javascript
 var fileUploader1 = document.querySelector("#file-uploader-01");
 fileUploader1.initialFiles = [{
@@ -118,17 +118,17 @@ file: new File([new Blob(new Uint8Array([
 progress: -1,
 error: 'Failed to upload file'
 }];
-```  
+```
 
 ---
 >title: file-uploader-2 - File uploader with initial values set in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File uploader with initial values set in React
-  
+
 ```jsx
 import { FwFileUploader2 } from "@freshworks/crayons/react";
 function App() {
@@ -174,17 +174,17 @@ initialFiles={initialFiles}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File uploader with initial values set in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File uploader with initial values set
-Expected format for initial file upload:  
+Expected format for initial file upload:
 ```
 const lastServerResponse = {
 uploadStatus: 200,
@@ -203,7 +203,7 @@ const InitialFiles: [{
 "error": "", // Error text to display when progress is -1. Must be empty for successful state.
 "lastServerResponse": lastServerResponse, // Just a reference placeholder for storing any response from last server call.
 }];
-```  
+```
 ```html live
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader-2
@@ -244,17 +244,17 @@ progress: -1,
 error: 'Failed to upload file'
 }];
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload on a button trigger in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload on a button trigger in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <div style="width: 400px;" class="fw-flex fw-flex-column">
@@ -272,24 +272,24 @@ is-batch-upload="true"
 <fw-button id="file-uploader-button-02">Upload file</fw-button>
 </div>
 </div>
-```  
+```
 ```javascript
 var fileUploader2 = document.querySelector("#file-uploader-02");
 var fileUploaderButton2 = document.querySelector("#file-uploader-button-02");
 fileUploaderButton2.addEventListener('click', () => {
 fileUploader2.uploadFiles();
 });
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload on a button trigger in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload on a button trigger in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader2, FwButton } from "@freshworks/crayons/react";
@@ -314,11 +314,11 @@ ref={fileUploader}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File upload on a button trigger in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -348,17 +348,17 @@ fileUploaderButton2.addEventListener('click', () => {
 fileUploader2.uploadFiles();
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - File uploader as part of a form in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File uploader as part of a form in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <form style="width: 400px;" class="fw-flex fw-flex-column fw-justify-center" id="sample-form" action="https://mocktarget.apigee.net/echo" method="post" onsubmit>
@@ -376,7 +376,7 @@ is-batch-upload="true"
 <fw-button type="submit">Upload file</fw-button>
 </form>
 </div>
-```  
+```
 ```javascript
 var sampleForm = document.getElementById("sample-form");
 var fileUploader3 = document.getElementById("file-uploader-03");
@@ -386,17 +386,17 @@ var files = await fileUploader3.getFiles();
 console.log(files); // Perform action to send file to a server
 fileUploader3.reset(); // reset the form to initial state
 });
-```  
+```
 
 ---
 >title: file-uploader-2 - File uploader as part of a form in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File uploader as part of a form in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader2, FwButton } from "@freshworks/crayons/react";
@@ -431,11 +431,11 @@ ref={fileUploader}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File uploader as part of a form in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -469,17 +469,17 @@ console.log(files); // Perform action to send file to a server
 fileUploader3.reset(); // reset the form to initial state
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - retry cases in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - retry cases in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <div>
@@ -499,7 +499,7 @@ is-batch-upload="true"
 <fw-button id="file-uploader-button-04">Upload file</fw-button>
 </div>
 </div>
-```  
+```
 ```javascript
 var fileUploader4 = document.querySelector('#file-uploader-04');
 var succeedToggle = document.querySelector('#succeed-toggle');
@@ -522,17 +522,17 @@ console.log(event); // Will be called a retry attempt request is sent.
 fileUploaderButton4.addEventListener('click', () => {
 fileUploader4.uploadFiles();
 });
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - retry cases in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - retry cases in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwToggle, FwFileUploader2, FwButton } from "@freshworks/crayons/react";
@@ -577,11 +577,11 @@ onFwFileReuploaded={(e) => console.log(e)}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File upload - retry cases in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -630,17 +630,17 @@ fileUploaderButton4.addEventListener('click', () => {
 fileUploader4.uploadFiles();
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - modify header request in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - modify header request in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <div style="width: 400px;" class="fw-flex fw-flex-column">
@@ -658,7 +658,7 @@ is-batch-upload="true"
 <fw-button id="file-uploader-button-05">Upload file</fw-button>
 </div>
 </div>
-```  
+```
 ```javascript
 var fileUploader5 = document.querySelector('#file-uploader-05');
 var filesUploaderButton5 = document.querySelector('#file-uploader-button-05');
@@ -673,17 +673,17 @@ console.log(JSON.parse(event.detail.response).headers.authorization); // Will be
 filesUploaderButton5.addEventListener('click', () => {
 fileUploader5.uploadFiles();
 });
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - modify header request in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - modify header request in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader2, FwButton } from "@freshworks/crayons/react";
@@ -717,11 +717,11 @@ console.log(JSON.parse(e.detail.response).headers.authorization);
 </>
 );
 }
-```  
+```
 
 ---
 >title: File upload - modify header request in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -760,17 +760,17 @@ filesUploaderButton5.addEventListener('click', () => {
 fileUploader5.uploadFiles();
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - custom upload and reset buttons in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - custom upload and reset buttons in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <div style="width: 400px;" class="fw-flex fw-flex-column">
@@ -790,7 +790,7 @@ is-batch-upload="true"
 <button id="custom-reset">Reset</button>
 </div>
 </div>
-```  
+```
 ```javascript
 var fileUploader6 = document.querySelector("#file-uploader-06");
 var customButton = document.querySelector("#custom-submit");
@@ -804,17 +804,17 @@ fileUploader6.reset(); // To return component to initial state
 fileUploader6.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
-```  
+```
 
 ---
 >title: file-uploader-2 - File upload - custom upload and reset buttons in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### File upload - custom upload and reset buttons in React
-  
+
 ```jsx
 import { useRef } from 'react';
 import { FwFileUploader2 } from "@freshworks/crayons/react";
@@ -843,11 +843,11 @@ ref={fileUploader}
 </>
 );
 }
-```  
+```
 
 ---
 >title: File upload - custom upload and reset buttons in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -887,17 +887,17 @@ fileUploader6.addEventListener('fwFilesUploaded', (event) => {
 console.log(event);
 });
 </script>
-```  
+```
 
 ---
 >title: file-uploader-2 - Restrict attachment size in HTML
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### Restrict attachment size in HTML
-  
+
 ```html
 <div class="fw-flex fw-flex-column fw-justify-center">
 <fw-file-uploader-2
@@ -913,7 +913,7 @@ restrict-attachment-block="true"
 >
 </fw-file-uploader-2>
 </div>
-```  
+```
 ```javascript
 var fileUploader7 = document.querySelector("#file-uploader-07");
 fileUploader7.initialFiles = [{
@@ -947,17 +947,17 @@ file: new File([new Blob(new Uint8Array([
 137,80,78,71,13])
 )], 'file6.png', {type: 'png', lastModified: Date.now()}),
 }];
-```  
+```
 
 ---
 >title: file-uploader-2 - Restrict attachment size in React
->tags: 
+>tags:
 >context: file-uploader-2, react
 >content:
 
 # File uploader 2 (fw-file-uploader-2)
 ### Restrict attachment size in React
-  
+
 ```jsx
 import { FwFileUploader2 } from "@freshworks/crayons/react";
 function App() {
@@ -1014,11 +1014,11 @@ initialFiles={initialFiles}
 </>
 );
 }
-```  
+```
 
 ---
 >title: Restrict attachment size in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -1074,12 +1074,12 @@ file: new File([new Blob(new Uint8Array([
 )], 'file6.png', {type: 'png', lastModified: Date.now()}),
 }];
 </script>
-```  
-  
+```
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -1263,7 +1263,7 @@ Type: `any`
 Default: `TranslationController.t(     'fileUploader2.totalFileSizeAllowedError'   )`
 ---
 >title: Events in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -1297,7 +1297,7 @@ Description: Triggered after file upload if not a batch upload.
 Type: `CustomEvent<any>`
 ---
 >title: CSS Custom Properties in file-uploader-2
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -1318,7 +1318,7 @@ Name: `--max-attachment-width`
 Description: max width for the attachment block
 ---
 >title: How to use file-uploader-2 in crayons ?
->tags: 
+>tags:
 >context: file-uploader-2
 >content:
 
@@ -1354,6 +1354,6 @@ fileUploadPromise
 | `"fw-file-uploader-dropzone"`          |             |
 | `"fw-file-uploader-error"`             |             |
 | `"fw-file-uploader-text"`              |             |
- 
+
 
 ---

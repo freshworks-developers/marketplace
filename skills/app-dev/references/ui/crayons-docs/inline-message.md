@@ -1,5 +1,5 @@
 >title: inline-message - Usage in HTML
->tags: 
+>tags:
 >context: inline-message
 >content:
 
@@ -27,7 +27,7 @@
 
 ---
 >title: inline-message - Usage in React
->tags: 
+>tags:
 >context: inline-message, react
 >content:
 
@@ -62,17 +62,17 @@ return (<div>
 
 ---
 >title: Usage in inline-message
->tags: 
+>tags:
 >context: inline-message
 >content:
 
 # Inline Message (fw-inline-message)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in inline-message
->tags: 
+>tags:
 >context: inline-message
 >content:
 
@@ -109,7 +109,7 @@ Type: `"error" \| "info" \| "success" \| "warning"`
 Default: `'info'`
 ---
 >title: Events in inline-message
->tags: 
+>tags:
 >context: inline-message
 >content:
 
@@ -128,7 +128,7 @@ Description: Triggered when inline message is shown.
 Type: `CustomEvent<any>`
 ---
 >title: How to use inline-message in crayons ?
->tags: 
+>tags:
 >context: inline-message
 >content:
 
@@ -161,6 +161,6 @@ Type: `Promise<void>`
 ### `show() => Promise<void>`
 #### Returns
 Type: `Promise<void>`
- 
+
 
 ---

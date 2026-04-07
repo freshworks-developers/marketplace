@@ -6,8 +6,8 @@
 # What is Data store in Freshworks apps
 
 The developer platform provides the Data store to allow developers to persist and use data across the app lifecycle. The data stores are accessible through run-time interfaces. There are two types of Data stores available in Freshworks apps:
-1. The Key-value store allows you to store data as keys with a corresponding value of limited size. 
-2. Entity store requires you to declare an entity schema as a configuration. Then, you can create and manipulate records of the same type in the app code. 
+1. The Key-value store allows you to store data as keys with a corresponding value of limited size.
+2. Entity store requires you to declare an entity schema as a configuration. Then, you can create and manipulate records of the same type in the app code.
 
 ---
 
@@ -19,7 +19,7 @@ The developer platform provides the Data store to allow developers to persist an
 # When can I use the Data Store be used in Freshworks apps
 
 If there is a need to persist data and use it across the app lifecycle, then the Data Store can be used.
-1. The Key-value store allows you to store data as keys with a corresponding value of limited size. The Key-value store is ideal for storing app data, where the developer knows the keys at query time, thereby enabling a lookup operation against the store.  
+1. The Key-value store allows you to store data as keys with a corresponding value of limited size. The Key-value store is ideal for storing app data, where the developer knows the keys at query time, thereby enabling a lookup operation against the store.
 2. Entity store requires you to declare an entity schema as a configuration. Then, you can create and manipulate records of the same type in the app code. An entity store is ideal for querying/filtering/listing use-cases.
 
 ---
@@ -57,7 +57,7 @@ You should implement your app logic in such a way that a module’s logic does n
 
 # How to use Key-value store in Freshworks apps
 
-The Key-value store in Freshworks apps allows you to store data as keys with a corresponding value of limited size. Each key is a string and each value a valid JSON object. It does not require any schema to be declared ahead of time. The Key-value store is ideal for storing app data, where the developer knows the keys at query time, thereby enabling a lookup operation against the store. For example, the number of times an agent views a specific ticket, is app data that is a candidate for Key-value store. 
+The Key-value store in Freshworks apps allows you to store data as keys with a corresponding value of limited size. Each key is a string and each value a valid JSON object. It does not require any schema to be declared ahead of time. The Key-value store is ideal for storing app data, where the developer knows the keys at query time, thereby enabling a lookup operation against the store. For example, the number of times an agent views a specific ticket, is app data that is a candidate for Key-value store.
 
 Using Key-value store in Freshworks apps in front-end apps (app.js code)
 ```js
@@ -107,7 +107,7 @@ The following operations can be performed in the Key-value store:
 >title: what are Key-value store considerations
 >tags: key-value-store, data-store, store, retrieve, update, delete
 >context: app.js, server.js
->content:   
+>content:
 
 # What are Key-value store considerations
 
@@ -118,8 +118,8 @@ The following operations can be performed in the Key-value store:
 5. The value should be of type JSON and not blank or empty "{}".
 6. The values in the JSON Object will be converted to null - empty strings, NaN, "+/- Infinity".
 7. It does not allow querying for a select range or pattern of keys.
-8. It is not ideal for storing records of the same type that need querying based on field values or where the size of the value could be larger than 32 KB. 
-9. There is no limitation on how many key-value pairs can be stored in the key value store. 
+8. It is not ideal for storing records of the same type that need querying based on field values or where the size of the value could be larger than 32 KB.
+9. There is no limitation on how many key-value pairs can be stored in the key value store.
 10. Data in the key value store can be accessed only after an app has been installed successfully.
 11. If the app is uninstalled by a customer, all the data stored by that customer is removed permanently and cannot be recovered again.
 12. When a custom app is deleted, all the data across all the installed accounts are deleted irreversibly.
@@ -129,11 +129,11 @@ The following operations can be performed in the Key-value store:
 >title: What is the rate limit for requests in the Key-value store
 >tags: key-value-store, data-store
 >context: app.js, server.js
->content:  
+>content:
 
 # What is the rate limit for requests in the Key-value store
 
-A rate limit of 50 requests per minute applies with each set, get, and delete counting as one request. This rate limit is applied separately for each installed app which means that if two apps have been installed by an account, the rate limit will apply separately to each app. This limit is not affected by the number of agents in the account. 
+A rate limit of 50 requests per minute applies with each set, get, and delete counting as one request. This rate limit is applied separately for each installed app which means that if two apps have been installed by an account, the rate limit will apply separately to each app. This limit is not affected by the number of agents in the account.
 
 The rate limit can be increased on a case by case basis if required, please use DevAssist to raise a request for the same.
 
@@ -154,7 +154,7 @@ The rate limit can be increased on a case by case basis if required, please use 
 
 ---
 
->title: How to use Time to live (ttl) in options field while storing data in Key-value store 
+>title: How to use Time to live (ttl) in options field while storing data in Key-value store
 >tags: key-value-store, data-store, store-data
 >context: app.js
 >code:
@@ -196,7 +196,7 @@ $db.set( "ticket:101", { "jiraIssueId": 15213 }, {ttl: 60}).then(
 
 ---
 
->title: How to use Set If (setIf) in options field while storing data in Key-value store 
+>title: How to use Set If (setIf) in options field while storing data in Key-value store
 >tags: key-value-store, data-store, store-data
 >context: app.js
 >code:
@@ -650,7 +650,7 @@ Yes, some of the apps' data that will be frequently accessed can be cached with 
 
 # Is it possible to retrieve all data stored in key-value store
 
-No, it is not possible to retrieve all data stored in the key value store. You can retrieve the data based on the key that was used to store a specific record. Here is some sample code for the same : 
+No, it is not possible to retrieve all data stored in the key value store. You can retrieve the data based on the key that was used to store a specific record. Here is some sample code for the same :
 
  Retrieving data from Key value store in front-end app (app.js) :
 ```js

@@ -1,5 +1,5 @@
 >title: button - Usage in HTML
->tags: 
+>tags:
 >context: button
 >content:
 
@@ -82,7 +82,7 @@ value="Try icon + text buttons Buttons with before-label and after-label"
 
 ---
 >title: button - Usage in React
->tags: 
+>tags:
 >context: button, react
 >content:
 
@@ -175,17 +175,17 @@ Select date
 
 ---
 >title: Usage in button
->tags: 
+>tags:
 >context: button
 >content:
 
 # Button (fw-button)
 ## Usage
-  
+
 <!-- Auto Generated Below -->
 ---
 >title: Properties in button
->tags: 
+>tags:
 >context: button
 >content:
 
@@ -257,7 +257,7 @@ Type: `"button" \| "submit"`
 Default: `'button'`
 ---
 >title: Events in button
->tags: 
+>tags:
 >context: button
 >content:
 
@@ -281,7 +281,7 @@ Description: Triggered when the button comes into focus.
 Type: `CustomEvent<void>`
 ---
 >title: CSS Custom Properties in button
->tags: 
+>tags:
 >context: button
 >content:
 
@@ -298,7 +298,7 @@ Name: `--fw-button-min-width`
 Description: minimum width for the button
 ---
 >title: How to use button in crayons ?
->tags: 
+>tags:
 >context: button
 >content:
 
@@ -376,6 +376,6 @@ fw-button displays a button on the user interface and enables performing specifi
 ### `setFocus() => Promise<any>`
 #### Returns
 Type: `Promise<any>`
- 
+
 
 ---
