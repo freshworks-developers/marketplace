@@ -18,7 +18,7 @@
   },
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -166,7 +166,7 @@ For apps that work across multiple products:
   },
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -236,7 +236,7 @@ Required in all Platform 3.0 apps:
 {
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```

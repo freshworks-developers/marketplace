@@ -45,7 +45,7 @@ After creating a serverless app’s files, to configure the app manifest for an 
   },
   "engines": {
     "node": "18.16.0",
-    "fdk": "9.1.0"
+    "fdk": "9.8.2"
   },
   "dependencies": {
     "nodemon": "1.14.12"
@@ -83,7 +83,7 @@ Platform version you use to build the app. This value is auto-generated when you
   },
   "engines": {
     "node": "18.17.1",
-    "fdk": "9.0.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -118,7 +118,7 @@ It associates a Freshworks product with the information that is necessary to ren
   },
   "engines": {
     "node": "18.17.1",
-    "fdk": "9.0.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -164,7 +164,7 @@ For apps built with FDK 6.x.x or earlier:
   },
   "engines": {
     "node": "18.17.1",
-    "fdk": "9.0.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -201,7 +201,7 @@ All npm packages that the app uses, specified as <npm-package-name>:<version> pa
   },
   "engines": {
     "node": "18.17.1",
-    "fdk": "9.0.4"
+    "fdk": "9.8.2"
   }
 }
 ```

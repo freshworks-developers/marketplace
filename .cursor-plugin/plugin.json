@@ -1,8 +1,8 @@
 {
-  "name": "freshworks-app-dev",
-  "displayName": "Freshworks App Development",
+  "name": "freshworks",
+  "displayName": "Freshworks",
+  "description": "Freshworks Platform 3.0 app development skill",
   "version": "1.0.0",
-  "description": "Expert-level Cursor skill for building Freshworks Platform 3.0 marketplace applications with zero tolerance for legacy patterns",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -10,21 +10,7 @@
   "homepage": "https://github.com/freshworks-developers/marketplace",
   "repository": "https://github.com/freshworks-developers/marketplace",
   "license": "MIT",
-  "logo": "skills/app-dev/assets/logo.svg",
-  "keywords": [
-    "freshworks",
-    "platform-3.0",
-    "marketplace",
-    "crayons",
-    "fdk",
-    "validation",
-    "oauth",
-    "serverless"
-  ],
-  "category": "developer-tools",
-  "tags": [
-    "automation",
-    "app-development",
-    "platform"
-  ]
+  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"],
+  "skills": "./skills/",
+  "logo": "skills/app-dev/assets/logo.svg"
 }

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "app-dev": {
+      "source": "/Users/dchatterjee/Documents/GitHub/freshworks-developers/marketplace-main",
+      "sourceType": "local",
+      "computedHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

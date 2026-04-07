@@ -1,7 +1,7 @@
 ---
 description: Reduce function complexity to ≤ 7 for FDK validation. Use when fdk validate shows "Function has complexity X. Maximum allowed is 7." Apply lookup objects, guard clauses, functional patterns, and Sets for multiple comparisons.
 alwaysApply: false
-globs: ["**/server.js", "**/app.js", "**/app/scripts/*.js"]
+globs: ["**/server/**/*.js", "**/app/**/*.js"]
 ---
 
 # Function Complexity Reduction Patterns

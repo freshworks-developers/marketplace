@@ -297,7 +297,7 @@ app/
   "modules": { ... },
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```
@@ -518,7 +518,7 @@ await $request.invokeTemplate('apiCall', {
 {
   "engines": {
     "node": "18.20.8",
-    "fdk": "9.7.4"
+    "fdk": "9.8.2"
   }
 }
 ```
