@@ -17,12 +17,19 @@ NC='\033[0m' # No Color
 
 # Check 1: Trailing whitespace
 echo "1️⃣  Checking for trailing whitespace..."
-if git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|json|yml|js|mdc)$' | xargs grep -l '[[:space:]]$' 2>/dev/null; then
-    echo -e "${RED}❌ Files with trailing whitespace found${NC}"
-    echo "Run: sed -i '' 's/[[:space:]]*$//' <file>"
-    FAILED=1
+files_to_check=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(md|json|yml|js|mdc)$' || true)
+if [ -n "$files_to_check" ]; then
+    whitespace_files=$(echo "$files_to_check" | xargs grep -l '[[:space:]]$' 2>/dev/null || true)
+    if [ -n "$whitespace_files" ]; then
+        echo -e "${RED}❌ Files with trailing whitespace found:${NC}"
+        echo "$whitespace_files"
+        echo "Run: sed -i '' 's/[[:space:]]*$//' <file>"
+        FAILED=1
+    else
+        echo -e "${GREEN}✅ No trailing whitespace${NC}"
+    fi
 else
-    echo -e "${GREEN}✅ No trailing whitespace${NC}"
+    echo -e "${GREEN}✅ No trailing whitespace (no matching files staged)${NC}"
 fi
 echo ""
 
