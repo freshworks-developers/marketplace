@@ -24,7 +24,7 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          extra_args: --since-commit HEAD~1 --debug --only-verified
+          extra_args: --debug --only-verified
 
   dependency-scan:
     name: Dependency Vulnerability Scan
