@@ -1,6 +1,8 @@
 ---
+name: fdk-refactor
 description: Reduce function complexity in a Freshworks app to meet cyclomatic complexity ≤ 7 per function. Extracts helper functions, simplifies conditionals, and preserves behavior while improving code quality.
 globs: ["**/server.js", "**/app/scripts/*.js"]
+always: false
 ---
 
 # FDK Refactor Command

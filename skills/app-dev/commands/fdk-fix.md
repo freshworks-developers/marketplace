@@ -1,6 +1,8 @@
 ---
+name: fdk-fix
 description: Fix all platform validation errors and lint errors in a Freshworks app. Runs fdk validate, identifies fatal errors and lint issues, applies fixes iteratively, and re-validates until all errors are resolved.
 globs: ["**/manifest.json", "**/server.js", "**/app.js"]
+always: false
 ---
 
 # FDK Fix Command

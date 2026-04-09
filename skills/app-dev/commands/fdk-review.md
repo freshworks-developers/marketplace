@@ -1,6 +1,8 @@
 ---
+name: fdk-review
 description: Review a Freshworks app using multiple rounds of fdk validate. Performs 3 validation rounds, fixes fatal errors, and provides a comprehensive report of platform errors, lint issues, and warnings.
 globs: ["**/manifest.json"]
+always: false
 ---
 
 # FDK Review Command

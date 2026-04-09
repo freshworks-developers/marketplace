@@ -1,6 +1,8 @@
 ---
+name: fdk-migrate
 description: Migrate a Freshworks app from Platform 2.x to Platform 3.0. Transforms manifest structure, replaces legacy APIs, updates UI components to Crayons, and validates the migrated app.
 globs: ["**/manifest.json"]
+always: false
 ---
 
 # FDK Migrate Command
