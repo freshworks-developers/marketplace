@@ -18,7 +18,7 @@
     {
       "name": "fdk-setup",
       "source": "./skills/fdk-setup",
-      "description": "Automated FDK installation, upgrade, downgrade, and uninstall for macOS and Windows along with Node.js 18 installation and management"
+      "description": "Automated FDK 10 installation, upgrade, downgrade, and uninstall for macOS and Windows along with Node.js 24 installation and management"
     },
     {
       "name": "publish",

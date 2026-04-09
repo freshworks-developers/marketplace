@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - **nvm (Node Version Manager)** — Recommended for managing Node.js versions
-- **Node.js v18.13.0 or later** — Installed via nvm
+- **Node.js v24.0.0 or later** — Installed via nvm
 - **Homebrew** (optional) — [Install](https://brew.sh/) if not present: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
 ## Step 1: Install nvm
@@ -24,20 +24,20 @@ nvm --version
 
 The install script automatically adds nvm to your shell profile (`~/.zshrc`, `~/.bash_profile`, or `~/.bashrc`).
 
-## Step 2: Install Node.js 18
+## Step 2: Install Node.js 24
 
 ```bash
-# Install latest Node.js 18.x
-nvm install 18
+# Install latest Node.js 24.x
+nvm install 24
 
 # Create alias for FDK
-nvm alias fdk 18
+nvm alias fdk 24
 
 # Set as current version
-nvm use 18
+nvm use 24
 
 # Verify
-node --version  # Should show v18.x.x
+node --version  # Should show v24.x.x
 ```
 
 ## Step 3: Configure Shell for FDK
@@ -45,12 +45,12 @@ node --version  # Should show v18.x.x
 Add to `~/.zshrc` (or `~/.bash_profile` for bash):
 
 ```bash
-# FDK uses Node.js 18
-export FDK_NODE_VERSION=18
+# FDK uses Node.js 24
+export FDK_NODE_VERSION=24
 alias fdk-env='nvm use $FDK_NODE_VERSION'
 
-# Auto-switch to Node 18 when entering FDK projects (optional)
-# Add .nvmrc with "18" to your FDK project directories
+# Auto-switch to Node 24 when entering FDK projects (optional)
+# Add .nvmrc with "24" to your FDK project directories
 ```
 
 Apply changes:
@@ -63,8 +63,8 @@ source ~/.zshrc
 ### Option A: Install via npm (Recommended)
 
 ```bash
-# Ensure Node 18 is active
-nvm use 18
+# Ensure Node 24 is active
+nvm use 24
 
 # Install FDK globally
 npm install https://cdn.freshdev.io/fdk/latest.tgz -g
@@ -106,10 +106,10 @@ fdk version
 
 ```bash
 # Check all components
-nvm current          # Should show v18.x.x
-node --version       # Should show v18.x.x
+nvm current          # Should show v24.x.x
+node --version       # Should show v24.x.x
 npm --version        # Should show 9.x or 10.x
-fdk version          # Should show 9.4.1 or later
+fdk version          # Should show 10.0.0 or later
 
 # Test FDK
 fdk --help
@@ -128,13 +128,13 @@ nvm install 20
 nvm install 22
 
 # Switch between versions
-nvm use fdk         # Use Node 18 for FDK
+nvm use fdk         # Use Node 24 for FDK
 nvm use 20          # Use Node 20 for other projects
 nvm use default     # Use system default
 
 # Set default version (optional)
 nvm alias default 20  # Node 20 as default
-nvm alias fdk 18      # Node 18 for FDK (already set)
+nvm alias fdk 24      # Node 24 for FDK (already set)
 ```
 
 ## Auto-Switching with .nvmrc
@@ -142,7 +142,7 @@ nvm alias fdk 18      # Node 18 for FDK (already set)
 Create `.nvmrc` in your FDK project directories:
 
 ```bash
-echo "18" > .nvmrc
+echo "24" > .nvmrc
 ```
 
 Then nvm will auto-switch when you `cd` into the directory (requires shell integration).
@@ -151,8 +151,8 @@ Then nvm will auto-switch when you `cd` into the directory (requires shell integ
 
 ### `fdk: command not found`
 
-1. Check Node version: `node --version` (should be 18.x)
-2. Switch to Node 18: `nvm use 18`
+1. Check Node version: `node --version` (should be 24.x)
+2. Switch to Node 24: `nvm use 24`
 3. Reinstall FDK: `npm install https://cdn.freshdev.io/fdk/latest.tgz -g`
 4. Check npm global path: `npm config get prefix`
 5. Ensure PATH includes npm global bin: `echo $PATH | grep npm`
@@ -170,7 +170,7 @@ Then nvm will auto-switch when you `cd` into the directory (requires shell integ
 ### FDK installed but wrong Node version
 
 ```bash
-nvm use 18
+nvm use 24
 fdk version  # Should work now
 ```
 
@@ -184,8 +184,8 @@ npm uninstall fdk -g
 brew uninstall fdk
 brew untap freshworks-developers/homebrew-tap
 
-# To remove Node 18 (optional)
-nvm uninstall 18
+# To remove Node 24 (optional)
+nvm uninstall 24
 nvm unalias fdk
 
 # To remove nvm completely (optional)

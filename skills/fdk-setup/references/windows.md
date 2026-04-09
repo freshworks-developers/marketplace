@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - **nvm-windows** — Recommended for managing Node.js versions
-- **Node.js v18.13.0 or later** — Installed via nvm-windows
+- **Node.js v24.0.0 or later** — Installed via nvm-windows
 - **PowerShell** — Run as Administrator for installation
 
 ## Step 1: Install nvm-windows
@@ -26,29 +26,29 @@ choco install nvm
 nvm version
 ```
 
-## Step 2: Install Node.js 18
+## Step 2: Install Node.js 24
 
 ```powershell
-# Install latest Node.js 18.x
-nvm install 18
+# Install latest Node.js 24.x
+nvm install 24
 
 # Set as active version
-nvm use 18
+nvm use 24
 
 # Verify
-node --version  # Should show v18.x.x
+node --version  # Should show v24.x.x
 ```
 
 ## Step 3: Configure Environment for FDK
 
-**Set Node 18 as default for FDK:**
+**Set Node 24 as default for FDK:**
 
 ```powershell
 # Create batch script for FDK environment
 # Save to C:\Users\<YourUsername>\fdk-env.bat
 @echo off
-nvm use 18
-echo FDK environment active (Node.js 18)
+nvm use 24
+echo FDK environment active (Node.js 24)
 ```
 
 **Or add to PowerShell profile:**
@@ -59,8 +59,8 @@ notepad $PROFILE
 
 # Add these lines:
 function Use-FDK {
-    nvm use 18
-    Write-Host "FDK environment active (Node.js 18)" -ForegroundColor Green
+    nvm use 24
+    Write-Host "FDK environment active (Node.js 24)" -ForegroundColor Green
 }
 Set-Alias fdk-env Use-FDK
 ```
@@ -68,8 +68,8 @@ Set-Alias fdk-env Use-FDK
 ## Step 4: Install FDK via npm
 
 ```powershell
-# Ensure Node 18 is active
-nvm use 18
+# Ensure Node 24 is active
+nvm use 24
 
 # Uninstall old FDK (if any)
 npm uninstall fdk -g
@@ -81,16 +81,16 @@ npm install https://cdn.freshdev.io/fdk/latest.tgz -g
 fdk version
 ```
 
-Ensure version is 9.0.0 or later (9.4.1+ recommended for Platform 3.0).
+Ensure version is 10.0.0 or later (recommended for Platform 3.0).
 
 ## Step 5: Verify Complete Setup
 
 ```powershell
 # Check all components
-nvm list             # Should show 18.x.x with asterisk (active)
-node --version       # Should show v18.x.x
+nvm list             # Should show 24.x.x with asterisk (active)
+node --version       # Should show v24.x.x
 npm --version        # Should show 9.x or 10.x
-fdk version          # Should show 9.4.1 or later
+fdk version          # Should show 10.0.0 or later
 
 # Test FDK
 fdk --help
@@ -109,11 +109,11 @@ nvm install 20
 nvm install 22
 
 # Switch between versions
-nvm use 18          # Use Node 18 for FDK
+nvm use 24          # Use Node 24 for FDK
 nvm use 20          # Use Node 20 for other projects
 
 # Set default version (optional)
-nvm use 18          # Sets as current for new terminals
+nvm use 24          # Sets as current for new terminals
 ```
 
 ## PATH Configuration
@@ -153,7 +153,7 @@ nvm-windows automatically manages PATH. If `fdk` is not recognized:
 ## Important Notes
 
 - Use **npm** (not YARN) for FDK installation
-- Always use Node.js 18 for FDK: `nvm use 18`
+- Always use Node.js 24 for FDK: `nvm use 24`
 - nvm-windows requires Administrator privileges for installation
 - After nvm installation, restart PowerShell
 
@@ -162,8 +162,8 @@ nvm-windows automatically manages PATH. If `fdk` is not recognized:
 ### `fdk` not found after installation
 
 ```powershell
-# Switch to Node 18
-nvm use 18
+# Switch to Node 24
+nvm use 24
 
 # Reinstall FDK
 npm install https://cdn.freshdev.io/fdk/latest.tgz -g
@@ -175,11 +175,11 @@ where.exe fdk
 ### Multiple Node versions causing issues
 
 ```powershell
-# Always use Node 18 for FDK
-nvm use 18
+# Always use Node 24 for FDK
+nvm use 24
 
 # Verify
-node --version  # Should show v18.x.x
+node --version  # Should show v24.x.x
 fdk version     # Should work now
 ```
 
@@ -189,8 +189,8 @@ fdk version     # Should work now
 # Uninstall FDK only (keep Node.js and nvm)
 npm uninstall fdk -g
 
-# To remove Node 18 (optional)
-nvm uninstall 18
+# To remove Node 24 (optional)
+nvm uninstall 24
 
 # To remove nvm-windows completely (optional)
 # Use Add/Remove Programs or:
