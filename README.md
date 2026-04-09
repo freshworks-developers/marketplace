@@ -34,9 +34,9 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill publ
 
 | Skill | Description | Execution Mode |
 |-------|-------------|----------------|
-| [**freshworks-app-dev-skill**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
-| [**freshworks-fdk-setup-skill**](skills/fdk-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
-| [**freshworks-publish-skill**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+| [**app-dev**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
+| [**fdk-setup**](skills/fdk-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
+| [**publish**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
 
 ### Subagent-Based Skills
 
