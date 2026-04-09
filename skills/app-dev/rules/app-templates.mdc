@@ -168,7 +168,7 @@ assets/templates/
 - **app-building-blocking-gates.mdc** - Validation gates before completion
 - **freshworks-platform3.mdc** - Platform 3.0 enforcement patterns
 - **security.mdc** - Security requirements for all templates
-- **lint-enforcement.mdc** - Lint rules for generated code
+- **complexity-reduction.mdc** - Lint rules and complexity reduction patterns for generated code
 
 ## Template Modification Guidelines
 

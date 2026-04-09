@@ -108,7 +108,7 @@ Load this file **on demand** when the task needs: full Platform 2.x rejection ta
 9. Product module present
 10. Location placement (common vs product module)
 11. `$request.invokeTemplate` only
-12. SMI/events + `renderData` per `rules/event-smi-handlers.mdc`
+12. SMI/events + `renderData` per `rules/async-patterns.mdc`
 
 ### Security checklist (numbered)
 

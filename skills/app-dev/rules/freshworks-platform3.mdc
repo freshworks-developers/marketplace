@@ -166,7 +166,7 @@ const result = await $request.invokeTemplate('apiCall', {
 - [VALID] If manifest has `location` → Files MUST exist (app/, index.html, icon.svg)
 - [VALID] If manifest has `functions` → server/server.js MUST exist with implementations
 - [VALID] If manifest has `requests` → config/requests.json MUST exist
-- [VALID] If manifest has `functions` or `events` → Every declared name MUST match `exports` in server.js; SMI MUST use `renderData()` (see `event-smi-handlers.mdc`)
+- [VALID] If manifest has `functions` or `events` → Every declared name MUST match `exports` in server.js; SMI MUST use `renderData()` (see `async-patterns.mdc`)
 
 ### Gate 3: FDK Validation
 - [VALID] `fdk validate` shows 0 platform errors
@@ -190,7 +190,7 @@ Is this Platform 2.x pattern?
 - `app-building-blocking-gates.mdc` - Mandatory validation gates
 - `app-templates.mdc` - Template selection guide
 - `security.mdc` - Security enforcement
-- `event-smi-handlers.mdc` - SMI `renderData()`, events, manifest handler alignment
+- `async-patterns.mdc` - SMI `renderData()`, events, manifest handler alignment, async/await patterns
 - `validation-workflow.mdc` - Validation and auto-fix
 
 **This rule provides only critical enforcement. Reference SKILL.md for detailed patterns, examples, and API documentation.**
@@ -205,4 +205,4 @@ Is this Platform 2.x pattern?
 - [VALID] ALWAYS reference templates from `assets/templates/`
 - [VALID] ALWAYS validate before marking complete
 
-**Related:** `security.mdc`, `validation-workflow.mdc`, `app-building-blocking-gates.mdc`, `event-smi-handlers.mdc`, `lint-enforcement.mdc`
+**Related:** `security.mdc`, `validation-workflow.mdc`, `app-building-blocking-gates.mdc`, `async-patterns.mdc`

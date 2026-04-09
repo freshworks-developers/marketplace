@@ -437,7 +437,7 @@ Before presenting the app, validate against:
 | Params / async | No unused params; `async` only with `await`; IIFE on frontend init |
 | Requests / exports | `$request.invokeTemplate` only; helpers after `exports` |
 | Control flow | Complexity ≤ 7; no unreachable code |
-| Errors | try/catch around async; SMI/events use `renderData` per `rules/event-smi-handlers.mdc` |
+| Errors | try/catch around async; SMI/events use `renderData` per `rules/async-patterns.mdc` |
 | Comments | Brief on SMI; explain non-obvious logic only |
 
 ### Security (see `rules/security.mdc`)
@@ -484,7 +484,7 @@ Before presenting the app, validate against:
 | Gate | Checks |
 |------|--------|
 | **1 – Files** | `manifest.json`; `config/iparams.json`; frontend: `app/index.html`, `app/scripts/app.js`, `app/styles/images/icon.svg`; serverless: `server/server.js` |
-| **2 – Manifest ↔ disk** | Every `url`/`icon` path exists; events/functions → `server/server.js`; `events.*.handler` + `functions` keys match `exports`; SMI uses `renderData` (`rules/event-smi-handlers.mdc`); each `requests.json` key in `modules.common.requests` |
+| **2 – Manifest ↔ disk** | Every `url`/`icon` path exists; events/functions → `server/server.js`; `events.*.handler` + `functions` keys match `exports`; SMI uses `renderData` (`rules/async-patterns.mdc`); each `requests.json` key in `modules.common.requests` |
 | **3 – Manifest JSON** | `platform-version` `3.0`; no empty `functions`/`requests`/`events` blocks; implementations for declared functions/events/requests |
 | **4 – OAuth (if used)** | `display_name`, `token_type`, `description` on every `oauth_iparam` field |
 | **5 – Code quality** | Complexity ≤ 7; async only with `await`; no unused params |

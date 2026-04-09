@@ -60,7 +60,7 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 
 **Rules:**
 - `freshworks-platform3.mdc` - Platform 3.0 enforcement
-- `event-smi-handlers.mdc` - SMI `renderData()`, events, manifest ↔ server.js alignment
+- `async-patterns.mdc` - SMI `renderData()`, events, manifest ↔ server.js alignment, async/await patterns
 - `security.mdc` - Security enforcement
 - `validation-workflow.mdc` - Auto-validation & fixes
 - `app-building-blocking-gates.mdc` - Mandatory gates
