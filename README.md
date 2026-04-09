@@ -11,8 +11,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/FDK-10.0.0-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Multi_IDE-Support-764abc?style=flat-square" alt="Multi-IDE">
+  <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=flat-square" alt="FDK">
+  <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
 </p>
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
@@ -21,93 +21,101 @@
 
 ## Installation
 
-### Claude Code (via Plugin Marketplace)
+### For Cursor:
 
 ```bash
-# Add marketplace
-claude plugin marketplace add freshworks-developers/marketplace
-
-# Install the plugin (single plugin with all skills)
-claude plugin install freshworks@freshworks-marketplace
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill
+npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill
+npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill
 ```
 
-### Cursor (via Plugin Marketplace)
-
-In Cursor Agent chat, add the marketplace and install:
-
-```
-/add-plugin freshworks
-```
-
-Or search for "freshworks" in the plugin marketplace.
-
-### npx skills
-
+### Or add individual skills
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
+npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill app-dev
 ```
 
 
-## App Development Skill
+## Available Skills
 
-[**freshworks-app-dev-skill**](skills/app-dev/) - Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications.
+| Skill | Description | Execution Mode |
+|-------|-------------|----------------|
+| [**freshworks-app-dev-skill**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
+| [**freshworks-fdk-setup-skill**](skills/fdk-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
+| [**freshworks-publish-skill**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+
+### Subagent-Based Skills
+
+The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations:
 
 **Features:**
-- ✅ **Platform 3.0 Enforcement** - Zero tolerance for legacy patterns
-- ✅ **Validation-Driven** - Iterates until `fdk validate` shows zero errors
-- ✅ **Manifest Generation** - Auto-generates correct Platform 3.0 manifests
-- ✅ **OAuth Integration** - Full support for OAuth 2.0 configuration
-- ✅ **Request Templates** - Proper request template syntax and validation
-- ✅ **Crayons UI** - Integrated Crayons 4.x component support
+- ✅ **nvm Integration** - Manages Node.js 24 alongside other versions
+- ✅ **Version Isolation** - FDK uses Node 24, other projects keep their versions
+- ✅ **Autonomous Execution** - No user intervention required
+- ✅ **Parallel Checks** - Fast prerequisite validation
+- ✅ **Error Recovery** - Automatic retry and fallback strategies
+- ✅ **Progress Tracking** - Real-time status updates
+- ✅ **Backward Compatibility** - Supports FDK 9.x → 10.x migration, multiple Node versions, legacy apps
+- ✅ **Cross-Platform** - macOS, Windows, Linux, CI/CD, Docker
 
-**Commands:**
+**Operations:**
 ```bash
-/app-dev                    # General app development assistance
-/fdk-fix                    # Fix validation errors
-/fdk-migrate                # Migrate Platform 2.x to 3.0
-/fdk-review                 # Review manifest and configs
+/fdk-install                # Spawns subagent: nvm → Node 24 → FDK 10
+/fdk-upgrade                # Spawns subagent: ensure Node 24 → upgrade FDK
+/fdk-downgrade 10.0.0       # Spawns subagent: ensure Node 24 → downgrade FDK only
+/fdk-uninstall              # Spawns subagent: remove FDK (keep Node/nvm)
+/fdk-status                 # Spawns subagent: status check
 ```
+
+**Cross-Scenarios (7 scenarios via subagents):**
+- 🔄 **Legacy Migration** - FDK 9.x → 10.x with Node 18 → 24
+- 📦 **Existing Node** - Install FDK alongside system Node.js
+- ⬇️ **Downgrade** - Temporary downgrade for legacy app maintenance
+- 🔧 **Troubleshooting** - Diagnose and fix broken installations (auto-fix mode)
+- 🎯 **Specific Version** - Install exact FDK version (e.g., 10.6.0)
+- 🛤️ **Node PATH Mismatch** - Fix FDK using wrong Node version
+- 🔀 **Multiple Node Versions** - Multiple projects with different Node versions
+
+See [cross-scenarios.md](skills/fdk-setup/references/cross-scenarios.md) for detailed subagent prompts.
 
 ## Structure
-
-
-```
-marketplace/
-├── .cursor/
-│   ├── rules/         # Platform 3.0 enforcement rules
-│   └── agents/        # Specialized agents
-├── .claude-plugin/    # Claude Code plugin config
-├── .cursor-plugin/    # Cursor plugin config
-└── skills/
-    └── app-dev/       # App development skill
-```
 
 Each skill follows the Agent Skills Specification:
 
 ```
 skill-name/
 ├── SKILL.md           # Main skill file with frontmatter + instructions
+├── commands/          # Slash commands with always: true (fdk-setup)
 ├── references/        # Additional documentation loaded on demand
-├── assets/            # Templates, logos, etc.
-└── commands/          # Slash commands (optional)
+└── assets/            # Templates, logos, etc.
 ```
 
+### Project-Level Installation
 
-## Manifest Management
+Skills are also available project-wide via `.cursor/skills/`:
 
-Generate manifest after adding or updating skills:
-
-```bash
-python3 scripts/generate_manifest.py
+```
+.cursor/
+├── README.md          # Configuration documentation
+└── skills/
+    └── fdk-setup/     # Symlink to ../../skills/fdk-setup
 ```
 
-Validate that manifest is up to date (for CI):
+This allows project contributors to use skills without global installation.
 
-```bash
-python3 scripts/generate_manifest.py validate
+
+## Skill Discovery
+
+Skills are automatically discovered via `SKILL.md` frontmatter:
+
+```yaml
+---
+name: "freshworks-app-dev-skill"
+description: "Build Platform 3.0 apps"
+version: "1.0.0"
+---
 ```
 
-The manifest is used by the CLI to discover available skills.
+No manifest generation or registry required. Each skill is self-contained and declarative.
 
 ## Support
 

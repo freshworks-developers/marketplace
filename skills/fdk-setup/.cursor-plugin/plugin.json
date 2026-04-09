@@ -1,0 +1,58 @@
+{
+  "name": "fdk-setup",
+  "displayName": "FDK Setup",
+  "version": "1.0.0",
+  "description": "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when working with Freshworks apps (Freshdesk, Freshservice, Freshsales, Freshchat, Freshcaller) or encountering FDK errors. Provides /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status commands.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/fdk-setup",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "freshworks",
+    "fdk",
+    "cli",
+    "setup",
+    "install",
+    "macos",
+    "windows",
+    "homebrew",
+    "npm"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "automation",
+    "setup",
+    "cli"
+  ],
+  "commands": [
+    {
+      "name": "fdk-install",
+      "description": "Smart FDK installation with auto-detection",
+      "file": "commands/fdk-install.md"
+    },
+    {
+      "name": "fdk-upgrade",
+      "description": "Upgrade FDK to latest version",
+      "file": "commands/fdk-upgrade.md"
+    },
+    {
+      "name": "fdk-downgrade",
+      "description": "Downgrade FDK to specific version",
+      "file": "commands/fdk-downgrade.md"
+    },
+    {
+      "name": "fdk-uninstall",
+      "description": "Uninstall FDK (keeps Node.js/nvm)",
+      "file": "commands/fdk-uninstall.md"
+    },
+    {
+      "name": "fdk-status",
+      "description": "Check FDK installation status",
+      "file": "commands/fdk-status.md"
+    }
+  ]
+}
