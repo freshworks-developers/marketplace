@@ -21,17 +21,12 @@
 
 ## Installation
 
-### For Cursor:
+### npx skills
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill
-npx skills add https://github.com/freshworks-developers/marketplace/skills/fdk-setup --skill
-npx skills add https://github.com/freshworks-developers/marketplace/skills/publish --skill
-```
-
-### Or add individual skills
-```bash
-npx skills add https://github.com/freshworks-developers/marketplace/skills/app-dev --skill app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill publish
 ```
 
 

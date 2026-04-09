@@ -25,12 +25,12 @@
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-fdk-setup-skill
+npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
 ```
 
 **For local development:**
 ```bash
-npx skills add file:///path/to/marketplace-main --skill freshworks-fdk-setup-skill
+npx skills add file:///path/to/marketplace-main --skill fdk-setup
 ```
 
 ### Install as Claude Plugin
