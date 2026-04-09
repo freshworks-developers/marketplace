@@ -203,13 +203,9 @@ exports = {
 1. **Only use `async` if function contains `await`** (lint error otherwise)
 2. **Use IIFE pattern in frontend** `(async function() { ... })()`
 3. **Always wrap async operations in try/catch** (prevent unhandled rejections)
-<<<<<<<< HEAD:skills/app-dev/rules/async-patterns.mdc
 4. **SMI responses:** use `renderData(null, payload)` / `renderData(error)` — not `return` for the client
-5. **Log errors with `e.message` only** (not full error objects - security)
-========
-4. **Return structured responses** `{ success: boolean, data?: any, error?: string }`
-5. **Log errors with `e.message` only** (not full error objects) — See **security.mdc** for error logging rules
->>>>>>>> feature/multi-ide-patterns-and-updates:.cursor/rules/async-patterns.mdc
+5. **Return structured responses** `{ success: boolean, data?: any, error?: string }`
+6. **Log errors with `e.message` only** (not full error objects) — See **security.mdc** for error logging rules
 
 ## Common Mistakes
 

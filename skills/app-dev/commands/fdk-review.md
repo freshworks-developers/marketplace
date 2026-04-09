@@ -27,7 +27,7 @@ Run `fdk validate` from the app directory (the folder containing manifest.json).
 
 ### Round 2
 - Attempt to fix **fatal errors only** (ignore lint and warnings for now).
-- Apply fixes from `references/errors/` and `.cursor/rules/validation-autofix.mdc`.
+- Apply fixes from `references/errors/` and `rules/validation-workflow.mdc`.
 - Run: `fdk validate` again.
 - Report: Whether fatal errors were resolved.
 

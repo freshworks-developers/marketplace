@@ -26,7 +26,7 @@ Capture all output (fatal errors, lint errors, warnings).
 
 ### Priority 1: Fatal errors (Platform/validation)
 
-Fix these first. Use `references/errors/` and `.cursor/rules/validation-autofix.mdc`:
+Fix these first. Use `references/errors/` and `rules/validation-workflow.mdc`:
 - JSON structure errors (multiple top-level objects, commas)
 - Missing required files (icon.svg, iparams.json)
 - Manifest structure (platform-version, modules, declarations)
