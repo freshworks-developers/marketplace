@@ -1,5 +1,0 @@
-# Files to exclude from skill packaging
-.DS_Store
-*.log
-node_modules/
-.git/
