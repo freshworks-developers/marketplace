@@ -3,7 +3,7 @@ name: fdk-setup
 description: "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when user explicitly requests FDK installation, upgrade, downgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status. Also use when user mentions install fdk, setup fdk, check fdk status, or encounters fdk command not found errors. Installs FDK 10 with Node.js 24 for Platform 3.0 app development."
 compatibility: "Node.js 24.x, FDK 10.x, nvm"
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
-allowed-tools: ["shell", "task"]
+allowed-tools: "shell task"
 ---
 
 # FDK Setup Skill
