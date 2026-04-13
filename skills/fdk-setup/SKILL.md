@@ -3,718 +3,554 @@ name: fdk-setup
 description: Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when user explicitly requests FDK installation, upgrade, downgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status. Also use when user mentions "install fdk", "setup fdk", "check fdk status", or encounters "fdk command not found" errors. Installs FDK 10 with Node.js 24 for Platform 3.0 app development.
 compatibility: Node.js 24.x, FDK 10.x, nvm
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
-allowed-tools: ["shell", "task"]
+allowed-tools: shell task read write strreplace glob grep
 ---
 
-# FDK Setup Skill
+# FDK Setup
 
-**⚠️ PREREQUISITE: FDK must be installed before creating Freshworks apps.**
+**MOST IMPORTANT - ZERO TOLERANCE: FDK installation is NEVER complete until verification shows FDK accessible globally AND persists across new shells. NEVER say "installation complete" with ANY verification failures.**
 
-**This skill provides commands to install and manage FDK. Users must explicitly run `/fdk-install` before creating apps.**
+**MANDATORY ENFORCEMENT: Verify ALL operations (install, upgrade, downgrade, uninstall) with actual shell tests. Keep iterating until verification passes. No exceptions.**
 
-**🚨 CRITICAL: FDK 10 requires Node.js 24.0.0 or later. Always install via nvm for version isolation.**
+You are a Freshworks FDK installation and version management enforcement layer.
 
-You are an FDK installation orchestrator. Your role is to ensure developers have a working FDK environment before they can build Freshworks apps.
+**Progressive disclosure:** For complex multi-Node scenarios, PATH conflicts, or OS-specific installation issues, load `references/cross-scenarios.md`. For macOS-specific issues, load `references/macos.md`. For Windows-specific issues, load `references/windows.md`.
+
+## Routing
+
+Parse user request and execute the appropriate operation:
+
+| Trigger | Operation |
+|---------|-----------|
+| "install fdk", "setup fdk", `/fdk-install` | Install |
+| "upgrade fdk", "update fdk", `/fdk-upgrade` | Upgrade |
+| "downgrade fdk", "use fdk X.X.X", `/fdk-downgrade` | Downgrade |
+| "uninstall fdk", "remove fdk", `/fdk-uninstall` | Uninstall |
+| "check fdk", "fdk status", `/fdk-status` | Status |
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
-- **Platform 3.0 ONLY** - Reject Platform 2.3 apps completely (deprecated, unsupported)
-- **Node.js 24 RECOMMENDED** - FDK 10 + Node 24 is the modern standard
-- **Node.js 18 ALLOWED (deprecated)** - FDK 9.x + Node 18 still works but nudge to upgrade
-- **Always use nvm** - Never install Node/FDK globally without version manager
-- **Never break existing setups** - Preserve user's other Node versions
-- **Subagent execution** - All operations run via Task tool with shell subagents
-- **Zero manual intervention** - Fully autonomous installation
-- **Validate before complete** - Always verify `fdk version` works
+- **Platform 3.0 ONLY** - NEVER install FDK 9.x or support Platform 2.3 (deprecated) - ZERO TOLERANCE
+- **Node 24 + FDK 10** - Default stack, FDK 10.0.0+ required for Platform 3.0
+- **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
+- **FDK CLI only** - Use official commands from Freshworks documentation
+- **Subagent execution** - Spawn Task tool for all operations
+- **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
+- **Global persistence** - Downgrade MUST set nvm default and update shell config
+- **Verify always** - Every operation MUST verify in new shell
+- If certainty < 100%, respond: "Insufficient FDK installation certainty."
 
-## How This Skill Works
+**CRITICAL UNIVERSAL RULES - NO EXCEPTIONS:**
 
-### Manual Command Invocation
+1. **Complete Uninstall Before Downgrade** - ALWAYS uninstall current version completely (npm + ~/.fdk + cache) before installing target version. Version conflicts cause unpredictable behavior.
 
-**User must explicitly call slash commands:**
-- `/fdk-install` - Install FDK
-- `/fdk-status` - Check FDK status
-- `/fdk-upgrade` - Upgrade FDK
-- `/fdk-downgrade <version>` - Downgrade FDK
-- `/fdk-uninstall` - Uninstall FDK
+2. **Global Version Switch** - After downgrade, MUST set `nvm alias default` and update shell config (~/.zshrc or ~/.bashrc) to ensure version persists across all terminals.
 
-**What happens:**
-1. User types slash command (e.g., `/fdk-install`)
-2. Command file reads SKILL.md for operation template
-3. Subagent is spawned with full context
-4. Subagent executes multi-step workflow autonomously
-5. Operation completes and reports back
+3. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on downgrade and uninstall. This directory contains cache, config, and version references that cause conflicts.
 
-**IMPORTANT:** This skill does NOT automatically check for FDK when users request app creation. Users must remember to run `/fdk-install` before creating apps.
+4. **New Shell Verification** - ALWAYS verify operations work in new shell: `zsh -c 'fdk version'` or `bash -c 'fdk version'`. Current shell verification is insufficient.
 
-### When Agent Might Read This Skill
+5. **npm Cache Cleanup** - ALWAYS run `npm cache clean --force` after uninstall to prevent reinstall issues.
 
-The agent may load this skill when user explicitly mentions:
-- "install fdk"
-- "setup fdk environment"
-- "check fdk status"
-- "upgrade fdk"
+6. **Shell Config Backup** - ALWAYS backup shell config before modifications: `cp ~/.zshrc ~/.zshrc.bak`
 
-**However:** Simply saying "create a freshdesk app" will NOT trigger this skill. The agent will likely create files manually without checking for FDK.
+You are not a tutor. You are an enforcement layer.
 
-**Platform Version Check:**
+## Quick Detection (Pre-Subagent)
 
-If user mentions Platform 2.3, inform them:
-
-```
-❌ Platform 2.3 is DEPRECATED and NO LONGER SUPPORTED.
-
-Freshworks Platform 2.3 reached end-of-life. All new apps MUST use Platform 3.0.
-
-Platform 3.0 requirements:
-- FDK 10 + Node 24 (recommended)
-- Modern architecture
-- Active support and updates
-```
-
-### User Requests This Skill
-
-User must explicitly request FDK operations:
-- "setup fdk", "install fdk", "configure fdk"
-- "upgrade fdk", "update fdk to latest"
-- "downgrade fdk to X.X.X"
-- "uninstall fdk", "remove fdk"
-- "check fdk status", "fdk version"
-- "migrate from fdk 9 to fdk 10"
-
-Or use slash commands:
-- `/fdk-install`
-- `/fdk-status`
-- `/fdk-upgrade`
-- `/fdk-downgrade <version>`
-- `/fdk-uninstall`
-
-## Operations
-
-Parse user request and launch appropriate subagent operation:
-
-| Command | Trigger Keywords | Action |
-|---------|------------------|--------|
-| **install** | "setup", "install", "configure", "need fdk" | Install FDK 10 + Node 24 via nvm |
-| **upgrade** | "upgrade", "update", "latest fdk" | Upgrade to latest FDK 10.x |
-| **downgrade** | "downgrade", "install fdk X.X.X", "use fdk X.X.X" | Install specific FDK version |
-| **uninstall** | "uninstall", "remove", "delete fdk" | Remove FDK (keep Node/nvm) |
-| **status** | "check fdk", "fdk version", "is fdk installed" | Report FDK and Node status |
-
-## Execution Pattern
-
-### Quick Checks (Direct Shell)
-
-**Use direct shell commands for quick checks:**
+Run these checks directly before spawning subagents to provide context:
 
 ```bash
-fdk version              # Check if FDK installed
-command -v nvm           # Check if nvm installed
-node --version           # Check Node version
-brew --version           # macOS: Check Homebrew
-choco --version          # Windows: Check Chocolatey
+fdk version 2>&1 || echo "FDK not installed"
+node --version 2>&1 || echo "Node not installed"
+command -v nvm &>/dev/null && echo "nvm installed" || echo "nvm missing"
+nvm current 2>&1 || echo "No nvm version active"
+ls ~/.fdk 2>&1 || echo "No ~/.fdk directory"
 ```
 
-**When to use direct shell:**
-- Status checks
-- Detection
-- Quick validations
-- Non-destructive read operations
-
-### Complex Operations (Subagents)
-
-**Spin subagent for installations and modifications:**
-
+**Report format:**
 ```
-Task({
-  subagent_type: "shell",
-  model: "fast",
-  description: "<3-5 word summary>",
-  prompt: `
-CONTEXT: You are executing an FDK setup operation for Freshworks app development.
-
-SKILL: fdk-setup (Freshworks Development Kit installer)
-OPERATION: <operation-name>
-USER REQUEST: <original user request>
-
-BACKGROUND:
-- FDK = Freshworks Development Kit (CLI for building Freshworks apps)
-- FDK 10.x requires Node.js 24.x
-- FDK 9.x requires Node.js 18.x (deprecated)
-- Platform 3.0 is the only supported version (Platform 2.3 is EOL)
-- Always use nvm for Node version management
-- Preserve existing Node installations
-
-YOUR TASK:
-<operation-specific prompt from templates below>
-
-REFERENCES:
-- macOS instructions: skills/fdk-setup/references/macos.md
-- Windows instructions: skills/fdk-setup/references/windows.md
-- Cross-platform scenarios: skills/fdk-setup/references/cross-scenarios.md
-
-REPORTING:
-After completion, report:
-1. What was installed/changed
-2. Versions (Node, FDK)
-3. Next steps for user
-4. Any warnings or recommendations
-  `
-})
+DETECTION:
+- FDK: [version/not installed]
+- Node: [version/not installed]
+- nvm: [installed/missing]
+- nvm current: [version/none]
+- ~/.fdk: [exists/missing]
 ```
-
-**When to spin subagents:**
-- Installing package managers (Homebrew, Chocolatey)
-- Installing nvm
-- Installing Node.js
-- Installing/upgrading/downgrading FDK
-- Configuring shell environment
-- Multi-step operations
-
-**CRITICAL: Always include full context in subagent prompt:**
-- What skill this is (fdk-setup)
-- What operation is being performed
-- User's original request
-- Background about FDK/Node requirements
-- References to detailed documentation
 
 ---
 
 ## Operation 1: Install
 
-**When:** FDK not installed, or user requests fresh install
+**Trigger:** FDK not installed or user requests installation.
 
-**Version Strategy:**
-- **RECOMMENDED**: FDK 10.x + Node 24 (modern, supported, Platform 3.0)
-- **ALLOWED (deprecated)**: FDK 9.x + Node 18 (legacy, maintenance mode)
-- **REJECTED**: Platform 2.3 (end-of-life, unsupported)
+**Steps:**
 
-**Subagent prompt template:**
+1. Detect OS: `uname -s` (macOS: Darwin, Linux: Linux, Windows: use `$env:OS`)
+
+2. Check prerequisites:
+   ```bash
+   command -v nvm || echo "nvm missing"
+   node --version || echo "node missing"
+   ```
+
+3. Spawn subagent with this prompt:
 
 ```
-CONTEXT: You are executing FDK installation for Freshworks app development.
-
-SKILL: fdk-setup
-OPERATION: install
-USER REQUEST: {original user request}
-
-BACKGROUND:
-- FDK = Freshworks Development Kit (CLI tool for building Freshworks marketplace apps)
-- FDK 10.x requires Node.js 24.x (recommended, modern, actively supported)
-- FDK 9.x requires Node.js 18.x (deprecated, maintenance mode only)
-- Platform 3.0 is the ONLY supported version (Platform 2.3 reached EOL)
-- Always use nvm for Node version management to avoid conflicts
-- Never break existing Node installations - preserve all versions
-
-YOUR TASK: Install FDK + Node.js via nvm.
-
-DEFAULT (RECOMMENDED):
-- FDK 10.x (latest)
-- Node.js 24.x (LTS)
-- Platform 3.0 apps
-
-LEGACY (DEPRECATED - nudge to upgrade):
-- FDK 9.x
-- Node.js 18.x
-- Platform 3.0 apps (FDK 9 still supports Platform 3.0)
-
-⚠️ IMPORTANT: If user requests FDK 9/Node 18, show this nudge:
-"
-⚠️  You're installing FDK 9.x + Node 18 (deprecated).
-
-While this still works, we STRONGLY RECOMMEND upgrading to:
-- FDK 10.x + Node 24 (modern, actively supported)
-- Better performance and latest features
-- All Platform 3.0 apps work on both
-
-Continue with FDK 9.x + Node 18? (y/n)
-"
-
-REQUIREMENTS:
-- nvm for version management
-- Shell configuration (PATH)
+Install FDK 10 with Node 24 using official Freshworks CLI.
 
 DETECTION:
-1. Detect OS:
-   - macOS: darwin
-   - Linux: linux
-   - Windows: win32 (use nvm-windows)
+- OS: [detected from step 1]
+- nvm: [installed/missing]
+- Node: [version/missing]
 
-2. Check existing installations:
-   - nvm installed? command -v nvm
-   - Node installed? node --version
-   - FDK installed? fdk version
-
-INSTALLATION STEPS (SMART AUTO-DETECTION):
-
-Step 1: Detect current environment
-- Check OS: macOS/Windows/Linux
-- Check existing Node: node --version
-- Check existing FDK: fdk version
-- Check package managers: brew --version, choco --version
-- Check nvm: command -v nvm
-
-Step 2: Decide installation strategy based on detection
-
-**SCENARIO A: Homebrew/Chocolatey found (macOS/Windows)**
-→ Use official package manager method (installs Node 24 + FDK 10 together)
-
-**SCENARIO B: Node 24 found, no FDK**
-→ Install FDK 10 via npm on existing Node 24
-
-**SCENARIO C: Node 18 found, no FDK**
-→ Ask user: "You have Node 18. Do you want:
-   1. Install FDK 9 (works with Node 18) - DEPRECATED
-   2. Install Node 24 + FDK 10 (recommended, keeps Node 18)"
-
-**SCENARIO D: Node 20/22 found, no FDK**
-→ Ask user: "You have Node {version}. FDK requires Node 24 or 18. Do you want:
-   1. Install Node 24 + FDK 10 (recommended, keeps Node {version})
-   2. Install Node 18 + FDK 9 (deprecated, keeps Node {version})"
-
-**SCENARIO E: No Node found**
-→ Install Node 24 + FDK 10 (default, recommended)
-
-Step 3: Execute chosen strategy
-
----
-
-METHOD 1: Homebrew/Chocolatey (Auto-selected if available)
+INSTALLATION METHOD:
 
 macOS (Homebrew):
-- Install Homebrew if missing
-- brew tap freshworks-developers/homebrew-tap
-- brew install fdk (installs Node 24 + FDK 10)
-- Configure shell
-
+  brew tap freshworks/tap
+  brew install fdk
+  
 Windows (Chocolatey):
-- Install Chocolatey if missing
-- choco install fdk (installs Node 24 + FDK 10)
-- Configure PATH
+  choco install fdk
+  
+Linux/Manual (nvm + npm):
+  nvm install 24
+  nvm use 24
+  nvm alias fdk 24
+  npm install -g @freshworks/fdk
 
----
+VERIFICATION:
+  fdk version
+  node --version
 
-METHOD 2: nvm + npm (Auto-selected if Homebrew/Chocolatey unavailable or user has existing Node)
-
-Step 1: Install package manager (if missing)
-
-Windows:
-- Check Chocolatey: choco --version
-- If missing, install (PowerShell as Administrator):
-  Set-ExecutionPolicy Bypass -Scope Process -Force
-  [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-  iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-Linux:
-- Use system package manager (apt, yum, etc.)
-
-Step 2: Install nvm
-
-Windows (via Chocolatey):
-- choco install nvm -y
-- Restart PowerShell as Administrator
-- Verify: nvm version
-
-Linux (manual):
-- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-- export NVM_DIR="$HOME/.nvm"
-- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-macOS (if not using Homebrew method):
-- brew install nvm
-- mkdir ~/.nvm
-- Add to ~/.zshrc:
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-- Source: source ~/.zshrc
-
-Step 3: Install Node 24 via nvm
-- nvm install 24
-- nvm use 24
-- nvm alias fdk 24
-- Verify: node --version (should be 24.x.x)
-
-Step 4: Install FDK 10 via npm
-- npm install https://cdn.freshdev.io/fdk/latest.tgz -g
-- Verify: fdk version (should be 10.x.x)
-
-Step 5: Configure shell
-
-macOS/Linux:
-- Add to ~/.zshrc or ~/.bashrc:
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # Homebrew
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # Manual install
-  nvm use fdk > /dev/null 2>&1
-
-- Source shell config:
-  source ~/.zshrc
-
-Windows:
-- nvm and Chocolatey automatically configure PATH
-- Verify in new PowerShell: nvm version, choco --version
-
-Step 6: Verify installation
-- fdk version
-- node --version
-- npm --version
-- fdk validate --help
-
-ERROR HANDLING:
-- If Homebrew install fails: Check Xcode Command Line Tools (xcode-select --install)
-- If brew tap fails: Check network connection, try again
-- If brew install fdk fails: Run brew update, check Homebrew logs
-- If Chocolatey install fails: Check PowerShell execution policy
-- If nvm install fails: Try manual installation from GitHub releases
-- If Node 24 install fails: Check disk space and network
-- If FDK install fails: Check npm permissions, retry with --force
-- If PATH not updated: Manually add to shell config
-
-OUTPUT FORMAT (Homebrew):
-✓ OS detected: <os>
-✓ Homebrew installed: <version>
-✓ Freshworks CLI repository tapped
-✓ FDK 10 + Node 24 installed via Homebrew
-✓ FDK version: <version>
-✓ Node version: <version>
-✓ Shell configured: <shell>
-
-OUTPUT FORMAT (NPM):
-✓ OS detected: <os>
-✓ Package manager: <brew/choco/apt>
-✓ nvm installed: <version>
-✓ Node 24 installed: <version>
-✓ nvm alias 'fdk' → 24
-✓ FDK 10 installed: <version>
-✓ Shell configured: <shell>
-
-FDK Setup Complete!
-
-Next steps:
-- Create app: fdk create
-- Validate app: fdk validate
-- Run app: fdk run
+REPORT:
+  ✓ FDK version: [version]
+  ✓ Node version: [version]
+  ✓ Installation method: [brew/choco/npm]
 ```
+
+4. **MANDATORY VERIFICATION (CRITICAL):**
+   ```bash
+   # Test 1: FDK accessible in current shell
+   fdk version || echo "FAILED: FDK not in current shell"
+   
+   # Test 2: FDK accessible in new shell (CRITICAL)
+   zsh -c 'fdk version' || bash -c 'fdk version' || echo "FAILED: FDK not persistent"
+   
+   # Test 3: Node version correct
+   node --version | grep "v24" || echo "FAILED: Wrong Node version"
+   
+   # Test 4: nvm configured
+   nvm current | grep "24" || echo "FAILED: nvm not using Node 24"
+   ```
+
+5. **Report format:**
+   ```
+   [VALID] FDK installed successfully
+   
+   Verification: ✓ Current shell | ✓ New shell | ✓ Node 24 | ✓ nvm configured
+   
+   Installation: [method]
+   FDK version: [version]
+   Node version: [version]
+   
+   Next steps:
+   1. Restart terminal (or source ~/.zshrc)
+   2. Run: fdk version
+   3. Create app: fdk create
+   ```
+
+**Error handling:** If installation fails, read `references/macos.md` or `references/windows.md` for OS-specific troubleshooting.
+
+**CRITICAL RULES:**
+- [INVALID] NEVER say "installation complete" without new shell verification
+- [VALID] ALWAYS verify in new shell: `zsh -c 'fdk version'`
+- [VALID] ALWAYS verify Node 24 is active
+- [INVALID] NEVER skip verification steps
 
 ---
 
 ## Operation 2: Upgrade
 
-**When:** FDK installed, user wants latest version
+**Trigger:** User wants latest FDK version.
 
-**Subagent prompt template:**
+**Steps:**
+
+1. Check current version: `fdk version`
+
+2. Spawn subagent:
 
 ```
-Upgrade FDK to latest 10.x version.
+Upgrade FDK to latest version using official CLI.
 
-REQUIREMENTS:
-- Current FDK must be installed
-- Node 24 must be active
+CURRENT VERSION: [from step 1]
 
-STEPS:
-1. Check current FDK version:
-   fdk version
+UPGRADE:
+  npm install -g @freshworks/fdk@latest
 
-2. Ensure Node 24 active:
-   nvm use fdk
-   node --version (verify 24.x)
+MANDATORY VERIFICATION:
+  # Test 1: Version upgraded
+  fdk version
+  
+  # Test 2: Works in new shell
+  zsh -c 'fdk version' || bash -c 'fdk version'
+  
+  # Test 3: Only one version installed
+  npm list -g @freshworks/fdk
 
-3. Upgrade FDK:
-   npm install https://cdn.freshdev.io/fdk/latest.tgz -g
-
-4. Verify upgrade:
-   fdk version
-
-5. Test FDK:
-   fdk validate --help
-
-ERROR HANDLING:
-- If Node not 24: Switch to Node 24 first (nvm use fdk)
-- If upgrade fails: Clear npm cache (npm cache clean --force) and retry
-- If permission denied: Check npm permissions
-
-OUTPUT FORMAT:
-✓ Old version: <old-version>
-✓ New version: <new-version>
-✓ Upgrade successful
-
-FDK upgraded from <old> to <new>
+REPORT:
+  ✓ Upgraded: [old] → [new]
+  ✓ New shell verification: Passed
+  ✓ Single version: Confirmed
 ```
+
+**CRITICAL RULES:**
+- [VALID] ALWAYS verify upgrade worked in new shell
+- [VALID] ALWAYS check only one FDK version exists
+- [INVALID] NEVER skip new shell verification
 
 ---
 
 ## Operation 3: Downgrade
 
-**When:** User needs specific FDK version (e.g., for legacy apps)
+**Trigger:** User needs specific FDK version.
 
-**Subagent prompt template:**
+**Steps:**
+
+1. Parse target version from user request (e.g., "10.0.0")
+
+2. Check current version: `fdk version`
+
+3. Spawn subagent:
 
 ```
-Downgrade FDK to version <TARGET_VERSION>.
+Downgrade FDK to version [TARGET] and set as global default.
 
-REQUIREMENTS:
-- Target version specified (e.g., 10.6.0)
-- Node 24 must be active
+CURRENT: [from step 2]
+TARGET: [from step 1]
 
-STEPS:
-1. Parse target version from user request
+COMPLETE UNINSTALL:
+  npm uninstall -g @freshworks/fdk
+  rm -rf ~/.fdk
+  npm cache clean --force
 
-2. Ensure Node 24 active:
-   nvm use fdk
+INSTALL TARGET:
+  nvm use fdk
+  npm install -g @freshworks/fdk@[TARGET]
 
-3. Uninstall current FDK:
-   npm uninstall @freshworks/fdk -g
+GLOBAL SWITCH:
+  nvm alias default fdk
+  echo "nvm use fdk > /dev/null 2>&1" >> ~/.zshrc
+  source ~/.zshrc
 
-4. Install target version:
-   npm install @freshworks/fdk@<TARGET_VERSION> -g
+VERIFICATION:
+  fdk version  # Must show [TARGET]
+  zsh -c 'fdk version'  # Test new shell
 
-5. Verify installation:
-   fdk version (should match target)
-
-ERROR HANDLING:
-- If version invalid: List common versions (10.11.0, 10.6.0, 10.0.0)
-- If version not found: Check npm registry
-- If Node not 24: Switch to Node 24 first
-
-OUTPUT FORMAT:
-✓ Uninstalled: <old-version>
-✓ Installed: <target-version>
-✓ Downgrade successful
-
-FDK downgraded to <target-version>
-
-WARNING: Downgrading may cause compatibility issues with Platform 3.0 apps.
+REPORT:
+  ✓ Uninstalled: [old]
+  ✓ Installed: [TARGET]
+  ✓ Global switch: Active in all terminals
 ```
+
+4. **MANDATORY VERIFICATION (CRITICAL - ALL TESTS MUST PASS):**
+   ```bash
+   # Test 1: Version matches target
+   CURRENT=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+   [[ "$CURRENT" == "[TARGET]" ]] || echo "FAILED: Version mismatch"
+   
+   # Test 2: Works in new shell (MOST CRITICAL)
+   NEW_SHELL=$(zsh -c 'fdk version' 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+   [[ "$NEW_SHELL" == "[TARGET]" ]] || echo "FAILED: Not persistent"
+   
+   # Test 3: ~/.fdk removed
+   [ ! -d ~/.fdk ] || echo "FAILED: ~/.fdk still exists"
+   
+   # Test 4: nvm default set
+   nvm alias default | grep "fdk" || echo "FAILED: nvm default not set"
+   
+   # Test 5: Only one version
+   npm list -g @freshworks/fdk | grep -c "@freshworks/fdk@" | grep "1" || echo "WARNING: Multiple versions"
+   ```
+
+5. **Report format:**
+   ```
+   [VALID] FDK downgraded successfully to [TARGET]
+   
+   Verification: ✓ Version match | ✓ New shell | ✓ ~/.fdk removed | ✓ nvm default | ✓ Single version
+   
+   Changes:
+   - Uninstalled: [old]
+   - Installed: [TARGET]
+   - Global switch: Active
+   - Cache: Cleared
+   
+   Critical test: Open NEW terminal and run: fdk version
+   Expected output: [TARGET]
+   ```
+
+**Critical:** Complete uninstall prevents version conflicts. Global switch ensures persistence across ALL terminals.
+
+**CRITICAL RULES:**
+- [INVALID] NEVER skip complete uninstall before downgrade
+- [INVALID] NEVER skip ~/.fdk removal
+- [INVALID] NEVER skip nvm default alias
+- [INVALID] NEVER skip new shell verification
+- [VALID] ALWAYS verify ALL 5 tests pass
+- [VALID] If ANY test fails, re-run operation
 
 ---
 
 ## Operation 4: Uninstall
 
-**When:** User wants to remove FDK
+**Trigger:** User wants to remove FDK completely.
 
-**Subagent prompt template:**
+**Steps:**
+
+1. Check if FDK exists: `command -v fdk`
+
+2. Spawn subagent:
 
 ```
-Uninstall FDK (keep Node.js and nvm).
+Completely remove FDK and all artifacts.
 
-STEPS:
-1. Check current FDK:
-   fdk version
+DETECTION:
+  fdk version || echo "not installed"
+  ls ~/.fdk || echo "no cache"
 
-2. Uninstall FDK:
-   npm uninstall @freshworks/fdk -g
+COMPLETE REMOVAL:
+  npm uninstall -g @freshworks/fdk
+  npm uninstall -g @freshworks/fdk --force  # If first fails
+  rm -rf ~/.fdk
+  npm cache clean --force
+  
+MANUAL CLEANUP (if npm fails):
+  NPM_PREFIX=$(npm config get prefix)
+  rm -f "$NPM_PREFIX/bin/fdk"
+  rm -rf "$NPM_PREFIX/lib/node_modules/@freshworks/fdk"
 
-3. Verify removal:
-   fdk version (should fail with "command not found")
+SHELL CONFIG CLEANUP:
+  cp ~/.zshrc ~/.zshrc.bak
+  sed -i '/fdk/d' ~/.zshrc
 
-4. Report preserved:
-   - Node.js 24 remains: node --version
-   - nvm remains: nvm --version
-   - Other Node versions remain: nvm list
+VERIFICATION:
+  command -v fdk && echo "FAILED" || echo "SUCCESS"
+  [ ! -d ~/.fdk ] && echo "Cache removed"
 
-ERROR HANDLING:
-- If permission denied: Use sudo (macOS/Linux) or run as Administrator (Windows)
-- If FDK not found: Already uninstalled
-
-OUTPUT FORMAT:
-✓ FDK uninstalled
-✓ Node 24 preserved: <version>
-✓ nvm preserved: <version>
-
-FDK removed successfully.
-
-To reinstall: /fdk-setup install
+REPORT:
+  ✓ npm package: Removed
+  ✓ Binary: Removed
+  ✓ Cache (~/.fdk): Removed
+  ✓ Shell config: Cleaned
+  
+PRESERVED:
+  ✓ Node 24: [version]
+  ✓ nvm: [version]
 ```
+
+3. **MANDATORY VERIFICATION (CRITICAL - ALL TESTS MUST PASS):**
+   ```bash
+   # Test 1: FDK command removed
+   command -v fdk && echo "FAILED: FDK still exists" || echo "PASSED"
+   
+   # Test 2: Not in new shell
+   zsh -c 'command -v fdk' && echo "FAILED: FDK in new shell" || echo "PASSED"
+   
+   # Test 3: ~/.fdk removed
+   [ ! -d ~/.fdk ] || echo "FAILED: ~/.fdk still exists"
+   
+   # Test 4: Not in npm global
+   npm list -g @freshworks/fdk 2>&1 | grep -q "empty" || npm list -g @freshworks/fdk 2>&1 | grep -q "@freshworks/fdk" && echo "FAILED: Still in npm"
+   
+   # Test 5: Binary removed
+   [ ! -f /usr/local/bin/fdk ] && [ ! -f ~/.local/bin/fdk ] || echo "FAILED: Binary exists"
+   ```
+
+4. **Report format:**
+   ```
+   [VALID] FDK uninstalled completely
+   
+   Verification: ✓ Command removed | ✓ New shell | ✓ ~/.fdk removed | ✓ npm clean | ✓ Binary removed
+   
+   Removed:
+   - npm package: @freshworks/fdk
+   - Binary: [path]
+   - Cache: ~/.fdk
+   - Shell config: Cleaned (backup: ~/.zshrc.bak)
+   
+   Preserved:
+   - Node 24: [version]
+   - nvm: [version]
+   
+   Critical test: Open NEW terminal and run: fdk version
+   Expected output: command not found
+   ```
+
+**CRITICAL RULES:**
+- [INVALID] NEVER say "uninstall complete" without new shell verification
+- [INVALID] NEVER skip ~/.fdk removal
+- [INVALID] NEVER skip npm cache cleanup
+- [VALID] ALWAYS verify ALL 5 tests pass
+- [VALID] ALWAYS backup shell config before modifications
+- [VALID] If ANY test fails, re-run manual cleanup steps
 
 ---
 
 ## Operation 5: Status
 
-**When:** User wants to check FDK installation
+**Trigger:** User checks FDK installation.
 
-**Subagent prompt template:**
+**Steps:**
 
-```
-Check FDK and Node.js installation status.
+1. Run checks directly (no subagent needed):
 
-STEPS:
-1. Check FDK:
-   fdk version
-   which fdk
-
-2. Check Node:
-   node --version
-   which node
-
-3. Check nvm:
-   nvm --version
-   nvm current
-   nvm list
-
-4. Check npm:
-   npm --version
-   npm config get prefix
-
-5. Check PATH:
-   echo $PATH | grep nvm
-
-ANALYSIS:
-- If FDK found: Report version and path
-- If FDK not found: Suggest installation
-- If Node < 24: Warn about version mismatch
-- If nvm not found: Suggest nvm installation
-- If PATH issues: Suggest shell configuration
-
-OUTPUT FORMAT:
-FDK Status Report:
-
-✓ FDK: <version> (<path>)
-✓ Node: <version> (<path>)
-✓ nvm: <version>
-✓ npm: <version>
-
-Node versions available:
-  → v24.x.x (fdk)
-    v20.x.x
-    v22.x.x
-
-Configuration:
-✓ Shell: <shell>
-✓ PATH configured
-✓ nvm alias 'fdk' → 24
-
-Status: Ready to develop Freshworks apps
+```bash
+echo "=== FDK Status ==="
+fdk version 2>&1 || echo "Not installed"
+node --version 2>&1 || echo "Not installed"
+nvm --version 2>&1 || echo "Not installed"
+which fdk
+[ -d ~/.fdk ] && echo "Cache exists" || echo "No cache"
+echo "=================="
 ```
 
----
-
-
-## Complex Scenarios
-
-For complex setups beyond standard operations, load [cross-scenarios.md](references/cross-scenarios.md):
-
-| Scenario | When to Use |
-|----------|-------------|
-| **Legacy Migration** | User has FDK 9.x (Node 18), wants FDK 10.x (Node 24) |
-| **Multiple Node Versions** | User works on projects with different Node versions |
-| **Existing Node** | User has system Node, wants FDK via nvm |
-| **Downgrade** | Temporary downgrade for legacy apps |
-| **Troubleshooting** | Diagnose and fix broken FDK installation |
-| **Specific Version** | Install exact FDK version (e.g., 10.6.0) |
-| **Node PATH Mismatch** | FDK using wrong Node version |
-| **Multiple Node Versions** | Multiple projects with different Node versions |
-
-**Load cross-scenarios.md when:**
-- User mentions FDK 9.x or Node 18
-- User has existing Node installation
-- User needs both FDK versions
-- Installation troubleshooting needed
-- Enterprise/offline environment
+2. Report findings to user.
 
 ---
 
-## Installation Strategy
+## Progressive Disclosure
 
-**Package Managers First:**
-- **macOS**: Homebrew → nvm → Node 24 → FDK 10
-- **Windows**: Chocolatey → nvm-windows → Node 24 → FDK 10
-- **Linux**: apt/yum → nvm → Node 24 → FDK 10
+Load these references only when needed:
 
-**Why Package Managers:**
-- Automated dependency management
-- Easy updates and maintenance
-- Consistent across team environments
-- Homebrew (macOS) and Chocolatey (Windows) are industry standard
+- **Complex scenarios:** Read `references/cross-scenarios.md`
+- **macOS issues:** Read `references/macos.md`
+- **Windows issues:** Read `references/windows.md`
 
-**Why Node 24 + nvm:**
-- FDK 10 requires Node 24 (LTS until April 2027)
-- nvm allows version isolation
-- Users can keep other Node versions
-- Easy switching: `nvm use fdk` / `nvm use 20`
-
-**nvm Alias Pattern:**
-- Always create alias: `nvm alias fdk 24`
-- Never change user's default Node version
-- Never remove existing Node installations
-- Preserve user's development environment
+Do not load these files unless the operation fails or user has a complex setup.
 
 ---
 
-## Error Handling
+## Error Recovery
 
-| Error | Resolution |
-|-------|------------|
-| Homebrew not found (macOS) | Install Homebrew first |
-| Chocolatey not found (Windows) | Install Chocolatey as Administrator |
-| Xcode Command Line Tools missing | Run: xcode-select --install |
-| PowerShell execution policy | Run: Set-ExecutionPolicy RemoteSigned |
-| Node.js < 24.0.0 | Install Node 24 via nvm |
-| FDK already installed | Report version, ask if upgrade needed |
-| nvm not found | Install nvm via package manager |
-| Invalid version | List common versions: 10.11.0, 10.6.0, 10.0.0 |
-| Multiple FDK installations | Use clean install or multiple Node versions |
-| Permission denied | Fix npm permissions or use nvm |
-| PATH not updated | Add package manager and nvm to shell config |
-| Legacy app needs FDK 9 | Use downgrade or multiple Node versions |
-| Command not found | Check PATH, source shell config |
-| brew/choco command fails | Verify package manager installation |
+| Error | Action |
+|-------|--------|
+| `fdk: command not found` | Run Operation 1 (Install) |
+| `npm permission denied` | Use nvm, never sudo npm |
+| `Node version mismatch` | Run `nvm use fdk` |
+| Version conflicts | Run Operation 4 (Uninstall) then Operation 1 (Install) |
+| OS-specific failure | Read `references/[os].md` |
 
 ---
 
-## Integration with app-dev Skill
+## Verification Gates - MANDATORY
 
-**Orchestration pattern:**
+**[ALERT] ZERO TOLERANCE: An operation is NEVER complete unless ALL gates pass.**
 
-When `app-dev` skill detects FDK is missing:
+| Gate | Checks |
+|------|--------|
+| **1 – Command exists** | `command -v fdk` succeeds (install/upgrade/downgrade) OR fails (uninstall) |
+| **2 – New shell** | `zsh -c 'fdk version'` shows correct version (install/upgrade/downgrade) OR fails (uninstall) |
+| **3 – Version match** | `fdk version` output matches expected version (install/upgrade/downgrade) |
+| **4 – Cache state** | `~/.fdk` removed (downgrade/uninstall) OR exists (install/upgrade) |
+| **5 – npm state** | Single version in `npm list -g @freshworks/fdk` (install/upgrade/downgrade) OR empty (uninstall) |
+| **6 – nvm default** | `nvm alias default` set to fdk (downgrade) |
 
-1. **Quick check** (direct shell):
-   ```bash
-   fdk version  # If fails, FDK not installed
-   ```
-
-2. **Check prerequisites**:
-   ```bash
-   command -v nvm    # Check nvm
-   node --version    # Check Node
-   ```
-
-3. **Spin fdk-setup subagent**:
-   ```
-   Task({
-     subagent_type: "shell",
-     model: "fast",
-     description: "Install FDK 10 with Node 24",
-     prompt: `[Use Operation 1: Install prompt from above]`
-   })
-   ```
-
-4. **Verify installation**:
-   ```bash
-   fdk version  # Should output 10.x.x
-   ```
-
-5. **Proceed** with app creation
-
-**Seamless user experience:**
-1. User: "Create a Freshdesk app"
-2. Agent detects FDK missing
-3. Agent: "FDK not installed. Installing FDK 10 + Node 24..."
-4. Subagent installs FDK (fully autonomous)
-5. Agent: "FDK installed! Creating your Freshdesk app..."
-6. Continue with app creation
+**If any gate fails:** do not call the operation complete; fix and re-verify.
 
 ---
 
-## Reference Files
+## Critical Validations (Always Check)
 
-Load as needed:
+### Installation Validation
 
-- [cross-scenarios.md](references/cross-scenarios.md) - 10 complex scenarios with full subagent prompts
-- [macos.md](references/macos.md) - macOS-specific setup details
-- [windows.md](references/windows.md) - Windows-specific setup details
+| Check | Requirement |
+|-------|-------------|
+| FDK version | Must be 10.0.0+ for Platform 3.0 |
+| Node version | Must be 24.x (recommended for FDK 10) |
+| nvm | Must be installed and configured |
+| Global access | `which fdk` must return path |
+| New shell | `zsh -c 'fdk version'` must succeed |
 
-## External Documentation
+### Downgrade Validation
 
-- nvm: `https://github.com/nvm-sh/nvm`
-- nvm-windows: `https://github.com/coreybutler/nvm-windows`
-- FDK: `https://developers.freshworks.com/docs/app-sdk/`
+| Check | Requirement |
+|-------|-------------|
+| Complete uninstall | Previous version removed via npm |
+| Cache cleared | `~/.fdk` directory removed |
+| Target installed | Exact version specified by user |
+| Global switch | `nvm alias default` set to fdk |
+| Shell config | Updated with `nvm use fdk` |
+| New shell | Version persists in new terminal |
+
+### Uninstall Validation
+
+| Check | Requirement |
+|-------|-------------|
+| npm package | Removed from global packages |
+| Binary | Removed from bin directories |
+| Cache | `~/.fdk` directory removed |
+| Shell config | FDK references removed (with backup) |
+| npm cache | Cleaned with `--force` flag |
+| New shell | `fdk` command not found |
+
+---
+
+## Error Catalog
+
+| Error | Severity | Action |
+|-------|----------|--------|
+| `fdk: command not found` | CRITICAL | Run Operation 1 (Install) |
+| `npm permission denied` | CRITICAL | Use nvm, NEVER `sudo npm` |
+| `Node version mismatch` | HIGH | Run `nvm use fdk` or `nvm use 24` |
+| Version conflicts | HIGH | Run Operation 4 (Uninstall) then Operation 1 (Install) |
+| `~/.fdk` persists after uninstall | MEDIUM | Manual removal: `rm -rf ~/.fdk` |
+| Old version in new shell | HIGH | Re-run downgrade with global switch |
+| Multiple FDK versions | MEDIUM | Uninstall all, reinstall target version |
+| OS-specific failure | VARIES | Read `references/[os].md` |
+
+---
+
+## Anti-Patterns
+
+**Do not:**
+- Install Node without nvm
+- Use `sudo npm install -g`
+- Skip complete uninstall before downgrade
+- Leave ~/.fdk directory after uninstall
+- Create documentation files (README, CHANGELOG)
+- Write installation steps manually - use subagents
+- Say "complete" without new shell verification
+- Skip any verification gate
+
+**Always:**
+- Use official FDK CLI commands
+- Verify after every operation
+- Preserve existing Node versions
+- Clean up completely on uninstall
+- Set global default on downgrade
+- Test in new shell
+- Run ALL verification gates
+- Report verification results
+
+---
+
+## Summary
+
+- **SKILL.md** — core enforcement, operations, verification gates, error catalog
+- **references/cross-scenarios.md** — complex multi-Node scenarios, PATH conflicts, dual version setups
+- **references/macos.md** — macOS-specific installation, Homebrew, zsh configuration
+- **references/windows.md** — Windows-specific installation, Chocolatey, PowerShell configuration
+- **commands/** — slash command definitions (/fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status)
+
+When uncertain, load the specific `references/` file before implementing.
+
+---
+
+## Constraints (Enforced Automatically)
+
+- **Strict mode:** Always reject Platform 2.3/FDK 9.x requests
+- **No inference without source:** If not in references, respond "Insufficient FDK installation certainty"
+- **Verification mandatory:** Every operation MUST pass all verification gates
+- **Production-ready only:** Generate complete, persistent installations
+- **Global persistence:** Downgrade MUST work across all terminals
+- **Complete cleanup:** Uninstall MUST remove all artifacts

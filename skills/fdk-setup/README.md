@@ -25,12 +25,12 @@
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill freshworks-fdk-setup-skill
+npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
 ```
 
 **For local development:**
 ```bash
-npx skills add file:///path/to/marketplace-main --skill freshworks-fdk-setup-skill
+npx skills add file:///path/to/marketplace-main --skill fdk-setup
 ```
 
 ### Install as Claude Plugin
@@ -67,10 +67,27 @@ Check available commands:
 ```bash
 /fdk-install                    # Smart install: auto-detects Node, asks only when needed
 /fdk-upgrade                    # Upgrade to latest FDK (preserves Node version)
-/fdk-downgrade 10.0.0           # Downgrade to specific version (asks about Node if needed)
-/fdk-uninstall                  # Remove FDK (keeps Node.js/nvm)
+/fdk-downgrade 10.0.0           # Downgrade + GLOBAL SWITCH + complete cleanup
+/fdk-uninstall                  # Complete removal: npm + ~/.fdk + cache + shell config
 /fdk-status                     # Check installation status
 ```
+
+### 🎯 Key Improvements
+
+**Downgrade (`/fdk-downgrade`):**
+- ✅ **Complete uninstall** of previous version (no conflicts)
+- ✅ **Removes ~/.fdk** directory (cache, config, references)
+- ✅ **Global version switch** - active in all terminals
+- ✅ **Sets nvm default** for persistence across sessions
+- ✅ **Updates shell config** automatically
+
+**Uninstall (`/fdk-uninstall`):**
+- ✅ **Complete removal**: npm package + binary + node_modules
+- ✅ **Removes ~/.fdk** directory completely
+- ✅ **Cleans npm cache** to prevent reinstall issues
+- ✅ **Removes shell config** references (with backup)
+- ✅ **Manual binary removal** if npm uninstall fails
+- ✅ **Comprehensive verification** of complete removal
 
 ### ⚠️ IMPORTANT: Run Before Creating Apps
 
