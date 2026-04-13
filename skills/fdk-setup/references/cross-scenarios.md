@@ -116,10 +116,10 @@ VERIFICATION:
 
 MIGRATION REPORT:
 Print summary:
-✓ Old setup: FDK 9.x on Node 18
-✓ New setup: FDK 10.x on Node 24
-✓ Node 18 preserved: nvm use 18
-✓ Default: Node 24 (FDK 10)
+Old setup: FDK 9.x on Node 18
+New setup: FDK 10.x on Node 24
+Node 18 preserved: nvm use 18
+Default: Node 24 (FDK 10)
 
 COMMANDS TO SWITCH:
 - Use FDK 10 (Node 24): nvm use fdk
@@ -136,13 +136,13 @@ ERROR HANDLING:
 ### Expected Output
 
 ```
-✓ Detected: FDK 9.8.2 on Node 18.20.0
-✓ nvm installed: v0.39.0
-✓ Node 24 installed: v24.11.0
-✓ nvm alias 'fdk' → 24.11.0
-✓ FDK 9.x uninstalled
-✓ FDK 10.11.0 installed
-✓ Shell configured (~/.zshrc)
+Detected: FDK 9.8.2 on Node 18.20.0
+nvm installed: v0.39.0
+Node 24 installed: v24.11.0
+nvm alias 'fdk' set to 24.11.0
+FDK 9.x uninstalled
+FDK 10.11.0 installed
+Shell configured (~/.zshrc)
 
 Migration Complete!
 
@@ -266,11 +266,11 @@ VERIFICATION:
 
 SETUP REPORT:
 Print summary:
-✓ System Node preserved: [system node version]
-✓ nvm installed
-✓ Node 24 installed via nvm
-✓ FDK 10.x installed on Node 24
-✓ No conflicts
+System Node preserved: [system node version]
+nvm installed
+Node 24 installed via nvm
+FDK 10.x installed on Node 24
+No conflicts
 
 USAGE:
 - Default: System Node ([version])
@@ -319,9 +319,9 @@ CONTEXT:
 - Should preserve ability to upgrade back
 
 WARNING TO USER:
-echo "⚠️  WARNING: FDK 9.x is DEPRECATED and for legacy apps only."
-echo "⚠️  Platform 3.0 apps require FDK 10.x."
-echo "⚠️  You can upgrade back anytime with: /fdk-upgrade"
+echo "WARNING: FDK 9.x is DEPRECATED and for legacy apps only."
+echo "WARNING: Platform 3.0 apps require FDK 10.x."
+echo "WARNING: You can upgrade back anytime with: /fdk-upgrade"
 echo ""
 read -p "Continue with downgrade? (y/N): " confirm
 if [[ $confirm != [yY] ]]; then
@@ -371,8 +371,8 @@ FDK 10 COMPLETE UNINSTALLATION (IMPROVED):
    rm -rf "$NPM_PREFIX/lib/node_modules/@freshworks/fdk"
 
 9. Verify complete removal:
-   fdk version 2>&1 | grep "command not found" && echo "✓ FDK 10 completely removed"
-   [ ! -d ~/.fdk ] && echo "✓ ~/.fdk directory removed"
+   fdk version 2>&1 | grep "command not found" && echo "FDK 10 completely removed"
+   [ ! -d ~/.fdk ] && echo "~/.fdk directory removed"
 
 FDK 9.8.2 INSTALLATION:
 10. Switch to Node 18:
@@ -411,7 +411,7 @@ GLOBAL VERSION SWITCH (IMPROVED):
     
     # Test in new shell
     bash -c 'fdk version' || zsh -c 'fdk version'
-    echo "✓ FDK 9.8.2 set as global active version"
+    echo "FDK 9.8.2 set as global active version"
 
 VERIFICATION:
 16. Test FDK 9:
@@ -421,13 +421,13 @@ VERIFICATION:
 
 DOWNGRADE REPORT:
 Print summary:
-✓ FDK 10.x completely uninstalled (npm package + ~/.fdk + cache)
-✓ Node 18 installed
-✓ FDK 9.8.2 installed
-✓ Global version switched to FDK 9.8.2 on Node 18
-✓ nvm default set to Node 18
-✓ Shell configuration updated
-✓ Active in all terminals (current + new)
+FDK 10.x completely uninstalled (npm package + ~/.fdk + cache)
+Node 18 installed
+FDK 9.8.2 installed
+Global version switched to FDK 9.8.2 on Node 18
+nvm default set to Node 18
+Shell configuration updated
+Active in all terminals (current + new)
 
 IMPORTANT NOTES:
 - FDK 9.x is for Platform 2.x apps only
@@ -436,9 +436,9 @@ IMPORTANT NOTES:
 - Previous FDK 10 completely removed (no conflicts)
 
 ACTIVE GLOBALLY:
-- Current terminal: ✓
-- New terminals: ✓
-- System-wide: ✓
+- Current terminal: Verified
+- New terminals: Verified
+- System-wide: Verified
 
 TO UPGRADE BACK TO FDK 10:
   nvm use 24
@@ -487,7 +487,7 @@ DIAGNOSTIC PHASE:
 1. Check if FDK binary exists:
    which fdk
    if [ $? -eq 0 ]; then
-     echo "✓ FDK binary found: $(which fdk)"
+     echo "FDK binary found: $(which fdk)"
      ls -la $(which fdk)
    else
      echo "✗ FDK binary not found"
@@ -539,7 +539,7 @@ FIX A: Permission issues
 if [ -d "$NPM_PREFIX" ]; then
   echo "Fixing npm permissions..."
   sudo chown -R $(whoami) "$NPM_PREFIX"
-  echo "✓ Permissions fixed"
+  echo "Permissions fixed"
 fi
 
 FIX B: PATH issues
@@ -547,7 +547,7 @@ if ! echo "$PATH" | grep -q "$(npm config get prefix)/bin"; then
   echo "Adding npm global bin to PATH..."
   echo 'export PATH="$(npm config get prefix)/bin:$PATH"' >> ~/.zshrc
   source ~/.zshrc
-  echo "✓ PATH updated"
+  echo "PATH updated"
 fi
 
 FIX C: Multiple conflicting installations
@@ -555,20 +555,20 @@ echo "Removing all FDK installations..."
 npm uninstall @freshworks/fdk -g 2>/dev/null
 brew uninstall fdk 2>/dev/null
 sudo rm -f /usr/local/bin/fdk 2>/dev/null
-echo "✓ Old installations removed"
+echo "Old installations removed"
 
 FIX D: Wrong Node version
 if command -v nvm >/dev/null; then
   echo "Switching to Node 24..."
   nvm install 24
   nvm use 24
-  echo "✓ Node 24 activated"
+  echo "Node 24 activated"
 fi
 
 FIX E: Corrupted npm cache
 echo "Cleaning npm cache..."
 npm cache clean --force
-echo "✓ npm cache cleaned"
+echo "npm cache cleaned"
 
 CLEAN REINSTALL:
 
@@ -592,20 +592,20 @@ VERIFICATION:
 echo "=== VERIFICATION ==="
 
 1. Test FDK command:
-   fdk version && echo "✓ fdk version works" || echo "✗ fdk version failed"
+   fdk version && echo "PASS: fdk version works" || echo "FAIL: fdk version failed"
 
 2. Test FDK help:
-   fdk validate --help && echo "✓ fdk validate --help works" || echo "✗ fdk validate --help failed"
+   fdk validate --help && echo "PASS: fdk validate --help works" || echo "FAIL: fdk validate --help failed"
 
 3. Test in new shell:
-   bash -c 'fdk version' && echo "✓ fdk works in new shell" || echo "✗ fdk fails in new shell"
+   bash -c 'fdk version' && echo "PASS: fdk works in new shell" || echo "FAIL: fdk fails in new shell"
 
 4. Create test app (optional):
    mkdir -p /tmp/fdk-test
    cd /tmp/fdk-test
    fdk create --product freshdesk --template your_first_app
    cd your_first_app
-   fdk validate && echo "✓ Test app validates" || echo "✗ Test app validation failed"
+   fdk validate && echo "PASS: Test app validates" || echo "FAIL: Test app validation failed"
    cd -
    rm -rf /tmp/fdk-test
 
@@ -713,9 +713,9 @@ VERIFICATION:
 - fdk validate --help should work
 
 OUTPUT FORMAT:
-✓ Node 24 active: v24.x.x
-✓ FDK <TARGET_VERSION> installed
-✓ Verification successful
+Node 24 active: v24.x.x
+FDK <TARGET_VERSION> installed
+Verification successful
 
 FDK <TARGET_VERSION> ready!
 
@@ -801,9 +801,9 @@ VERIFICATION:
 - Check FDK works: fdk validate --help
 
 OUTPUT FORMAT:
-✓ Node PATH fixed: v24.x.x
-✓ FDK now accessible
-✓ Shell configured
+Node PATH fixed: v24.x.x
+FDK now accessible
+Shell configured
 
 PATH mismatch resolved!
 
@@ -903,13 +903,13 @@ VERIFICATION:
 - cd freshworks-app && fdk version (10.x.x)
 
 OUTPUT FORMAT:
-✓ Node 20 installed
-✓ Node 22 installed
-✓ Node 24 installed
-✓ nvm aliases configured
-✓ FDK 10 installed on Node 24
-✓ .nvmrc files created
-✓ Auto-switching configured
+Node 20 installed
+Node 22 installed
+Node 24 installed
+nvm aliases configured
+FDK 10 installed on Node 24
+.nvmrc files created
+Auto-switching configured
 
 Multiple Node Setup Complete!
 
@@ -939,13 +939,13 @@ ERROR HANDLING:
 
 | Scenario | macOS | Windows | Linux |
 |----------|-------|---------|-------|
-| 1. Legacy Migration (FDK 9→10) | ✅ | ✅ | ✅ |
-| 2. Existing Node | ✅ | ✅ | ✅ |
-| 3. Downgrade | ✅ | ✅ | ✅ |
-| 4. Troubleshooting | ✅ | ✅ | ✅ |
-| 5. Specific Version | ✅ | ✅ | ✅ |
-| 6. Node PATH Mismatch | ✅ | ✅ | ✅ |
-| 7. Multiple Node Versions | ✅ | ✅ | ✅ |
+| 1. Legacy Migration (FDK 9→10) | Supported | Supported | Supported |
+| 2. Existing Node | Supported | Supported | Supported |
+| 3. Downgrade | Supported | Supported | Supported |
+| 4. Troubleshooting | Supported | Supported | Supported |
+| 5. Specific Version | Supported | Supported | Supported |
+| 6. Node PATH Mismatch | Supported | Supported | Supported |
+| 7. Multiple Node Versions | Supported | Supported | Supported |
 
 ---
 
