@@ -1,8 +1,8 @@
 ---
 name: fdk-setup
-description: Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when user explicitly requests FDK installation, upgrade, downgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status. Also use when user mentions "install fdk", "setup fdk", "check fdk status", or encounters "fdk command not found" errors. Installs FDK 10 with Node.js 24 for Platform 3.0 app development.
-compatibility: Node.js 24.x, FDK 10.x, nvm
-argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
+description: Installs and manages Freshworks Development Kit (FDK) 10.x with Node.js 24 via nvm for Platform 3.0 ONLY. Use when user explicitly requests FDK installation, upgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-uninstall, /fdk-status. Also use when user mentions "install fdk", "setup fdk", "check fdk status", or encounters "fdk command not found" errors. REJECTS FDK 9.x requests (Platform 2.3 deprecated).
+compatibility: Node.js 24.x, FDK 10.x, nvm, Platform 3.0 ONLY
+argument-hint: "[install|upgrade|uninstall|status] [version]"
 allowed-tools: shell task read write strreplace glob grep
 ---
 
@@ -24,9 +24,20 @@ Parse user request and execute the appropriate operation:
 |---------|-----------|
 | "install fdk", "setup fdk", `/fdk-install` | Install |
 | "upgrade fdk", "update fdk", `/fdk-upgrade` | Upgrade |
-| "downgrade fdk", "use fdk X.X.X", `/fdk-downgrade` | Downgrade |
 | "uninstall fdk", "remove fdk", `/fdk-uninstall` | Uninstall |
 | "check fdk", "fdk status", `/fdk-status` | Status |
+
+**IMPORTANT:** If user requests "downgrade" or FDK 9.x installation:
+```
+ERROR: This skill supports Platform 3.0 ONLY (FDK 10.x + Node 24.x)
+
+Platform 2.3 and FDK 9.x are DEPRECATED and unsupported.
+
+If you need FDK 9.x for legacy Platform 2.3 maintenance:
+- Install manually (outside this skill)
+- Use at your own risk
+- No automated support provided
+```
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
@@ -35,18 +46,19 @@ Parse user request and execute the appropriate operation:
 - **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
 - **FDK CLI only** - Use official commands from Freshworks documentation
 - **Subagent execution** - Spawn Task tool for all operations
-- **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
-- **Global persistence** - Downgrade MUST set nvm default and update shell config
+- **Complete cleanup** - Uninstall MUST remove ~/.fdk directory
+- **Global persistence** - All operations MUST set nvm default and update shell config
 - **Verify always** - Every operation MUST verify in new shell
+- **Reject FDK 9.x requests** - If user asks for FDK 9.x, inform them it's unsupported
 - If certainty < 100%, respond: "Insufficient FDK installation certainty."
 
 **CRITICAL UNIVERSAL RULES - NO EXCEPTIONS:**
 
-1. **Complete Uninstall Before Downgrade** - ALWAYS uninstall current version completely (npm + ~/.fdk + cache) before installing target version. Version conflicts cause unpredictable behavior.
+1. **Platform 3.0 Enforcement** - REJECT any request to install FDK 9.x. This skill ONLY supports FDK 10.x for Platform 3.0 development. Platform 2.3 is deprecated.
 
-2. **Global Version Switch** - After downgrade, MUST set `nvm alias default` and update shell config (~/.zshrc or ~/.bashrc) to ensure version persists across all terminals.
+2. **Global Version Persistence** - All operations MUST set `nvm alias default 24` and update shell config (~/.zshrc or ~/.bashrc) to ensure Node 24 + FDK 10 persists across all terminals.
 
-3. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on downgrade and uninstall. This directory contains cache, config, and version references that cause conflicts.
+3. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on uninstall. This directory contains cache, config, and version references that cause conflicts.
 
 4. **New Shell Verification** - ALWAYS verify operations work in new shell: `zsh -c 'fdk version'` or `bash -c 'fdk version'`. Current shell verification is insufficient.
 
