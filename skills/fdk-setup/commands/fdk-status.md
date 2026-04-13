@@ -23,3 +23,5 @@ echo "=================="
 ```
 
 Report findings to user.
+
+**Closeout:** `/fdk-status` runs inline only (no shell Task). After printing the block above, stop—do not spawn `fdk run`, tunnels, or watchers.

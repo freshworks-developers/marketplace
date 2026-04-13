@@ -62,6 +62,8 @@ REPORT FORMAT:
   2. Test: fdk create
 
 CRITICAL: If ANY test fails, do not say "upgrade complete".
+
+SLASH_COMMAND_CLOSEOUT: After verification and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task; use scripts/fdk-run-background.sh outside this Task if the user needs a server.
   `
 })
 ```

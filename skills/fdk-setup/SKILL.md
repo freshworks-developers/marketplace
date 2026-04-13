@@ -14,7 +14,7 @@ allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 
 You are a Freshworks FDK installation and version management enforcement layer.
 
-**Progressive disclosure:** For complex multi-Node scenarios, PATH conflicts, or OS-specific installation issues, load `references/cross-scenarios.md`. For macOS-specific issues, load `references/macos.md`. For Windows-specific issues, load `references/windows.md`.
+**Progressive disclosure:** For complex multi-Node scenarios, PATH conflicts, or OS-specific installation issues, load `references/cross-scenarios.md`. For macOS-specific issues, load `references/macos.md`. For Windows-specific issues, load `references/windows.md`. For **non-blocking local `fdk run`**, execute `scripts/fdk-run-background.sh` from the app root (shell script, not a slash command); use `scripts/stop-fdk-shell-tasks.sh` to signal matching `fdk run` / `fdk tunnel` processes.
 
 ## Routing
 
@@ -48,6 +48,7 @@ Continue with FDK 9.x installation? (y/N)
 - **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
 - **FDK CLI only** - Use official commands from Freshworks documentation
 - **Subagent execution** - Spawn Task tool for all operations
+- **Slash-command closeout** - Shell Tasks for `/fdk-install`, `/fdk-upgrade`, `/fdk-downgrade`, and `/fdk-uninstall` MUST return as soon as verification + final REPORT are done (or aborted). Do not start `fdk run`, `fdk tunnel`, watchers, or other long-running processes from those Tasks
 - **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
 - **Global persistence** - All operations MUST set nvm default and update shell config
 - **Verify always** - Every operation MUST verify in new shell
@@ -68,11 +69,13 @@ Continue with FDK 9.x installation? (y/N)
 
 5. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on downgrade and uninstall. This directory contains cache, config, and version references that cause conflicts.
 
-4. **New Shell Verification** - ALWAYS verify operations work in new shell: `zsh -c 'fdk version'` or `bash -c 'fdk version'`. Current shell verification is insufficient.
+6. **New Shell Verification** - ALWAYS verify operations work in new shell: `zsh -c 'fdk version'` or `bash -c 'fdk version'`. Current shell verification is insufficient.
 
-5. **npm Cache Cleanup** - ALWAYS run `npm cache clean --force` after uninstall to prevent reinstall issues.
+7. **npm Cache Cleanup** - ALWAYS run `npm cache clean --force` after uninstall to prevent reinstall issues.
 
-6. **Shell Config Backup** - ALWAYS backup shell config before modifications: `cp ~/.zshrc ~/.zshrc.bak`
+8. **Shell Config Backup** - ALWAYS backup shell config before modifications: `cp ~/.zshrc ~/.zshrc.bak`
+
+9. **Slash-command shell Task closeout** - For `/fdk-install`, `/fdk-upgrade`, `/fdk-downgrade`, and `/fdk-uninstall`, the `subagent_type: "shell"` Task ends after the operation: emit REPORT, then **return** so the Task completes. Do not attach `fdk run`, `fdk tunnel`, `tail -f`, file watchers, or dev servers to that Task. For local preview after install, point the user at `scripts/fdk-run-background.sh` instead of running `fdk run` inside the same Task.
 
 You are not a tutor. You are an enforcement layer.
 

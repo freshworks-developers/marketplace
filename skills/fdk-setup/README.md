@@ -62,7 +62,7 @@ Check available commands:
 ```bash
 # In Cursor/Claude chat, type:
 /fdk-
-# You should see 4 commands in autocomplete
+# You should see 5 commands in autocomplete
 ```
 
 ## FDK Version Support Policy
@@ -99,6 +99,12 @@ Check available commands:
 /fdk-uninstall                  # Complete removal: npm + ~/.fdk + cache + shell config
 /fdk-status                     # Check installation status
 ```
+
+**Local dev (background, not a slash command):** from your app directory (where `manifest.json` lives), run the script by absolute path, for example:
+
+`bash /path/to/marketplace/skills/fdk-setup/scripts/fdk-run-background.sh`
+
+Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_LOG_DIR` is set. To signal matching `fdk run` / `fdk tunnel` processes: `bash .../scripts/stop-fdk-shell-tasks.sh` (`--dry-run`, `--force`).
 
 ### Key Features
 
@@ -182,6 +188,8 @@ When you run a command (e.g., `/fdk-install`), it spawns a **dedicated shell sub
 6. **Verifies setup** - Tests all components work correctly
 7. **Reports status** - Comprehensive output with next steps
 
+Slash commands that use a shell Task (`/fdk-install`, `/fdk-upgrade`, `/fdk-downgrade`, `/fdk-uninstall`) **must close out** when done: return after the final report—do not leave `fdk run` or similar running inside that Task (`/fdk-status` is inline only).
+
 **Benefits:**
 - Autonomous execution (minimal user intervention)
 - Smart auto-detection (Homebrew/Chocolatey/nvm)
@@ -214,6 +222,10 @@ fdk-setup/
 │   ├── fdk-downgrade.md       # /fdk-downgrade <version>
 │   ├── fdk-uninstall.md       # /fdk-uninstall
 │   └── fdk-status.md          # /fdk-status
+│
+├── scripts/
+│   ├── fdk-run-background.sh  # nohup fdk run … (returns immediately)
+│   └── stop-fdk-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
 │
 └── references/                # Loaded by SKILL.md on-demand
     ├── cross-scenarios.md     # Complex installation scenarios

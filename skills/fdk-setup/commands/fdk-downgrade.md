@@ -148,6 +148,8 @@ REPORT FORMAT:
   echo "Expected: 9.x.x"
 
 CRITICAL: If ANY test fails, re-run operation.
+
+SLASH_COMMAND_CLOSEOUT: After verification and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task; use scripts/fdk-run-background.sh outside this Task if the user needs a server.
   `
 })
 ```

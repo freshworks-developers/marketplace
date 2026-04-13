@@ -84,6 +84,7 @@ TODO.md
 .windsurf/
 .agents/
 .cursor/
+.claude/
 
 # Internal
 .telemetry

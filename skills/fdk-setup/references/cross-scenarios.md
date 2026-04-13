@@ -2,6 +2,8 @@
 
 > **Comprehensive subagent prompts for all FDK setup scenarios including migrations, version management, and troubleshooting. Users should upgrade or downgrade FDK versions, not maintain multiple FDK installations.**
 
+**Shell Task closeout (same as slash commands):** Every `Task({ subagent_type: "shell", ...})` below must **return** after verification and final summary. Do not start `fdk run`, `fdk tunnel`, `tail -f`, or dev servers inside that Task; use `scripts/fdk-run-background.sh` from the app root if the user needs a running server.
+
 ## Table of Contents
 
 1. [Legacy Migration (FDK 9 → 10)](#scenario-1-legacy-migration)
