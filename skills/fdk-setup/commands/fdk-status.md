@@ -6,15 +6,20 @@ always: true
 
 # FDK Status
 
-Execute Operation 5 from `../SKILL.md`.
+Check FDK installation status.
 
 ## Execution
 
-```javascript
-Task({
-  subagent_type: "shell",
-  model: "fast",
-  description: "Check FDK status",
-  prompt: `[Use Operation 5 template from ../SKILL.md]`
-})
+Run checks directly (no subagent needed):
+
+```bash
+echo "=== FDK Status ==="
+fdk version 2>&1 || echo "Not installed"
+node --version 2>&1 || echo "Not installed"
+nvm --version 2>&1 || echo "Not installed"
+which fdk
+[ -d ~/.fdk ] && echo "Cache exists" || echo "No cache"
+echo "=================="
 ```
+
+Report findings to user.
