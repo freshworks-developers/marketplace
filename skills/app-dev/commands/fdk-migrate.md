@@ -13,39 +13,39 @@ You are helping migrate a Freshworks app from Platform 2.x to Platform 3.0. Foll
 
 **IMPORTANT:** This command helps migrate Platform 2.x app code to Platform 3.0 structure.
 
-**FDK 9.x Requirement:**
+**FDK Version for Migration:**
 - Platform 2.x apps were built with FDK 9.x (Node 18-19)
-- FDK 9.x is DEPRECATED and unsupported by the fdk-setup skill
-- The fdk-setup skill supports **Platform 3.0 ONLY** (FDK 10.x + Node 24.x)
+- FDK 9.x is DEPRECATED (support ends March 2026)
+- The fdk-setup skill supports FDK 9.x for development, but publishing requires FDK 10.x
 
-**If you need to migrate a Platform 2.x app:**
+**Recommended Migration Approach:**
 
-1. **Manual FDK 9.x Setup (if needed):**
+1. **Use FDK 9.x + Node 18 for migration:**
    ```bash
-   # Install Node 19 manually
-   nvm install 19
-   nvm use 19
+   # Install fdk-setup skill
+   npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
    
-   # Install FDK 9.x manually (at your own risk - deprecated)
-   npm install -g @freshworks/fdk@9.8.2
+   # Downgrade to FDK 9.x (shows deprecation warning)
+   /fdk-downgrade
    ```
    
-   **WARNING:** FDK 9.x is deprecated. Use only for legacy Platform 2.x maintenance.
+   **Note:** FDK 9.x works with Platform 3.0 for development only.
 
-2. **After migration is complete:**
+2. **After migration is complete, upgrade to FDK 10.x for publishing:**
    ```bash
-   # Remove FDK 9.x
-   npm uninstall -g @freshworks/fdk
-   rm -rf ~/.fdk
+   # Upgrade to FDK 10.x + Node 24
+   /fdk-upgrade
    
-   # Install Platform 3.0 stack
-   npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
-   # Then use: /fdk-install
+   # Validate and publish
+   fdk validate
+   fdk publish
    ```
 
 3. **ONLY proceed to Step 1 if:**
-   - You have manually installed FDK 9.x + Node 19 for migration
+   - You have FDK 9.x or 10.x installed
    - OR you are reviewing/planning the migration without running FDK commands
+
+**Publishing Requirement:** Marketplace submission requires FDK 10.x + Node 24.x
 
 ## Step 1: Locate manifest.json files
 

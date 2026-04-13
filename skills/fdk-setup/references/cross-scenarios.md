@@ -1,14 +1,15 @@
 # Cross-Scenario FDK Setup: Detailed Subagent Specifications
 
-> **Platform 3.0 ONLY: This skill supports FDK 10.x + Node 24.x exclusively. FDK 9.x and Platform 2.3 are deprecated and unsupported.**
+> **Platform 3.0 Development:** Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Publishing requires FDK 10.x.
 
 ## Table of Contents
 
 1. [Existing Node Installation](#scenario-1-existing-node)
-2. [Troubleshooting Broken FDK](#scenario-2-troubleshooting)
-3. [Install Specific FDK 10.x Version](#scenario-3-install-specific-fdk-version)
-4. [Node PATH Mismatch](#scenario-4-node-path-mismatch)
-5. [Multiple Node Versions (Team Development)](#scenario-5-multiple-node-versions-team-development)
+2. [Downgrade to FDK 9.x (Deprecated)](#scenario-2-downgrade-to-fdk-9x)
+3. [Troubleshooting Broken FDK](#scenario-3-troubleshooting)
+4. [Install Specific FDK Version](#scenario-4-install-specific-fdk-version)
+5. [Node PATH Mismatch](#scenario-5-node-path-mismatch)
+6. [Multiple Node Versions (Team Development)](#scenario-6-multiple-node-versions-team-development)
 
 ---
 
@@ -152,7 +153,189 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 2: Troubleshooting Broken FDK
+## Scenario 2: Downgrade to FDK 9.x (Deprecated)
+
+### Context
+
+User needs to:
+- Downgrade from FDK 10.x to FDK 9.x
+- Work on legacy project requiring FDK 9.x
+- Understand deprecation timeline and limitations
+
+**DEPRECATION NOTICE:** FDK 9.x + Node 18.x support ends March 2026.
+
+### Goals
+
+- Show clear deprecation warning
+- Complete uninstall of FDK 10.x
+- Install Node 18 and FDK 9.x
+- Set global version to FDK 9.x
+- Warn that publishing requires FDK 10.x
+
+### Subagent Prompt
+
+```javascript
+Task({
+  subagent_type: "shell",
+  model: "fast",
+  description: "Downgrade FDK 10.x to 9.x with warnings",
+  prompt: `Downgrade from FDK 10.x (Node 24) to FDK 9.x (Node 18).
+
+DEPRECATION WARNING TO USER:
+echo "========================================="
+echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
+echo "========================================="
+echo ""
+echo "Support ends: March 2026"
+echo ""
+echo "Limitations:"
+echo "- Development: Allowed for Platform 3.0 apps"
+echo "- Publishing: NOT SUPPORTED (requires FDK 10.x + Node 24.x)"
+echo "- Recommendation: Use FDK 10.x for all new development"
+echo ""
+read -p "Continue with FDK 9.x downgrade? (y/N): " confirm
+if [[ $confirm != [yY] ]]; then
+  echo "Downgrade cancelled."
+  exit 0
+fi
+
+CURRENT SETUP DETECTION:
+1. Check current FDK:
+   fdk version
+
+2. Check current Node:
+   node --version
+
+3. Check nvm:
+   nvm --version
+
+FDK 10.x COMPLETE UNINSTALLATION:
+4. Switch to Node 24:
+   nvm use 24
+
+5. Completely uninstall FDK 10.x:
+   echo "Completely removing FDK 10.x..."
+   
+   npm uninstall @freshworks/fdk -g
+   rm -rf ~/.fdk
+   npm cache clean --force
+
+6. Verify complete removal:
+   fdk version 2>&1 | grep "command not found" && echo "FDK 10.x completely removed"
+   [ ! -d ~/.fdk ] && echo "~/.fdk directory removed"
+
+NODE 18 INSTALLATION:
+7. Check if Node 18 already installed:
+   nvm list | grep v18
+
+8. Install Node 18 if not present:
+   nvm install 18
+
+9. Switch to Node 18:
+   nvm use 18
+   node --version
+
+FDK 9.x INSTALLATION:
+10. Install FDK 9.x:
+    npm install -g @freshworks/fdk@9
+
+11. Verify installation:
+    fdk version
+
+GLOBAL VERSION SWITCH:
+12. Update default nvm alias to Node 18:
+    nvm alias default 18
+    nvm alias fdk 18
+
+13. Update shell config for global switch:
+    SHELL_RC="$HOME/.zshrc"
+    [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+    
+    cp "$SHELL_RC" "$SHELL_RC.bak.$(date +%Y%m%d_%H%M%S)"
+    
+    sed -i.tmp '/nvm use 24/d' "$SHELL_RC"
+    sed -i.tmp '/nvm use fdk/d' "$SHELL_RC"
+    rm -f "$SHELL_RC.tmp"
+    
+    echo "" >> "$SHELL_RC"
+    echo "# FDK 9.x (Node 18) - DEPRECATED, ends March 2026" >> "$SHELL_RC"
+    echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
+
+14. Source shell and verify:
+    source "$SHELL_RC"
+    bash -c 'fdk version' || zsh -c 'fdk version'
+
+VERIFICATION:
+15. Test FDK 9.x:
+    fdk version | grep "^9\."
+    node --version | grep "^v18\."
+    fdk validate --help
+
+DOWNGRADE REPORT:
+Print summary:
+FDK 10.x completely uninstalled
+Node 18 installed
+FDK 9.x installed
+Global version switched to FDK 9.x on Node 18
+nvm default set to Node 18
+Shell configuration updated
+
+IMPORTANT REMINDERS:
+- FDK 9.x support ends March 2026
+- Publishing requires FDK 10.x + Node 24.x
+- Use for development only
+- Node 24 still available: nvm use 24
+
+TO UPGRADE BACK TO FDK 10.x:
+  /fdk-upgrade
+
+ERROR HANDLING:
+- If FDK 10 uninstall fails: Use npm uninstall --force
+- If ~/.fdk removal fails: Check permissions
+- If FDK 9 install fails: Check npm registry access
+- If Node 18 install fails: Check nvm installation
+`
+})
+```
+
+### Expected Output
+
+```
+=========================================
+WARNING: FDK 9.x + Node 18.x DEPRECATED
+=========================================
+
+Support ends: March 2026
+
+Limitations:
+- Development: Allowed for Platform 3.0 apps
+- Publishing: NOT SUPPORTED (requires FDK 10.x + Node 24.x)
+- Recommendation: Use FDK 10.x for all new development
+
+Continue with FDK 9.x downgrade? (y/N): y
+
+FDK 10.x completely removed
+~/.fdk directory removed
+Node 18 installed: v18.20.0
+FDK 9.8.2 installed
+Global version switched to FDK 9.x on Node 18
+
+Downgrade Complete!
+
+Previous: FDK 10.x + Node 24.x
+Current:  FDK 9.x + Node 18.x
+
+IMPORTANT REMINDERS:
+- FDK 9.x support ends March 2026
+- Publishing requires FDK 10.x + Node 24.x
+- Use for development only
+
+To upgrade back: /fdk-upgrade
+```
+
+---
+
+## Scenario 3: Troubleshooting Broken FDK
 
 ### Context
 
@@ -356,7 +539,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 3: Install Specific FDK 10.x Version
+## Scenario 4: Install Specific FDK Version
 
 ### Context
 
@@ -423,7 +606,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 4: Node PATH Mismatch
+## Scenario 5: Node PATH Mismatch
 
 ### Context
 
@@ -516,7 +699,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 5: Multiple Node Versions (Team Development)
+## Scenario 6: Multiple Node Versions (Team Development)
 
 ### Context
 
@@ -634,10 +817,11 @@ ERROR HANDLING:
 | Scenario | macOS | Windows | Linux |
 |----------|-------|---------|-------|
 | 1. Existing Node | Supported | Supported | Supported |
-| 2. Troubleshooting | Supported | Supported | Supported |
-| 3. Specific FDK 10.x Version | Supported | Supported | Supported |
-| 4. Node PATH Mismatch | Supported | Supported | Supported |
-| 5. Multiple Node Versions | Supported | Supported | Supported |
+| 2. Downgrade to FDK 9.x | Supported | Supported | Supported |
+| 3. Troubleshooting | Supported | Supported | Supported |
+| 4. Specific FDK Version | Supported | Supported | Supported |
+| 5. Node PATH Mismatch | Supported | Supported | Supported |
+| 6. Multiple Node Versions | Supported | Supported | Supported |
 
 ---
 
@@ -646,7 +830,8 @@ ERROR HANDLING:
 | Need | Use Scenario |
 |------|--------------|
 | Already have Node installed | Scenario 1 |
-| FDK not working | Scenario 2 |
-| Install specific FDK 10.x version | Scenario 3 |
-| Node PATH issues | Scenario 4 |
-| Multiple projects, different Node versions | Scenario 5 |
+| Downgrade to FDK 9.x (deprecated) | Scenario 2 |
+| FDK not working | Scenario 3 |
+| Install specific FDK version | Scenario 4 |
+| Node PATH issues | Scenario 5 |
+| Multiple projects, different Node versions | Scenario 6 |
