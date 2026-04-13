@@ -1,14 +1,13 @@
 # Cross-Scenario FDK Setup: Detailed Subagent Specifications
 
-> **Comprehensive subagent prompts for all FDK setup scenarios including backward compatibility, migrations, dual environments, and troubleshooting.**
+> **Comprehensive subagent prompts for all FDK setup scenarios including migrations, version management, and troubleshooting. Users should upgrade or downgrade FDK versions, not maintain multiple FDK installations.**
 
 ## Table of Contents
 
 1. [Legacy Migration (FDK 9 → 10)](#scenario-1-legacy-migration)
-2. [Dual FDK Setup (9.x + 10.x)](#scenario-2-dual-fdk-setup)
-3. [Existing Node Installation](#scenario-3-existing-node)
-4. [Downgrade to Legacy FDK](#scenario-4-downgrade-to-legacy)
-5. [Troubleshooting Broken FDK](#scenario-5-troubleshooting)
+2. [Existing Node Installation](#scenario-2-existing-node)
+3. [Downgrade to Legacy FDK](#scenario-3-downgrade-to-legacy)
+4. [Troubleshooting Broken FDK](#scenario-4-troubleshooting)
 6. [Install Specific FDK Version](#scenario-6-install-specific-fdk-version)
 7. [Node PATH Mismatch](#scenario-7-node-path-mismatch)
 8. [Multiple Node Versions (Team Development)](#scenario-8-multiple-node-versions-team-development)
@@ -156,170 +155,7 @@ Default: Node 24 (FDK 10)
 
 ---
 
-## Scenario 2: Dual FDK Setup (9.x + 10.x)
-
-### Context
-
-User needs:
-- FDK 9.x for legacy Platform 2.x apps
-- FDK 10.x for new Platform 3.0 apps
-- Easy switching between versions
-
-### Strategy
-
-Use nvm + shell aliases to maintain two separate FDK installations:
-- `fdk` → FDK 10.x on Node 24 (default)
-- `fdk9` → FDK 9.x on Node 18 (legacy)
-
-### Subagent Prompt
-
-```javascript
-Task({
-  subagent_type: "shell",
-  model: "fast",
-  description: "Install dual FDK setup (9.x + 10.x)",
-  prompt: `Set up dual FDK environment: FDK 9.x on Node 18 + FDK 10.x on Node 24.
-
-CONTEXT:
-- User needs both FDK 9.x (legacy) and FDK 10.x (new apps)
-- Must be able to switch easily between versions
-- No conflicts between installations
-
-STRATEGY:
-Use nvm + npm for version isolation + shell aliases for easy switching
-
-NODE VERSIONS SETUP:
-1. Install Node 18:
-   nvm install 18
-
-2. Install Node 24:
-   nvm install 24
-
-3. Create nvm aliases:
-   nvm alias fdk9 18
-   nvm alias fdk10 24
-
-4. Verify both installed:
-   nvm list
-
-FDK 9.x INSTALLATION (Node 18):
-5. Switch to Node 18:
-   nvm use 18
-
-6. Install FDK 9.8.2:
-   npm install @freshworks/fdk@9.8.2 -g
-
-7. Get Node 18 path:
-   NODE18_PATH=$(nvm which 18 | sed 's|/bin/node||')
-   echo "Node 18 path: $NODE18_PATH"
-
-8. Rename FDK binary to fdk9:
-   mv "$NODE18_PATH/bin/fdk" "$NODE18_PATH/bin/fdk9"
-
-9. Verify fdk9:
-   "$NODE18_PATH/bin/fdk9" version
-
-FDK 10.x INSTALLATION (Node 24):
-10. Switch to Node 24:
-    nvm use 24
-
-11. Install FDK 10.x:
-    npm install https://cdn.freshdev.io/fdk/latest.tgz -g
-
-12. Verify fdk (10.x):
-    fdk version
-
-SHELL ALIASES SETUP:
-13. Get Node 18 path for alias:
-    NODE18_BIN=$(nvm which 18 | sed 's|/node|/fdk9|')
-
-14. Add aliases to ~/.zshrc:
-    cat >> ~/.zshrc << 'EOF'
-
-# Dual FDK Setup
-alias fdk9="nvm use 18 > /dev/null 2>&1 && $NODE18_BIN"
-alias fdk10="nvm use 24 > /dev/null 2>&1 && fdk"
-alias fdk="fdk10"
-
-# Platform environment switchers
-platform2() {
-  nvm use 18
-  export FDK_VERSION="9.x (Platform 2.x)"
-  echo "Switched to Platform 2.x: FDK 9.x on Node 18"
-}
-
-platform3() {
-  nvm use 24
-  export FDK_VERSION="10.x (Platform 3.0)"
-  echo "Switched to Platform 3.0: FDK 10.x on Node 24"
-}
-
-# Default to Platform 3.0
-platform3 > /dev/null 2>&1
-EOF
-
-15. Source shell config:
-    source ~/.zshrc
-
-VERIFICATION:
-16. Test FDK 10 (default):
-    fdk version
-
-17. Test FDK 9 (legacy):
-    fdk9 version
-
-18. Test switching:
-    platform2
-    fdk9 version
-    platform3
-    fdk version
-
-SETUP REPORT:
-Print summary:
-✓ Node 18 installed with FDK 9.8.2
-✓ Node 24 installed with FDK 10.x
-✓ Shell aliases configured
-
-USAGE:
-- fdk → FDK 10.x on Node 24 (default)
-- fdk9 → FDK 9.x on Node 18 (legacy)
-- platform2 → switch to Platform 2.x environment
-- platform3 → switch to Platform 3.0 environment
-
-ERROR HANDLING:
-- If binary rename fails: Check permissions, use sudo if needed
-- If alias creation fails: Manually add to ~/.zshrc
-- If version conflict: Uninstall all FDK versions and retry
-`
-})
-```
-
-### Expected Output
-
-```
-✓ Node 18.20.0 installed
-✓ Node 24.11.0 installed
-✓ nvm aliases: fdk9 → 18, fdk10 → 24
-✓ FDK 9.8.2 installed on Node 18 (as fdk9)
-✓ FDK 10.11.0 installed on Node 24 (as fdk)
-✓ Shell aliases configured
-
-Dual FDK Setup Complete!
-
-Commands:
-  fdk        → FDK 10.x on Node 24 (default)
-  fdk9       → FDK 9.x on Node 18 (legacy)
-  platform2  → Switch to Platform 2.x environment
-  platform3  → Switch to Platform 3.0 environment
-
-Test:
-  $ fdk version   # 10.11.0
-  $ fdk9 version  # 9.8.2
-```
-
----
-
-## Scenario 3: Existing Node Installation
+## Scenario 2: Existing Node Installation
 
 ### Context
 
@@ -459,7 +295,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 4: Downgrade to Legacy FDK
+## Scenario 3: Downgrade to Legacy FDK
 
 ### Context
 
@@ -483,9 +319,9 @@ CONTEXT:
 - Should preserve ability to upgrade back
 
 WARNING TO USER:
-echo "⚠️  WARNING: FDK 9.x is for Platform 2.x (legacy) apps only."
+echo "⚠️  WARNING: FDK 9.x is DEPRECATED and for legacy apps only."
 echo "⚠️  Platform 3.0 apps require FDK 10.x."
-echo "⚠️  Consider dual setup (Scenario 2) instead of full downgrade."
+echo "⚠️  You can upgrade back anytime with: /fdk-upgrade"
 echo ""
 read -p "Continue with downgrade? (y/N): " confirm
 if [[ $confirm != [yY] ]]; then
@@ -510,8 +346,8 @@ NODE 18 INSTALLATION:
 5. Install Node 18 if not present:
    nvm install 18
 
-6. Create fdk9 alias:
-   nvm alias fdk9 18
+6. Create fdk alias:
+   nvm alias fdk 18
 
 FDK 10 COMPLETE UNINSTALLATION (IMPROVED):
 7. Switch to Node 24:
@@ -551,7 +387,7 @@ FDK 9.8.2 INSTALLATION:
 GLOBAL VERSION SWITCH (IMPROVED):
 13. Update default nvm alias to Node 18:
     nvm alias default 18
-    nvm alias fdk9 18
+    nvm alias fdk 18
 
 14. Update shell config for global switch:
     SHELL_RC="$HOME/.zshrc"
@@ -622,7 +458,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 5: Troubleshooting Broken FDK
+## Scenario 4: Troubleshooting Broken FDK
 
 ### Context
 
@@ -826,7 +662,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 6: Install Specific FDK Version
+## Scenario 5: Install Specific FDK Version
 
 ### Context
 
@@ -893,7 +729,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 7: Node PATH Mismatch
+## Scenario 6: Node PATH Mismatch
 
 ### Context
 
@@ -986,7 +822,7 @@ ERROR HANDLING:
 
 ---
 
-## Scenario 8: Multiple Node Versions (Team Development)
+## Scenario 7: Multiple Node Versions (Team Development)
 
 ### Context
 
@@ -1103,14 +939,13 @@ ERROR HANDLING:
 
 | Scenario | macOS | Windows | Linux |
 |----------|-------|---------|-------|
-| 1. Legacy Migration | ✅ | ✅ | ✅ |
-| 2. Dual FDK | ✅ | ✅ | ✅ |
-| 3. Existing Node | ✅ | ✅ | ✅ |
-| 4. Downgrade | ✅ | ✅ | ✅ |
-| 5. Troubleshooting | ✅ | ✅ | ✅ |
-| 6. Specific Version | ✅ | ✅ | ✅ |
-| 7. Node PATH Mismatch | ✅ | ✅ | ✅ |
-| 8. Multiple Node Versions | ✅ | ✅ | ✅ |
+| 1. Legacy Migration (FDK 9→10) | ✅ | ✅ | ✅ |
+| 2. Existing Node | ✅ | ✅ | ✅ |
+| 3. Downgrade | ✅ | ✅ | ✅ |
+| 4. Troubleshooting | ✅ | ✅ | ✅ |
+| 5. Specific Version | ✅ | ✅ | ✅ |
+| 6. Node PATH Mismatch | ✅ | ✅ | ✅ |
+| 7. Multiple Node Versions | ✅ | ✅ | ✅ |
 
 ---
 
@@ -1118,11 +953,10 @@ ERROR HANDLING:
 
 | Need | Use Scenario |
 |------|--------------|
-| Upgrade from FDK 9 | Scenario 1 |
-| Keep both FDK 9 & 10 | Scenario 2 |
-| Already have Node installed | Scenario 3 |
-| Work on legacy app | Scenario 4 |
-| FDK not working | Scenario 5 |
-| Install specific FDK version | Scenario 6 |
-| Node PATH issues | Scenario 7 |
-| Multiple projects, different Node versions | Scenario 8 |
+| Upgrade from FDK 9 to 10 | Scenario 1 |
+| Already have Node installed | Scenario 2 |
+| Downgrade to legacy FDK | Scenario 3 (use /fdk-downgrade) |
+| FDK not working | Scenario 4 |
+| Install specific FDK version | Scenario 5 |
+| Node PATH issues | Scenario 6 |
+| Multiple projects, different Node versions | Scenario 7 |
