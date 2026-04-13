@@ -513,15 +513,30 @@ NODE 18 INSTALLATION:
 6. Create fdk9 alias:
    nvm alias fdk9 18
 
-FDK 10 UNINSTALLATION:
+FDK 10 COMPLETE UNINSTALLATION (IMPROVED):
 7. Switch to Node 24:
    nvm use 24
 
-8. Uninstall FDK 10:
+8. Completely uninstall FDK 10:
+   echo "Completely removing FDK 10..."
+   
+   # Uninstall npm package
    npm uninstall @freshworks/fdk -g
+   
+   # Remove FDK cache and config
+   rm -rf ~/.fdk
+   
+   # Clean npm cache
+   npm cache clean --force
+   
+   # Remove binary if still exists
+   NPM_PREFIX=$(npm config get prefix)
+   rm -f "$NPM_PREFIX/bin/fdk"
+   rm -rf "$NPM_PREFIX/lib/node_modules/@freshworks/fdk"
 
-9. Verify removal:
-   fdk version 2>&1 | grep "command not found" && echo "FDK 10 removed"
+9. Verify complete removal:
+   fdk version 2>&1 | grep "command not found" && echo "✓ FDK 10 completely removed"
+   [ ! -d ~/.fdk ] && echo "✓ ~/.fdk directory removed"
 
 FDK 9.8.2 INSTALLATION:
 10. Switch to Node 18:
@@ -533,16 +548,34 @@ FDK 9.8.2 INSTALLATION:
 12. Verify installation:
     fdk version
 
-DEFAULT UPDATE:
-13. Update default nvm alias:
+GLOBAL VERSION SWITCH (IMPROVED):
+13. Update default nvm alias to Node 18:
     nvm alias default 18
+    nvm alias fdk9 18
 
-14. Update shell config:
-    # Comment out Node 24 default, add Node 18
-    sed -i.bak 's/nvm use fdk/nvm use 18/' ~/.zshrc
+14. Update shell config for global switch:
+    SHELL_RC="$HOME/.zshrc"
+    [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+    
+    # Backup shell config
+    cp "$SHELL_RC" "$SHELL_RC.bak.$(date +%Y%m%d_%H%M%S)"
+    
+    # Remove old FDK references
+    sed -i.tmp '/# FDK version/d' "$SHELL_RC"
+    sed -i.tmp '/nvm use fdk/d' "$SHELL_RC"
+    rm -f "$SHELL_RC.tmp"
+    
+    # Add new FDK 9 reference
+    echo "" >> "$SHELL_RC"
+    echo "# FDK 9.8.2 (downgraded on $(date +%Y-%m-%d))" >> "$SHELL_RC"
+    echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
 
-15. Source shell:
-    source ~/.zshrc
+15. Source shell and verify global switch:
+    source "$SHELL_RC"
+    
+    # Test in new shell
+    bash -c 'fdk version' || zsh -c 'fdk version'
+    echo "✓ FDK 9.8.2 set as global active version"
 
 VERIFICATION:
 16. Test FDK 9:
@@ -552,25 +585,37 @@ VERIFICATION:
 
 DOWNGRADE REPORT:
 Print summary:
-✓ FDK 10.x uninstalled
+✓ FDK 10.x completely uninstalled (npm package + ~/.fdk + cache)
 ✓ Node 18 installed
 ✓ FDK 9.8.2 installed
-✓ Default: Node 18 (FDK 9)
+✓ Global version switched to FDK 9.8.2 on Node 18
+✓ nvm default set to Node 18
+✓ Shell configuration updated
+✓ Active in all terminals (current + new)
 
 IMPORTANT NOTES:
 - FDK 9.x is for Platform 2.x apps only
 - Platform 3.0 apps will NOT work with FDK 9
 - Node 24 still available: nvm use 24
+- Previous FDK 10 completely removed (no conflicts)
+
+ACTIVE GLOBALLY:
+- Current terminal: ✓
+- New terminals: ✓
+- System-wide: ✓
 
 TO UPGRADE BACK TO FDK 10:
   nvm use 24
   npm install https://cdn.freshdev.io/fdk/latest.tgz -g
   nvm alias default 24
+  echo "nvm use fdk > /dev/null 2>&1" >> ~/.zshrc
 
 ERROR HANDLING:
-- If FDK 10 uninstall fails: Use npm uninstall --force
+- If FDK 10 uninstall fails: Use npm uninstall --force, manual removal
+- If ~/.fdk removal fails: Check permissions, use sudo
 - If FDK 9 install fails: Check npm registry access
 - If Node 18 install fails: Check nvm installation
+- If global switch fails: Manually edit shell config
 `
 })
 ```

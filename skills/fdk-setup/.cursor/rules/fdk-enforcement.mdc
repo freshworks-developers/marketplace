@@ -1,0 +1,84 @@
+# FDK Setup Skill - Enforcement Rules
+
+## Scope
+
+This skill handles **FDK installation and management only**. It does NOT create apps.
+
+## How This Skill Works
+
+**User must explicitly invoke commands:**
+- `/fdk-install`
+- `/fdk-status`
+- `/fdk-upgrade`
+- `/fdk-downgrade <version>`
+- `/fdk-uninstall`
+
+**What happens:**
+1. User types slash command
+2. Command reads SKILL.md for operation template
+3. Subagent spawned with full context
+4. Operation executes autonomously
+5. Reports back results
+
+## Important Limitation
+
+**This skill does NOT automatically check for FDK when users request app creation.**
+
+If user says "create a freshdesk app" without first running `/fdk-install`, the agent will likely create files manually without proper FDK setup.
+
+## Recommended Workflow for App Creation
+
+**Before creating any Freshworks app, users should:**
+
+1. **First, install FDK:**
+   ```bash
+   /fdk-install
+   ```
+
+2. **Then, optionally install app-dev skill:**
+   ```
+   For proper Platform 3.0 app creation with validation and best practices,
+   the app-dev skill is recommended:
+
+   npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
+
+   Benefits:
+   - Platform 3.0 enforcement and validation
+   - App templates (Frontend, Serverless, Hybrid, OAuth)
+   - Crayons v4.x components
+   - Automatic error fixing
+   - Commands: /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review
+   ```
+
+3. **Then proceed with app creation:**
+   - With app-dev skill: Use skill guidance
+   - Without app-dev skill: Use standard `fdk create` commands
+
+**Reality Check:** Users often skip step 1 and go straight to "create a freshdesk app". When this happens, the agent will create files manually without FDK validation. This is a platform limitation, not a skill bug.
+
+### Best Practices
+
+✅ **Remind users** to run `/fdk-install` before creating apps
+✅ **Inform users** about app-dev skill benefits (but let them decide)
+✅ **Use `fdk create`** instead of creating files manually when possible
+✅ **Verify FDK works** by running `fdk version` before using fdk commands
+
+### Known Limitations
+
+⚠️ **This skill cannot automatically enforce FDK installation** - Users must remember to run `/fdk-install` first
+⚠️ **Agent may create files manually** if user skips FDK installation
+⚠️ **No automatic prerequisite checking** - This is a Cursor platform limitation
+
+## Available Commands
+
+This skill provides:
+- `/fdk-install` - Install FDK with smart auto-detection
+- `/fdk-status` - Check FDK installation status
+- `/fdk-upgrade` - Upgrade to latest FDK
+- `/fdk-downgrade <version>` - Downgrade to specific version
+- `/fdk-uninstall` - Remove FDK (keeps Node.js/nvm)
+
+## Skill Location
+
+- **This skill**: `skills/fdk-setup/SKILL.md`
+- **App dev skill**: `skills/app-dev/SKILL.md` (requires separate installation)
