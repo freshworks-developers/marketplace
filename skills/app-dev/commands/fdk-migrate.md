@@ -41,7 +41,10 @@ You are helping migrate a Freshworks app from Platform 2.x to Platform 3.0. Foll
      Current version: [detected version]
      
      To fix (if you have FDK 10.x):
-     Use /fdk-downgrade command to downgrade to FDK 9.x
+     1. Install the fdk-setup skill:
+        npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
+     
+     2. Use the /fdk-downgrade command to downgrade to FDK 9.x
      ```
 
 3. **ONLY proceed to Step 1 if BOTH conditions are met:**
