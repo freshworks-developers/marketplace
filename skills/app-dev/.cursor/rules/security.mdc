@@ -1,0 +1,215 @@
+---
+name: security
+description: Security enforcement rules for Freshworks Platform 3.0 app development. Apply these rules to EVERY app to prevent vulnerabilities.
+alwaysApply: true
+---
+
+# 🔒 Security Enforcement - ZERO TOLERANCE
+
+Security is as critical as Platform 3.0 compliance. Apply these rules to EVERY app.
+
+## 🔴 CRITICAL: Input Validation & Command Injection Prevention
+
+**All SMI functions MUST validate input. Use allowlists for operations.**
+
+### Safe Patterns - ALWAYS USE:
+
+```javascript
+// ✅ SAFE - Allowlisted operations only
+const ALLOWED_OPERATIONS = ['status', 'list', 'health'];
+
+exports = {
+  performOperation: async function(args) {
+    if (!ALLOWED_OPERATIONS.includes(args.operation)) {
+      return { success: false, error: 'Operation not allowed' };
+    }
+    // Execute only pre-defined, safe operations
+    return await executeAllowedOperation(args.operation);
+  }
+};
+
+// ✅ SAFE - Parameterized operations with validation
+exports = {
+  getData: async function(args) {
+    const id = parseInt(args.id, 10);
+    if (isNaN(id) || id < 0) {
+      return { success: false, error: 'Invalid ID' };
+    }
+    // Use validated input
+    return await fetchDataById(id);
+  }
+};
+
+// ✅ SAFE - String sanitization
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/[<>\"\'&]/g, '');
+}
+```
+
+### Input Validation Checklist:
+- [ ] Validate all input types (string, number, boolean)
+- [ ] Sanitize strings (remove/escape special characters)
+- [ ] Use allowlists for enumerated values
+- [ ] Reject unexpected or malformed input
+- [ ] Never trust client-provided data
+
+---
+
+## 🟠 HIGH: Logging Security - No Sensitive Data
+
+**Log only operation status and non-sensitive identifiers.**
+
+### Safe Logging Patterns:
+
+```javascript
+// ✅ SAFE - Log only confirmation, no sensitive data
+onAppInstallHandler: function() {
+  console.log('App installed successfully');
+}
+
+// ✅ SAFE - Log only non-sensitive, specific fields
+onTicketCreateHandler: function(args) {
+  console.log('Ticket created:', args.data?.ticket?.id);
+}
+
+// ✅ SAFE - Sanitized error logging
+try {
+  await performOperation();
+} catch (e) {
+  console.error('Operation failed:', e.message);
+}
+```
+
+### Logging Security Checklist:
+- [ ] Never log full configuration objects
+- [ ] Never log full request objects in handlers
+- [ ] Never log tokens, passwords, API keys, or secrets
+- [ ] Log only operation status and non-sensitive identifiers
+- [ ] Sanitize error messages before logging (use e.message only)
+
+---
+
+## 🟡 MEDIUM: XSS Prevention - Safe DOM Manipulation
+
+**Use textContent for dynamic data. Sanitize before innerHTML.**
+
+### Safe Patterns:
+
+```javascript
+// ✅ SAFE - Use textContent for plain text
+el.textContent = response.data;
+
+// ✅ SAFE - Use Crayons components with safe properties
+el.innerHTML = '<fw-inline-message type="success">Operation completed</fw-inline-message>';
+
+// ✅ SAFE - Sanitize dynamic content before rendering
+function sanitizeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+el.innerHTML = '<div>' + sanitizeHTML(userData) + '</div>';
+
+// ✅ SAFE - Create elements programmatically
+const div = document.createElement('div');
+div.textContent = response.data;
+container.appendChild(div);
+
+// ✅ SAFE - Display with fw-inline-message
+const msg = document.createElement('fw-inline-message');
+msg.setAttribute('type', 'success');
+msg.textContent = result.message;
+resultEl.appendChild(msg);
+```
+
+### XSS Prevention Checklist:
+- [ ] Prefer `textContent` over `innerHTML` for dynamic data
+- [ ] Use Crayons components with safe string props
+- [ ] Sanitize ALL user/API data before innerHTML insertion
+- [ ] Create DOM elements programmatically when possible
+
+---
+
+## 🟡 MEDIUM: Sensitive Data Handling
+
+**Store secrets server-side. Use secure delivery for credentials.**
+
+### Safe Patterns:
+
+```javascript
+// ✅ SAFE - Send credentials via secure channel only
+await client.request.invoke('sendSecureEmail', {
+  to: requesterEmail,
+  temporaryAccess: true,
+  expiresIn: '24h'
+});
+await client.interface.trigger('addNote', {
+  content: 'Temporary access sent to requester email. Expires in 24h.',
+  isPrivate: true
+});
+
+// ✅ SAFE - Use server-side storage for secrets
+await $db.set('integration_config', {
+  configured: true,
+  timestamp: Date.now()
+});
+
+// ✅ SAFE - Mask sensitive display
+const maskedKey = '****' + apiKey.slice(-4);
+el.textContent = 'API Key: ' + maskedKey;
+```
+
+### Sensitive Data Checklist:
+- [ ] Never store secrets in ticket notes or comments
+- [ ] Never display full credentials in UI
+- [ ] Use secure delivery mechanisms (email with expiry)
+- [ ] Store secrets server-side using $db
+- [ ] Mask sensitive data in displays (show only last 4 chars)
+
+---
+
+## 🛡️ Security Pre-Generation Checklist
+
+**BEFORE generating ANY app code, verify ALL security requirements:**
+
+### Input Validation
+- [ ] All SMI functions validate their arguments
+- [ ] Allowlists used for enumerated operations
+- [ ] Type checking for all numeric/boolean inputs
+- [ ] String inputs sanitized
+
+### Logging Security
+- [ ] No logging of configuration objects
+- [ ] No logging of full request objects
+- [ ] No logging of tokens, passwords, or secrets
+- [ ] Error logging uses e.message only
+
+### XSS Prevention
+- [ ] `textContent` used for dynamic text
+- [ ] `innerHTML` only with sanitized or static content
+- [ ] Crayons components used for UI
+
+### Sensitive Data
+- [ ] No secrets in ticket notes
+- [ ] Secure delivery for generated credentials
+- [ ] Secrets stored server-side only
+- [ ] Sensitive displays masked
+
+**IF ANY SECURITY RULE IS VIOLATED → STOP → REGENERATE WITH SECURE PATTERNS**
+
+---
+
+## Quick Reference: Security Patterns
+
+| Category | Safe Pattern |
+|----------|-------------|
+| Input Validation | `ALLOWED_OPS.includes(args.op)` |
+| Number Validation | `parseInt(args.id, 10)` with `isNaN` check |
+| String Sanitization | `str.replace(/[<>\"\'&]/g, '')` |
+| Safe Logging | `console.log('Done:', args.data?.ticket?.id)` |
+| Error Logging | `console.error('Failed:', e.message)` |
+| Safe DOM | `el.textContent = data` |
+| Sanitized HTML | `sanitizeHTML(data)` before innerHTML |
+| Secret Storage | `$db.set('config', { ... })` |
+| Masked Display | `'****' + key.slice(-4)` |
