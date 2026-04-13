@@ -1,21 +1,8 @@
 ---
 name: fdk-downgrade
-description: Downgrade FDK to specific version
-always: true
-argument-hint: "<version>"
+description: Downgrade FDK 10.x to 9.x (deprecated, ends March 2026)
 ---
 
-# FDK Downgrade
+Downgrade from FDK 10.x (Node 24) to FDK 9.x (Node 18) with deprecation warnings.
 
-Execute Operation 3 from `../SKILL.md`.
-
-## Execution
-
-```javascript
-Task({
-  subagent_type: "shell",
-  model: "fast",
-  description: "Downgrade FDK to version",
-  prompt: `[Use Operation 3 template from ../SKILL.md with target version]`
-})
-```
+**WARNING:** FDK 9.x support ends March 2026. Publishing requires FDK 10.x.

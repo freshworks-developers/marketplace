@@ -1,24 +1,31 @@
 <h1 align="center">FDK Setup</h1>
 
-<p align="center"><strong>Automated Freshworks FDK installation and management</strong></p>
+<p align="center"><strong>Platform 3.0 Development - FDK 10.x (recommended) & FDK 9.x (deprecated)</strong></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-3.0-blue?style=for-the-badge" alt="Platform 3.0">
   <img src="https://img.shields.io/badge/Cursor-Plugin-00a67e?style=for-the-badge" alt="Cursor Plugin">
-  <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=for-the-badge" alt="FDK">
+  <img src="https://img.shields.io/badge/FDK-10.x_|_9.x-0052cc?style=for-the-badge" alt="FDK">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/Node.js-24.x_(recommended)-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 24.x">
+  <img src="https://img.shields.io/badge/Node.js-18.x_(deprecated)-orange?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 18.x">
   <img src="https://img.shields.io/badge/macOS-Supported-000000?style=flat-square&logo=apple&logoColor=white" alt="macOS">
   <img src="https://img.shields.io/badge/Windows-Supported-0078D6?style=flat-square&logo=windows&logoColor=white" alt="Windows">
 </p>
 
-<p align="center">Manual commands for FDK lifecycle management on macOS and Windows.<br>Install, upgrade, downgrade, and uninstall FDK using <strong>subagents</strong> with <strong>nvm</strong> and <strong>Node.js 24</strong>.</p>
+<p align="center">Manual commands for FDK lifecycle management on macOS and Windows.<br>Install, upgrade, downgrade, and uninstall FDK using <strong>subagents</strong> with <strong>nvm</strong>.</p>
 
-<p align="center"><code>Manual Commands</code> · <code>Subagent-Based</code> · <code>nvm</code> · <code>Node.js 24</code> · <code>Autonomous Execution</code></p>
+<p align="center"><code>Platform 3.0</code> · <code>FDK 10.x Recommended</code> · <code>FDK 9.x Allowed</code> · <code>Publishing Requires FDK 10.x</code></p>
 
-> **⚠️ IMPORTANT**: This skill provides manual commands. You must explicitly run `/fdk-install` before creating Freshworks apps. The skill does NOT automatically check for FDK prerequisites.
+> **FDK VERSION SUPPORT**: 
+> - **FDK 10.x + Node 24.x** (Recommended) - Required for publishing, supported until Dec 2027
+> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends March 2026
+
+> **PLATFORM 3.0 ONLY**: Platform 2.3 is deprecated. Both FDK versions support Platform 3.0.
+
+> **IMPORTANT**: This skill provides manual commands. You must explicitly run `/fdk-install` before creating Freshworks apps. The skill does NOT automatically check for FDK prerequisites.
 
 ## Install
 
@@ -55,8 +62,29 @@ Check available commands:
 ```bash
 # In Cursor/Claude chat, type:
 /fdk-
-# You should see 5 commands in autocomplete
+# You should see 4 commands in autocomplete
 ```
+
+## FDK Version Support Policy
+
+**Platform 3.0 Development:** Both FDK 10.x and FDK 9.x work with Platform 3.0.
+
+### FDK 10.x + Node 24.x (Recommended)
+- **Status:** Active, supported until December 2027
+- **Use for:** All new development
+- **Publishing:** Required for marketplace submission
+- **Command:** `/fdk-install` (default)
+
+### FDK 9.x + Node 18.x (Deprecated)
+- **Status:** Deprecated, support ends March 2026
+- **Use for:** Development only (legacy projects)
+- **Publishing:** NOT SUPPORTED
+- **Command:** `/fdk-downgrade` (shows deprecation warning)
+- **Warning:** Automatic prompt before installation
+
+### Platform 2.3 (Rejected)
+- **Status:** Deprecated, no support
+- **This skill:** Platform 3.0 ONLY
 
 ## Usage
 
@@ -65,29 +93,42 @@ Check available commands:
 **You must explicitly run these commands:**
 
 ```bash
-/fdk-install                    # Smart install: auto-detects Node, asks only when needed
-/fdk-upgrade                    # Upgrade to latest FDK (preserves Node version)
-/fdk-downgrade 10.0.0           # Downgrade + GLOBAL SWITCH + complete cleanup
+/fdk-install                    # Install FDK 10.x + Node 24 (recommended)
+/fdk-upgrade                    # Upgrade to latest FDK 10.x
+/fdk-downgrade                  # Downgrade to FDK 9.x + Node 18 (shows deprecation warning)
 /fdk-uninstall                  # Complete removal: npm + ~/.fdk + cache + shell config
 /fdk-status                     # Check installation status
 ```
 
-### 🎯 Key Improvements
+### Key Features
+
+**Install (`/fdk-install`):**
+- Installs FDK 10.x with Node.js 24.x via nvm (default)
+- Auto-detects existing Node installations
+- Sets up global persistence across all terminals
+- Comprehensive verification in new shells
+
+**Upgrade (`/fdk-upgrade`):**
+- Upgrades to latest FDK 10.x version
+- Complete uninstall of previous version before upgrade
+- Removes ~/.fdk directory to prevent conflicts
+- Preserves Node 24 configuration
 
 **Downgrade (`/fdk-downgrade`):**
-- ✅ **Complete uninstall** of previous version (no conflicts)
-- ✅ **Removes ~/.fdk** directory (cache, config, references)
-- ✅ **Global version switch** - active in all terminals
-- ✅ **Sets nvm default** for persistence across sessions
-- ✅ **Updates shell config** automatically
+- Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
+- Shows deprecation warning (FDK 9.x ends March 2026)
+- Requires confirmation before proceeding
+- Complete cleanup of FDK 10.x before installing 9.x
+- Warns that publishing requires FDK 10.x
+- Use for development only
 
 **Uninstall (`/fdk-uninstall`):**
-- ✅ **Complete removal**: npm package + binary + node_modules
-- ✅ **Removes ~/.fdk** directory completely
-- ✅ **Cleans npm cache** to prevent reinstall issues
-- ✅ **Removes shell config** references (with backup)
-- ✅ **Manual binary removal** if npm uninstall fails
-- ✅ **Comprehensive verification** of complete removal
+- Complete removal: npm package + binary + node_modules
+- Removes ~/.fdk directory completely
+- Cleans npm cache to prevent reinstall issues
+- Removes shell config references (with backup)
+- Manual binary removal if npm uninstall fails
+- Comprehensive verification of complete removal
 
 ### ⚠️ IMPORTANT: Run Before Creating Apps
 

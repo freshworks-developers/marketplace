@@ -1,9 +1,9 @@
 ---
 name: fdk-setup
-description: Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when user explicitly requests FDK installation, upgrade, downgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status. Also use when user mentions "install fdk", "setup fdk", "check fdk status", or encounters "fdk command not found" errors. Installs FDK 10 with Node.js 24 for Platform 3.0 app development.
-compatibility: Node.js 24.x, FDK 10.x, nvm
+description: Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Use when user explicitly requests FDK installation, upgrade, downgrade, uninstall, or status check. Provides slash commands /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status. Publishing to marketplace requires FDK 10.x + Node 24.
+compatibility: Node.js 24.x (FDK 10.x) or Node.js 18.x (FDK 9.x), nvm, Platform 3.0
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
-allowed-tools: shell task read write strreplace glob grep
+allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 ---
 
 # FDK Setup
@@ -22,31 +22,51 @@ Parse user request and execute the appropriate operation:
 
 | Trigger | Operation |
 |---------|-----------|
-| "install fdk", "setup fdk", `/fdk-install` | Install |
-| "upgrade fdk", "update fdk", `/fdk-upgrade` | Upgrade |
-| "downgrade fdk", "use fdk X.X.X", `/fdk-downgrade` | Downgrade |
+| "install fdk", "setup fdk", `/fdk-install` | Install (FDK 10.x by default) |
+| "upgrade fdk", "update fdk", `/fdk-upgrade` | Upgrade (to latest FDK 10.x) |
+| "downgrade fdk", "use fdk 9", `/fdk-downgrade` | Downgrade (FDK 10.x → 9.x with warnings) |
 | "uninstall fdk", "remove fdk", `/fdk-uninstall` | Uninstall |
 | "check fdk", "fdk status", `/fdk-status` | Status |
 
+**FDK 9.x Deprecation Warning (Always show when installing/downgrading to FDK 9.x):**
+```
+WARNING: FDK 9.x + Node 18.x is DEPRECATED (ends March 2026)
+
+- Development: Allowed for Platform 3.0 apps
+- Publishing: NOT SUPPORTED - requires FDK 10.x + Node 24.x
+- Recommendation: Use FDK 10.x for all new development
+
+Continue with FDK 9.x installation? (y/N)
+```
+
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
-- **Platform 3.0 ONLY** - NEVER install FDK 9.x or support Platform 2.3 (deprecated) - ZERO TOLERANCE
-- **Node 24 + FDK 10** - Default stack, FDK 10.0.0+ required for Platform 3.0
+- **Platform 3.0 ONLY** - Platform 2.3 is deprecated, NEVER support it - ZERO TOLERANCE
+- **FDK 10.x + Node 24 RECOMMENDED** - Primary stack for Platform 3.0 development and publishing
+- **FDK 9.x + Node 18 ALLOWED** - Supported for Platform 3.0 development until March 2026 (deprecated)
+- **Publishing requires FDK 10.x** - Marketplace submission requires Node 24 + FDK 10.x
 - **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
 - **FDK CLI only** - Use official commands from Freshworks documentation
 - **Subagent execution** - Spawn Task tool for all operations
 - **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
-- **Global persistence** - Downgrade MUST set nvm default and update shell config
+- **Global persistence** - All operations MUST set nvm default and update shell config
 - **Verify always** - Every operation MUST verify in new shell
+- **Warn on FDK 9.x** - Always warn that FDK 9.x is deprecated (March 2026)
 - If certainty < 100%, respond: "Insufficient FDK installation certainty."
 
 **CRITICAL UNIVERSAL RULES - NO EXCEPTIONS:**
 
-1. **Complete Uninstall Before Downgrade** - ALWAYS uninstall current version completely (npm + ~/.fdk + cache) before installing target version. Version conflicts cause unpredictable behavior.
+1. **Platform 3.0 Enforcement** - ONLY support Platform 3.0. Platform 2.3 is deprecated. Both FDK 10.x (Node 24) and FDK 9.x (Node 18) work with Platform 3.0.
 
-2. **Global Version Switch** - After downgrade, MUST set `nvm alias default` and update shell config (~/.zshrc or ~/.bashrc) to ensure version persists across all terminals.
+2. **FDK Version Support Matrix:**
+   - **FDK 10.x + Node 24.x** - Recommended, required for publishing, supported until Dec 2027
+   - **FDK 9.x + Node 18.x** - Allowed for development, DEPRECATED (ends March 2026), cannot publish
 
-3. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on downgrade and uninstall. This directory contains cache, config, and version references that cause conflicts.
+3. **Complete Uninstall Before Version Switch** - When switching between FDK 10.x ↔ 9.x, ALWAYS uninstall current version completely (npm + ~/.fdk + cache) before installing target version.
+
+4. **Global Version Persistence** - All operations MUST set `nvm alias default` and update shell config (~/.zshrc or ~/.bashrc) to ensure FDK persists across all terminals.
+
+5. **~/.fdk Directory Removal** - ALWAYS remove ~/.fdk on downgrade and uninstall. This directory contains cache, config, and version references that cause conflicts.
 
 4. **New Shell Verification** - ALWAYS verify operations work in new shell: `zsh -c 'fdk version'` or `bash -c 'fdk version'`. Current shell verification is insufficient.
 

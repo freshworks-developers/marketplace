@@ -1,22 +1,26 @@
 ---
 name: fdk-downgrade
-description: Downgrade FDK to specific version with global switch
+description: Downgrade FDK 10.x to 9.x with deprecation warnings and global switch
 always: true
-argument-hint: "<version>"
+argument-hint: "[9.x.x]"
 ---
 
 # FDK Downgrade
 
-Downgrade FDK to specific version and set as global default.
+Downgrade from FDK 10.x (Node 24) to FDK 9.x (Node 18) with complete cleanup and global switch.
+
+**DEPRECATION WARNING:** FDK 9.x + Node 18.x support ends March 2026.
 
 ## Critical Requirements
 
-- Complete uninstall of current version
+- Show deprecation warning before proceeding
+- Complete uninstall of FDK 10.x
 - Remove ~/.fdk directory
-- Install target version
-- Set nvm alias default
+- Install Node 18 and FDK 9.x
+- Set nvm alias default to Node 18
 - Update shell configuration for global persistence
 - Verify in new shell
+- Warn that publishing requires FDK 10.x
 
 ## Execution
 
@@ -24,58 +28,124 @@ Downgrade FDK to specific version and set as global default.
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Downgrade FDK with global switch",
+  description: "Downgrade FDK 10.x to 9.x with warnings",
   prompt: `
-Downgrade FDK to version {TARGET_VERSION} and set as global default.
+Downgrade from FDK 10.x (Node 24) to FDK 9.x (Node 18) for Platform 3.0 development.
+
+DEPRECATION WARNING TO USER:
+echo "========================================="
+echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
+echo "========================================="
+echo ""
+echo "Support ends: March 2026"
+echo ""
+echo "Limitations:"
+echo "- Development: Allowed for Platform 3.0 apps"
+echo "- Publishing: NOT SUPPORTED (requires FDK 10.x + Node 24.x)"
+echo "- Recommendation: Use FDK 10.x for all new development"
+echo ""
+read -p "Continue with FDK 9.x downgrade? (y/N): " confirm
+if [[ $confirm != [yY] ]]; then
+  echo "Downgrade cancelled."
+  exit 0
+fi
 
 CURRENT: $(fdk version)
-TARGET: {TARGET_VERSION}
+TARGET: FDK 9.x (latest or specified version)
 
-COMPLETE UNINSTALL:
-  npm uninstall -g @freshworks/fdk
-  rm -rf ~/.fdk
-  npm cache clean --force
-
-INSTALL TARGET:
+COMPLETE UNINSTALL OF FDK 10.x:
+  # Switch to Node 24 first
   nvm use 24
-  npm install -g @freshworks/fdk@{TARGET_VERSION}
+  
+  # Uninstall npm package
+  npm uninstall -g @freshworks/fdk
+  
+  # Remove FDK cache and config
+  rm -rf ~/.fdk
+  
+  # Clean npm cache
+  npm cache clean --force
+  
+  # Verify removal
+  fdk version 2>&1 | grep "command not found" || echo "WARNING: FDK still exists"
 
-GLOBAL SWITCH:
-  nvm alias default 24
-  echo "nvm use 24 > /dev/null 2>&1" >> ~/.zshrc
-  source ~/.zshrc
+INSTALL NODE 18:
+  # Check if Node 18 exists
+  nvm list | grep v18 || nvm install 18
+  
+  # Switch to Node 18
+  nvm use 18
+  
+  # Verify
+  node --version
+
+INSTALL FDK 9.x:
+  # Install latest FDK 9.x (or specified version)
+  npm install -g @freshworks/fdk@9
+  
+  # Verify installation
+  fdk version
+
+GLOBAL SWITCH TO NODE 18:
+  # Set nvm default to Node 18
+  nvm alias default 18
+  nvm alias fdk 18
+  
+  # Update shell config
+  SHELL_RC="$HOME/.zshrc"
+  [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+  
+  # Backup shell config
+  cp "$SHELL_RC" "$SHELL_RC.bak.$(date +%Y%m%d_%H%M%S)"
+  
+  # Remove old FDK references
+  sed -i.tmp '/nvm use 24/d' "$SHELL_RC"
+  sed -i.tmp '/nvm use fdk/d' "$SHELL_RC"
+  rm -f "$SHELL_RC.tmp"
+  
+  # Add Node 18 reference
+  echo "" >> "$SHELL_RC"
+  echo "# FDK 9.x (Node 18) - DEPRECATED, ends March 2026" >> "$SHELL_RC"
+  echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
+  
+  # Source shell
+  source "$SHELL_RC"
 
 MANDATORY VERIFICATION (ALL 5 TESTS MUST PASS):
-  # Test 1: Version matches target
-  CURRENT=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-  [[ "$CURRENT" == "{TARGET_VERSION}" ]] || echo "FAILED: Version mismatch"
+  # Test 1: FDK 9.x installed
+  fdk version | grep "^9\." || echo "FAILED: Not FDK 9.x"
   
-  # Test 2: Works in new shell (MOST CRITICAL)
-  NEW_SHELL=$(zsh -c 'fdk version' 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-  [[ "$NEW_SHELL" == "{TARGET_VERSION}" ]] || echo "FAILED: Not persistent"
+  # Test 2: Node 18 active
+  node --version | grep "^v18\." || echo "FAILED: Not Node 18"
   
-  # Test 3: ~/.fdk removed
+  # Test 3: Works in new shell
+  zsh -c 'fdk version' | grep "^9\." || echo "FAILED: Not persistent"
+  
+  # Test 4: ~/.fdk removed
   [ ! -d ~/.fdk ] || echo "FAILED: ~/.fdk still exists"
   
-  # Test 4: nvm default set
-  nvm alias default | grep "24" || echo "FAILED: nvm default not set"
-  
-  # Test 5: Only one version
-  npm list -g @freshworks/fdk | grep -c "@freshworks/fdk@" | grep "1" || echo "WARNING: Multiple versions"
+  # Test 5: nvm default set to 18
+  nvm alias default | grep "18" || echo "FAILED: nvm default not set"
 
 REPORT FORMAT:
-  [VALID] FDK downgraded successfully to {TARGET_VERSION}
-  
-  Verification: ✓ Version match | ✓ New shell | ✓ ~/.fdk removed | ✓ nvm default | ✓ Single version
-  
-  Changes:
-  - Uninstalled: [old version]
-  - Installed: {TARGET_VERSION}
-  - Global switch: Active
-  - Cache: Cleared
-  
-  Critical test: Open NEW terminal and run: fdk version
-  Expected output: {TARGET_VERSION}
+  echo ""
+  echo "========================================="
+  echo "FDK Downgrade Complete"
+  echo "========================================="
+  echo ""
+  echo "Previous: FDK 10.x + Node 24.x"
+  echo "Current:  FDK 9.x + Node 18.x"
+  echo ""
+  echo "IMPORTANT REMINDERS:"
+  echo "- FDK 9.x support ends March 2026"
+  echo "- Publishing requires FDK 10.x + Node 24.x"
+  echo "- Use for development only"
+  echo ""
+  echo "To upgrade back to FDK 10.x:"
+  echo "  /fdk-upgrade"
+  echo ""
+  echo "Verification: Open NEW terminal and run: fdk version"
+  echo "Expected: 9.x.x"
 
 CRITICAL: If ANY test fails, re-run operation.
   `
