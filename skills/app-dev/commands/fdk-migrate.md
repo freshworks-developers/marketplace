@@ -11,6 +11,43 @@ always: false
 
 You are helping migrate a Freshworks app from Platform 2.x to Platform 3.0. Follow these steps exactly.
 
+## Step 0: Verify Environment Prerequisites
+
+**CRITICAL:** Migration requires specific versions to work correctly.
+
+1. Check Node.js version:
+   ```bash
+   node --version
+   ```
+   - **REQUIRED:** Node.js 19.x (e.g., v19.0.0 - v19.9.0)
+   - **IF NOT Node 19:** Stop and inform user:
+     ```
+     ERROR: FDK migration requires Node.js 19.x
+     Current version: [detected version]
+     
+     To fix:
+     nvm install 19
+     nvm use 19
+     ```
+
+2. Check FDK version:
+   ```bash
+   fdk version
+   ```
+   - **REQUIRED:** FDK 9.x (e.g., 9.0.0 - 9.x.x)
+   - **IF NOT FDK 9.x:** Stop and inform user:
+     ```
+     ERROR: FDK migration requires FDK 9.x
+     Current version: [detected version]
+     
+     To fix (if you have FDK 10.x):
+     Use /fdk-downgrade command to downgrade to FDK 9.x
+     ```
+
+3. **ONLY proceed to Step 1 if BOTH conditions are met:**
+   - Node.js 19.x is active
+   - FDK 9.x is installed
+
 ## Step 1: Locate manifest.json files
 
 1. Search the workspace for all `manifest.json` files.
