@@ -12,6 +12,8 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **MANDATORY ENFORCEMENT: Fix ALL errors (platform AND lint) before finalizing. Keep iterating max 6 times with command `fdk validate`, until errors = 0. No exceptions.**
 
+**README.md ENFORCEMENT: EVERY app MUST have a README.md file. Create it BEFORE running validation. If you generate an app without README.md, you have failed.**
+
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
 **Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`.
@@ -229,6 +231,33 @@ You are not a tutor. You are an enforcement layer.
 
 Never emit: `platform-version` ≠ `3.0`, `product` key, `whitelisted-domains`, `$request.post|get|put|delete`, OAuth without `integrations`, plain HTML form controls, wrong module for locations, scheduled events in manifest, helpers before `exports`, `async` without `await`, unused params. **Full table:** `references/skill-advanced-topics.md`; **enforcement:** `rules/freshworks-platform3.mdc`.
 
+### README.md Enforcement (MANDATORY)
+
+**[FORBIDDEN] NEVER complete app generation without README.md**
+- [REQUIRED] ALWAYS create README.md for EVERY app
+- [REQUIRED] README.md MUST be the FIRST or SECOND file you create
+- [REQUIRED] Create it BEFORE running `fdk validate`
+- [REQUIRED] Minimum sections: App name, description, features, setup, usage
+- **Apps without README.md are INCOMPLETE and INVALID**
+
+**Minimum README.md structure:**
+```markdown
+# [App Name]
+
+[1-2 sentence description]
+
+## Features
+- [Key feature 1]
+- [Key feature 2]
+
+## Setup
+1. Install app in [Product]
+2. [Configuration steps if any]
+
+## Usage
+[How to use the app]
+```
+
 ---
 
 ## App Generation Workflow
@@ -280,35 +309,38 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
 
 | Template folder | When | Main artifacts |
 |-----------------|------|----------------|
-| `assets/templates/frontend-skeleton/` | UI only | `app/`, `manifest.json`, `config/iparams.json`, icon |
-| `assets/templates/serverless-skeleton/` | No UI, events/automation | `server/server.js`, `manifest.json`, `config/iparams.json` |
-| `assets/templates/hybrid-skeleton/` | UI + SMI + external API | `app/`, `server/`, `config/requests.json`, `config/iparams.json` |
-| `assets/templates/oauth-skeleton/` | UI + OAuth service | above + `config/oauth_config.json` (`oauth_iparams` only there; see `references/api/oauth-docs.md`) |
+| `assets/templates/frontend-skeleton/` | UI only | `app/`, `manifest.json`, `config/iparams.json`, `icon.svg`, **`README.md`** |
+| `assets/templates/serverless-skeleton/` | No UI, events/automation | `server/server.js`, `manifest.json`, `config/iparams.json`, **`README.md`** |
+| `assets/templates/hybrid-skeleton/` | UI + SMI + external API | `app/`, `server/`, `config/requests.json`, `config/iparams.json`, `icon.svg`, **`README.md`** |
+| `assets/templates/oauth-skeleton/` | UI + OAuth service | above + `config/oauth_config.json` + **`README.md`** (`oauth_iparams` only there; see `references/api/oauth-docs.md`) |
+
+**CRITICAL: README.md is MANDATORY for every app. It must be created BEFORE validation.**
 
 ### Step 3: Automatic Validation & Auto-Fix (MANDATORY)
 
 **CRITICAL: Fix ALL errors - Platform errors AND Lint errors. ZERO TOLERANCE.**
 
-**AFTER creating ALL app files, you MUST AUTOMATICALLY:**
+**AFTER creating ALL app files (INCLUDING README.md), you MUST AUTOMATICALLY:**
 
-1. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
-2. **Parse validation output** - Identify ALL errors (platform AND lint)
-3. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
+1. **Verify README.md exists** - If missing, create it NOW before validation
+2. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
+3. **Parse validation output** - Identify ALL errors (platform AND lint)
+4. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
    - Fix JSON structure errors (multiple top-level objects → merge)
    - Fix comma placement (missing commas → add, trailing commas → remove)
    - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)
-   - Create missing mandatory files (`icon.svg`, `iparams.json`)
+   - Create missing mandatory files (`icon.svg`, `iparams.json`, `README.md`)
    - Fix FQDN issues (host with path → FQDN only)
    - Fix path issues (missing `/` → add `/` prefix)
    - Re-run `fdk validate`
-4. **If still failing, Attempt Auto-Fix Iteration 2 (Fatal Errors Only):**
+5. **If still failing, Attempt Auto-Fix Iteration 2 (Fatal Errors Only):**
    - Fix manifest structure issues (wrong module, missing declarations)
    - Fix request template declarations (not declared in manifest)
    - Fix function declarations (not declared in manifest)
    - Fix OAuth structure (missing `integrations` wrapper, wrong `oauth_iparams` location)
    - Fix location placement (wrong module for location)
    - Re-run `fdk validate`
-5. **After iterations (up to 6):**
+6. **After iterations (up to 6):**
    - [VALID] If ALL errors (platform AND lint) are resolved → Present concise success message
    - [WARNING] If ANY errors persist → Keep iterating, NEVER say "complete" with errors
 
@@ -355,10 +387,9 @@ Next steps:
 
 **OAuth vs API key, full OAuth/iparams JSON patterns, secure iparams, onAppInstall/onAppUninstall:** `references/skill-advanced-topics.md` + `references/architecture/oauth-configuration-latest.md` + `references/api/oauth-docs.md`.
 
-### Step 3: Generate Complete Structure
-
 **Frontend apps (frontend-skeleton, hybrid-skeleton, oauth-skeleton):**
 ```
+README.md                     # MANDATORY - create FIRST
 app/
 ├── index.html               # MUST include Crayons CDN
 ├── scripts/app.js           # Use IIFE pattern for async
@@ -388,7 +419,54 @@ app/ + server/ + config/requests.json + config/iparams.json
 app/ + server/ + config/oauth_config.json + config/requests.json + config/iparams.json
 ```
 
-### Step 4: Validate Against Test Patterns
+### Step 4: Automatic Validation & Auto-Fix (MANDATORY - DO NOT SKIP)
+
+**CRITICAL: This step is MANDATORY and happens AUTOMATICALLY after creating all files.**
+
+**AFTER creating ALL app files (including README.md), you MUST AUTOMATICALLY:**
+
+1. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
+2. **Parse validation output** - Identify ALL errors (platform AND lint)
+3. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
+   - Fix JSON structure errors (multiple top-level objects → merge)
+   - Fix comma placement (missing commas → add, trailing commas → remove)
+   - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)
+   - Create missing mandatory files (`icon.svg`, `iparams.json`, `README.md`)
+   - Fix FQDN issues (host with path → FQDN only)
+   - Fix path issues (missing `/` → add `/` prefix)
+   - Re-run `fdk validate`
+4. **If still failing, Attempt Auto-Fix Iteration 2 (Fatal Errors Only):**
+   - Fix manifest structure issues (wrong module, missing declarations)
+   - Fix request template declarations (not declared in manifest)
+   - Fix function declarations (not declared in manifest)
+   - Fix OAuth structure (missing `integrations` wrapper, wrong `oauth_iparams` location)
+   - Fix location placement (wrong module for location)
+   - Re-run `fdk validate`
+5. **After iterations (up to 6):**
+   - [VALID] If ALL errors (platform AND lint) are resolved → Present concise success message
+   - [WARNING] If ANY errors persist → Keep iterating, NEVER say "complete" with errors
+
+**Output after successful validation:**
+```
+[VALID] App generated successfully in <app-directory>/
+
+Validation: 0 platform errors, 0 lint errors
+
+Next steps:
+1. cd <app-directory>
+2. fdk run
+3. Test in product with ?dev=true
+```
+
+**CRITICAL RULES:**
+- [INVALID] NEVER say "app complete" without running `fdk validate`
+- [INVALID] NEVER skip README.md creation
+- [VALID] ALWAYS create README.md before validation
+- [VALID] ALWAYS run validation automatically after file creation
+- [VALID] ALWAYS attempt up to 6 fix iterations
+- [VALID] ALWAYS re-run `fdk validate` after each fix iteration
+
+### Step 5: Validate Against Test Patterns
 
 Before presenting the app, validate against:
 - `references/tests/golden.json` - Should match correct patterns
