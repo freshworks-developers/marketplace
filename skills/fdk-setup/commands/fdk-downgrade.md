@@ -80,11 +80,12 @@ INSTALL NODE 18:
   node --version
 
 INSTALL FDK 9.x:
-  # Install latest FDK 9.x (or specified version)
-  npm install -g @freshworks/fdk@9
+  # CRITICAL: Use latest.tgz for FDK 9 line (NOT latest-v24.tgz)
+  # @freshworks/fdk@9 is NOT on npm registry
+  npm install -g https://cdn.freshdev.io/fdk/latest.tgz
   
   # Verify installation
-  fdk version
+  fdk version | grep "^9\." || echo "FAILED: Not FDK 9.x"
 
 GLOBAL SWITCH TO NODE 18:
   # Set nvm default to Node 18

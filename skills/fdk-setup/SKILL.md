@@ -79,6 +79,55 @@ Continue with FDK 9.x installation? (y/N)
 
 You are not a tutor. You are an enforcement layer.
 
+## CRITICAL: CDN Tarball Reality (Based on Real-World Apr 2026 Session)
+
+**DO NOT use npm registry for FDK installation.** `@freshworks/fdk` is NOT published on registry.npmjs.org for global install.
+
+### Correct Installation Sources:
+
+| FDK Version | Node Version | Installation Command |
+|-------------|--------------|---------------------|
+| **FDK 10.x** (Recommended) | **Node 24.11.x** | `npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz` |
+| **FDK 9.x** (Deprecated) | **Node 18.x** | `npm install -g https://cdn.freshdev.io/fdk/latest.tgz` |
+
+### Critical Notes:
+
+1. **Homebrew tap correction:** Use `freshworks-developers/homebrew-tap` (NOT `freshworks/tap`)
+2. **Node 24.11.x specificity:** FDK 10.1.0+ requires Node 24.11.x specifically (NOT 24.14.x or higher)
+3. **Legacy package name:** Uninstall BOTH `@freshworks/fdk` AND `fdk` (unscoped) - older versions used unscoped name
+4. **Tarball branches:**
+   - `latest.tgz` → FDK 9.x line (Node 18)
+   - `latest-v24.tgz` → FDK 10.x line (Node 24)
+5. **Per-Node globals:** Each nvm Node version has its own global packages - check all active Nodes
+6. **Verification must check version:** Don't just check if `fdk` command exists - verify it's the correct major version (9.x or 10.x)
+
+### Common Failure Patterns:
+
+- ❌ `npm install -g @freshworks/fdk@10` → 404 (not on registry)
+- ❌ `npm install -g https://cdn.freshdev.io/fdk/latest.tgz` on Node 24 → installs FDK 9.x, fails at runtime
+- ❌ `fdk version` on Node 24.14.x with FDK 10.1.0 → engine mismatch error
+- ❌ Only uninstalling `@freshworks/fdk` → leaves legacy `fdk` package behind
+
+### Correct Workflow:
+
+```bash
+# Uninstall both package names
+npm uninstall -g @freshworks/fdk 2>/dev/null
+npm uninstall -g fdk 2>/dev/null
+rm -rf ~/.fdk
+npm cache clean --force
+
+# Install FDK 10 on Node 24.11.x
+nvm install 24.11
+nvm use 24.11
+nvm alias default 24.11
+npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz
+
+# Verify
+fdk version  # Should show 10.x.x
+node --version  # Should show v24.11.x
+```
+
 ## Quick Detection (Pre-Subagent)
 
 Run these checks directly before spawning subagents to provide context:

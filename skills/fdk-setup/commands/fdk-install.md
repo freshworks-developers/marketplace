@@ -33,34 +33,54 @@ DETECTION:
 
 INSTALLATION METHOD:
 
-macOS (Homebrew):
-  brew tap freshworks/tap
+macOS (Homebrew - RECOMMENDED):
+  brew tap freshworks-developers/homebrew-tap
   brew install fdk
   
 Windows (Chocolatey):
   choco install fdk
   
-Linux/Manual (nvm + npm):
-  nvm install 24
-  nvm use 24
-  nvm alias default 24
-  npm install -g @freshworks/fdk
+Linux/Manual (nvm + npm - CDN tarball):
+  # CRITICAL: Use CDN tarball, NOT npm registry
+  # @freshworks/fdk is NOT on registry.npmjs.org
+  
+  # Install Node 24.11.x (FDK 10.1.0+ requires 24.11.x specifically)
+  nvm install 24.11
+  nvm use 24.11
+  nvm alias default 24.11
+  
+  # Remove any legacy FDK installations
+  npm uninstall -g @freshworks/fdk 2>/dev/null
+  npm uninstall -g fdk 2>/dev/null
+  rm -rf ~/.fdk
+  
+  # Install FDK 10 from CDN (latest-v24.tgz = FDK 10 line)
+  npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz
+  
+  # Verify correct version
+  fdk version  # Should show 10.x.x
 
-MANDATORY VERIFICATION (ALL 5 TESTS MUST PASS):
+MANDATORY VERIFICATION (ALL 7 TESTS MUST PASS):
   # Test 1: FDK accessible in current shell
   fdk version || echo "FAILED: FDK not in current shell"
   
-  # Test 2: FDK accessible in new shell (CRITICAL)
+  # Test 2: FDK version is 10.x (not 9.x)
+  fdk version | grep "^10\." || echo "FAILED: Wrong FDK version (not 10.x)"
+  
+  # Test 3: FDK accessible in new shell (CRITICAL)
   zsh -c 'fdk version' || bash -c 'fdk version' || echo "FAILED: FDK not persistent"
   
-  # Test 3: Node version correct
-  node --version | grep "v24" || echo "FAILED: Wrong Node version"
+  # Test 4: Node version correct (24.11.x for FDK 10.1.0+)
+  node --version | grep "v24\.11\." || echo "WARNING: Node 24.11.x recommended for FDK 10.1.0+"
   
-  # Test 4: nvm configured
+  # Test 5: nvm configured
   nvm current | grep "24" || echo "FAILED: nvm not using Node 24"
   
-  # Test 5: FDK globally accessible
-  which fdk || echo "FAILED: FDK not in PATH"
+  # Test 6: Check for legacy fdk package
+  npm list -g fdk 2>&1 | grep "empty" || npm list -g fdk || echo "INFO: Legacy fdk package check"
+  
+  # Test 7: Check @freshworks/fdk package
+  npm list -g @freshworks/fdk | grep "@freshworks/fdk@10" || echo "FAILED: @freshworks/fdk not installed or wrong version"
 
 REPORT FORMAT:
   [VALID] FDK installed successfully
