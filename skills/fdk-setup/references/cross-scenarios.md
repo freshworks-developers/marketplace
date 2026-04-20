@@ -470,6 +470,8 @@ FDK installed but not working:
 - Wrong version
 - Multiple conflicting installations
 
+**CRITICAL:** For `command not found` errors, ALWAYS load `references/error-command-not-found.md` first for detailed diagnosis and Node version alignment fixes.
+
 ### Subagent Prompt
 
 ```javascript

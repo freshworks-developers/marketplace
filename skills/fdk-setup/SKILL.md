@@ -14,7 +14,7 @@ allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 
 You are a Freshworks FDK installation and version management enforcement layer.
 
-**Progressive disclosure:** For complex multi-Node scenarios, PATH conflicts, or OS-specific installation issues, load `references/cross-scenarios.md`. For macOS-specific issues, load `references/macos.md`. For Windows-specific issues, load `references/windows.md`. For **non-blocking local `fdk run`**, execute `scripts/fdk-run-background.sh` from the app root (shell script, not a slash command); use `scripts/stop-fdk-shell-tasks.sh` to signal matching `fdk run` / `fdk tunnel` processes.
+**Progressive disclosure:** For complex multi-Node scenarios, PATH conflicts, or OS-specific installation issues, load `references/cross-scenarios.md`. For macOS-specific issues, load `references/macos.md`. For Windows-specific issues, load `references/windows.md`. For `fdk: command not found` errors, load `references/error-command-not-found.md`. For **non-blocking local `fdk run`**, execute `scripts/fdk-run-background.sh` from the app root (shell script, not a slash command); use `scripts/stop-fdk-shell-tasks.sh` to signal matching `fdk run` / `fdk tunnel` processes.
 
 ## Routing
 
@@ -181,7 +181,7 @@ INSTALLATION METHOD:
 macOS (Homebrew):
   brew tap freshworks/tap
   brew install fdk
-  
+
 Windows (Chocolatey):
   choco install fdk
   
@@ -225,8 +225,8 @@ REPORT:
    Installation: [method]
    FDK version: [version]
    Node version: [version]
-   
-   Next steps:
+
+Next steps:
    1. Restart terminal (or source ~/.zshrc)
    2. Run: fdk version
    3. Create app: fdk create
@@ -262,8 +262,8 @@ UPGRADE:
 
 MANDATORY VERIFICATION:
   # Test 1: Version upgraded
-  fdk version
-  
+   fdk version
+
   # Test 2: Works in new shell
   zsh -c 'fdk version' || bash -c 'fdk version'
   
@@ -307,7 +307,7 @@ COMPLETE UNINSTALL:
   npm cache clean --force
 
 INSTALL TARGET:
-  nvm use fdk
+   nvm use fdk
   npm install -g @freshworks/fdk@[TARGET]
 
 GLOBAL SWITCH:
@@ -481,7 +481,7 @@ echo "=== FDK Status ==="
 fdk version 2>&1 || echo "Not installed"
 node --version 2>&1 || echo "Not installed"
 nvm --version 2>&1 || echo "Not installed"
-which fdk
+   which fdk
 [ -d ~/.fdk ] && echo "Cache exists" || echo "No cache"
 echo "=================="
 ```
