@@ -8,7 +8,7 @@ Skills for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshwo
 skills/
 └── app-dev/              # core skill: Platform 3.0 apps, manifest, Crayons, FDK
     ├── SKILL.md
-    ├── commands/         # /migrate, /review, /fix, /refactor
+    ├── commands/         # /fdk-migrate, /fdk-review, /fdk-fix, /fdk-refactor
     ├── references/
     └── assets/templates/
 ```

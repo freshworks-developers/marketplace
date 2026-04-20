@@ -4,7 +4,7 @@
 
 The `fdk create` command generates the initial app structure based on the app type you select. Understanding this structure helps ensure proper app architecture from the start.
 
-**App-dev default `engines`:** **`node` `24.11.0`**, **`fdk` `10.0.1`** in `manifest.json` for new Platform 3.0 apps (matches skill templates). If `fdk validate` will not run, fix FDK/Node per **SKILL.md** / **fdk-setup**—**do not** change `engines` to FDK 9 or Node 18.
+**App-dev default `engines`:** **`node` `24.11.0`**, **`fdk` `10.0.1`** in `manifest.json` for new Platform 3.0 apps (matches skill templates). If `fdk validate` will not run, use **fdk-setup** first; **LAST RESORT** engines to **9.8.2 / 18.20.8** only per **SKILL.md** after six validate iterations or CLI blocked on 10.0.1+24.11.0.
 
 ---
 

@@ -32,7 +32,7 @@
     },
     {
       "name": "fdk-migrate",
-      "description": "Migrate Platform 2.x app to Platform 3.0",
+      "description": "Migrate Platform 2.3 (2.x), FDK 9.x, Node 18 → Platform 3.0, FDK 10, Node 24",
       "file": "commands/fdk-migrate.md"
     },
     {

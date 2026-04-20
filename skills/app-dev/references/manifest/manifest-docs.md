@@ -133,7 +133,7 @@ It associates a Freshworks product with the information that is necessary to ren
 
 The `engines` attribute specifies the Node.js and FDK versions used to build the app. This value is auto-populated when you create the app files using the `fdk create` command.
 
-**App-dev alignment:** For new Platform 3.0 apps, use **`node` `24.11.0`** and **`fdk` `10.0.1`** only. **Never** FDK 9.x or Node 18 in `engines` for new apps—fix the environment per **SKILL.md** / **fdk-setup** if `fdk validate` will not run.
+**App-dev alignment:** For new Platform 3.0 apps, use **`node` `24.11.0`** and **`fdk` `10.0.1`**. Prefer **fdk-setup** if `fdk validate` will not run. **FDK 9.8.2 + Node 18.20.8** in `engines` is **LAST RESORT only** after six validate iterations / CLI blocked — see **SKILL.md**.
 
 ## Creating an App
 

@@ -71,8 +71,8 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - `confusion.mdc` - Disambiguation
 
 **Commands:**
+- `/fdk-migrate` - Migrate **Platform 2.3** (2.x), **FDK 9.x**, **Node 18** → **Platform 3.0**, **FDK 10.0.1**, **Node 24**
 - `/fdk-fix` - Fix all platform and lint errors
-- `/fdk-migrate` - Migrate Platform 2.x → 3.0
 - `/fdk-refactor` - Reduce function complexity (≤ 7)
 - `/fdk-review` - Run 3 rounds of `fdk validate`
 
