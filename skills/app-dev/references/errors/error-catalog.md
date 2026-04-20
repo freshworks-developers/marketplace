@@ -297,11 +297,11 @@ app/
   "modules": { ... },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```
-**Rule:** All Platform 3.0 apps MUST declare node and fdk versions in engines block. Use **Node `24.11.0`** and **FDK `10.0.0`** for new apps. The **SKILL.md** toolchain-mismatch fallback (`18.20.8` / `9.8.2`) applies only when `fdk validate` cannot run for Node/FDK reasons—not for missing `engines`.
+**Rule:** All Platform 3.0 apps MUST declare node and fdk versions in engines block. New apps: **Node `24.11.0`** and **FDK `10.0.1`** only—**never** FDK 9.x or Node 18 in `engines`; fix the local toolchain (**fdk-setup**) if `fdk validate` will not start.
 
 ### SMI function not found
 **Error:** "SMI function not found"
@@ -518,12 +518,12 @@ await $request.invokeTemplate('apiCall', {
 {
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```
 
-Prefer **FDK 10.x + Node 24.x** as above. Use deprecated **9.8.2** / **18.20.8** only per **SKILL.md** when the CLI cannot run under FDK 10 + Node 24.
+Use **`fdk` `10.0.1`** and **Node `24.11.0`** (Node **24.x**) as above. If the CLI cannot run, fix FDK/Node—**do not** lower `engines` to FDK 9 or Node 18.
 
 ### At least one product module required
 **Fix:** Add product module:

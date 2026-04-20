@@ -21,10 +21,11 @@ For detailed instructions to install the Freshworks CLI, kindly follow the steps
     ```sh
     npm uninstall fdk -g
     ```
-3. To install the global app CLI version, run the following command:
+3. To install the global app CLI (**Platform 3.0 / app-dev:** FDK **10.0.1** on **Node 24.x** — do not use FDK 9 installers for new apps), run:
     ```sh
-    npm install https://cdn.freshdev.io/fdk/v9.1.0-beta.tgz -g
+    npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz
     ```
+    Use the **fdk-setup** skill for nvm-aligned installs; see Freshworks developer docs for the current install URL if this tarball name changes.
 4. Verify the CLI installation using `fdk version`
 
 ---

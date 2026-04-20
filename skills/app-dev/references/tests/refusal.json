@@ -6,6 +6,12 @@
       "topic": "onTicketUpdate field-level inference",
       "forbidden_assumption": "If data.changes.model_changes is missing or empty, infer that only status or priority changed by comparing undocumented keys on data.ticket, or map Freshdesk priority semantics to Freshservice urgency without API verification.",
       "required_behavior": "Load references/events/onTicketUpdate-payload-contract.md. If deltas are required and absent, use snapshot/API diff, broad handling with documented caveats, skip, or state Insufficient platform certainty — do not guess."
+    },
+    {
+      "id": "refusal_engines_001",
+      "topic": "manifest engines FDK / Node version",
+      "forbidden_assumption": "Setting manifest engines to FDK 9.x or Node 18, or downgrading engines so fdk validate will run on an old toolchain.",
+      "required_behavior": "Use `\"fdk\": \"10.0.1\"` and `\"node\": \"24.11.0\"` (Node 24.x) for every new app. If validate cannot start, fix FDK/Node via fdk-setup per SKILL.md—never change engines to 9.x or 18."
     }
   ]
 }

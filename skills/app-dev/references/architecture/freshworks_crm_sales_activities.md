@@ -81,7 +81,7 @@ To use the supported placeholder modify your `manifest.json` as below to include
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```

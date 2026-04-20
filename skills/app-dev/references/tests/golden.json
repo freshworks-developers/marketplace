@@ -20,7 +20,7 @@
           },
           "engines": {
             "node": "24.11.0",
-            "fdk": "10.0.0"
+            "fdk": "10.0.1"
           }
         },
         "required_files": [
@@ -57,7 +57,7 @@
           },
           "engines": {
             "node": "24.11.0",
-            "fdk": "10.0.0"
+            "fdk": "10.0.1"
           }
         },
         "required_files": [
@@ -92,7 +92,7 @@
           },
           "engines": {
             "node": "24.11.0",
-            "fdk": "10.0.0"
+            "fdk": "10.0.1"
           }
         },
         "required_files": [
@@ -133,7 +133,7 @@
           },
           "engines": {
             "node": "24.11.0",
-            "fdk": "10.0.0"
+            "fdk": "10.0.1"
           }
         },
         "required_files": [

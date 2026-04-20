@@ -45,7 +45,7 @@ After creating a serverless app’s files, to configure the app manifest for an 
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   },
   "dependencies": {
     "nodemon": "1.14.12"
@@ -83,7 +83,7 @@ Platform version you use to build the app. This value is auto-generated when you
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```
@@ -118,7 +118,7 @@ It associates a Freshworks product with the information that is necessary to ren
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```
@@ -133,7 +133,7 @@ It associates a Freshworks product with the information that is necessary to ren
 
 The `engines` attribute specifies the Node.js and FDK versions used to build the app. This value is auto-populated when you create the app files using the `fdk create` command.
 
-**App-dev alignment:** For new Platform 3.0 apps, use **`node` `24.11.0`** and **`fdk` `10.0.0`** unless **SKILL.md** documents the one-time deprecated fallback (`18.20.8` / `9.8.2`) when `fdk validate` cannot run under FDK 10 + Node 24.
+**App-dev alignment:** For new Platform 3.0 apps, use **`node` `24.11.0`** and **`fdk` `10.0.1`** only. **Never** FDK 9.x or Node 18 in `engines` for new apps—fix the environment per **SKILL.md** / **fdk-setup** if `fdk validate` will not run.
 
 ## Creating an App
 
@@ -166,7 +166,7 @@ For apps built with FDK 6.x.x or earlier:
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```
@@ -203,7 +203,7 @@ All npm packages that the app uses, specified as <npm-package-name>:<version> pa
   },
   "engines": {
     "node": "24.11.0",
-    "fdk": "10.0.0"
+    "fdk": "10.0.1"
   }
 }
 ```

@@ -11,7 +11,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/FDK-10.0.0-0052cc?style=flat-square" alt="FDK">
+  <img src="https://img.shields.io/badge/FDK-10.0.1-0052cc?style=flat-square" alt="FDK">
   <img src="https://img.shields.io/badge/References-140+-764abc?style=flat-square" alt="References">
 </p>
 
@@ -95,7 +95,7 @@ Invoke with `@app-dev` in chat, or it activates automatically when working on Fr
 
 - Cursor IDE
 - Node.js 24 (recommended; we work on apps below too; suggest moving to latest)
-- FDK 10.0.0 (recommended)
+- FDK 10.0.1 (recommended)
 
 ## Support
 
