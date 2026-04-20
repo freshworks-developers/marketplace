@@ -858,3 +858,26 @@ Your handler receives a payload with this structure:
 - `DELETE /api/v2/time_entries/[id]`
 
 ---
+
+>title: onTicketUpdate serverless payload and change metadata (Freshdesk support_ticket)
+>tags: module=support_ticket, support_ticket, freshdesk, serverless_events, onTicketUpdate
+>context: manifest.json, server.js, server/test_data
+>content:
+
+# onTicketUpdate serverless payload (Freshdesk support_ticket)
+
+`onTicketUpdate` fires when a ticket is updated in the product; the exact trigger set is product-defined.
+
+**Normative in this skill (do not skip):**
+
+1. **Stable envelope** — `currentHost`, `data`, `event`, `iparams`, `region`, `timestamp` (see examples earlier in this file).
+2. **`data.ticket`** — treat as a **post-update snapshot** for fields included; not a guaranteed diff.
+3. **`changes` / `model_changes`** — **not** guaranteed for this module in this corpus. Do not implement “only if priority changed” by guessing keys unless you captured a real payload or use API diffing.
+
+**Cross-links:**
+
+- Full contract, refusal line, FD vs FS naming: `references/events/onTicketUpdate-payload-contract.md`
+- Golden sample JSON (copy to `<app>/server/test_data/support_ticket/onTicketUpdate.json`): `references/test-payloads/server/test_data/support_ticket/onTicketUpdate.json`
+- REST field truth: `GET /api/v2/tickets/[id]` in this document’s Tickets Endpoints list.
+
+---

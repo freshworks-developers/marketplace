@@ -759,3 +759,26 @@ It provides the endpoint along with Oauth scope required for every api
 - `GET /api/v2/tickets/id]/csat_response` - ITSM Scope: freshservice.tickets.view, MSP Scope: freshservice.tickets.view
 
 ---
+
+>title: onTicketUpdate serverless payload and change metadata (Freshservice service_ticket)
+>tags: module=service_ticket, service_ticket, freshservice, serverless_events, onTicketUpdate
+>context: manifest.json, server.js, server/test_data
+>content:
+
+# onTicketUpdate serverless payload (Freshservice service_ticket)
+
+`onTicketUpdate` fires when a service ticket is updated; exact triggers are product-defined.
+
+**Normative in this skill (do not skip):**
+
+1. **Stable envelope** — `currentHost`, `data`, `event`, `iparams`, `region`, `timestamp` (see payload examples earlier in this file).
+2. **`data.ticket`** — post-update snapshot; ITSM tickets often expose **urgency** (and may include **priority** depending on workspace). Align names with **Freshservice** `GET /api/v2/tickets/[id]`, not Freshdesk.
+3. **`changes` / `model_changes`** — **not** guaranteed for ticket update in this corpus. Do not map Freshdesk `priority` semantics onto Freshservice `urgency` without verifying the API object.
+
+**Cross-links:**
+
+- Full contract, refusal line, FD vs FS table: `references/events/onTicketUpdate-payload-contract.md`
+- Golden sample JSON (copy to `<app>/server/test_data/service_ticket/onTicketUpdate.json`): `references/test-payloads/server/test_data/service_ticket/onTicketUpdate.json`
+- REST field truth: Tickets API section in this document.
+
+---

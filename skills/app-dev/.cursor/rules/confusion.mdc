@@ -100,6 +100,8 @@ What should trigger the app?
 └─ App installation → onAppInstall
 ```
 
+**Payload / delta (mandatory read for filtered handlers):** Choosing `onTicketUpdate` is only **when** the app runs; it does **not** define which fields changed. `changes` / `model_changes` are **not** guaranteed on Freshdesk/Freshservice ticket update payloads in this skill. For envelope rules, FD vs FS field naming (`priority` vs `urgency`), and refusal when deltas are absent, load **`references/events/onTicketUpdate-payload-contract.md`** and use golden JSON under **`references/test-payloads/server/test_data/`**.
+
 **Common combinations:**
 - **Logging:** `onTicketCreate` + `onTicketUpdate`
 - **Notifications:** `onTicketCreate` only (avoid spam)

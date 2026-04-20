@@ -41,7 +41,7 @@ If validation still cannot run after the downgrade, stop and tell the user to fi
 
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
-**Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`.
+**Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`. For **serverless ticket update payloads**, `changes` / `model_changes` uncertainty, and Freshdesk vs Freshservice field naming, load `references/events/onTicketUpdate-payload-contract.md` and golden JSON under `references/test-payloads/server/test_data/`.
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
@@ -660,7 +660,7 @@ Default: mandatory files + short `README.md` only.
 
 ## Serverless events, requests, jobs
 
-**Events:** `references/events/event-reference.md` — `onAppInstall` / `onAppUninstall` when required; product events in module `events`; schedules via `$schedule.create()` only.
+**Events:** `references/events/event-reference.md` — `onAppInstall` / `onAppUninstall` when required; product events in module `events`; schedules via `$schedule.create()` only. **`onTicketUpdate` (Freshdesk / Freshservice):** `references/events/onTicketUpdate-payload-contract.md`; samples `references/test-payloads/server/test_data/support_ticket/onTicketUpdate.json`, `.../service_ticket/onTicketUpdate.json`.
 
 **Request templates + OAuth:** `references/architecture/request-templates-latest.md`, `oauth-configuration-latest.md`, `references/api/request-method-docs.md` (FQDN host, `/` path, `<%= %>`, `options.oauth`). **API integration patterns:** `references/api-integration-examples.md` (pagination, rate limiting, error handling, auth patterns, real-world examples).
 

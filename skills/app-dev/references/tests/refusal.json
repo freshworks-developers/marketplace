@@ -1,0 +1,11 @@
+{
+  "description": "Patterns and assumptions agents must refuse for Platform 3.0 ticket serverless handlers",
+  "refusals": [
+    {
+      "id": "refusal_ticket_update_delta_001",
+      "topic": "onTicketUpdate field-level inference",
+      "forbidden_assumption": "If data.changes.model_changes is missing or empty, infer that only status or priority changed by comparing undocumented keys on data.ticket, or map Freshdesk priority semantics to Freshservice urgency without API verification.",
+      "required_behavior": "Load references/events/onTicketUpdate-payload-contract.md. If deltas are required and absent, use snapshot/API diff, broad handling with documented caveats, skip, or state Insufficient platform certainty — do not guess."
+    }
+  ]
+}

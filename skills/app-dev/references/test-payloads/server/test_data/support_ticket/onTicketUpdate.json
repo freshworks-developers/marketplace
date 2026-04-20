@@ -1,0 +1,34 @@
+{
+  "currentHost": {
+    "subscribed_modules": ["support_ticket"],
+    "endpoint_urls": {
+      "freshdesk": "https://your-domain.freshdesk.com"
+    }
+  },
+  "data": {
+    "actor": {
+      "id": 48,
+      "email": "agent@your-domain.freshdesk.com",
+      "first_name": "Agent",
+      "helpdesk_agent": true
+    },
+    "requester": {
+      "id": 48014615863,
+      "email": "requester@example.com",
+      "name": "Requester"
+    },
+    "ticket": {
+      "id": 42,
+      "subject": "Sample ticket after update",
+      "status": 3,
+      "priority": 2,
+      "requester_id": 48014615863,
+      "responder_id": 48,
+      "custom_fields": {}
+    }
+  },
+  "event": "onTicketUpdate",
+  "iparams": {},
+  "region": "US",
+  "timestamp": 1636116400.12
+}
