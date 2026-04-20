@@ -17,8 +17,8 @@
     "support_ticket": {}
   },
   "engines": {
-    "node": "18.20.8",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -165,8 +165,8 @@ For apps that work across multiple products:
     }
   },
   "engines": {
-    "node": "18.20.8",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -235,8 +235,8 @@ Required in all Platform 3.0 apps:
 ```json
 {
   "engines": {
-    "node": "18.20.8",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```

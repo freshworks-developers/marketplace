@@ -13,43 +13,44 @@ You are helping migrate a Freshworks app from Platform 2.x to Platform 3.0. Foll
 
 ## Step 0: Verify Environment Prerequisites
 
-**CRITICAL:** Migration requires specific versions to work correctly.
+**CRITICAL:** Platform 3.0 migration and validation align with **app-dev**: **FDK 10.x** and **Node.js 24.x** (templates use Node **24.11.0**, FDK **10.0.0**).
 
 1. Check Node.js version:
    ```bash
    node --version
    ```
-   - **REQUIRED:** Node.js 19.x (e.g., v19.0.0 - v19.9.0)
-   - **IF NOT Node 19:** Stop and inform user:
+   - **REQUIRED:** Node.js **24.x** (e.g. v24.11.x; major **24** required for the FDK 10 line)
+   - **IF NOT Node 24.x:** Stop and inform user:
      ```
-     ERROR: FDK migration requires Node.js 19.x
+     ERROR: Platform 3.0 work in this skill requires Node.js 24.x (with FDK 10.x).
      Current version: [detected version]
      
      To fix:
-     nvm install 19
-     nvm use 19
+     nvm install 24.11
+     nvm use 24.11
      ```
+     Point them to the **fdk-setup** skill for a full install path.
 
 2. Check FDK version:
    ```bash
    fdk version
    ```
-   - **REQUIRED:** FDK 9.x (e.g., 9.0.0 - 9.x.x)
-   - **IF NOT FDK 9.x:** Stop and inform user:
+   - **REQUIRED:** FDK **10.x** (e.g. 10.0.0 - 10.x.x)
+   - **IF NOT FDK 10.x:** Stop and inform user:
      ```
-     ERROR: FDK migration requires FDK 9.x
+     ERROR: Platform 3.0 migration expects FDK 10.x on Node 24.x for validation and publishing.
      Current version: [detected version]
      
-     To fix (if you have FDK 10.x):
+     To fix:
      1. Install the fdk-setup skill:
         npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
      
-     2. Use the /fdk-downgrade command to downgrade to FDK 9.x
+     2. Use /fdk-install or /fdk-upgrade to install FDK 10.x on Node 24.x
      ```
 
 3. **ONLY proceed to Step 1 if BOTH conditions are met:**
-   - Node.js 19.x is active
-   - FDK 9.x is installed
+   - Node.js 24.x is active
+   - FDK 10.x is installed
 
 ## Step 1: Locate manifest.json files
 
@@ -78,7 +79,7 @@ Use the Freshworks App Development Skill and references. Apply these transformat
 3. **Request API**: Replace `$request.post()`, `.get()`, `.put()`, `.delete()` with `$request.invokeTemplate()`.
 4. **OAuth**: Ensure `integrations` wrapper and `oauth_iparams` in oauth_config.json.
 5. **UI**: Replace plain HTML (`<button>`, `<input>`, etc.) with Crayons components.
-6. **Engines**: Ensure `engines` block with `node` and `fdk` versions.
+6. **Engines**: Set `manifest.json` → `engines` to **`"node": "24.11.0"`, `"fdk": "10.0.0"`** (app-dev default). Use deprecated **18.20.8** / **9.8.2** only if **SKILL.md** toolchain-mismatch fallback applies after `fdk validate` cannot run.
 
 ## Step 4: Validate
 

@@ -100,8 +100,8 @@ exports = {
     "support_ticket": {}
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```

@@ -65,8 +65,8 @@ To use the module modify your `manifest.json` as below:
     }
   },
   "engines": {
-    "node": "18.20.3",
-    "fdk": "9.3.1"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```

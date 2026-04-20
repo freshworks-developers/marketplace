@@ -4,6 +4,8 @@
 
 The `fdk create` command generates the initial app structure based on the app type you select. Understanding this structure helps ensure proper app architecture from the start.
 
+**App-dev default `engines`:** **`node` `24.11.0`**, **`fdk` `10.0.0`** in `manifest.json` for new Platform 3.0 apps (matches skill templates). See **SKILL.md** for the deprecated toolchain fallback only when `fdk validate` cannot run under FDK 10 + Node 24.
+
 ---
 
 ## Basic Command
@@ -58,8 +60,8 @@ my-app/
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -108,8 +110,8 @@ my-serverless-app/
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -179,8 +181,8 @@ my-hybrid-app/
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -296,8 +298,8 @@ my-oauth-app/
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
