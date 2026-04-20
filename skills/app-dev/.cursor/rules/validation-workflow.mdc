@@ -8,7 +8,7 @@ alwaysApply: true
 
 **🚨 ZERO TOLERANCE: App is NEVER complete until ALL errors (platform AND lint) are fixed.**
 
-**RECOMMENDED ENVIRONMENT: FDK v9.8.2, Node.js 18.** We work on apps below these versions too. For new apps or when updating, prefer `"engines": { "node": "18", "fdk": "9.8.2" }`. We suggest moving to the latest when feasible. **Roadmap:** Node 24 and FDK 10 after June.
+**REQUIRED FOR NEW APPS: FDK 10.x + Node.js 24.x** (`"engines": { "node": "24.11.0", "fdk": "10.0.0" }`). If `fdk validate` cannot start due to **Node or FDK / engines mismatch** (not in-project validation errors), follow **SKILL.md** — downgrade `engines` to FDK 9.8.2 + Node 18.20.8 once, print the mandatory deprecation warning, re-run `fdk validate`.
 
 ## Mandatory Workflow
 
@@ -22,6 +22,8 @@ fdk validate
 ```
 
 **DO NOT ask user to run it manually.**
+
+If the command fails **before** normal app validation (wrong Node for FDK, missing `fdk`, engines mismatch messages), apply the **toolchain mismatch fallback** in **SKILL.md** then re-run `fdk validate`.
 
 ### Step 2: Parse Validation Output
 

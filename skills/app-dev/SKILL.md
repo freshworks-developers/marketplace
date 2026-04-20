@@ -1,7 +1,7 @@
 ---
 name: app-dev
 description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
-compatibility: "Freshworks Platform 3.0, FDK 10.x, Node.js 24.x (recommended FDK 10.0.0, Node 24; we work on apps below these too)"
+compatibility: "Freshworks Platform 3.0. New apps MUST target FDK 10.x + Node.js 24.x only. FDK 9.x manifests are allowed only as a documented fallback when validation cannot run due to toolchain mismatch (deprecated)."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
 allowed-tools: "shell read write strreplace glob grep"
 ---
@@ -13,6 +13,31 @@ allowed-tools: "shell read write strreplace glob grep"
 **MANDATORY ENFORCEMENT: Fix ALL errors (platform AND lint) before finalizing. Keep iterating max 6 times with command `fdk validate`, until errors = 0. No exceptions.**
 
 **README.md ENFORCEMENT: EVERY app MUST have a README.md file. Create it BEFORE running validation. If you generate an app without README.md, you have failed.**
+
+**MANDATORY: NEW APP ENGINES — FDK 10.x + NODE 24.x ONLY**
+
+- Every **new** generated app MUST ship `manifest.json` → `engines` with **FDK 10.x** and **Node 24.x** (same values as templates: `fdk` `10.0.0`, `node` `24.11.0`). Do **not** create new apps with FDK 9.x or Node 18 in `engines` by default.
+
+**MANDATORY: `fdk validate` TOOLCHAIN MISMATCH FALLBACK (DEPRECATED MANIFEST)**
+
+When **`fdk validate` cannot be executed** or **exits immediately** because the environment does not match the manifest (typical signals: wrong Node major/minor for the installed FDK, FDK binary missing for the active Node prefix, CLI errors that cite **Node version** or **FDK version** / **engines** mismatch — not ordinary app validation errors inside the project):
+
+1. **Do not** claim the app is validated or complete on FDK 10 engines.
+2. **Downgrade `manifest.json` → `engines` once** to the deprecated pair used across this skill: `"node": "18.20.8"`, `"fdk": "9.8.2"`.
+3. **Immediately show this warning verbatim** (fill in the reason from the CLI output in one short line):
+
+```
+WARNING: DEPRECATED TOOLCHAIN — Manifest engines were set to FDK 9.x + Node 18.x because fdk validate could not run under FDK 10.x + Node 24.x.
+
+Reason: <one-line summary from fdk/node error>
+
+- FDK 9.x + Node 18.x is DEPRECATED (support ends March 2026).
+- Marketplace publishing requires FDK 10.x + Node 24.x — upgrade the environment (see fdk-setup skill), then restore engines to FDK 10.x + Node 24.x and re-run fdk validate.
+```
+
+4. **Re-run `fdk validate`** after the engine change. Continue the normal auto-fix loop (up to 6 iterations) on **platform and lint** errors only if the CLI now runs.
+
+If validation still cannot run after the downgrade, stop and tell the user to fix the local FDK/Node install (fdk-setup); do not invent a passing validation.
 
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
@@ -207,8 +232,8 @@ You are not a tutor. You are an enforcement layer.
     }
   },
   "engines": {
-    "node": "18",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -324,6 +349,7 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
 
 1. **Verify README.md exists** - If missing, create it NOW before validation
 2. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
+   - **If `fdk validate` cannot run** due to **Node** or **FDK** / **engines** toolchain mismatch (see **MANDATORY: `fdk validate` TOOLCHAIN MISMATCH FALLBACK** at top of skill): apply the manifest `engines` downgrade to FDK 9.8.2 + Node 18.20.8, emit the deprecation warning, then re-run `fdk validate`. Do not skip this step when the failure mode matches.
 3. **Parse validation output** - Identify ALL errors (platform AND lint)
 4. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
    - Fix JSON structure errors (multiple top-level objects → merge)
@@ -426,6 +452,7 @@ app/ + server/ + config/oauth_config.json + config/requests.json + config/iparam
 **AFTER creating ALL app files (including README.md), you MUST AUTOMATICALLY:**
 
 1. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
+   - **If `fdk validate` cannot run** due to **Node** or **FDK** / **engines** toolchain mismatch: apply the manifest `engines` downgrade and deprecation warning (see top of skill), then re-run `fdk validate`.
 2. **Parse validation output** - Identify ALL errors (platform AND lint)
 3. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
    - Fix JSON structure errors (multiple top-level objects → merge)
@@ -493,7 +520,7 @@ Before presenting the app, validate against:
 |-------|-------------|
 | Icon | `app/styles/images/icon.svg` exists for frontend apps |
 | Crayons | All frontend HTML includes CDN (above) |
-| Engines | `manifest.json` has `engines` |
+| Engines | `manifest.json` has `engines` with **FDK 10.x + Node 24.x** for new apps; deprecated **9.8.2 + 18.20.8** only after mandatory toolchain-mismatch fallback (see top of skill) |
 | Product module | At least one product module (may be `{}`) |
 | Iparams | Exactly one of: `config/iparams.json` OR custom `iparams.html` + assets — not both |
 

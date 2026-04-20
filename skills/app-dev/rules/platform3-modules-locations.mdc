@@ -97,8 +97,8 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -170,8 +170,8 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -235,8 +235,8 @@ Platform 3.0 uses a `modules` structure instead of the legacy `product` structur
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -287,8 +287,8 @@ You can have multiple locations in the same module:
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
@@ -313,8 +313,8 @@ Background apps don't render UI but can intercept events:
     }
   },
   "engines": {
-    "node": "18.18.0",
-    "fdk": "9.8.2"
+    "node": "24.11.0",
+    "fdk": "10.0.0"
   }
 }
 ```
