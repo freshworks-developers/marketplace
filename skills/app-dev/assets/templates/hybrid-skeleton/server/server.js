@@ -1,13 +1,11 @@
 exports = {
   fetchExternalData: async function(args) {
-    const { param1 } = args;
+    const query = args.param1 || 'ping';
 
     try {
       const response = await $request.invokeTemplate('externalApiCall', {
-        context: {
-          api_key: args.iparams.api_key
-        },
-        body: JSON.stringify({ query: param1 })
+        context: {},
+        body: JSON.stringify({ query: query })
       });
 
       renderData(null, { success: true, data: response.response });

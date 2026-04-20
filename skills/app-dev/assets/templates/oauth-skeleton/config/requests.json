@@ -1,0 +1,17 @@
+{
+  "getOAuthResource": {
+    "schema": {
+      "protocol": "https",
+      "method": "GET",
+      "host": "api.github.com",
+      "path": "/user",
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>",
+        "Accept": "application/vnd.github+json"
+      }
+    },
+    "options": {
+      "oauth": "github"
+    }
+  }
+}

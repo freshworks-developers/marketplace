@@ -14,6 +14,19 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **README.md ENFORCEMENT: EVERY app MUST have a README.md file. Create it BEFORE running validation. If you generate an app without README.md, you have failed.**
 
+**PRE-WRITE CHECKLIST (run mentally before writing or editing app files):**
+
+1. `async` only when the function body contains `await`; otherwise use `function` without `async`.
+2. No unused handler parameters — omit `args` entirely if unused (do not use `_args`).
+3. Helper functions **after** the `exports = { ... }` block (server).
+4. Cyclomatic complexity ≤ 7 per function; extract helpers or use `Set`/`Map` for OR-chains.
+5. Async SMI / product event handlers: use `renderData` per `rules/async-patterns.mdc`.
+6. Every `config/requests.json` key declared under `modules.common.requests` in `manifest.json` (and reverse: no orphan manifest entries).
+7. OAuth: `integrations` wrapper in `oauth_config.json`; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
+8. Frontend apps: `app/styles/images/icon.svg` + Crayons CDN in HTML (see templates).
+9. FQDN `host` only in request templates; paths start with `/`.
+10. `README.md` exists before you claim the app is ready for `fdk validate`.
+
 **MANDATORY: NEW APP ENGINES — FDK 10.x + NODE 24.x ONLY**
 
 - Every **new** generated app MUST ship `manifest.json` → `engines` with **FDK 10.x** and **Node 24.x** (same values as templates: `fdk` `10.0.0`, `node` `24.11.0`). Do **not** create new apps with FDK 9.x or Node 18 in `engines` by default.
@@ -41,7 +54,9 @@ If validation still cannot run after the downgrade, stop and tell the user to fi
 
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
-**Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`. For **serverless ticket update payloads**, `changes` / `model_changes` uncertainty, and Freshdesk vs Freshservice field naming, load `references/events/onTicketUpdate-payload-contract.md` and golden JSON under `references/test-payloads/server/test_data/`.
+**Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`. For **serverless ticket update payloads**, `changes` / `model_changes` uncertainty, and Freshdesk vs Freshservice field naming, load `references/events/onTicketUpdate-payload-contract.md` and golden JSON under `references/test-payloads/server/test_data/`. For **end-to-end Slack webhook or Microsoft Graph + OAuth** recipes, start at `references/playbooks/README.md` (then open only the one playbook file you need).
+
+**Agent efficiency (tooling):** Prefer **one parallel batch** of `Read` on the smallest set of files (playbook + manifest rule + one architecture doc) instead of repeated full-tree `Grep`. Use `Glob` to find filenames, then `Read` each path **once**. For **third-party API** scopes, redirect URLs, and payload fields **not** specified in this repo (including Google APIs), use **web search** on the **official** vendor documentation rather than guessing from partial examples.
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
@@ -338,6 +353,8 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
 | `assets/templates/serverless-skeleton/` | No UI, events/automation | `server/server.js`, `manifest.json`, `config/iparams.json`, **`README.md`** |
 | `assets/templates/hybrid-skeleton/` | UI + SMI + external API | `app/`, `server/`, `config/requests.json`, `config/iparams.json`, `icon.svg`, **`README.md`** |
 | `assets/templates/oauth-skeleton/` | UI + OAuth service | above + `config/oauth_config.json` + **`README.md`** (`oauth_iparams` only there; see `references/api/oauth-docs.md`) |
+
+**Golden-path recipes (Slack webhook, Microsoft Graph OAuth):** `references/playbooks/README.md` — load **one** playbook instead of hopping across many docs.
 
 **CRITICAL: README.md is MANDATORY for every app. It must be created BEFORE validation.**
 
@@ -666,11 +683,26 @@ Default: mandatory files + short `README.md` only.
 
 **Jobs:** `references/runtime/jobs-docs.md` — declare under `modules.common.jobs`; no `renderData` in job handlers.
 
+## Task → ordered reads (max ~5 files)
+
+Use this sequence **instead of** ad-hoc greps across `references/` when the task type is clear:
+
+| Task | Read in order |
+|------|----------------|
+| New hybrid + external HTTP | `references/playbooks/README.md` (pick playbook or hybrid template) → `references/architecture/request-templates-latest.md` → `rules/async-patterns.mdc` |
+| New OAuth + external API | `references/playbooks/microsoft-graph-account-oauth.md` (or oauth template) → `references/architecture/oauth-configuration-latest.md` → `references/architecture/request-templates-latest.md` → `rules/async-patterns.mdc` |
+| Ticket serverless events / filters | `references/events/onTicketUpdate-payload-contract.md` → `references/test-payloads/README.md` → product module doc (`freshdesk_support_ticket.md` or `freshservice_service_tickets.md`) |
+| Multi-module / placement | `rules/platform3-modules-locations.mdc` → `references/skill-advanced-topics.md` (module summary only) |
+| Lint / validate churn | `rules/validation-workflow.mdc` → `rules/freshworks-platform3.mdc` (complexity + unused params) |
+
+If the task is still unclear after step 1, load `rules/confusion.mdc`.
+
 ## Summary
 
 - **SKILL.md** — core enforcement, workflow, validation tables, gates.
 - **rules/** — always-on Platform 3.0, security, validation, SMI/events, templates, gates.
 - **references/** — 140+ files; load by topic as needed (including `references/skill-advanced-topics.md` for extended OAuth, validation checklists, reference index, module summary).
-- **assets/templates/** — frontend, serverless, hybrid, OAuth skeletons.
+- **assets/templates/** — frontend, serverless, hybrid, OAuth skeletons (validate-ready file sets).
+- **references/playbooks/** — Slack webhook + Microsoft Graph golden paths.
 
 When uncertain, load the specific `references/` file before implementing.

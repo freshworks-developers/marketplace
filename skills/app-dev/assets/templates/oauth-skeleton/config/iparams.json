@@ -1,0 +1,15 @@
+{
+  "client_id": {
+    "display_name": "GitHub OAuth Client ID",
+    "description": "From your GitHub OAuth App settings",
+    "type": "text",
+    "required": true
+  },
+  "client_secret": {
+    "display_name": "GitHub OAuth Client Secret",
+    "description": "From your GitHub OAuth App settings",
+    "type": "text",
+    "required": true,
+    "secure": true
+  }
+}

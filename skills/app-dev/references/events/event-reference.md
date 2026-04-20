@@ -17,3 +17,8 @@
 ## Simulation & test data
 
 - FDK **Simulate** writes payloads to `<app>/server/test_data/` — `references/architecture/app_setup_events_doc.md`, `references/architecture/fdk_test.md`.
+- Skill-maintained copy-paste samples: `references/test-payloads/README.md`.
+
+## Integration playbooks
+
+- `references/playbooks/README.md` — Slack Incoming Webhook (hybrid) and Microsoft Graph (account OAuth) end-to-end.

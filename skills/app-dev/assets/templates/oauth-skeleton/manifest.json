@@ -7,6 +7,14 @@
       },
       "functions": {
         "fetchOAuthData": {}
+      },
+      "events": {
+        "onAppInstall": {
+          "handler": "onAppInstallHandler"
+        },
+        "onAppUninstall": {
+          "handler": "onAppUninstallHandler"
+        }
       }
     },
     "support_ticket": {

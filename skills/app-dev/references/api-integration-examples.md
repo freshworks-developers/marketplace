@@ -2,6 +2,8 @@
 
 **Complete guide for external API integrations in Platform 3.0 apps.**
 
+**Auth & third-party docs:** For **OAuth** providers, use `oauth_config.json` + `<%= access_token %>` + `"options": { "oauth": "..." }` on the template (see `references/architecture/oauth-configuration-latest.md`). **Do not** ship new apps that put long-lived Google/Microsoft **user** tokens only in iparams as `Bearer <%= iparam... %>` when account OAuth is available. **API keys, Slack bot tokens, Stripe secrets, and fixed webhooks** in **secure iparams** are still valid where OAuth is not applicable. For **scopes, redirect URIs, Sheets range encoding, Graph vs Sheets paths**, and other vendor details **not** fully enumerated here, use **web search** against the **official** vendor documentation, then encode results into request templates.
+
 ## Table of Contents
 1. [Common Request Schema Patterns](#common-request-schema-patterns)
 2. [Error Handling Patterns](#error-handling-patterns)
@@ -1159,77 +1161,18 @@ exports = {
 };
 ```
 
-### 3. Google Sheets API - Read/Write Data
+### 3. Google Sheets API (account OAuth — no iparam Bearer)
 
-```json
-// config/requests.json
-{
-  "readGoogleSheet": {
-    "schema": {
-      "protocol": "https",
-      "method": "GET",
-      "host": "sheets.googleapis.com",
-      "path": "/v4/spreadsheets/<%= context.spreadsheet_id %>/values/<%= context.range %>",
-      "headers": {
-        "Authorization": "Bearer <%= iparam.google_access_token %>"
-      }
-    }
-  },
-  "writeGoogleSheet": {
-    "schema": {
-      "protocol": "https",
-      "method": "POST",
-      "host": "sheets.googleapis.com",
-      "path": "/v4/spreadsheets/<%= context.spreadsheet_id %>/values/<%= context.range %>:append",
-      "query": {
-        "valueInputOption": "USER_ENTERED"
-      },
-      "headers": {
-        "Authorization": "Bearer <%= iparam.google_access_token %>",
-        "Content-Type": "application/json"
-      }
-    }
-  }
-}
-```
+**[DEPRECATED for new apps]** Storing `Authorization: Bearer <%= iparam.google_access_token %>` in request templates bypasses Platform account OAuth and drifts from marketplace security expectations.
 
-```javascript
-// server/server.js
-exports = {
-  syncTicketToSheets: async function(args) {
-    const { ticket } = args.data;
+**Platform 3.0 pattern:** Register Google OAuth in `config/oauth_config.json` (`integrations`), add request templates with:
 
-    try {
-      const row = [
-        ticket.id,
-        ticket.subject,
-        ticket.priority,
-        ticket.status,
-        ticket.requester.name,
-        ticket.created_at
-      ];
+- `"Authorization": "Bearer <%= access_token %>"`
+- Per-template `"options": { "oauth": "<your_integration_name>" }`
 
-      const response = await $request.invokeTemplate('writeGoogleSheet', {
-        context: {
-          spreadsheet_id: args.iparams.spreadsheet_id,
-          range: 'Tickets!A:F'
-        },
-        body: JSON.stringify({
-          values: [row]
-        })
-      });
+Use `context` for `spreadsheet_id`, `range`, etc. Invoke with `$request.invokeTemplate('writeGoogleSheet', { context: { ... }, body: JSON.stringify({ values: [...] }) })`.
 
-      const data = JSON.parse(response.response);
-      console.info('[syncTicketToSheets] Row added:', data.updates.updatedRows);
-
-      renderData(null, { success: true, rowsAdded: data.updates.updatedRows });
-    } catch (error) {
-      console.error('[syncTicketToSheets] Error:', error.message);
-      renderData({ status: 500, message: 'Failed to sync to Google Sheets' });
-    }
-  }
-};
-```
+**Operational details (ranges, `valueInputOption`, sheet names with spaces/special characters):** not duplicated here — use **web search** on official Google Sheets / Google OAuth documentation and mirror the current API paths and query parameters in `config/requests.json`.
 
 ### 4. Stripe API - Create Payment
 

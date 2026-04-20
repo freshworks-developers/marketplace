@@ -1,32 +1,25 @@
-(async function() {
-  const client = await app.initialized();
+(function () {
+  document.addEventListener('DOMContentLoaded', init);
 
-  client.events.on('app.activated', () => {
-    document.getElementById('btnFetch').addEventListener('fwClick', async () => {
-      await fetchData(client);
-    });
-  });
-
-  async function fetchData(client) {
-    const resultEl = document.getElementById('result');
-    resultEl.innerHTML = '<fw-spinner size="small"></fw-spinner>';
-
-    try {
-      const result = await client.request.invoke('fetchExternalData', {
-        param1: 'value1'
+  function init() {
+    app.initialized().then(function (client) {
+      document.getElementById('btnFetch').addEventListener('fwClick', function () {
+        invokeServer(client);
       });
+    });
+  }
 
-      resultEl.innerHTML = '';
-      const msg = document.createElement('fw-inline-message');
-      msg.setAttribute('type', result.success ? 'success' : 'error');
-      msg.textContent = result.success ? JSON.stringify(result.data) : result.error;
-      resultEl.appendChild(msg);
-    } catch (error) {
-      resultEl.innerHTML = '';
-      const msg = document.createElement('fw-inline-message');
-      msg.setAttribute('type', 'error');
-      msg.textContent = error.message;
-      resultEl.appendChild(msg);
-    }
+  function invokeServer(client) {
+    const resultEl = document.getElementById('result');
+    resultEl.textContent = 'Loading…';
+
+    client.request
+      .invoke('fetchExternalData', { param1: 'demo' })
+      .then(function (data) {
+        resultEl.textContent = data.success ? data.data : data.message || 'Error';
+      })
+      .catch(function (err) {
+        resultEl.textContent = err.message || 'Request failed';
+      });
   }
 })();
