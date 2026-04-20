@@ -28,6 +28,16 @@
 - ✅ Request template patterns
 - ✅ Module and location reference for all products
 
+## Validating skeleton templates
+
+With **FDK 10.x** and **Node 24.x** on your PATH, run:
+
+```bash
+./skills/app-dev/scripts/validate-skeleton-templates.sh
+```
+
+This copies each `assets/templates/*-skeleton` to a temp directory and runs **`fdk validate`**. Exit code is non-zero if any skeleton fails.
+
 ## Install
 
 ### Install via CLI:

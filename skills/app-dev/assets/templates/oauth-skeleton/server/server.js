@@ -7,7 +7,7 @@ exports = {
     console.info('onAppUninstallHandler invoked');
     renderData();
   },
-  fetchOAuthData: async function(args) {
+  fetchOAuthData: async function() {
     try {
       const response = await $request.invokeTemplate('getOAuthResource', {
         context: {}

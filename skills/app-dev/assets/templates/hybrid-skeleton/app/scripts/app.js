@@ -6,6 +6,8 @@
       document.getElementById('btnFetch').addEventListener('fwClick', function () {
         invokeServer(client);
       });
+    }).catch(function (err) {
+      console.error('App init failed:', err);
     });
   }
 

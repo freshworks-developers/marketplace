@@ -9,6 +9,8 @@
           message: 'App is running.'
         });
       });
+    }).catch(function (err) {
+      console.error('App init failed:', err);
     });
   }
 })();
