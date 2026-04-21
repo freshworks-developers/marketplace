@@ -1,8 +1,8 @@
 {
-  "name": "app-dev",
-  "displayName": "Freshworks App Publishing",
+  "name": "publish",
+  "displayName": "Freshworks AMP upload",
   "version": "1.0.0",
-  "description": "Guide for publishing Freshworks apps to the marketplace with submission workflows and review guidelines",
+  "description": "Pack and upload any Platform 3.0 custom app to AMP (test or dev)",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"

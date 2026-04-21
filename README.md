@@ -41,11 +41,11 @@ npx skills add https://github.com/freshworks-developers/marketplace/skills/app-d
 |-------|-------------|----------------|
 | [**freshworks-app-dev-skill**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
 | [**freshworks-fdk-setup-skill**](skills/fdk-setup/) | Automated FDK installation with Node.js 18 via nvm using subagents | **Subagent-Based** |
-| [**freshworks-publish-skill**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+| [**freshworks-publish-skill**](skills/publish/) | Validate, pack, and publish Platform 3.0 apps (FDK + AMP API) via pure shell subagents | **Subagent-based** ([SKILL.md](skills/publish/SKILL.md)) |
 
 ### Subagent-Based Skills
 
-The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations:
+Both **fdk-setup** and **publish** skills use Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations following **skills-main patterns**:
 
 **Features:**
 - ✅ **nvm Integration** - Manages Node.js 18 alongside other versions
@@ -78,21 +78,9 @@ skill-name/
 ```
 
 
-## Manifest Management
+## Skill Discovery
 
-Generate manifest after adding or updating skills:
-
-```bash
-python3 scripts/generate_manifest.py
-```
-
-Validate that manifest is up to date (for CI):
-
-```bash
-python3 scripts/generate_manifest.py validate
-```
-
-The manifest is used by the CLI to discover available skills.
+Skills are discovered automatically by AI agents through the `skills/` directory structure. Each skill has a `SKILL.md` file with frontmatter metadata that agents read to understand capabilities and when to trigger.
 
 ## Support
 

@@ -22,7 +22,6 @@ Thumbs.db
 *.log
 *.bak
 *.backup
-*~
 
 # FDK Log Directories
 log/
@@ -44,7 +43,7 @@ build/
 .env.local
 .env.*.local
 
-# Node Modules (if any)
+# Node Modules
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -75,55 +74,25 @@ notes.md
 TODO.md
 *.personal
 
-# Testing Environment (local only, never push)
+# Testing Environment (local only)
 .test/
 
-# Internal Development Materials (local only, never push)
+# Internal Development Materials (local only)
 .dev/
-
-# Windsurf (internal only)
 .windsurf/
-
-# Internal
 .telemetry
 .db/
-.github/
 .aclm/
 .clp/
+
+# Agent and Cursor directories (except root rules)
 .agents/
 .cursor/
-test/
 skills/.agents/
 skills/.cursor/
 skills/test/
-skills/skills-lock.json
-skills-lock.json
-prompts102.csv
-apps/
-.cursor/agents
-.agents/
-security-report.md
-validation-report.md
-iteration6/
-apps-12-run1/
-iteration7/
 
-# Unignore app-dev skill rules
-!skills/app-dev/.cursor/
-!skills/app-dev/.cursor/rules/
-!skills/app-dev/.cursor/rules/*.mdc
-
-
-fdk_validation_results.txt
-SKILL-old.md
-run_fdk_validation.sh
-prompts12list4.csv
-FDK_VALIDATION_REPORT.md
-/manual-apps/
-analyze-manual-apps.sh
-analyze_iterations.sh
-analyze_iterations.py
-fdk_validation_results.json
-VALIDATION_SUMMARY.txt
-/apps-12-run2/
-validation_results.json
+# Unignore root rules (plugin-based, aligned with superpowers)
+!.cursor/
+!.cursor/rules/
+!.cursor/rules/*.mdc

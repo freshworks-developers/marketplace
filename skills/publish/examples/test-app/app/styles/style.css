@@ -1,0 +1,9 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+fw-label {
+  display: block;
+  margin-bottom: 15px;
+}

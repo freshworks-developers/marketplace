@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Test files
+test/
+*.test.js
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS Files
+.DS_Store

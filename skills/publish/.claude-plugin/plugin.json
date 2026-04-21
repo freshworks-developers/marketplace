@@ -1,8 +1,8 @@
 {
   "name": "publish",
-  "displayName": "FDK Pack & Publish",
+  "displayName": "Freshworks AMP upload",
   "version": "1.0.0",
-  "description": "Automated Freshworks marketplace FDK pack and publish",
+  "description": "FDK pack + AMP modularApps upload (test or dev)",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"

@@ -182,7 +182,7 @@ references/
 │   ├── manifest-errors.md
 │   └── oauth-errors.md
 ├── architecture/           # Platform architecture docs
-└── tests/                  # Test patterns and golden files
+└── fixtures/               # Optional golden files / sample payloads
     ├── golden.json
     └── violations.json
 ```

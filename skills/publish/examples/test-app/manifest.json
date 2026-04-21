@@ -1,0 +1,24 @@
+{
+  "platform-version": "3.0",
+  "engines": {
+    "node": "18.20.8",
+    "fdk": "9.8.2"
+  },
+  "modules": {
+    "common": {
+      "events": {
+        "onAppInstall": {
+          "handler": "onAppInstallHandler"
+        }
+      }
+    },
+    "support_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      }
+    }
+  }
+}
