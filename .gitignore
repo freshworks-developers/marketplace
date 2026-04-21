@@ -94,3 +94,6 @@ TODO.md
 
 # Local skills CLI lock (machine-specific)
 skills-lock.json
+
+# Publish skill local examples (not versioned)
+skills/publish/examples/
