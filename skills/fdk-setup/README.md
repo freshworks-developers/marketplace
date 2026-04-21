@@ -25,7 +25,7 @@
 
 > **PLATFORM 3.0 ONLY**: Platform 2.3 is deprecated. Both FDK versions support Platform 3.0.
 
-> **IMPORTANT**: This skill provides manual commands. You must explicitly run `/fdk-install` before creating Freshworks apps. The skill does NOT automatically check for FDK prerequisites.
+> **IMPORTANT**: Run **`/fdk-setup-install`** (or legacy **`/fdk-install`**) before creating Freshworks apps. This skill does NOT auto-check prerequisites on generic “create app” prompts.
 
 ## Install
 
@@ -61,8 +61,8 @@ The plugin should appear in Cursor/Claude Settings → Plugins → Installed Plu
 Check available commands:
 ```bash
 # In Cursor/Claude chat, type:
-/fdk-
-# You should see 5 commands in autocomplete
+/fdk-setup-
+# You should see 6 commands in autocomplete (plus legacy /fdk-* if registered)
 ```
 
 ## FDK Version Support Policy
@@ -73,13 +73,13 @@ Check available commands:
 - **Status:** Active, supported until December 2027
 - **Use for:** All new development
 - **Publishing:** Required for marketplace submission
-- **Command:** `/fdk-install` (default)
+- **Command:** `/fdk-setup-install` (default)
 
 ### FDK 9.x + Node 18.x (Deprecated)
 - **Status:** Deprecated, support ends March 2026
 - **Use for:** Development only (legacy projects)
 - **Publishing:** NOT SUPPORTED
-- **Command:** `/fdk-downgrade` (shows deprecation warning)
+- **Command:** `/fdk-setup-downgrade` (shows deprecation warning)
 - **Warning:** Automatic prompt before installation
 
 ### Platform 2.3 (Rejected)
@@ -93,11 +93,20 @@ Check available commands:
 **You must explicitly run these commands:**
 
 ```bash
-/fdk-install                    # Install FDK 10.x + Node 24 (recommended)
-/fdk-upgrade                    # Upgrade to latest FDK 10.x
-/fdk-downgrade                  # Downgrade to FDK 9.x + Node 18 (shows deprecation warning)
-/fdk-uninstall                  # Complete removal: npm + ~/.fdk + cache + shell config
-/fdk-status                     # Check installation status
+/fdk-setup-install              # Install FDK 10.x + Node 24 (recommended)
+/fdk-setup-install --version 10.1.0  # Pin FDK 10.x.y (CDN v10.1.0.tgz)
+/fdk-setup-upgrade              # Upgrade to latest FDK 10 line (Node 24.11)
+/fdk-setup-upgrade --to 10.1.0 # Pin semver (CDN v10.1.0.tgz)
+/fdk-setup-migrate              # FDK 9 + Node 18 → FDK 10 + Node 24.11
+/fdk-setup-downgrade            # FDK 9 latest line + Node 18 (deprecated)
+/fdk-setup-downgrade 9.6.0      # Pin FDK 9.x.y (CDN v9.6.0.tgz)
+/fdk-setup-uninstall            # Remove FDK only (npm + ~/.fdk + cache; keeps nvm)
+/fdk-setup-status               # Inline status
+/fdk-setup-status --verbose     # PATH, npm prefix, nvm, rc snippets
+/fdk-setup-troubleshoot         # Diagnose (inline)
+/fdk-setup-troubleshoot --fix   # Shell Task: zshrc-safe nvm + FDK 10 on 24.11
+/fdk-setup-use                  # Workspace: nvm use + .nvmrc (FDK 10 vs 9); optional --write-nvmrc
+# Legacy: /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status
 ```
 
 **Local dev (background, not a slash command):** from your app directory (where `manifest.json` lives), run the script by absolute path, for example:
@@ -108,39 +117,55 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_L
 
 ### Key Features
 
-**Install (`/fdk-install`):**
-- Installs FDK 10.x with Node.js 24.x via nvm (default)
+**Install (`/fdk-setup-install`):**
+- Installs FDK 10.x with Node.js 24.11 via nvm + CDN (default **latest-v24.tgz**)
+- Optional **`--version X.Y.Z`** pins **`vX.Y.Z.tgz`** (FDK **10.x.y** only; refuse 9.x here)
 - Auto-detects existing Node installations
 - Sets up global persistence across all terminals
 - Comprehensive verification in new shells
 
-**Upgrade (`/fdk-upgrade`):**
-- Upgrades to latest FDK 10.x version
+**Upgrade (`/fdk-setup-upgrade`):**
+- Upgrades to latest FDK 10 line, or **`--to X.Y.Z`** for a pinned release (`https://cdn.freshdev.io/fdk/vX.Y.Z.tgz`)
 - Complete uninstall of previous version before upgrade
 - Removes ~/.fdk directory to prevent conflicts
 - Preserves Node 24 configuration
 
-**Downgrade (`/fdk-downgrade`):**
+**Migrate (`/fdk-setup-migrate`):**
+- Moves from FDK 9 + Node 18 to FDK 10 + Node 24.11 (keeps Node 18 in nvm)
+
+**Downgrade (`/fdk-setup-downgrade`):**
 - Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
+- Optional **pinned 9.x.y** (`v9.x.y.tgz`) or **latest** 9 line (`latest.tgz`) after HTTP check
 - Shows deprecation warning (FDK 9.x ends March 2026)
 - Requires confirmation before proceeding
 - Complete cleanup of FDK 10.x before installing 9.x
 - Warns that publishing requires FDK 10.x
 - Use for development only
 
-**Uninstall (`/fdk-uninstall`):**
+**Uninstall (`/fdk-setup-uninstall`):**
 - Complete removal: npm package + binary + node_modules
 - Removes ~/.fdk directory completely
 - Cleans npm cache to prevent reinstall issues
 - Removes shell config references (with backup)
 - Manual binary removal if npm uninstall fails
 - Comprehensive verification of complete removal
+- **No `uninstall --all`** — Node and nvm are never removed by this skill
+
+**Status / troubleshoot:**
+- **`/fdk-setup-status --verbose`** — extended diagnostics (still inline, no Task)
+- **`/fdk-setup-troubleshoot`** — diagnose PATH / nvm / FDK (inline)
+- **`/fdk-setup-troubleshoot --fix`** — shell Task with conservative **`~/.zshrc`** / **`~/.bashrc`** edits
+
+**Use (`/fdk-setup-use`) — workspace stack (inline):**
+- **`nvm use`** from **`.nvmrc`** or explicit **10** / **9** (Node **24.11** vs **18**)
+- Optional **`--write-nvmrc`** to pin **`24.11`** (FDK 10) or **`18`** (FDK 9) in the app repo
+- Does not change global default alias by itself; switches the **active shell** (and documents next steps if **`fdk`** is missing on that Node)
 
 ### ⚠️ IMPORTANT: Run Before Creating Apps
 
 **Before creating any Freshworks app, you MUST run:**
 ```bash
-/fdk-install
+/fdk-setup-install
 ```
 
 **Why?** Cursor does not automatically check for FDK prerequisites. If you skip this step and try to create an app, the agent may create files manually without proper validation.
@@ -152,16 +177,16 @@ The agent *may* automatically load this skill when you explicitly mention:
 - "setup fdk"
 - "check fdk status"
 
-**However:** If you just say "create a freshdesk app", the agent will likely skip the FDK check and create files manually. Always run `/fdk-install` first.
+**However:** If you just say "create a freshdesk app", the agent may skip the FDK check. Always run **`/fdk-setup-install`** first.
 
 ## How It Works
 
 ### Command Flow (Manual Invocation)
 
 ```
-User types: /fdk-install
+User types: /fdk-setup-install
     ↓
-Cursor reads: commands/fdk-install.md
+Cursor reads: commands/fdk-setup-install.md
     ↓
 Command reads: SKILL.md (operation template)
     ↓
@@ -178,7 +203,7 @@ Returns: Installation status and next steps
 
 ### Subagent Workflow
 
-When you run a command (e.g., `/fdk-install`), it spawns a **dedicated shell subagent** that:
+When you run a command (e.g., `/fdk-setup-install`), it spawns a **dedicated shell subagent** that:
 
 1. **Auto-detects environment** - OS, Node.js, package managers (Homebrew/Chocolatey)
 2. **Smart decision-making** - Chooses best installation method automatically
@@ -188,7 +213,7 @@ When you run a command (e.g., `/fdk-install`), it spawns a **dedicated shell sub
 6. **Verifies setup** - Tests all components work correctly
 7. **Reports status** - Comprehensive output with next steps
 
-Slash commands that use a shell Task (`/fdk-install`, `/fdk-upgrade`, `/fdk-downgrade`, `/fdk-uninstall`) **must close out** when done: return after the final report—do not leave `fdk run` or similar running inside that Task (`/fdk-status` is inline only).
+Shell Tasks **must close out** when done: `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-migrate`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, **`/fdk-setup-troubleshoot --fix`**. Inline only: **`/fdk-setup-status`** (and **`--verbose`**), **`/fdk-setup-troubleshoot`** without **`--fix`**, **`/fdk-setup-use`**.
 
 **Benefits:**
 - Autonomous execution (minimal user intervention)
@@ -199,7 +224,7 @@ Slash commands that use a shell Task (`/fdk-install`, `/fdk-upgrade`, `/fdk-down
 **Limitation:**
 - Only works when YOU explicitly invoke commands
 - Does NOT automatically check FDK before app creation
-- You must remember to run `/fdk-install` first
+- You must remember to run **`/fdk-setup-install`** first
 
 ## What's Included
 
@@ -216,12 +241,15 @@ fdk-setup/
 ├── .claude-plugin/
 │   └── plugin.json            # Command registration for Claude Code
 │
-├── commands/                  # Slash command definitions
-│   ├── fdk-install.md         # /fdk-install (smart auto-detection)
-│   ├── fdk-upgrade.md         # /fdk-upgrade
-│   ├── fdk-downgrade.md       # /fdk-downgrade <version>
-│   ├── fdk-uninstall.md       # /fdk-uninstall
-│   └── fdk-status.md          # /fdk-status
+├── commands/                  # Slash command definitions (Confluence /fdk-setup *)
+│   ├── fdk-setup-install.md   # optional --version
+│   ├── fdk-setup-upgrade.md   # optional --to
+│   ├── fdk-setup-migrate.md
+│   ├── fdk-setup-downgrade.md # optional 9.x.y pin
+│   ├── fdk-setup-uninstall.md
+│   ├── fdk-setup-status.md    # optional --verbose
+│   ├── fdk-setup-troubleshoot.md  # optional --fix
+│   └── fdk-setup-use.md           # workspace nvm / .nvmrc
 │
 ├── scripts/
 │   ├── fdk-run-background.sh  # nohup fdk run … (returns immediately)
@@ -242,9 +270,9 @@ Commands are registered in `plugin.json`:
 {
   "commands": [
     {
-      "name": "fdk-install",
-      "description": "Smart FDK installation with auto-detection",
-      "file": "commands/fdk-install.md"
+      "name": "fdk-setup-install",
+      "description": "Install FDK 10 + Node 24",
+      "file": "commands/fdk-setup-install.md"
     }
   ]
 }
@@ -255,7 +283,7 @@ Claude Code/Cursor reads `plugin.json` to discover and register slash commands.
 ### Key Features
 
 - **Smart Auto-Detection** - Detects Homebrew/Chocolatey, Node versions, asks only when needed
-- **Subagent Execution** - All commands use Task tool with shell subagents
+- **Subagent Execution** - Mutating commands use shell Tasks; **`/fdk-setup-status`**, **`/fdk-setup-troubleshoot`** (no **`--fix`**), and **`/fdk-setup-use`** are inline
 - **Version Isolation** - Uses nvm to preserve existing Node versions
 - **Error Recovery** - Automatic retry and fallback strategies
 - **Cross-Platform** - macOS (Homebrew), Windows (Chocolatey), Linux (nvm)

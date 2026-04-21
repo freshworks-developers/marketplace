@@ -2,6 +2,13 @@
 
 User reports `zsh: command not found: fdk` (or `fdk` missing in any shell) after installing Freshworks FDK, especially FDK 10 (`@freshworks/fdk`) with nvm.
 
+## Windows / PowerShell first
+
+On **Windows PowerShell**, two common false alarms:
+
+1. **`where fdk` shows nothing** — **`where`** is the **`Where-Object`** cmdlet alias, not **`where.exe`**. Use **`where.exe fdk`** or **`Get-Command fdk`**. See **`references/windows.md`** (“Do not use `where fdk`”).
+2. **`&&` parse error** — **Windows PowerShell 5.1** does not support **`&&`**. Use **newlines**, **`;`**, or **`if ($LASTEXITCODE -eq 0) { ... }`**, or upgrade to **PowerShell 7+**. See **`references/windows.md`** (“`&&` is not valid”).
+
 ## Symptoms
 
 - Terminal: `fdk -v`, `fdk version`, or `fdk` → `command not found: fdk`

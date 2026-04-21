@@ -51,7 +51,7 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
      1. Install the fdk-setup skill:
         npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
 
-     2. Use /fdk-install or /fdk-upgrade to install FDK 10.x on Node 24.x
+     2. Use /fdk-setup-install or /fdk-setup-upgrade (or legacy /fdk-install, /fdk-upgrade) to install FDK 10.x on Node 24.x
      ```
 
 3. **ONLY proceed to Step 1 if BOTH conditions are met:**

@@ -24,6 +24,8 @@
     "validation",
     "migration"
   ],
+  "rulesDirectory": "./rules",
+  "commandsDirectory": "./commands",
   "commands": [
     {
       "name": "fdk-fix",

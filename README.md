@@ -54,11 +54,14 @@ The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagen
 
 **Operations:**
 ```bash
-/fdk-install                # Spawns subagent: nvm → Node 24 → FDK 10
-/fdk-upgrade                # Spawns subagent: ensure Node 24 → upgrade FDK
-/fdk-downgrade 10.0.0       # Spawns subagent: ensure Node 24 → downgrade FDK only
-/fdk-uninstall              # Spawns subagent: remove FDK (keep Node/nvm)
-/fdk-status                 # Spawns subagent: status check
+/fdk-setup-install          # Subagent: nvm → Node 24.11 → FDK 10 (CDN); optional --version X.Y.Z
+/fdk-setup-upgrade          # Subagent: latest FDK 10 line; optional --to X.Y.Z
+/fdk-setup-migrate          # Subagent: FDK 9 + Node 18 → FDK 10 + Node 24.11
+/fdk-setup-downgrade        # Subagent: FDK 10 → 9; optional 9.x.y semver (deprecated)
+/fdk-setup-uninstall        # Subagent: remove FDK only (keep Node/nvm)
+/fdk-setup-status           # Inline; optional --verbose diagnostics
+/fdk-setup-troubleshoot     # Inline diagnose; --fix = shell Task (rc + nvm + FDK)
+/fdk-setup-use              # Workspace: nvm use / .nvmrc for FDK 10 vs 9 stack (inline)
 ```
 
 **Cross-Scenarios (7 scenarios via subagents):**
@@ -112,10 +115,22 @@ version: "1.0.0"
 
 No manifest generation or registry required. Each skill is self-contained and declarative.
 
+## Troubleshooting
+
+Having issues with skills installation or usage?
+
+- 📋 [**TROUBLESHOOTING.md**](TROUBLESHOOTING.md) - Complete guide for Cursor and Claude Code skill issues
+
+**Common issues:**
+- Skills not recognized → Check `SKILL.md` and `plugin.json` structure
+- Commands not working → Verify `rulesDirectory` and `commandsDirectory` in plugin.json
+- Rules not applying → Ensure rules are in `skills/{skill}/rules/` (not `.cursor/rules/`)
+
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
 - 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
+- 💡 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Skills installation & usage guide
 
 ## License
 

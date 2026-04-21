@@ -323,7 +323,7 @@ CONTEXT:
 WARNING TO USER:
 echo "WARNING: FDK 9.x is DEPRECATED and for legacy apps only."
 echo "WARNING: Platform 3.0 apps require FDK 10.x."
-echo "WARNING: You can upgrade back anytime with: /fdk-upgrade"
+echo "WARNING: You can upgrade back anytime with: /fdk-setup-upgrade or /fdk-setup-migrate"
 echo ""
 read -p "Continue with downgrade? (y/N): " confirm
 if [[ $confirm != [yY] ]]; then
@@ -380,8 +380,8 @@ FDK 9.8.2 INSTALLATION:
 10. Switch to Node 18:
     nvm use 18
 
-11. Install FDK 9.8.2:
-    npm install @freshworks/fdk@9.8.2 -g
+11. Install FDK 9.8.2 (CDN tarball; same pattern as `/fdk-setup-upgrade --to 9.8.2`):
+    npm install -g "https://cdn.freshdev.io/fdk/v9.8.2.tgz"
 
 12. Verify installation:
     fdk version
@@ -703,10 +703,13 @@ STEPS:
    fi
 
 4. Uninstall current FDK (if exists):
-   npm uninstall @freshworks/fdk -g 2>/dev/null || true
+   npm uninstall -g @freshworks/fdk 2>/dev/null || true
 
-5. Install specific version:
-   npm install @freshworks/fdk@<TARGET_VERSION> -g
+5. Install specific version (verify tarball first; semver without leading `v`):
+   FDK_URL="https://cdn.freshdev.io/fdk/v<TARGET_VERSION>.tgz"
+   HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
+   [ "$HTTP" = "200" ] || exit 1
+   npm install -g "$FDK_URL"
 
 6. Verify installation:
    fdk version
@@ -724,7 +727,7 @@ Verification successful
 FDK <TARGET_VERSION> ready!
 
 ERROR HANDLING:
-- If version not found: Check npm registry, suggest valid versions
+- If version not found: Check `https://cdn.freshdev.io/fdk/v<semver>.tgz` (HTTP 200) and valid semver
 - If Node not 24: Switch to Node 24 first
 - If install fails: Check npm permissions
 `
@@ -959,7 +962,7 @@ ERROR HANDLING:
 |------|--------------|
 | Upgrade from FDK 9 to 10 | Scenario 1 |
 | Already have Node installed | Scenario 2 |
-| Downgrade to legacy FDK | Scenario 3 (use /fdk-downgrade) |
+| Downgrade to legacy FDK | Scenario 3 (use /fdk-setup-downgrade) |
 | FDK not working | Scenario 4 |
 | Install specific FDK version | Scenario 5 |
 | Node PATH issues | Scenario 6 |

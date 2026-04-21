@@ -2,36 +2,51 @@
   "name": "fdk-setup",
   "displayName": "FDK Setup",
   "version": "1.0.0",
-  "description": "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Use when working with Freshworks apps (Freshdesk, Freshservice, Freshsales, Freshchat, Freshcaller) or encountering FDK errors. Provides /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status commands.",
+  "description": "Freshworks FDK + nvm. Commands: install (--version), upgrade (--to), migrate, downgrade, uninstall, status (--verbose), troubleshoot (--fix), use (workspace .nvmrc). Legacy /fdk-install, etc.",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
   "commands": [
     {
-      "name": "fdk-install",
-      "description": "Smart FDK installation with auto-detection",
-      "file": "commands/fdk-install.md"
+      "name": "fdk-setup-install",
+      "description": "Install FDK 10 + Node 24; optional --version pin",
+      "file": "commands/fdk-setup-install.md"
     },
     {
-      "name": "fdk-upgrade",
-      "description": "Upgrade FDK to latest version",
-      "file": "commands/fdk-upgrade.md"
+      "name": "fdk-setup-upgrade",
+      "description": "Upgrade FDK; use --to X.Y.Z for pinned semver",
+      "file": "commands/fdk-setup-upgrade.md"
     },
     {
-      "name": "fdk-downgrade",
-      "description": "Downgrade FDK to specific version",
-      "file": "commands/fdk-downgrade.md"
+      "name": "fdk-setup-migrate",
+      "description": "Migrate FDK 9 + Node 18 to FDK 10 + Node 24.11",
+      "file": "commands/fdk-setup-migrate.md"
     },
     {
-      "name": "fdk-uninstall",
-      "description": "Uninstall FDK (keeps Node.js/nvm)",
-      "file": "commands/fdk-uninstall.md"
+      "name": "fdk-setup-downgrade",
+      "description": "Downgrade to FDK 9 + Node 18; optional 9.x.y pin",
+      "file": "commands/fdk-setup-downgrade.md"
     },
     {
-      "name": "fdk-status",
-      "description": "Check FDK installation status",
-      "file": "commands/fdk-status.md"
+      "name": "fdk-setup-uninstall",
+      "description": "Uninstall FDK (keeps Node/nvm)",
+      "file": "commands/fdk-setup-uninstall.md"
+    },
+    {
+      "name": "fdk-setup-status",
+      "description": "FDK / Node / nvm status; optional --verbose",
+      "file": "commands/fdk-setup-status.md"
+    },
+    {
+      "name": "fdk-setup-troubleshoot",
+      "description": "Diagnose FDK/nvm; optional --fix (careful rc edits)",
+      "file": "commands/fdk-setup-troubleshoot.md"
+    },
+    {
+      "name": "fdk-setup-use",
+      "description": "Workspace: nvm use / .nvmrc for FDK 10 vs 9 stack; inline",
+      "file": "commands/fdk-setup-use.md"
     }
   ]
 }
