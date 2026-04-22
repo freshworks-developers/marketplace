@@ -19,7 +19,7 @@ description: "Upload any Freshworks Platform 3.0 custom app to AMP (US): FDK val
   --support-email=you@your-domain.freshdesk.com
 ```
 
-### Node.js and FDK version handling
+### Node.js and FDK version handling (CRITICAL)
 
 **`fdk pack` respects `manifest.json` engines:**
 - Reads `engines.node` and `engines.fdk` from app's `manifest.json`
@@ -27,16 +27,28 @@ description: "Upload any Freshworks Platform 3.0 custom app to AMP (US): FDK val
 - Prompts to continue if active Node doesn't match manifest requirement
 - Auto-answers "Y" to engines prompt when called via `publish.sh` (pipe `printf 'Y\n'`)
 
-**Best practice:**
-1. Set correct engines in `manifest.json` before packing:
-   ```json
-   "engines": {
-     "node": "24.11.0",
-     "fdk": "10.0.1"
-   }
-   ```
-2. Use `/fdk-setup-use` to switch Node version per project (creates `.nvmrc`)
-3. Run `publish.sh` — it auto-confirms engines mismatch if needed
+**AGENT MUST:**
+1. **Before running `publish.sh`, check manifest engines vs active versions**
+2. **If mismatch detected, STOP and inform user with exact commands:**
+   - To switch Node: `/fdk-setup-use` in app directory OR `nvm use X.Y.Z`
+   - To install Node: `/fdk-setup-install --version X.Y.Z` OR use fdk-setup skill
+   - To install FDK: `/fdk-setup-install --version A.B.C` OR `/fdk-setup-upgrade --to A.B.C`
+3. **Wait for user confirmation before proceeding with pack/publish**
+
+**Example manifest engines:**
+```json
+"engines": {
+  "node": "24.11.0",
+  "fdk": "10.0.1"
+}
+```
+
+**Recommended workflow:**
+1. Check `manifest.json` engines
+2. Verify active versions: `node --version` && `fdk --version`
+3. If needed, use `/fdk-setup-use` to create `.nvmrc` and switch Node version
+4. If needed, use `/fdk-setup-install` or `/fdk-setup-upgrade` for FDK
+5. Recheck versions, then run `publish.sh`
 
 ### What `publish.sh` does first (clean AMP path)
 
@@ -68,11 +80,36 @@ Other useful flags: `--pack-only` (no AMP), `--force-pack`, `--skip-validate`, *
 
 ## Agent playbook
 
-1. Resolve **`APP_DIR`** (absolute path to folder containing `manifest.json`).
-2. Choose **test** vs **dev** from user intent; map to `publish.sh` **`--target`** (default test).
-3. Run **`publish.sh`** (preflight + stale-id repair are automatic). Stream or summarize stderr; **do not** paste presigned S3 URLs from AMP JSON into tickets or chat.
-4. On **401** (including preflight), rotate the Developer Portal API key in config; on **400**, compare manifest modules to **`MODULE_TO_PRODUCT`** in **`amp_upload.py`** or use **app-dev** skill.
-5. Tell the user: **app id**, **version state**, and where to install **custom** apps in their product (**Admin → Apps** / equivalent for their Freshworks product).
+1. **Check Node.js and FDK versions** (before pack):
+   - Read `engines.node` and `engines.fdk` from `manifest.json`
+   - Check active versions: `node --version` and `fdk --version`
+   - **If mismatch, EXPLICITLY tell the user:**
+     ```
+     Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
+     
+     Current environment: Node vW.X.Y, FDK vP.Q.R
+     
+     To switch Node version for this app:
+     1. Use /fdk-setup-use in the app directory, OR
+     2. Run: cd /path/to/app && nvm use X.Y.Z (if already installed)
+     
+     To install the required FDK version:
+     - Use /fdk-setup-install --version A.B.C, OR
+     - Use /fdk-setup-upgrade --to A.B.C
+     
+     Would you like me to help you install/switch to the required versions?
+     ```
+   - **DO NOT proceed with `fdk pack` until user confirms or versions match**
+
+2. Resolve **`APP_DIR`** (absolute path to folder containing `manifest.json`).
+
+3. Choose **test** vs **dev** from user intent; map to `publish.sh` **`--target`** (default test).
+
+4. Run **`publish.sh`** (preflight + stale-id repair are automatic). Stream or summarize stderr; **do not** paste presigned S3 URLs from AMP JSON into tickets or chat.
+
+5. On **401** (including preflight), rotate the Developer Portal API key in config; on **400**, compare manifest modules to **`MODULE_TO_PRODUCT`** in **`amp_upload.py`** or use **app-dev** skill.
+
+6. Tell the user: **app id**, **version state**, and where to install **custom** apps in their product (**Admin → Apps** / equivalent for their Freshworks product).
 
 ## Optional: list apps on the account
 
