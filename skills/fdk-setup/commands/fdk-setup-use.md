@@ -89,13 +89,9 @@ NODE_VER=$(node --version 2>&1)
 echo "node: $NODE_VER"
 
 if command -v fdk >/dev/null 2>&1; then
-  # Parse FDK version from "Installed: X.Y.Z" format (auto-decline upgrade prompts)
-  FDK_OUT=$(printf 'n\n' | fdk version 2>&1)
-  if echo "$FDK_OUT" | grep -q "Installed:"; then
-    FDK_VER=$(echo "$FDK_OUT" | grep "Installed:" | sed 's/Installed: //')
-  else
-    FDK_VER=$(echo "$FDK_OUT" | head -1)
-  fi
+  # Parse FDK version (handles both "Installed: X.Y.Z" and "X.Y.Z" formats)
+  FDK_OUT=$(fdk version 2>&1)
+  FDK_VER=$(echo "$FDK_OUT" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
   echo "fdk: $FDK_VER"
   
   # Extract major versions for compatibility check
