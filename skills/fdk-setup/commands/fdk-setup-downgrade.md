@@ -65,7 +65,20 @@ else
 fi
 
 HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
-[[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
+if [[ "$HTTP" != "200" ]]; then
+  echo "========================================="
+  echo "ERROR: FDK tarball not available"
+  echo "========================================="
+  echo "URL: $FDK_URL"
+  echo "HTTP Status: $HTTP"
+  echo ""
+  if [[ "$TARGET_VER" =~ ^9\\. ]]; then
+    echo "This FDK 9.x version may not be published to the CDN."
+    echo "Try: /fdk-setup-downgrade (no version, uses latest 9.x)"
+    echo "Or check https://cdn.freshdev.io/fdk/ for available versions"
+  fi
+  exit 1
+fi
 
 echo "Downgrading to FDK $TARGET_VER on Node $NODE_VER"
 
@@ -88,33 +101,33 @@ npm install -g "$FDK_URL" || exit 1
 if [[ "$IS_NINE" == 1 ]]; then
   fdk version | grep -E '^9\\.' || { echo "FAILED: Not FDK 9.x"; exit 1; }
   nvm alias default 18
-  SHELL_RC="$HOME/.zshrc"
-  [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
-  if [ -f "$SHELL_RC" ]; then
-    cp "$SHELL_RC" "$SHELL_RC.bak.fdk-downgrade.$(date +%Y%m%d_%H%M%S)"
-    sed -i '/nvm use 24/d' "$SHELL_RC" 2>/dev/null || sed -i '' '/nvm use 24/d' "$SHELL_RC" 2>/dev/null || true
-    echo "" >> "$SHELL_RC"
-    echo "# FDK 9.x (Node 18) - DEPRECATED, ends March 2026" >> "$SHELL_RC"
-    echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
-  fi
   echo "Downgrade complete: FDK 9.x on Node 18 (DEPRECATED)"
+  echo ""
+  echo "NOTE: nvm alias set to Node 18. Shell RC files NOT modified."
+  echo "To persist across new terminals, add to your ~/.zshrc or ~/.bashrc:"
+  echo "  nvm use 18 > /dev/null 2>&1"
 else
   fdk version | grep -E '^10\\.' || { echo "FAILED: Not FDK 10.x"; exit 1; }
   nvm alias default 24.11
   echo "Downgrade complete: FDK 10.x on Node 24.11"
 fi
-fi
 
 MANDATORY VERIFICATION:
-  fdk version | grep -E '^9\\.' || echo "FAILED: Not FDK 9.x"
-  node --version | grep -E '^v18\\.' || echo "FAILED: Not Node 18"
-  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 18 >/dev/null; fdk version' | grep -E '^9\\.' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 18 >/dev/null; fdk version' | grep -E '^9\\.' || echo "FAILED: Not persistent"
-  [ ! -d ~/.fdk ] || echo "FAILED: ~/.fdk still exists"
-  nvm current | grep -E '^v18\\.' || echo "FAILED: nvm current is not Node 18"
+  fdk version || echo "FAILED: FDK not in current shell"
+  if [[ "$IS_NINE" == 1 ]]; then
+    fdk version | grep -E '^9\\.' || echo "FAILED: Not FDK 9.x"
+    node --version | grep -E '^v18\\.' || echo "FAILED: Not Node 18"
+    nvm current | grep -E '^v18\\.' || echo "FAILED: nvm current is not Node 18"
+  else
+    fdk version | grep -E '^10\\.' || echo "FAILED: Not FDK 10.x"
+    node --version | grep -E '^v24\\.11\\.' || echo "WARNING: Node 24.11.x recommended"
+    nvm current | grep -E '^v24\\.' || echo "FAILED: nvm current is not Node 24"
+  fi
+  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || echo "FAILED: Not persistent"
 
 REPORT:
-  echo "FDK downgrade complete — URL: $NINE_URL"
-  echo "Return to FDK 10: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-migrate"
+  echo "FDK downgrade complete — URL: $FDK_URL"
+  echo "Return to FDK 10: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-install"
 
 SLASH_COMMAND_CLOSEOUT: Return after REPORT (or abort). No fdk run/tunnel in this Task.
   `
