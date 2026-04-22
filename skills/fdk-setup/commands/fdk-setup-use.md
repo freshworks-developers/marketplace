@@ -35,7 +35,12 @@ Confluence-style **`/fdk-setup use`**: align **this shell** (and optionally **`.
 3. **`export NVM_DIR="$HOME/.nvm"`** and **`[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"`**.
 4. **`nvm use`** (reads **`.nvmrc`**) or **`nvm use 24.11`** / **`nvm use 18`** per table above.
 5. **`node --version`** and **`fdk version`** — **10.x** with Node **24.x** (prefer **24.11**), **9.x** with **v18.x**.
-6. If **`fdk`** missing on that Node: install FDK on that prefix (see **`/fdk-setup-install`** / **`/fdk-setup-upgrade`** / **`/fdk-setup-downgrade`**), then repeat step 5.
+6. **TROUBLESHOOT mismatched stacks** (e.g., 2 Nodes but only 1 FDK):
+   - If **Node 24.11 + Node 18** both present but **FDK only on one**:
+     - **STOP and ask user:** "You have Node 24.11 and Node 18, but FDK is only installed on Node X. Would you like me to install FDK on the missing Node version? (yes/no)"
+     - **If yes:** Use `/fdk-setup-install X.Y.Z` (for FDK 10.x on Node 24) or `/fdk-setup-downgrade X.Y.Z` (for FDK 9.x on Node 18)
+     - **After install:** Re-run `nvm use` and verify both `node --version` and `fdk version` match expected stack
+   - If **`fdk`** completely missing: Route to **`/fdk-setup-install`** (FDK 10) or **`/fdk-setup-downgrade`** (FDK 9)
 
 ## Execution (inline only — no Task)
 
@@ -79,11 +84,36 @@ pick_node
 
 echo "=== workspace use ==="
 echo "PWD=$(pwd)"
-echo "node: $(node --version 2>&1)"
+NODE_VER=$(node --version 2>&1)
+echo "node: $NODE_VER"
+
 if command -v fdk >/dev/null 2>&1; then
-  echo "fdk: $(fdk version 2>&1)"
+  FDK_VER=$(fdk version 2>&1 | head -1)
+  echo "fdk: $FDK_VER"
+  
+  # Check for version mismatch
+  if [[ "$NODE_VER" =~ ^v24\. ]] && [[ "$FDK_VER" =~ ^9\. ]]; then
+    echo ""
+    echo "WARNING: Node 24 + FDK 9.x mismatch detected"
+    echo "Expected: FDK 10.x for Node 24"
+    echo "Action: Use /fdk-setup-install or /fdk-setup-upgrade for FDK 10.x"
+  elif [[ "$NODE_VER" =~ ^v18\. ]] && [[ "$FDK_VER" =~ ^10\. ]]; then
+    echo ""
+    echo "WARNING: Node 18 + FDK 10.x mismatch detected"
+    echo "Expected: FDK 9.x for Node 18 (deprecated) OR switch to Node 24"
+    echo "Action: Use /fdk-setup-use 10 (switch to Node 24) OR /fdk-setup-downgrade (FDK 9 on Node 18)"
+  fi
 else
-  echo "fdk: MISSING on this Node — install FDK for this stack (/fdk-setup-install, /fdk-setup-upgrade, or /fdk-setup-downgrade)"
+  echo "fdk: MISSING on Node $NODE_VER"
+  echo ""
+  if [[ "$NODE_VER" =~ ^v24\. ]]; then
+    echo "Recommended: /fdk-setup-install (installs FDK 10.x on Node 24)"
+  elif [[ "$NODE_VER" =~ ^v18\. ]]; then
+    echo "For Node 18: /fdk-setup-downgrade (installs FDK 9.x, deprecated)"
+    echo "Recommended: /fdk-setup-use 10 (switch to Node 24 + FDK 10)"
+  else
+    echo "Unknown Node version. Use /fdk-setup-install for FDK 10.x on Node 24"
+  fi
 fi
 echo "====================="
 ```
