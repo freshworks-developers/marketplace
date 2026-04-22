@@ -19,6 +19,11 @@
       "name": "fdk-setup",
       "source": "./skills/fdk-setup",
       "description": "Automated FDK 10 installation, upgrade, downgrade, and uninstall for macOS and Windows along with Node.js 24 installation and management"
+    },
+    {
+      "name": "publish",
+      "source": "./skills/publish",
+      "description": "FDK pack and AMP modularApps upload for Platform 3.0 apps (test or dev)"
     }
   ]
 }
