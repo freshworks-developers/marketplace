@@ -1,6 +1,6 @@
 ---
 name: fdk-setup
-description: "Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-migrate, /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24."
+description: "Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24."
 compatibility: "Node.js 24.x (FDK 10.x) or Node.js 18.x (FDK 9.x), nvm, Platform 3.0"
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
 allowed-tools: "shell, task, read, write, strreplace, glob, grep"
@@ -10,7 +10,7 @@ allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 
 **MOST IMPORTANT - ZERO TOLERANCE: FDK installation is NEVER complete until verification shows FDK accessible globally AND persists across new shells. NEVER say "installation complete" with ANY verification failures.**
 
-**MANDATORY ENFORCEMENT:** Verify every mutating operation (install, upgrade, migrate, downgrade, uninstall, and **`/fdk-setup-troubleshoot --fix`**) with actual shell tests. **`/fdk-setup-status`**, **`/fdk-setup-troubleshoot`** (no **`--fix`**), and **`/fdk-setup-use`** are non-Task flows (**`/fdk-setup-use`** may only add **`.nvmrc`** when the user asked for **`--write-nvmrc`**). Keep iterating until verification passes. No exceptions.
+**MANDATORY ENFORCEMENT:** Verify every mutating operation (install, upgrade, downgrade, uninstall, and **`/fdk-setup-troubleshoot --fix`**) with actual shell tests. **`/fdk-setup-status`**, **`/fdk-setup-troubleshoot`** (no **`--fix`**), and **`/fdk-setup-use`** are non-Task flows (**`/fdk-setup-use`** may only add **`.nvmrc`** when the user asked for **`--write-nvmrc`**). Keep iterating until verification passes. No exceptions.
 
 You are a Freshworks FDK installation and version management enforcement layer.
 
@@ -22,10 +22,10 @@ Parse user request and execute the appropriate operation:
 
 | Trigger | Operation |
 |---------|-----------|
-| "install fdk", "setup fdk", `/fdk-setup-install`, `/fdk-install` (legacy); optional **`--version X.Y.Z`** (FDK 10 only) | Install latest FDK 10 line or pinned **10.x.y** (see `commands/fdk-setup-install.md`) |
-| "upgrade fdk", "update fdk", `/fdk-setup-upgrade`, `/fdk-upgrade` (legacy); optional **`--to X.Y.Z`** (e.g. `10.1.0`) | Upgrade to latest FDK 10 line or pinned semver (see `commands/fdk-setup-upgrade.md`) |
-| "migrate fdk", "fdk 9 to 10", `/fdk-setup-migrate` | Migrate FDK 9 + Node 18 → FDK 10 + Node 24.11 |
-| "downgrade fdk", "use fdk 9", `/fdk-setup-downgrade 9.6.0`, `/fdk-downgrade` (legacy) | Downgrade to FDK 9 **latest** or **pinned 9.x.y** (see `commands/fdk-setup-downgrade.md`) |
+| "install fdk", "setup fdk", `/fdk-setup-install`, `/fdk-install` (legacy); optional version **`X.Y.Z`** or **`--version X.Y.Z`** | Install FDK 10.x (default) or 9.x with deprecation notice (see `commands/fdk-setup-install.md`) |
+| "upgrade fdk", "update fdk", `/fdk-setup-upgrade`, `/fdk-upgrade` (legacy); optional **`--to X.Y.Z`** | Upgrade to latest FDK 10 line or pinned semver (see `commands/fdk-setup-upgrade.md`) |
+| "migrate fdk 9 to 10", "fdk 9 to 10" | Use `/fdk-setup-install` (installs FDK 10 on Node 24) or `/fdk-setup-upgrade` |
+| "downgrade fdk", "use fdk 9", `/fdk-setup-downgrade 9.6.0`, `/fdk-downgrade` (legacy) | Downgrade FDK 10.x → 10.0.y or 10.x → 9.x (see `commands/fdk-setup-downgrade.md`) |
 | "uninstall fdk", "remove fdk", `/fdk-setup-uninstall`, `/fdk-uninstall` (legacy) | Uninstall FDK only (keeps Node/nvm; no `--all`) |
 | "check fdk", "fdk status", `/fdk-setup-status`, `/fdk-status` (legacy); optional **`--verbose`** | Status (inline; verbose adds PATH/nvm/rc diagnostics) |
 | "fdk broken", "fdk not found", `/fdk-setup-troubleshoot`; **`--fix`** only if user asks | Diagnose inline; **`--fix`** spawns shell Task (see `commands/fdk-setup-troubleshoot.md`) |
@@ -50,8 +50,8 @@ Continue with FDK 9.x installation? (y/N)
 - **Publishing requires FDK 10.x** - Marketplace submission requires Node 24 + FDK 10.x
 - **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
 - **FDK CLI only** - Use official commands from Freshworks documentation
-- **Subagent execution** - Spawn **shell** Tasks for mutating flows: install, upgrade, migrate, downgrade, uninstall, and **`/fdk-setup-troubleshoot --fix`**. **`/fdk-setup-status`** (with or without **`--verbose`**), **`/fdk-setup-troubleshoot`** without **`--fix`**, and **`/fdk-setup-use`** stay **inline** (no Task).
-- **Slash-command closeout** - Shell Tasks for `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-migrate`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, and **`/fdk-setup-troubleshoot --fix`** (and legacy `/fdk-*` aliases where applicable) MUST return as soon as verification + final REPORT are done (or aborted). Do not start `fdk run`, `fdk tunnel`, watchers, or other long-running processes from those Tasks
+- **Subagent execution** - Spawn **shell** Tasks for mutating flows: install, upgrade, downgrade, uninstall, and **`/fdk-setup-troubleshoot --fix`**. **`/fdk-setup-status`** (with or without **`--verbose`**), **`/fdk-setup-troubleshoot`** without **`--fix`**, and **`/fdk-setup-use`** stay **inline** (no Task).
+- **Slash-command closeout** - Shell Tasks for `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, and **`/fdk-setup-troubleshoot --fix`** (and legacy `/fdk-*` aliases where applicable) MUST return as soon as verification + final REPORT are done (or aborted). Do not start `fdk run`, `fdk tunnel`, watchers, or other long-running processes from those Tasks
 - **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
 - **Global persistence** - All operations MUST set nvm default and update shell config
 - **Verify always** - Every operation MUST verify in new shell
@@ -78,7 +78,7 @@ Continue with FDK 9.x installation? (y/N)
 
 8. **Shell Config Backup** - ALWAYS backup shell config before modifications: `cp ~/.zshrc ~/.zshrc.bak`
 
-9. **Slash-command shell Task closeout** - For `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-migrate`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, **`/fdk-setup-troubleshoot --fix`** (and legacy `/fdk-*` where applicable), the `subagent_type: "shell"` Task ends after the operation: emit REPORT, then **return**. Do not attach `fdk run`, `fdk tunnel`, `tail -f`, file watchers, or dev servers to that Task. For local preview after install, point the user at `scripts/fdk-run-background.sh` instead of running `fdk run` inside the same Task.
+9. **Slash-command shell Task closeout** - For `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, **`/fdk-setup-troubleshoot --fix`** (and legacy `/fdk-*` where applicable), the `subagent_type: "shell"` Task ends after the operation: emit REPORT, then **return**. Do not attach `fdk run`, `fdk tunnel`, `tail -f`, file watchers, or dev servers to that Task. For local preview after install, point the user at `scripts/fdk-run-background.sh` instead of running `fdk run` inside the same Task.
 
 You are not a tutor. You are an enforcement layer.
 
