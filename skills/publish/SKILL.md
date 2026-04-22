@@ -89,17 +89,25 @@ Other useful flags: `--pack-only` (no AMP), `--force-pack`, `--skip-validate`, *
      
      Current environment: Node vW.X.Y, FDK vP.Q.R
      
-     To switch Node version for this app:
-     1. Use /fdk-setup-use in the app directory, OR
-     2. Run: cd /path/to/app && nvm use X.Y.Z (if already installed)
+     Would you like me to install/switch to the required versions? (yes/no)
      
-     To install the required FDK version:
-     - Use /fdk-setup-install --version A.B.C, OR
-     - Use /fdk-setup-upgrade --to A.B.C
+     If yes, I'll use the fdk-setup skill to:
+     - Install Node.js X.Y.Z (if not present) and switch to it
+     - Install/upgrade to FDK A.B.C
      
-     Would you like me to help you install/switch to the required versions?
+     If no, you can manually run:
+     - /fdk-setup-use (in app directory) - switches Node version
+     - /fdk-setup-install --version A.B.C - installs FDK version
+     - /fdk-setup-upgrade --to A.B.C - upgrades FDK version
      ```
-   - **DO NOT proceed with `fdk pack` until user confirms or versions match**
+   - **If user says YES:**
+     - Use `/fdk-setup-use` command in the app directory (handles Node switching and .nvmrc)
+     - If FDK version mismatch, use `/fdk-setup-install --version A.B.C` or `/fdk-setup-upgrade --to A.B.C`
+     - Verify versions again after installation
+   - **If user says NO or manually installs:**
+     - Wait for user to confirm they've switched versions
+     - Verify versions before proceeding
+   - **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
 
 2. Resolve **`APP_DIR`** (absolute path to folder containing `manifest.json`).
 
