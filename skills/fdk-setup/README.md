@@ -238,7 +238,7 @@ fdk-setup/
 ├── .claude-plugin/
 │   └── plugin.json            # Command registration for Claude Code
 │
-├── commands/                  # Slash command definitions (Confluence /fdk-setup *)
+├── commands/                  # Slash command definitions (/fdk-setup *)
 │   ├── fdk-setup-install.md   # optional --version
 │   ├── fdk-setup-upgrade.md   # optional --to
 │   ├── 

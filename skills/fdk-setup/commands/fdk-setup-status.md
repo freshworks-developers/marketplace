@@ -1,13 +1,13 @@
 ---
 name: fdk-setup-status
-description: Check FDK and Node.js installation status (Confluence /fdk-setup status); optional --verbose diagnostics
+description: Check FDK and Node.js installation status (/fdk-setup status); optional --verbose diagnostics
 always: true
 argument-hint: "[--verbose]"
 ---
 
 # FDK setup — status (`/fdk-setup-status`)
 
-Confluence **`/fdk-setup status`**. Read-only; **no** shell Task.
+**`/fdk-setup status`**. Read-only; **no** shell Task.
 
 ## Behaviour
 

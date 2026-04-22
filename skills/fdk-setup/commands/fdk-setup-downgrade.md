@@ -7,7 +7,7 @@ argument-hint: "[version|latest]"
 
 # FDK setup — downgrade (`/fdk-setup-downgrade`)
 
-Confluence **`/fdk-setup-downgrade`** supports:
+**`/fdk-setup-downgrade`** supports:
 1. **FDK 10.x → 10.0.y** (e.g., 10.1.0 → 10.0.1) on Node 24
 2. **FDK 10.x → 9.x** (e.g., 10.x → 9.8.2) on Node 18 with deprecation notice
 

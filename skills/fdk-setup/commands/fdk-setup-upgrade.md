@@ -7,7 +7,7 @@ argument-hint: "[--to X.Y.Z|latest]"
 
 # FDK setup — upgrade (`/fdk-setup-upgrade`)
 
-Matches Confluence **`/fdk-setup upgrade`** with optional **`--to X.Y.Z`**.
+Matches **`/fdk-setup upgrade`** with optional **`--to X.Y.Z`**.
 
 ## Behaviour
 

@@ -7,7 +7,7 @@ argument-hint: “[X.Y.Z|--version X.Y.Z]”
 
 # FDK setup — install (`/fdk-setup-install`)
 
-Confluence **`/fdk-setup install`**. Supports **FDK 10.x** (Node 24) and **FDK 9.x** (Node 18, deprecated).
+**`/fdk-setup install`**. Supports **FDK 10.x** (Node 24) and **FDK 9.x** (Node 18, deprecated).
 
 ## Behaviour
 
