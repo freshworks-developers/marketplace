@@ -1,0 +1,74 @@
+{
+  "name": "fdk-setup",
+  "displayName": "FDK Setup",
+  "version": "1.0.0",
+  "description": "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Slash: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-migrate, /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm stack). Legacy: /fdk-install, etc.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/fdk-setup",
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "fdk",
+    "cli",
+    "setup",
+    "install",
+    "macos",
+    "windows",
+    "homebrew",
+    "npm"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "automation",
+    "setup",
+    "cli"
+  ],
+  "rulesDirectory": "./rules",
+  "commandsDirectory": "./commands",
+  "commands": [
+    {
+      "name": "fdk-setup-install",
+      "description": "Install FDK 10 + Node 24; optional --version X.Y.Z (CDN pin)",
+      "file": "commands/fdk-setup-install.md"
+    },
+    {
+      "name": "fdk-setup-upgrade",
+      "description": "Upgrade FDK; optional --to X.Y.Z semver (CDN vX.Y.Z.tgz)",
+      "file": "commands/fdk-setup-upgrade.md"
+    },
+    {
+      "name": "fdk-setup-migrate",
+      "description": "Migrate FDK 9 + Node 18 → FDK 10 + Node 24.11",
+      "file": "commands/fdk-setup-migrate.md"
+    },
+    {
+      "name": "fdk-setup-downgrade",
+      "description": "Downgrade FDK 10 → 9; optional semver 9.x.y or latest 9 line",
+      "file": "commands/fdk-setup-downgrade.md"
+    },
+    {
+      "name": "fdk-setup-uninstall",
+      "description": "Uninstall FDK (keeps Node.js/nvm)",
+      "file": "commands/fdk-setup-uninstall.md"
+    },
+    {
+      "name": "fdk-setup-status",
+      "description": "FDK / Node / nvm status; optional --verbose",
+      "file": "commands/fdk-setup-status.md"
+    },
+    {
+      "name": "fdk-setup-troubleshoot",
+      "description": "Diagnose FDK/nvm/PATH; optional --fix (shell Task, zshrc-safe)",
+      "file": "commands/fdk-setup-troubleshoot.md"
+    },
+    {
+      "name": "fdk-setup-use",
+      "description": "Workspace stack: nvm use + .nvmrc (10/9); optional --write-nvmrc; inline only",
+      "file": "commands/fdk-setup-use.md"
+    }
+  ]
+}

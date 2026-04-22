@@ -79,20 +79,45 @@ TODO.md
 
 # Internal Development Materials (local only)
 .dev/
-.windsurf/
+
+# IDE Workspace State (user-specific, not versioned)
+# Exclude root-level user workspace directories
+/.windsurf/
+/.agents/
+/.cursor/
+/.claude/
+
+# BUT: Allow skill-level plugin configs (versioned for distribution)
+!skills/**/.claude-plugin/
+!skills/**/.cursor-plugin/
+
+# Internal
 .telemetry
 .db/
 .aclm/
 .clp/
 
-# Agent and Cursor directories (except root rules)
-.agents/
-.cursor/
-skills/.agents/
-skills/.cursor/
-skills/test/
+# Local skills CLI lock (machine-specific)
+skills-lock.json
 
-# Unignore root rules (plugin-based, aligned with superpowers)
-!.cursor/
-!.cursor/rules/
-!.cursor/rules/*.mdc
+# Publish skill local examples (not versioned)
+skills/publish/examples/
+
+# Test artifacts
+.tmp/
+*.test.js
+*.spec.js
+coverage/
+
+# FDK artifacts
+.fdk/
+*.fdk-*
+
+# OS-specific
+.AppleDouble
+.LSOverride
+
+# IDE workspace (user-specific)
+*.swp
+*.swo
+*~.nib

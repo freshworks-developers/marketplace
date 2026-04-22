@@ -1,0 +1,13 @@
+{
+  "externalApiCall": {
+    "schema": {
+      "protocol": "https",
+      "method": "POST",
+      "host": "httpbin.org",
+      "path": "/post",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}

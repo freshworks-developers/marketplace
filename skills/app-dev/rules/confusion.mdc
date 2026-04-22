@@ -1,0 +1,172 @@
+---
+name: confusion
+description: Disambiguation guide for ambiguous app development prompts. Covers top 5 common ambiguities - OAuth vs API token, automatic vs manual trigger, frontend vs serverless, event selection, and error handling strategy. Load only when prompt is unclear.
+alwaysApply: false
+globs: ["**/manifest.json"]
+---
+
+# App Development Disambiguation Guide
+
+**When to use:** Prompt is vague, incomplete, or could be interpreted multiple ways.
+
+## Top 5 Common Ambiguities
+
+### 1. OAuth vs API Token?
+
+**Ambiguous patterns:**
+- "integrate with [service]"
+- "connect to [API]"
+- No mention of authentication
+
+**Decision:**
+
+```
+Does service support OAuth?
+├─ YES → Is it user-facing (users have accounts)?
+│   ├─ YES → Use OAuth (GitHub, Jira, Salesforce, Google)
+│   └─ NO → Use API Token (simpler for admin services)
+└─ NO → Use API Token (Zapier webhooks, custom APIs)
+```
+
+**Implementation:**
+- **OAuth:** `config/oauth_config.json` with `integrations` wrapper
+- **API Token:** `config/iparams.json` with `"secure": true`
+
+### 2. Automatic vs Manual Trigger?
+
+**Ambiguous patterns:**
+- "logs data to [service]"
+- "sends information to [platform]"
+- "creates [item] from ticket"
+
+**Decision:**
+
+```
+What's the purpose?
+├─ LOGGING/ARCHIVING → Automatic (serverless events)
+│   Examples: "logs tickets", "archives data"
+│   Why: Must happen without user action
+│
+├─ NOTIFICATION/ALERT → Automatic (serverless events)
+│   Examples: "sends alerts", "notifies team"
+│   Why: Must be timely
+│
+├─ ACTION/CREATION → Manual (button in UI)
+│   Examples: "creates issue", "generates card"
+│   Why: User decides when to create
+│
+└─ UNCLEAR → Ask user or default to Manual (safer)
+```
+
+**Implementation:**
+- **Automatic:** Serverless with `onTicketCreate`, `onTicketUpdate` events
+- **Manual:** Hybrid with button in sidebar + SMI function
+
+### 3. Frontend vs Serverless?
+
+**Ambiguous patterns:**
+- "app that syncs data"
+- "app that sends webhooks"
+- No mention of UI
+
+**Decision:**
+
+```
+Does user need to SEE or INTERACT with the app?
+├─ YES → Frontend or Hybrid
+│   Examples: View status, trigger actions, configure settings
+│
+└─ NO → Serverless only
+    Examples: Pure automation, background sync, webhook forwarding
+```
+
+**Default rule:** When in doubt, include frontend (Hybrid). Users almost always want to see what's happening.
+
+### 4. Which Event to Use?
+
+**Ambiguous patterns:**
+- "when ticket is created"
+- "when ticket changes"
+- "on ticket update"
+
+**Decision:**
+
+```
+What should trigger the app?
+├─ New tickets only → onTicketCreate
+├─ Status/priority changes → onTicketUpdate
+├─ Both creation and updates → Both events
+├─ Scheduled tasks → onScheduledEvent (create dynamically)
+└─ App installation → onAppInstall
+```
+
+**Payload / delta (mandatory read for filtered handlers):** Choosing `onTicketUpdate` is only **when** the app runs; it does **not** define which fields changed. `changes` / `model_changes` are **not** guaranteed on Freshdesk/Freshservice ticket update payloads in this skill. For envelope rules, FD vs FS field naming (`priority` vs `urgency`), and refusal when deltas are absent, load **`references/events/onTicketUpdate-payload-contract.md`** and use golden JSON under **`references/test-payloads/server/test_data/`**.
+
+**Common combinations:**
+- **Logging:** `onTicketCreate` + `onTicketUpdate`
+- **Notifications:** `onTicketCreate` only (avoid spam)
+- **Sync:** `onTicketCreate` + `onScheduledEvent` (for retries)
+
+### 5. Error Handling Strategy?
+
+**Ambiguous patterns:**
+- "handle failures"
+- "retry on error"
+- No mention of error handling
+
+**Decision:**
+
+```
+What happens on failure?
+├─ CRITICAL (must succeed) → Retry with exponential backoff
+│   Examples: Payment processing, data integrity
+│   Implementation: Store failed items in $db, retry via scheduled event
+│
+├─ IMPORTANT (should succeed) → Log error, notify admin
+│   Examples: Notifications, sync operations
+│   Implementation: Try/catch, log to console, optional admin notification
+│
+└─ OPTIONAL (nice to have) → Log error, continue
+    Examples: Analytics, non-critical updates
+    Implementation: Try/catch, log to console only
+```
+
+**Standard error handling pattern:**
+
+```javascript
+try {
+  const result = await $request.invokeTemplate('api', {});
+  return { success: true, data: result };
+} catch (e) {
+  console.error('Operation failed:', e.message);
+  return { success: false, error: e.message };
+}
+```
+
+## Quick Reference Table
+
+| Ambiguity | Default Choice | When to Ask User |
+|-----------|----------------|------------------|
+| OAuth vs API Token | API Token (simpler) | Service supports both |
+| Auto vs Manual | Manual (safer) | Logging/notification use case |
+| Frontend vs Serverless | Hybrid (include UI) | Pure automation mentioned |
+| Which Event | onTicketCreate | Multiple events possible |
+| Error Handling | Log + continue | Critical operations |
+
+## When to Ask User vs Decide
+
+**Decide automatically when:**
+- [VALID] One clear interpretation based on use case
+- [VALID] Default choice is safe and common
+- [VALID] User can easily change later
+
+**Ask user when:**
+- ❓ Multiple valid interpretations with different trade-offs
+- ❓ Decision significantly impacts architecture
+- ❓ User's specific workflow matters
+
+## Related Rules
+
+- **app-templates.mdc** - Template selection based on requirements
+- **freshworks-platform3.mdc** - Platform 3.0 enforcement patterns
+- **security.mdc** - Security requirements for all apps

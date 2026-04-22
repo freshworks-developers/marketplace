@@ -1,0 +1,151 @@
+{
+  "description": "Golden test cases - Correct Platform 3.0 patterns that should ALWAYS be generated",
+  "test_cases": [
+    {
+      "id": "golden_001",
+      "name": "Minimal Frontend App",
+      "expected": {
+        "manifest": {
+          "platform-version": "3.0",
+          "modules": {
+            "common": {},
+            "support_ticket": {
+              "location": {
+                "ticket_sidebar": {
+                  "url": "index.html",
+                  "icon": "styles/images/icon.svg"
+                }
+              }
+            }
+          },
+          "engines": {
+            "node": "24.11.0",
+            "fdk": "10.0.1"
+          }
+        },
+        "required_files": [
+          "app/index.html",
+          "app/scripts/app.js",
+          "app/styles/style.css",
+          "app/styles/images/icon.svg",
+          "manifest.json"
+        ],
+        "crayons_cdn_in_html": true
+      }
+    },
+    {
+      "id": "golden_002",
+      "name": "Serverless App with Events",
+      "expected": {
+        "manifest": {
+          "platform-version": "3.0",
+          "modules": {
+            "common": {
+              "events": {
+                "onAppInstall": {
+                  "handler": "onAppInstallHandler"
+                }
+              }
+            },
+            "support_ticket": {
+              "events": {
+                "onTicketCreate": {
+                  "handler": "onTicketCreateHandler"
+                }
+              }
+            }
+          },
+          "engines": {
+            "node": "24.11.0",
+            "fdk": "10.0.1"
+          }
+        },
+        "required_files": [
+          "server/server.js",
+          "manifest.json"
+        ]
+      }
+    },
+    {
+      "id": "golden_003",
+      "name": "Hybrid App with SMI and External API",
+      "expected": {
+        "manifest": {
+          "platform-version": "3.0",
+          "modules": {
+            "common": {
+              "requests": {
+                "externalApiCall": {}
+              },
+              "functions": {
+                "fetchExternalData": {}
+              }
+            },
+            "support_ticket": {
+              "location": {
+                "ticket_sidebar": {
+                  "url": "index.html",
+                  "icon": "styles/images/icon.svg"
+                }
+              }
+            }
+          },
+          "engines": {
+            "node": "24.11.0",
+            "fdk": "10.0.1"
+          }
+        },
+        "required_files": [
+          "app/index.html",
+          "app/scripts/app.js",
+          "server/server.js",
+          "config/requests.json",
+          "config/iparams.json",
+          "manifest.json"
+        ],
+        "backend_uses": "$request.invokeTemplate",
+        "frontend_uses": "client.request.invoke"
+      }
+    },
+    {
+      "id": "golden_004",
+      "name": "OAuth Integration",
+      "expected": {
+        "manifest": {
+          "platform-version": "3.0",
+          "modules": {
+            "common": {
+              "requests": {
+                "getOAuthResource": {}
+              },
+              "functions": {
+                "fetchOAuthData": {}
+              }
+            },
+            "support_ticket": {
+              "location": {
+                "ticket_sidebar": {
+                  "url": "index.html",
+                  "icon": "styles/images/icon.svg"
+                }
+              }
+            }
+          },
+          "engines": {
+            "node": "24.11.0",
+            "fdk": "10.0.1"
+          }
+        },
+        "required_files": [
+          "config/oauth_config.json",
+          "config/requests.json",
+          "config/iparams.json",
+          "manifest.json"
+        ],
+        "oauth_config_has_integrations_wrapper": true,
+        "request_template_has_oauth_option": true,
+        "request_template_uses_access_token": true
+      }
+    }
+  ]
+}

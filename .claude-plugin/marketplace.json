@@ -1,0 +1,24 @@
+{
+  "name": "marketplace",
+  "owner": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "metadata": {
+    "description": "Developer tools and skills for Freshworks marketplace applications",
+    "version": "1.0.0",
+    "pluginRoot": "skills"
+  },
+  "plugins": [
+    {
+      "name": "app-dev",
+      "source": "./skills/app-dev",
+      "description": "Expert-level development skill for building, debugging, and reviewing Freshworks marketplace apps"
+    },
+    {
+      "name": "fdk-setup",
+      "source": "./skills/fdk-setup",
+      "description": "Automated FDK 10 installation, upgrade, downgrade, and uninstall for macOS and Windows along with Node.js 24 installation and management"
+    }
+  ]
+}

@@ -41,17 +41,18 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 ```
 marketplace/
+├── .cursor/
+│   └── rules/                # Cursor workspace rules (.mdc files) - plugin root
+├── .claude-plugin/           # Claude Code plugin config
+├── .cursor-plugin/           # Cursor plugin config
 ├── skills/
 │   ├── app-dev/              # Core app development skill
 │   │   ├── SKILL.md          # Main skill definition
 │   │   ├── README.md         # Skill documentation
 │   │   ├── commands/         # Slash commands (/migrate, /review, etc.)
 │   │   ├── references/       # Documentation loaded on-demand
-│   │   ├── assets/           # Templates and resources
-│   │   └── .cursor/
-│   │       └── rules/        # Cursor workspace rules (.mdc files)
-│   ├── fdk-setup/            # FDK installation skill
-│   └── publish/              # Marketplace publishing skill
+│   │   └── assets/           # Templates and resources
+│   └── app-dev/              # App development skill
 ├── scripts/                  # Build and utility scripts
 ├── CLAUDE.md                 # Claude Code workspace configuration
 ├── CODE_OF_CONDUCT.MD        # Community guidelines
@@ -265,7 +266,7 @@ Use conventional commit style:
   ```javascript
   // ❌ WRONG
   $request.post(url, options);
-  
+
   // ✅ CORRECT
   $request.invokeTemplate('templateName', { context, body });
   ```

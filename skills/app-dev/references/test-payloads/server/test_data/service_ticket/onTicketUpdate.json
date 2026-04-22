@@ -1,0 +1,28 @@
+{
+  "currentHost": {
+    "subscribed_modules": ["service_ticket"],
+    "endpoint_urls": {
+      "freshservice": "https://your-domain.freshservice.com"
+    }
+  },
+  "data": {
+    "actor": {
+      "profile_id": 27000015175
+    },
+    "requester": {},
+    "ticket": {
+      "id": 123,
+      "subject": "Sample service request after update",
+      "status": 3,
+      "priority": 2,
+      "urgency": 2,
+      "category": "Hardware",
+      "custom_fields": [],
+      "attachments": []
+    }
+  },
+  "event": "onTicketUpdate",
+  "iparams": {},
+  "region": "US",
+  "timestamp": 1496400354326
+}
