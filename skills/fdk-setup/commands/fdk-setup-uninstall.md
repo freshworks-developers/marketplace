@@ -1,12 +1,12 @@
 ---
 name: fdk-setup-uninstall
-description: Uninstall FDK completely — keeps Node.js and nvm (Confluence /fdk-setup uninstall)
+description: Uninstall FDK completely — keeps Node.js and nvm (/fdk-setup uninstall)
 always: true
 ---
 
 # FDK setup — uninstall (`/fdk-setup-uninstall`)
 
-Confluence **`/fdk-setup uninstall`**: removes **FDK and `~/.fdk` cache` only** — **Node.js and nvm stay installed**. There is **no** **`uninstall --all`** in this skill (no automated removal of nvm / all Node versions).
+**`/fdk-setup uninstall`**: removes **FDK and `~/.fdk` cache` only** — **Node.js and nvm stay installed**. There is **no** **`uninstall --all`** in this skill (no automated removal of nvm / all Node versions).
 
 ## Execution
 

@@ -1,13 +1,13 @@
 ---
 name: fdk-setup-status
-description: Check FDK and Node.js installation status (Confluence /fdk-setup status); optional --verbose diagnostics
+description: Check FDK and Node.js installation status (/fdk-setup status); optional --verbose diagnostics
 always: true
 argument-hint: "[--verbose]"
 ---
 
 # FDK setup — status (`/fdk-setup-status`)
 
-Confluence **`/fdk-setup status`**. Read-only; **no** shell Task.
+**`/fdk-setup status`**. Read-only; **no** shell Task.
 
 ## Behaviour
 
@@ -22,12 +22,37 @@ Run checks directly (no subagent):
 
 ```bash
 echo "=== FDK Status ==="
-fdk version 2>&1 || echo "Not installed"
-node --version 2>&1 || echo "Not installed"
-nvm --version 2>&1 || echo "Not installed"
-command -v fdk || true
-which fdk 2>/dev/null || true
-[ -d ~/.fdk ] && echo "Cache: ~/.fdk exists" || echo "No ~/.fdk cache"
+echo "Node: $(node --version 2>&1 || echo 'Not installed')"
+echo "nvm: $(nvm --version 2>&1 || echo 'Not installed')"
+echo "FDK binary: $(command -v fdk || echo 'Not on PATH')"
+echo "FDK cache: $([ -d ~/.fdk ] && echo 'Present (~/.fdk)' || echo 'Not found')"
+
+# FDK version - simplified to handle "Installed: X.Y.Z" format
+if command -v fdk >/dev/null 2>&1; then
+  # Try current shell first
+  FDK_OUT=$(fdk version 2>&1)
+  if echo "$FDK_OUT" | grep -q "Installed:"; then
+    FDK_VER=$(echo "$FDK_OUT" | grep "Installed:" | head -1 | sed 's/Installed: //')
+    echo "FDK version: $FDK_VER"
+  else
+    # Try with nvm loaded in fresh shell (for restricted environments)
+    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+    if [ -s "$NVM_DIR/nvm.sh" ]; then
+      FDK_OUT_FRESH=$(bash -c '. "$NVM_DIR/nvm.sh" 2>/dev/null; fdk version 2>&1')
+      if echo "$FDK_OUT_FRESH" | grep -q "Installed:"; then
+        FDK_VER=$(echo "$FDK_OUT_FRESH" | grep "Installed:" | head -1 | sed 's/Installed: //')
+        echo "FDK version: $FDK_VER (from nvm shell)"
+      else
+        echo "FDK version: Binary found at $(which fdk) but version check failed"
+        echo "  Run 'fdk version' manually to diagnose"
+      fi
+    else
+      echo "FDK version: Binary found at $(which fdk) but version check failed (nvm not loaded)"
+    fi
+  fi
+else
+  echo "FDK version: Not installed"
+fi
 echo "=================="
 ```
 

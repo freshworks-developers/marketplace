@@ -97,7 +97,6 @@ Check available commands:
 /fdk-setup-install --version 10.1.0  # Pin FDK 10.x.y (CDN v10.1.0.tgz)
 /fdk-setup-upgrade              # Upgrade to latest FDK 10 line (Node 24.11)
 /fdk-setup-upgrade --to 10.1.0 # Pin semver (CDN v10.1.0.tgz)
-/fdk-setup-migrate              # FDK 9 + Node 18 → FDK 10 + Node 24.11
 /fdk-setup-downgrade            # FDK 9 latest line + Node 18 (deprecated)
 /fdk-setup-downgrade 9.6.0      # Pin FDK 9.x.y (CDN v9.6.0.tgz)
 /fdk-setup-uninstall            # Remove FDK only (npm + ~/.fdk + cache; keeps nvm)
@@ -130,7 +129,6 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_L
 - Removes ~/.fdk directory to prevent conflicts
 - Preserves Node 24 configuration
 
-**Migrate (`/fdk-setup-migrate`):**
 - Moves from FDK 9 + Node 18 to FDK 10 + Node 24.11 (keeps Node 18 in nvm)
 
 **Downgrade (`/fdk-setup-downgrade`):**
@@ -213,7 +211,6 @@ When you run a command (e.g., `/fdk-setup-install`), it spawns a **dedicated she
 6. **Verifies setup** - Tests all components work correctly
 7. **Reports status** - Comprehensive output with next steps
 
-Shell Tasks **must close out** when done: `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-migrate`, `/fdk-setup-downgrade`, `/fdk-setup-uninstall`, **`/fdk-setup-troubleshoot --fix`**. Inline only: **`/fdk-setup-status`** (and **`--verbose`**), **`/fdk-setup-troubleshoot`** without **`--fix`**, **`/fdk-setup-use`**.
 
 **Benefits:**
 - Autonomous execution (minimal user intervention)
@@ -241,10 +238,10 @@ fdk-setup/
 ├── .claude-plugin/
 │   └── plugin.json            # Command registration for Claude Code
 │
-├── commands/                  # Slash command definitions (Confluence /fdk-setup *)
+├── commands/                  # Slash command definitions (/fdk-setup *)
 │   ├── fdk-setup-install.md   # optional --version
 │   ├── fdk-setup-upgrade.md   # optional --to
-│   ├── fdk-setup-migrate.md
+│   ├── 
 │   ├── fdk-setup-downgrade.md # optional 9.x.y pin
 │   ├── fdk-setup-uninstall.md
 │   ├── fdk-setup-status.md    # optional --verbose

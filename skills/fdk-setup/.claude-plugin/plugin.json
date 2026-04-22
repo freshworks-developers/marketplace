@@ -2,7 +2,7 @@
   "name": "fdk-setup",
   "displayName": "FDK Setup",
   "version": "1.0.0",
-  "description": "Freshworks FDK + nvm. Commands: install (--version), upgrade (--to), migrate, downgrade, uninstall, status (--verbose), troubleshoot (--fix), use (workspace .nvmrc). Legacy /fdk-install, etc.",
+  "description": "Freshworks FDK + nvm. Commands: install (--version), upgrade (--to), downgrade, uninstall, status (--verbose), troubleshoot (--fix), use (workspace .nvmrc). Legacy /fdk-install, etc.",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -17,11 +17,6 @@
       "name": "fdk-setup-upgrade",
       "description": "Upgrade FDK; use --to X.Y.Z for pinned semver",
       "file": "commands/fdk-setup-upgrade.md"
-    },
-    {
-      "name": "fdk-setup-migrate",
-      "description": "Migrate FDK 9 + Node 18 to FDK 10 + Node 24.11",
-      "file": "commands/fdk-setup-migrate.md"
     },
     {
       "name": "fdk-setup-downgrade",
