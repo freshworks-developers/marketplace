@@ -112,18 +112,18 @@ else
   echo "Downgrade complete: FDK 10.x on Node 24.11"
 fi
 
-MANDATORY VERIFICATION:
-  fdk version || echo "FAILED: FDK not in current shell"
+MANDATORY VERIFICATION (auto-decline FDK upgrade prompts):
+  printf 'n\n' | fdk version || echo "FAILED: FDK not in current shell"
   if [[ "$IS_NINE" == 1 ]]; then
-    fdk version | grep -E '^9\\.' || echo "FAILED: Not FDK 9.x"
+    printf 'n\n' | fdk version | grep -q "Installed: 9\\." || echo "FAILED: Not FDK 9.x"
     node --version | grep -E '^v18\\.' || echo "FAILED: Not Node 18"
     nvm current | grep -E '^v18\\.' || echo "FAILED: nvm current is not Node 18"
   else
-    fdk version | grep -E '^10\\.' || echo "FAILED: Not FDK 10.x"
+    printf 'n\n' | fdk version | grep -q "Installed: 10\\." || echo "FAILED: Not FDK 10.x"
     node --version | grep -E '^v24\\.11\\.' || echo "WARNING: Node 24.11.x recommended"
     nvm current | grep -E '^v24\\.' || echo "FAILED: nvm current is not Node 24"
   fi
-  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || echo "FAILED: Not persistent"
+  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || echo "FAILED: Not persistent"
 
 REPORT:
   echo "FDK downgrade complete — URL: $FDK_URL"

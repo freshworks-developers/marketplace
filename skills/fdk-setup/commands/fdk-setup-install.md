@@ -93,16 +93,16 @@ npm cache clean --force
 
 npm install -g "$FDK_URL" || exit 1
 
-MANDATORY VERIFICATION (ALL TESTS MUST PASS):
-  fdk version || echo "FAILED: FDK not in current shell"
+MANDATORY VERIFICATION (ALL TESTS MUST PASS, auto-decline FDK upgrade prompts):
+  printf 'n\n' | fdk version || echo "FAILED: FDK not in current shell"
   if [[ "$FDK_VER" =~ ^9\\. ]]; then
-    fdk version | grep -E '^9\\.' || echo "FAILED: Wrong FDK major (expected 9.x)"
+    printf 'n\n' | fdk version | grep -E '^9\\.' || echo "FAILED: Wrong FDK major (expected 9.x)"
     node --version | grep "v18\\." || echo "FAILED: Node 18.x required for FDK 9.x"
   elif [[ "$FDK_VER" == latest ]] || [[ "$FDK_VER" =~ ^10\\. ]]; then
-    fdk version | grep -E '^10\\.' || echo "FAILED: Wrong FDK major (expected 10.x)"
+    printf 'n\n' | fdk version | grep -E '^10\\.' || echo "FAILED: Wrong FDK major (expected 10.x)"
     node --version | grep "v24\\.11\\." || echo "WARNING: Node 24.11.x recommended for FDK 10.x"
   fi
-  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || echo "FAILED: FDK not persistent"
+  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || echo "FAILED: FDK not persistent"
   nvm current | grep "24" || echo "FAILED: nvm not using Node 24"
   npm list -g fdk 2>&1 | grep "empty" || npm list -g fdk || echo "INFO: legacy fdk package check"
   npm list -g @freshworks/fdk --depth=0 | grep "@freshworks/fdk@10" || echo "FAILED: @freshworks/fdk@10 not installed"
@@ -110,7 +110,7 @@ MANDATORY VERIFICATION (ALL TESTS MUST PASS):
 REPORT FORMAT:
   [VALID] FDK installed successfully
   Tarball: $FDK_URL
-  FDK version: $(fdk version 2>&1)
+  FDK version: $(printf 'n\n' | fdk version 2>&1)
   Node version: $(node --version 2>&1)
 
 CRITICAL: If ANY mandatory test fails, do not say "installation complete".

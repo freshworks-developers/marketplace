@@ -150,10 +150,10 @@ for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
   echo 'nvm use 24.11 >/dev/null 2>&1 || true' >> "$rc"
 done
 
-# 6) Verify in subshells
-fdk version | grep -E '^10\\.' || { echo "FAILED: fdk not 10.x"; exit 1; }
-zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 24.11 >/dev/null; command -v fdk && fdk version' \
-  || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 24.11 >/dev/null; command -v fdk && fdk version' \
+# 6) Verify in subshells (auto-decline FDK upgrade prompts)
+printf 'n\n' | fdk version | grep -E '^10\\.' || { echo "FAILED: fdk not 10.x"; exit 1; }
+zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 24.11 >/dev/null; command -v fdk && printf "n\n" | fdk version' \
+  || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 24.11 >/dev/null; command -v fdk && printf "n\n" | fdk version' \
   || { echo "FAILED: fdk not on PATH in clean shell"; exit 1; }
 
 echo "REPORT: troubleshoot --fix complete. Backups: *.bak.fdk-troubleshoot.$TS"

@@ -27,10 +27,10 @@ echo "nvm: $(nvm --version 2>&1 || echo 'Not installed')"
 echo "FDK binary: $(command -v fdk || echo 'Not on PATH')"
 echo "FDK cache: $([ -d ~/.fdk ] && echo 'Present (~/.fdk)' || echo 'Not found')"
 
-# FDK version - simplified to handle "Installed: X.Y.Z" format
+# FDK version - auto-decline upgrade prompts (FDK 9.x prompts to upgrade to 10.x)
 if command -v fdk >/dev/null 2>&1; then
-  # Try current shell first
-  FDK_OUT=$(fdk version 2>&1)
+  # Try current shell first (auto-decline prompts with printf 'n\n')
+  FDK_OUT=$(printf 'n\n' | fdk version 2>&1)
   if echo "$FDK_OUT" | grep -q "Installed:"; then
     FDK_VER=$(echo "$FDK_OUT" | grep "Installed:" | head -1 | sed 's/Installed: //')
     echo "FDK version: $FDK_VER"
@@ -38,13 +38,13 @@ if command -v fdk >/dev/null 2>&1; then
     # Try with nvm loaded in fresh shell (for restricted environments)
     export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
     if [ -s "$NVM_DIR/nvm.sh" ]; then
-      FDK_OUT_FRESH=$(bash -c '. "$NVM_DIR/nvm.sh" 2>/dev/null; fdk version 2>&1')
+      FDK_OUT_FRESH=$(bash -c '. "$NVM_DIR/nvm.sh" 2>/dev/null; printf "n\n" | fdk version 2>&1')
       if echo "$FDK_OUT_FRESH" | grep -q "Installed:"; then
         FDK_VER=$(echo "$FDK_OUT_FRESH" | grep "Installed:" | head -1 | sed 's/Installed: //')
         echo "FDK version: $FDK_VER (from nvm shell)"
       else
         echo "FDK version: Binary found at $(which fdk) but version check failed"
-        echo "  Run 'fdk version' manually to diagnose"
+        echo "  Run 'printf \"n\\n\" | fdk version' to check manually"
       fi
     else
       echo "FDK version: Binary found at $(which fdk) but version check failed (nvm not loaded)"
