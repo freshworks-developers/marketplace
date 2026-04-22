@@ -48,7 +48,7 @@ Upgrade FDK. User target is __FDK_TARGET__ (replace this token before running).
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-CURRENT_FDK=$(printf 'n\n' | fdk version 2>&1 || echo "not installed")
+CURRENT_FDK=$(fdk version 2>&1 || echo "not installed")
 CURRENT_NODE=$(node --version 2>&1 || echo "not installed")
 echo "Before: FDK=$CURRENT_FDK Node=$CURRENT_NODE"
 
@@ -84,14 +84,14 @@ npm cache clean --force
 
 npm install -g "$FDK_URL" || exit 1
 
-printf 'n\n' | fdk version
+fdk version
 node --version
-zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; printf "n\n" | fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; printf "n\n" | fdk version'
+zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; fdk version'
 
 if [[ "$TARGET" == latest ]] || [[ "$TARGET" =~ ^10\\. ]]; then
-  printf 'n\n' | fdk version | grep -E '^10\\.' || echo "FAILED: expected FDK 10.x"
+  fdk version | grep -E '^10\\.' || echo "FAILED: expected FDK 10.x"
 elif [[ "$TARGET" =~ ^9\\. ]]; then
-  printf 'n\n' | fdk version | grep -E '^9\\.' || echo "FAILED: expected FDK 9.x"
+  fdk version | grep -E '^9\\.' || echo "FAILED: expected FDK 9.x"
 fi
 
 echo "REPORT: upgraded using $FDK_URL"

@@ -18,8 +18,8 @@ Task({
   prompt: `
 Completely remove FDK and all artifacts.
 
-DETECTION (auto-decline FDK upgrade prompts):
-  printf 'n\n' | fdk version || echo "not installed"
+DETECTION:
+  fdk version || echo "not installed"
   ls ~/.fdk || echo "no cache"
 
 COMPLETE REMOVAL:
