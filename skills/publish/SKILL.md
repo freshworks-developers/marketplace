@@ -1,5 +1,5 @@
 ---
-name: freshworks-publish-skill
+name: publish
 description: "Upload any Freshworks Platform 3.0 custom app to AMP (US): FDK validate/pack, multipart POST/PATCH to collections/modularApps, then optional move to test. Use when the user wants to push an app to the Marketplace backend for QA (test) or upload-only (dev), AMP upload, Developer Portal JWT, fdk pack, .fdk/app-info.json, or modularApps API. Pair with app-dev for manifest or module fixes. Not for generic non-AMP deploys unless explicitly tied to this flow."
 ---
 
