@@ -19,6 +19,25 @@ description: "Upload any Freshworks Platform 3.0 custom app to AMP (US): FDK val
   --support-email=you@your-domain.freshdesk.com
 ```
 
+### Node.js and FDK version handling
+
+**`fdk pack` respects `manifest.json` engines:**
+- Reads `engines.node` and `engines.fdk` from app's `manifest.json`
+- Uses currently active Node.js version (via `nvm` or system Node)
+- Prompts to continue if active Node doesn't match manifest requirement
+- Auto-answers "Y" to engines prompt when called via `publish.sh` (pipe `printf 'Y\n'`)
+
+**Best practice:**
+1. Set correct engines in `manifest.json` before packing:
+   ```json
+   "engines": {
+     "node": "24.11.0",
+     "fdk": "10.0.1"
+   }
+   ```
+2. Use `/fdk-setup-use` to switch Node version per project (creates `.nvmrc`)
+3. Run `publish.sh` — it auto-confirms engines mismatch if needed
+
 ### What `publish.sh` does first (clean AMP path)
 
 These steps are **built in**—no manual curl unless you are debugging.
