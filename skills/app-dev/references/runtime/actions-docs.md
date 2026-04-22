@@ -163,14 +163,21 @@ Ensure that the action name is the same as the `functionCallBackName` in `action
 
 ```js
 exports = {
-  <functionCallbackName>: function(args) {
-    //implementation code
-    //if success
-    renderData(null, {data: {response,"response_variables": {}}});
-    //if error
-    renderData(error);
-  }
-}
+  <functionCallbackName>: function (args) {
+    // implementation code
+    // if success — `response` is the string your action rules consume
+    renderData(null, {
+      data: {
+        response: "<string result for action branching>",
+        response_variables: {
+          /* optional key/value pairs for the UI */
+        },
+      },
+    });
+    // if error
+    // renderData({ status: 500, message: "…" });
+  },
+};
 ```
 
 ---
@@ -220,23 +227,26 @@ exports = {
 `response`: For which actions can be configured to send a response.
 
 ```js
-exports={
- getTicketStatus: async function (payload) {
+exports = {
+  getTicketStatus: async function (payload) {
     try {
-      console.log('Received payload');
-      let { response } = await $request.invokeTemplate(
-        'getTicketStatusRequest',
-        {
-          context: {
-            ticketId: payload.ticketId
-          }
-        }
-      );
-      response = JSON.parse(response);
-      console.log('Successfully fetched ticket status');
+      console.log("Received payload");
+      const result = await $request.invokeTemplate("getTicketStatusRequest", {
+        context: { ticketId: payload.ticketId },
+      });
+      const data = JSON.parse(result.response);
+      console.log("Successfully fetched ticket status");
+      renderData(null, {
+        data: {
+          response: data,
+          response_variables: {},
+        },
+      });
+    } catch (error) {
+      renderData({ status: 500, message: String(error && error.message ? error.message : error) });
     }
- }
-}
+  },
+};
 ```
 ---
 

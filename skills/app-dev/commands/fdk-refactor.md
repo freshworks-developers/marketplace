@@ -44,6 +44,8 @@ Apply these patterns:
 
 ## Step 5: Validate
 
+**Toolchain:** If `fdk validate` cannot run, **app-dev** does not install the CLI — use **fdk-setup** or prompt the user to add it (**SKILL.md** → *FDK / Node.js toolchain — not provided by app-dev*).
+
 Run: `cd <app-directory> && fdk validate`
 
 Ensure no new errors were introduced. Report the refactored functions and validation status.

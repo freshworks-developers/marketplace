@@ -1,40 +1,77 @@
->title: what are instance method in freshworks apps
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+>title: instance methods — agent routing (read first)
+>tags: instance-method, agent-routing, frontend, client.instance, modal, platform-3
+>context: app.js, app/index.html
 >content:
 
-# What are Instance Method in Freshworks apps
+# Instance methods — agent routing (read first)
 
-Instance methods enable a single app to exist in multiple locations or modals on the same page. An app location may open up one or more modals. The locations and modals can be thought of as separate instances of the app and can be resized, closed, and communicate with each other. The app framework provides instance methods to enable these use cases.
+**Load this file when** the work involves **`client.instance`**, **resize or close an app instance**, **multiple locations/modals on one page**, **instanceId / parentId**, or **send/receive between UI surfaces**.
 
-# Key features of Instance Methods
+**Prefer other files when:** **`client.interface` only** (showModal, dialogs, notifications) → **`references/api/interface-method-docs.md`**; **outbound HTTP** → **`references/architecture/request-templates-latest.md`** and **`references/api/request-method-docs.md`**; **serverless / `server/`** → **`skills/app-dev/SKILL.md`** and **`references/events/`**.
 
-- Multi-Instance Support: Enables apps to operate in multiple locations or modals simultaneously.
-- Inter-Instance Communication: Facilitates seamless data exchange between instances.
-- Custom Sizing: Allows resizing of app instances to suit user needs.
-- Error Handling: Provides robust mechanisms to handle issues such as instance unavailability.
+**Scope:** Product **frontend** with **`{{{appclient}}}`** in HTML. **Platform 3.0** app UI patterns.
+
+| Goal | API |
+|------|-----|
+| Set height (hard max **700px**; overflow scrolls) | `client.instance.resize({ height: "500px" })` |
+| Close this instance | `client.instance.close()` |
+| Metadata for *this* instance (incl. modal parent + `modalData`) | `await client.instance.context()` |
+| Active instances (to resolve `instanceId` for `send`) | `await client.instance.get()` |
+| Push data to one or more instances | `await client.instance.send({ message, receiver?: string[] })` |
+| Handle incoming `send` | `client.instance.receive(function (event) { … })` |
+
+**MUST:** Use **try/catch** around **`await client.instance.context()`**, **`get()`**, and **`send()`** as in examples below. **MUST** register **`receive`** where data should land. **MUST NOT** assume **`resize`** is async—follow the snippets in this doc.
+
+**Typical modal flow:** Parent uses **`client.interface.trigger("showModal", { …, data })`** → child reads **`(await client.instance.context()).modalData`** (see “Example — parent location to modal”).
 
 ---
->title: how to resize an instance
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: what are instance methods in Freshworks apps
+>tags: instance-method, overview, multi-instance, modal, communication
+>context: app.js, modal.html
+>content:
+
+# What are instance methods in Freshworks apps
+
+**Summary:** Instance methods let **one app** run in **multiple locations or modals** on the same page. Each surface is a separate **instance** (resizable, closeable) and instances can **exchange data**.
+
+**When to use:** Sidebar + modal, two ticket locations on one page, parent pre-filling a modal, modal returning data to a parent.
+
+**Key capabilities**
+
+| Capability | Meaning |
+|------------|---------|
+| Multi-instance | Same app in several placements or modals at once |
+| Inter-instance messaging | `send` / `receive` between active instances |
+| Sizing | `resize` up to **700px** height |
+| Errors | Use **try/catch** around async instance APIs |
+
+---
+
+>title: how to resize an app instance
+>tags: instance-method, resize, client.instance.resize, height-limit
+>context: app.js, modal.html
 >code:
 
-# How to resize an Instance
+# How to resize an app instance
 
-You can manually set the height of an app instance with client.instance.resize(). The maximum height for an instance is 700px. This works for modals and dialogs as well. If the instance occupies more space than this, scroll bars appear.
+**API:** `client.instance.resize({ height: "<css-length>" })`  
+**MUST NOT** exceed **700px** height for the instance; extra content **scrolls**.
 
 ```js
 client.instance.resize({ height: "500px" });
 ```
 
 ---
->title: error handling in instance method
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: error handling for client.instance.resize
+>tags: instance-method, resize, try-catch, error-handling
+>context: app.js, modal.html
 >code:
 
-# Error Handling in Instance method
+# Error handling for `client.instance.resize`
+
+**MUST** wrap `resize` in **try/catch** if failures should not break the UI.
 
 ```js
 try {
@@ -45,61 +82,69 @@ try {
 ```
 
 ---
->title: how to close an instance
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: how to close an app instance
+>tags: instance-method, close, client.instance.close
+>context: app.js, modal.html
 >code:
 
-# How to close an Instance
+# How to close an app instance
 
-You can close the instance with
+**API:** `client.instance.close()` — tears down **this** instance (for example closes a modal surface when applicable).
 
 ```js
 client.instance.close();
 ```
 
 ---
->title: how to communicate between instances
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: communicating between instances — patterns and APIs
+>tags: instance-method, send, receive, context, get, inter-instance
+>context: app.js, modal.html
 >content:
 
-# How to communicate between Instances
+# Communicating between instances — patterns and APIs
 
-You can communicate between instances like
+| Pattern | Mechanism |
+|---------|-----------|
+| Parent → modal (initial payload) | Usually **`client.interface.trigger("showModal", { data })`** + **`await client.instance.context()`** → **`modalData`** on the modal instance |
+| Modal → parent (or any → any) | **`await client.instance.send({ message, receiver })`** + **`client.instance.receive(...)`** on target(s) |
+| Discover targets | **`await client.instance.get()`** returns active instances with **`instanceId`** and **`location`** |
 
-1. Send data from a parent location to a modal - When a modal is opened, the location can send data to pre-populate form fields.
-2. Send data from a modal to a parent location - When a user fills a form in a modal window, some of this data may need to be returned to the parent.
-3. Send data from one location to another location - In the case of an app that is present in two locations on the same page, a button click in one location can be used to trigger an action in the second location.
+**APIs**
 
-# What are the methods available to communicate between Instances?
-
-- Context: To fetch information about the current instance.
-- Get: To fetch context information of all active instances.
-- Send: To send data to other instances.
-- Receive: To receive data from other instances.
+| Method | Role |
+|--------|------|
+| **`context()`** | Metadata for **current** instance (`instanceId`, `location`, optional `parentId`, optional `modalData`) |
+| **`get()`** | Array of **all active** instances at call time |
+| **`send()`** | Push **`message`** to **`receiver`** instance id(s), or default targeting per scenario |
+| **`receive()`** | Subscribe; **`event.helper.getData()`** yields **`{ senderId, message }`** |
 
 ---
->title: how to use the context method?
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: client.instance.context — current instance metadata
+>tags: instance-method, context, modalData, parentId, instanceId
+>context: app.js, modal.html
 >code:
 
-# How to use the Context method?
+# `client.instance.context` — current instance metadata
 
-You can fetch information about the current instance using `context`. For example, modals contain information about the parent location which triggered them and any data that was passed to them.
+**When:** You need **this** instance’s id, **location** name, **parent** modal relationship, or **`modalData`** from **`showModal`**.
 
-parent_location_template.html
+**MUST** use **`await`** and **try/catch**.
+
+### Example — non-modal location (`ticket_requester_info`)
 
 ```js
 try {
-  let data = await client.instance.context();
-    console.log(data); // context
+  const data = await client.instance.context();
+  console.log(data);
 } catch (error) {
-    console.error(error);
+  console.error(error);
 }
 ```
-It returns the following data
+
+**Example shape**
 
 ```js
 {
@@ -107,21 +152,24 @@ It returns the following data
   location: "ticket_requester_info"
 }
 ```
-Attributes
 
-- `instanceId`: Each instance is auto-assigned with an ID.
-- `location`: The location of the current instance.
+| Field | Meaning |
+|-------|---------|
+| `instanceId` | Auto-assigned id for this instance |
+| `location` | Manifest location key for this surface |
 
-modal.html
+### Example — modal surface (`modal.html`)
 
 ```js
 try {
-    let context = await client.instance.context();
+  const ctx = await client.instance.context();
+  console.log(ctx);
 } catch (error) {
-    console.error(error);
+  console.error(error);
 }
 ```
-It returns the following data
+
+**Example shape**
 
 ```js
 {
@@ -131,142 +179,144 @@ It returns the following data
   modalData: "This ticket is created by Rachel"
 }
 ```
-Attributes
 
-- `instanceId`: Each instance is auto-assigned with an ID.
-- `location`: The location of the current instance.
-- `parentId`: ID of the parent instance that triggered the modal.
-- `modalData`: (optional) This parameter contains data sent from the parent instance.
+| Field | Meaning |
+|-------|---------|
+| `instanceId` | This modal instance id |
+| `location` | Always **`"modal"`** for modal surfaces |
+| `parentId` | Opening instance id |
+| `modalData` | **Optional** — payload from parent (`data` in **`showModal`**); may be string, object, or array depending on what you pass |
 
 ---
->title: how to use the get method?
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: client.instance.get — list active instances
+>tags: instance-method, get, active-instances, send-targeting
+>context: app.js, modal.html
 >code:
 
-# How to use the get method?
+# `client.instance.get` — list active instances
 
-The get method is used to fetch context information of all instances that are active at the time of the `get()` call. It can be used in conjunction with the `send()` method to send data to a specific instance.
+**When:** You need **every active** instance (for example to **`find`** `ticket_sidebar` and pass its **`instanceId`** into **`send`**).
 
-## Using the get method at a location
-
-ticket_sidebar_template.html or modal.html
+**MUST** use **`await`** and **try/catch**.
 
 ```js
 try {
-  let data = await client.instance.get();
+  const instances = await client.instance.get();
+  console.log(instances);
 } catch (error) {
-    console.error(error);
+  console.error(error);
 }
 ```
 
-Output
+**Example output**
 
 ```js
 [
-  {instanceId: "1", location: "ticket_requester_info"},
-  {instanceId: "2", location: "ticket_sidebar"},
-  {instanceId: "4", location: "modal", parentId: "1"}
+  { instanceId: "1", location: "ticket_requester_info" },
+  { instanceId: "2", location: "ticket_sidebar" },
+  { instanceId: "4", location: "modal", parentId: "1" }
 ]
 ```
 
-Get method output attributes
-
-- `instanceId`: Each instance is auto-assigned with an ID.
-- `location`: The location of the current instance.
-- `parentId`: ID of the parent instance that triggered the modal.
+| Field | Meaning |
+|-------|---------|
+| `instanceId` | Target id for **`receiver`** |
+| `location` | Placement key |
+| `parentId` | Present on **modal** rows — opener’s **`instanceId`** |
 
 ---
 
->title: how to use the send method?
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+>title: client.instance.send — push data to instance(s)
+>tags: instance-method, send, receiver, message
+>context: app.js, modal.html
 >code:
 
-# How to use the Send method?
+# `client.instance.send` — push data to instance(s)
 
-You can use the send method to send data to one or many instances. The `receive()` method should be used in the destination instance(s) to receive data. The syntax varies according to the scenario as shown below.
-ticket_sidebar_template.html
+**When:** One instance should push a **`message`** payload to **specific** instance(s) or (in modal flows) to the **implicit** parent.
+
+**MUST** use **`await`** and **try/catch** on the **caller**. **MUST** ensure recipients are **active** (use **`get()`** first if ids are unknown).
+
+**`message`:** string, object, or array.  
+**`receiver`:** array of **`instanceId`** strings when targeting multiple surfaces; omit only when your product pattern allows default routing (see modal example in next sections).
+
+### From a location — explicit receivers
 
 ```js
 try {
   await client.instance.send({
-      message: {
-          name: "James",
-          email: "James@freshdesk.com"
-      },
-      receiver: ["instanceID1", "instanceID2"]
+    message: {
+      name: "James",
+      email: "James@freshdesk.com"
+    },
+    receiver: ["instanceID1", "instanceID2"]
   });
 } catch (error) {
-    console.error(error);
+  console.error(error);
 }
 ```
 
-- `message`:  Data that is sent from location/modal. message can be a string, object, or array.
-- `receiver`: InstanceId(s) of the receiver locations.
-modal.html
+### From a modal — message only (parent routing per product)
 
 ```js
 try {
   await client.instance.send({
-      message: {
-          name: "James",
-          email: "James@freshdesk.com"
-      }
-  });
-} catch (error) {
-    console.error(error);
-}
-```
-`send` returns the following attributes
-
-- `message`:  Data that is sent from location/modal. message can be a string, object, or array.
-
-The destination instances must be active when data is sent. You can retrieve all active instances using the get() method.
-
----
-
->title: how to use the recieve method?
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
->code:
-
-# How to use the Recieve method?
-
-This method is used to receive data that is sent by another instance of the same app using the `send()` method. Whenever data is sent to the instance, the callback method is executed.
-Recieving at ticket_sidebar_template.html or modal.html
-
-```js
-client.instance.receive(
-  function(event) {
-    let data = event.helper.getData();
-    console.log(data);
-    /* data contains {senderId: "1", message: { message: {name: "James", email: "James@freshdesk.com"}} */
+    message: {
+      name: "James",
+      email: "James@freshdesk.com"
     }
-);  console.error(error);
+  });
+} catch (error) {
+  console.error(error);
+}
 ```
 
-`data` returns the following attributes.
-
-- `message`:  Data that is sent from location/modal. `message` can be a string, object, or array.
-- `senderId`: InstanceId(s) of the sender location/modal.
+**Note:** Destination instances **must be active** when **`send`** runs—resolve ids with **`get()`** when needed.
 
 ---
->title: example of sending data from a parent location to a modal
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+
+>title: client.instance.receive — subscribe to incoming send
+>tags: instance-method, receive, event.helper.getData, senderId
+>context: app.js, modal.html
 >code:
 
-# Example of sending data from a parent location to a modal
+# `client.instance.receive` — subscribe to incoming `send`
 
-There is a ticket sidebar app with Name, Email as input fields and a button 'Show Modal' .User enters information (Name and Email) and clicks the `Show Modal` button, the values are sent to the modal.
+**When:** This instance should handle **`send`** payloads from elsewhere in the same app.
 
-1. Add an additional parameter data in `showModal()` so that information is available in the modal.
+**API:** `client.instance.receive(function (event) { … })` — callback runs when a **`send`** targets this instance.
 
-  ticket_sidebar_template.html
+```js
+client.instance.receive(function (event) {
+  const data = event.helper.getData();
+  console.log(data);
+  /* e.g. { senderId: "1", message: { name: "James", email: "James@freshdesk.com" } } */
+});
+```
 
-  ```js
-  try {
+| Field | Meaning |
+|-------|---------|
+| `message` | Payload from **`send`** |
+| `senderId` | Sender instance **`instanceId`** |
+
+---
+
+>title: example — parent location to modal via showModal data
+>tags: instance-method, showModal, modalData, context, ticket_sidebar
+>context: app.js, modal.html, interface-method-docs.md
+>code:
+
+# Example — parent location to modal (`showModal` + `modalData`)
+
+**Story:** Ticket UI has **Name** / **Email** and **Show Modal**. User fills fields; parent opens **`modal.html`** and passes values via **`data`**.
+
+**Step 1 — parent:** pass **`data`** into **`showModal`**.
+
+`ticket_sidebar_template.html`
+
+```js
+try {
   await client.interface.trigger("showModal", {
     title: "Information Form",
     template: "modal.html",
@@ -275,130 +325,113 @@ There is a ticket sidebar app with Name, Email as input fields and a button 'Sho
       email: "James@freshdesk.com"
     }
   });
-  } catch (error) {
-    console.error(error);
+} catch (error) {
+  console.error(error);
+}
+```
+
+**Step 2 — modal:** read **`modalData`** from **`context()`**.
+
+`modal.html`
+
+```js
+try {
+  const ctx = await client.instance.context();
+  console.log("Modal instance method context", ctx);
+  /* e.g. { instanceId, location: "modal", parentId, modalData: { name, email } } */
+  const nameEl = document.querySelector("#name");
+  const emailEl = document.querySelector("#email");
+  if (ctx.modalData && nameEl && emailEl) {
+    nameEl.value = ctx.modalData.name;
+    emailEl.value = ctx.modalData.email;
   }
-  ```
+} catch (error) {
+  console.error(error);
+}
+```
 
-2. Retrieve the data using the `context()` method.
-
-  modal.html
-
-  ```js
-  try {
-  let context = await client.instance.context();
-  console.log("Modal instance method context", context);
-    /* Output: Modal instance method context
-    {
-      instanceId: "4",
-      location: "modal",
-      parentId: "1",
-      modalData: {name: "James", email: "James@freshdesk.com"} }"
-    */
-  document.querySelector("#name").val(context.modalData.name);
-  document.querySelector("#email").val(context.modalData.name);
-  } catch (error) {
-    console.error(error);
-  }
-  ```
-
-Here, `modalData` contains `data` that was passed using `showModal`.
+**Rule:** `modalData` mirrors the **`data`** object passed from **`showModal`** (shape is under your control).
 
 ---
 
->title: example of sending data from a modal to a parent location
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+>title: example — modal to parent via send and receive
+>tags: instance-method, send, receive, modal-to-parent
+>context: app.js, modal.html, ticket_sidebar
 >code:
 
-# Example of sending data from a modal to a parent location
+# Example — modal to parent (`send` + `receive`)
 
-Data can be transferred from a modal to its parent location `ticket_requester_info` using the `send()` and `receive()` methods. When a user enters the information (Name and Email) and clicks the Send button in the modal, the user input is populated in ticket_requester_info(parent location).
+**Story:** User submits **Name** / **Email** in **`modal.html`**; **`ticket_requester_info`** (or another parent surface) should consume it via **`receive`**.
 
-1. Send the data from the modal using `send()` method.
+**Step 1 — modal:** **`send`** the payload.
 
-  modal.html
+`modal.html`
 
-  ```js
-  client.instance.send({
-  message: {name: "James", email: "james.dean@freshdesk.com"}});
-  /* message can be a string, object, or array */
-  ```
+```js
+try {
+  await client.instance.send({
+    message: { name: "James", email: "james.dean@freshdesk.com" }
+  });
+} catch (error) {
+  console.error(error);
+}
+```
 
-2. Receive the data using the `recieve()` method.
+**Step 2 — parent surface:** **`receive`**.
 
-  ticket_sidebar_template.html
+`ticket_sidebar_template.html` (or your parent template)
 
-  ```js
-  client.instance.receive(
-  function(event) {
-    let data = event.helper.getData();
-      console.log(data);
-        /* Output:
-        {
-        senderId: "4",
-        message: {name: "James", email: "james.dean@freshdesk.com"}
-       }
-        */
-    }
-  );
-  ```
+```js
+client.instance.receive(function (event) {
+  const data = event.helper.getData();
+  console.log(data);
+  /* e.g. { senderId: "4", message: { name: "James", email: "james.dean@freshdesk.com" } } */
+});
+```
 
 ---
 
->title: example of sending data from a modal to a parent location
->tags:  instance-method, app-framework, communication, resize, modal
->context: app.js, modal.html,
+>title: example — one ticket location to another via get send receive
+>tags: instance-method, get, send, receive, ticket_sidebar, ticket_requester_info
+>context: app.js, modal.html
 >code:
 
-# Example of sending data from one location to another
+# Example — one location to another (`get` + `send` + `receive`)
 
-Data can be transferred from location to another location by using `send()` and `receive()` methods in instance methods. In the following example, when a user enters information (Name and Email) and clicks the Send button in the `ticket_requester_info` location, the data is passed to the `ticket_sidebar` location.
+**Story:** User clicks **Send** in **`ticket_requester_info`**; **`ticket_sidebar`** should receive **Name** / **Email**.
 
-1. Send the data from the `ticket_requester_info` location
+**Step 1 — sender:** resolve **`ticket_sidebar`** with **`get()`**, then **`send`**.
 
-  ticket_requester_template.html
+`ticket_requester_template.html`
 
-  ```js
-  let data = await client.instance.get();
-  console.log("Modal instance method context", context);
-    /* Output: Modal instance method context
-    {
-      instanceId: "1",
-      location: "ticket_requester_info",
-    },
-    {
-      instanceId: "1",
-      location: "ticket_requester_info",
-    }"
-    */
-  let sidebarApp = data.find(x => x.location === "ticket_sidebar");
+```js
+try {
+  const instances = await client.instance.get();
+  console.log("Active instances", instances);
+  const sidebarApp = instances.find((x) => x.location === "ticket_sidebar");
+  if (!sidebarApp) {
+    throw new Error("ticket_sidebar instance is not active");
+  }
   await client.instance.send({
     message: {
       name: "James",
-            email: "james.dean@freshdesk.com"
-              },
-        receiver: sidebarApp.instanceId
-    });
-    /* 2 - instance ID of the receiver */
-  /* message can be a string, object, or array */
-  ```
+      email: "james.dean@freshdesk.com"
+    },
+    receiver: [sidebarApp.instanceId]
+  });
+} catch (error) {
+  console.error(error);
+}
+```
 
-2. Receive the data at `ticket_sidebar_template.html` location.
+**Step 2 — receiver:** **`receive`** on the sidebar template.
 
-  ticket_sidebar_template.html
+`ticket_sidebar_template.html`
 
-  ```js
-  client.instance.receive(
-  function(event) {
-    let data = event.helper.getData();
-    console.log(data);
-    /* Output:
-      {
-        senderId: "1",
-        message: { name: "James", email: "james.dean@freshdesk.com"}
-      }
-    */
-  }
-  );
-  ```
+```js
+client.instance.receive(function (event) {
+  const data = event.helper.getData();
+  console.log(data);
+  /* e.g. { senderId: "1", message: { name: "James", email: "james.dean@freshdesk.com" } } */
+});
+```

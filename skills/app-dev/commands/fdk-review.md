@@ -20,6 +20,8 @@ You are reviewing a Freshworks app using multiple rounds of `fdk validate`. Foll
 
 ## Step 2: Run validation rounds
 
+**Toolchain:** **app-dev** does not install **`fdk`** or **Node**. If `fdk` is missing or the stack is not **Node 24.x + FDK 10.x** for Platform 3.0, defer to **fdk-setup** or prompt the user to add that skill — see **SKILL.md** (*FDK / Node.js toolchain — not provided by app-dev*).
+
 Run `fdk validate` from the app directory (the folder containing manifest.json). Perform **3 rounds**:
 
 ### Round 1

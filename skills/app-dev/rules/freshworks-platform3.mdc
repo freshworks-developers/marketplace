@@ -23,7 +23,7 @@ alwaysApply: true
 
 ### [VALID] ALWAYS Enforce These (Platform 3.0)
 
-1. **Engines:** New apps MUST start with `"engines": { "node": "24.11.0", "fdk": "10.0.1" }`. Prefer **fdk-setup** if validate will not run. **One-time** downgrade to `"node": "18.20.8", "fdk": "9.8.2"` is **LAST RESORT only** after **six** `fdk validate` fix iterations (or CLI cannot run on 10.0.1+24.11.0) and toolchain-only failure — full rules in **SKILL.md**.
+1. **Engines:** New apps MUST start with `"engines": { "node": "24.11.0", "fdk": "10.0.1" }`. **app-dev** does not install **fdk** or **Node** — use **fdk-setup** (or prompt the user to add it; **SKILL.md** → *FDK / Node.js toolchain — not provided by app-dev*). Prefer **fdk-setup** if validate will not run. **One-time** downgrade to `"node": "18.20.8", "fdk": "9.8.2"` is **LAST RESORT only** after **six** `fdk validate` fix iterations (or CLI cannot run on 10.0.1+24.11.0) and toolchain-only failure — full rules in **SKILL.md**.
 2. **Manifest:** `"platform-version": "3.0"` with `"modules"` structure
 3. **Request Templates:** FQDN hosts only (no paths), use `<%= variable %>` syntax
 4. **Crayons Components:** All UI elements must use Crayons (fw-* components)

@@ -1,12 +1,26 @@
 ---
 name: app-dev
-description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. New apps MUST start with FDK 10.0.1 and Node.js 24.x in manifest engines; FDK 9.x / Node 18 engines are forbidden except the single last-resort downgrade in SKILL.md after six validate iterations when toolchain blocks validation. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
+description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. Does NOT install or manage FDK/Node—use the fdk-setup skill (or prompt the user to add it). New apps MUST start with FDK 10.0.1 and Node.js 24.x in manifest engines; FDK 9.x / Node 18 engines are forbidden except the single last-resort downgrade in SKILL.md after six validate iterations when toolchain blocks validation. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
 compatibility: "Freshworks Platform 3.0. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
 allowed-tools: "shell read write strreplace glob grep"
 ---
 
 # Freshworks Platform 3.0 Development Skill
+
+## FDK / Node.js toolchain — not provided by app-dev
+
+**This skill does not install, upgrade, or repair** the Freshworks CLI (**`fdk`**) or **Node.js** (nvm aliases, PATH, global npm prefix). Those workflows live in the **`fdk-setup`** skill (`skills/fdk-setup/` in this repo), not here.
+
+**When the user’s shell is missing FDK, on the wrong Node major, or stuck on FDK 9.x for a Platform 3.0 app:**
+
+1. **If `fdk-setup` is available** (workspace has `skills/fdk-setup/`, or the IDE already loaded the **fdk-setup** skill with slash commands such as `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-use`, `/fdk-setup-status`): **stop improvising shell scripts** and follow **fdk-setup** to get **Node 24.x** + **FDK 10.x** before `fdk validate` / `fdk run` / `fdk pack`.
+2. **If `fdk-setup` is not available:** say clearly that **app-dev cannot install the toolchain**, then **ask the user to add the `fdk-setup` skill**, for example:
+   - **From this marketplace repo:** install or copy the **`fdk-setup`** skill into their agent skills/plugins path (same layout as `skills/fdk-setup/` here).
+   - **Claude Code:** `npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup`
+   After it is installed, they should use **`/fdk-setup-install`** or **`/fdk-setup-upgrade`** (or legacy **`/fdk-install`** / **`/fdk-upgrade`**) per that skill’s `SKILL.md` / `README.md`.
+
+Do not treat app-dev as a substitute for a missing **`fdk`** binary or for Node/FDK version management.
 
 **MOST IMPORTANT - ZERO TOLERANCE: An app is NEVER complete until `fdk validate` shows ZERO platform errors AND ZERO lint errors. NEVER say "app complete" or "app generated" with ANY errors remaining.**
 
@@ -515,7 +529,6 @@ Next steps:
 ### Step 5: Validate Against Test Patterns
 
 Before presenting the app, validate against:
-- `references/tests/golden.json` - Should match correct patterns
 - `references/tests/refusal.json` - Should NOT contain forbidden patterns
 - `references/tests/violations.json` - Should avoid common mistakes
 
@@ -662,7 +675,7 @@ Default: mandatory files + short `README.md` only.
 
 ## Installation, tests, product modules
 
-**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/golden.json`, `refusal.json`, `violations.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
+**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/refusal.json`, `references/tests/violations.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
 
 ---
 
@@ -673,7 +686,7 @@ Default: mandatory files + short `README.md` only.
 - **Terminal logs backend only:** `console.log` only in `server/server.js`, not frontend
 - **Production-ready only:** Generate complete, deployable apps
 - **Forbidden patterns:** Listed in refusal tests
-- **Required patterns:** Listed in golden tests
+- **Required patterns:** Per **SKILL.md** validation tables and **`rules/freshworks-platform3.mdc`**
 
 ---
 

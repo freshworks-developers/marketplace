@@ -54,7 +54,7 @@ marketplace/
 │   │   └── assets/           # Templates and resources
 │   └── app-dev/              # App development skill
 ├── scripts/                  # Build and utility scripts
-├── CLAUDE.md                 # Claude Code workspace configuration
+├── AGENTS.md                 # Agent entry point (routing + repo norms)
 ├── CODE_OF_CONDUCT.MD        # Community guidelines
 └── README.md                 # Repository overview
 ```
@@ -183,8 +183,8 @@ references/
 │   ├── manifest-errors.md
 │   └── oauth-errors.md
 ├── architecture/           # Platform architecture docs
-└── tests/                  # Test patterns and golden files
-    ├── golden.json
+└── tests/                  # Test patterns (refusal / violations)
+    ├── refusal.json
     └── violations.json
 ```
 

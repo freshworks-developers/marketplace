@@ -43,7 +43,7 @@ line-height: 16px;"
 </div>
 </fw-toast-message>
 
-<fw-button onclick="document.querySelector('#type_toast').trigger({type:'success', content: 'Successfullly triggered'})">Success</fw-button>
+<fw-button onclick="document.querySelector('#type_toast').trigger({type:'success', content: 'Successfully triggered'})">Success</fw-button>
 <fw-button onclick="document.querySelector('#type_toast_right').trigger({type:'error', content:'something went wrong!'})">Error</fw-button>
 <fw-button onclick="document.querySelector('#type_toast_left').trigger({type:'warning', content:'This is a warning!'})">Warning</fw-button>
 <fw-button onclick="document.querySelector('#type_toast').trigger({type:'inprogress', content:'Request is in progress'})">Inprogress</fw-button>
@@ -120,7 +120,7 @@ custom html contents can be added
 
 <FwToast id="type_toast" ref={el} timeout={5000}></FwToast>
 
-<FwButton onClick={()=> toast.trigger({type:'success', content: 'Successfullly triggered'})}>Success</FwButton>
+<FwButton onClick={()=> toast.trigger({type:'success', content: 'Successfully triggered'})}>Success</FwButton>
 <FwButton onClick={()=> el.current.trigger({type:'error', content:'something went wrong!'})}>Error</FwButton>
 <FwButton onClick={()=> el.current.trigger({type:'warning', content:'This is a warning!'})}>Warning</FwButton>
 <FwButton onClick={()=> el.current.trigger({type:'inprogress', content:'Request is in progress'})}>Inprogress</FwButton>
@@ -266,7 +266,7 @@ Toasts are used to show pop-up messages that lasts on the screen for a while. Us
   </div>
 </fw-toast-message>
 <fw-button
-  onclick="document.querySelector('#type_toast').trigger({type:'success', content: 'Successfullly triggered'})"
+  onclick="document.querySelector('#type_toast').trigger({type:'success', content: 'Successfully triggered'})"
   >Success</fw-button
 >
 <fw-button
@@ -301,7 +301,7 @@ React - import {  ToastController } from "@freshworks/crayons/react"
 Create an instance of `ToastController` by passing [ToastOptions](#toastoptions) (optional) and use [Methods](#methods) to manage toast
 ```js
 const toast = ToastController({ position: 'top-right' });
-toast.trigger({ type: 'success', content: 'Successfullly triggered' });
+toast.trigger({ type: 'success', content: 'Successfully triggered' });
 ```
 ## ToastOptions
 Below is the interface for `ToastOptions` that can be used for creating the toast

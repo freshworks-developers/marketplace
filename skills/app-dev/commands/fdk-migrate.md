@@ -1,6 +1,6 @@
 ---
 name: fdk-migrate
-description: Migrate a legacy Freshworks app from platform-version 2.3 (2.x), FDK 9.x, and Node 18 to Platform 3.0 with FDK 10.0.1 and Node 24.11.0. Transforms manifest, request templates, Crayons UI, and validates on the new toolchain.
+description: Migrate a legacy Freshworks app from platform-version 2.3 (2.x), FDK 9.x, and Node 18 to Platform 3.0 with FDK 10.0.1 and Node 24.11.0. Transforms manifest, request templates, Crayons UI, and validates on the new toolchain. Does not install fdk/Node—use fdk-setup (or prompt user to add it) per SKILL.md.
 globs: ["**/manifest.json"]
 always: false
 ---
@@ -21,6 +21,13 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
 
 **CRITICAL:** Do **not** use **FDK 9.x on Node 18** to validate a finished **Platform 3.0** app. Upgrade the **machine** (shell) to **Node 24.x** + **FDK 10.x** before you rely on `fdk validate` for the migrated tree. Platform 3.0 migration aligns with **app-dev**: **FDK 10.0.1** and **Node.js 24.x** (templates use Node **24.11.0**, FDK **10.0.1**).
 
+**Toolchain** (same split as `/fdk-fix`, `/fdk-review`, `/fdk-refactor`, and always-on **`rules/validation-workflow.mdc`**):
+
+- **app-dev** does not install **`fdk`**, **Node**, **nvm**, or **PATH**.
+- Use **`fdk-setup`** when present: `/fdk-setup-install`, `/fdk-setup-upgrade`, `/fdk-setup-use`, `/fdk-setup-status`.
+- If **fdk-setup** is missing: prompt the user to add it (e.g. `npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup`, or copy `skills/fdk-setup/` from this repo), then continue Step 0.
+- Do not invent one-off global `npm install` scripts here. Canonical wording: **SKILL.md** → *FDK / Node.js toolchain — not provided by app-dev*.
+
 1. Check Node.js version:
    ```bash
    node --version
@@ -35,7 +42,7 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
      nvm install 24.11
      nvm use 24.11
      ```
-     Point them to the **fdk-setup** skill for a full install path.
+     Point them to **fdk-setup** for a full install path (**SKILL.md** → *FDK / Node.js toolchain — not provided by app-dev*). Do not substitute ad hoc `npm install -g` recipes for Freshworks FDK tarballs.
 
 2. Check FDK version:
    ```bash
@@ -91,4 +98,6 @@ Use the Freshworks App Development Skill and references. Apply these transformat
 
 ## Step 4: Validate
 
-Run `fdk validate` in the app directory. Fix any fatal errors. Present the migrated app when validation passes.
+**Toolchain:** Before `fdk validate`, re-check **Step 0** if the shell may have changed. **app-dev** does not install the CLI — use **fdk-setup** or prompt the user to add it (**SKILL.md** → *FDK / Node.js toolchain — not provided by app-dev*). Same rule as **`rules/validation-workflow.mdc`** (always-on when app-dev is loaded).
+
+Run `fdk validate` in the app directory. Fix any fatal errors (and lint per app-dev zero-tolerance). Present the migrated app when validation passes.

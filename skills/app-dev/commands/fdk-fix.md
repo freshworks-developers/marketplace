@@ -20,6 +20,8 @@ You are fixing all platform validation errors and lint errors in a Freshworks ap
 
 ## Step 2: Run fdk validate
 
+**Toolchain:** **app-dev** does not install **`fdk`** or **Node**. If the shell has no `fdk`, wrong Node major for FDK 10, or only **FDK 9.x** while fixing a **Platform 3.0** tree, follow **SKILL.md** (*FDK / Node.js toolchain — not provided by app-dev*): use **`fdk-setup`** when available, or prompt the user to add it (`npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup`, or copy `skills/fdk-setup/` from this repo). Do not invent one-off global npm installs here.
+
 Run: `cd <app-directory> && fdk validate`
 
 Capture all output (fatal errors, lint errors, warnings).
