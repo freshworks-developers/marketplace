@@ -1,7 +1,7 @@
 ---
 name: fdk-setup
-description: Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-migrate, /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24.
-compatibility: Node.js 24.x (FDK 10.x) or Node.js 18.x (FDK 9.x), nvm, Platform 3.0
+description: "Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-migrate, /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24."
+compatibility: "Node.js 24.x (FDK 10.x) or Node.js 18.x (FDK 9.x), nvm, Platform 3.0"
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
 allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 ---
