@@ -11,7 +11,11 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 
 **Scope:**
 - **Without `--global`**: Changes only current shell (`nvm use`)
-- **With `--global`**: Sets as default for all new shells (`nvm alias default`)
+- **With `--global`**: Sets as default for all new shells across all environments:
+  - **nvm (macOS/Linux)**: `nvm alias default <version>` + updates `~/.zshrc` and `~/.bashrc` with `nvm use` line
+  - **Homebrew (macOS)**: System-wide already (no action needed)
+  - **Chocolatey (Windows)**: System-wide already (no action needed)
+  - **nvm-windows**: Sets default via nvm-windows alias
 
 ## When to use
 
@@ -58,13 +62,78 @@ Before running the block, set shell variables (or inline the values):
 - **`SET_GLOBAL`** — **`true`** if user passed **`--global`** flag, otherwise **`false`** (default).
 
 ```bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" || { echo "nvm not found"; exit 1; }
+# Detect installation method
+detect_install_method() {
+  if command -v brew >/dev/null 2>&1 && brew list fdk >/dev/null 2>&1; then
+    echo "homebrew"
+  elif command -v choco >/dev/null 2>&1 && choco list --local-only fdk >/dev/null 2>&1; then
+    echo "chocolatey"
+  elif [ -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "nvm"
+  elif command -v nvm >/dev/null 2>&1; then
+    echo "nvm-windows"
+  else
+    echo "unknown"
+  fi
+}
+
+INSTALL_METHOD=$(detect_install_method)
+
+# For nvm-based installs
+if [[ "$INSTALL_METHOD" == "nvm" ]] || [[ "$INSTALL_METHOD" == "nvm-windows" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" || { echo "nvm not found"; exit 1; }
+fi
 
 cd "${WORK_DIR:-.}" || exit 1
 
 # Parse --global flag (default: false)
 SET_GLOBAL="${SET_GLOBAL:-false}"
+
+set_global_persist() {
+  local node_ver="$1"
+  
+  if [[ "$SET_GLOBAL" != "true" ]]; then
+    return 0
+  fi
+  
+  case "$INSTALL_METHOD" in
+    nvm)
+      # Set nvm alias
+      nvm alias default "$node_ver"
+      
+      # Update shell RC files to auto-load this version
+      for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
+        [ -f "$rc" ] || continue
+        
+        # Remove old fdk-setup-use lines
+        sed -i.bak '/# fdk-setup-use --global/d' "$rc" 2>/dev/null || sed -i '' '/# fdk-setup-use --global/d' "$rc" 2>/dev/null
+        
+        # Add new line
+        echo "" >> "$rc"
+        echo "# fdk-setup-use --global (auto-set Node $node_ver)" >> "$rc"
+        echo "export NVM_DIR=\"\$HOME/.nvm\"" >> "$rc"
+        echo "[ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"" >> "$rc"
+        echo "nvm use $node_ver >/dev/null 2>&1 || true" >> "$rc"
+      done
+      echo "✓ Set as global default: nvm alias + updated ~/.zshrc and ~/.bashrc"
+      ;;
+      
+    nvm-windows)
+      # Windows nvm uses different command
+      nvm alias default "$node_ver"
+      echo "✓ Set as global default for nvm-windows"
+      ;;
+      
+    homebrew|chocolatey)
+      echo "✓ Already global (Homebrew/Chocolatey installs are system-wide)"
+      ;;
+      
+    *)
+      echo "⚠ Unknown install method; skipping global persistence"
+      ;;
+  esac
+}
 
 pick_node() {
   case "${STACK:-auto}" in
@@ -77,19 +146,23 @@ pick_node() {
       fi
       ;;
     10|24.11)
-      nvm install 24.11 2>/dev/null || true
-      nvm use 24.11
-      if [[ "$SET_GLOBAL" == "true" ]]; then
-        nvm alias default 24.11
-        echo "Set as global default (all new shells)"
+      if [[ "$INSTALL_METHOD" == "nvm" ]] || [[ "$INSTALL_METHOD" == "nvm-windows" ]]; then
+        nvm install 24.11 2>/dev/null || true
+        nvm use 24.11
+        set_global_persist "24.11"
+      else
+        echo "Node version switching not supported for $INSTALL_METHOD installations"
+        echo "FDK version is system-wide"
       fi
       ;;
     9|18)
-      nvm install 18 2>/dev/null || true
-      nvm use 18
-      if [[ "$SET_GLOBAL" == "true" ]]; then
-        nvm alias default 18
-        echo "Set as global default (all new shells)"
+      if [[ "$INSTALL_METHOD" == "nvm" ]] || [[ "$INSTALL_METHOD" == "nvm-windows" ]]; then
+        nvm install 18 2>/dev/null || true
+        nvm use 18
+        set_global_persist "18"
+      else
+        echo "Node version switching not supported for $INSTALL_METHOD installations"
+        echo "FDK version is system-wide"
       fi
       ;;
     *)
