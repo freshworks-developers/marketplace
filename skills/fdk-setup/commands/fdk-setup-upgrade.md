@@ -77,10 +77,33 @@ fi
 HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
 [[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
 
+# Remove FDK from current Node
 npm uninstall -g @freshworks/fdk 2>/dev/null || true
 npm uninstall -g fdk 2>/dev/null || true
 rm -rf ~/.fdk
 npm cache clean --force
+
+# If upgrading to FDK 10, remove FDK 9 from Node 18 (exclusive operation)
+if [[ "$TARGET" == latest ]] || [[ "$TARGET" =~ ^10\\. ]]; then
+  if nvm list | grep -q "v18"; then
+    echo "Removing FDK 9.x from Node 18 (exclusive upgrade to FDK 10)..."
+    nvm use 18 2>/dev/null || nvm use 18.20 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    nvm use "$TARGET" == "latest" && echo "24.11" || echo "$TARGET" | sed 's/\([0-9]*\)\..*/24.11/'
+  fi
+fi
+
+# If upgrading to FDK 9, remove FDK 10 from Node 24 (exclusive downgrade)
+if [[ "$TARGET" =~ ^9\\. ]]; then
+  if nvm list | grep -q "v24"; then
+    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9)..."
+    nvm use 24 2>/dev/null || nvm use 24.11 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    nvm use 18
+  fi
+fi
 
 npm install -g "$FDK_URL" || exit 1
 
