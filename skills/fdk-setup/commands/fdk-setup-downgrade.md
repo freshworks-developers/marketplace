@@ -11,7 +11,7 @@ argument-hint: "[version|latest]"
 1. **FDK 10.x → 10.0.y** (e.g., 10.1.0 → 10.0.1) on Node 24
 2. **FDK 10.x → 9.x** (e.g., 10.x → 9.8.2) on Node 18 with deprecation notice
 
-**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends March 2026. Publishing to marketplace requires FDK 10.x + Node 24.x. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends May 30, 2026. Publishing to marketplace requires FDK 10.x + Node 24.x. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
 ## Agent pre-step
 
@@ -43,7 +43,7 @@ if [[ "$TARGET_VER" == latest ]] || [[ "$TARGET_VER" =~ ^9\\. ]]; then
   echo "========================================="
   echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
   echo "========================================="
-  echo "Support ends: March 2026"
+  echo "Support ends: May 30, 2026"
   echo "Publishing requires FDK 10.x + Node 24.x"
   echo "Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/"
   echo ""

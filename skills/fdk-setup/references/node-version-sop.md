@@ -358,7 +358,7 @@ nvm alias fdk 24.11
 
 ### For FDK 9 Users (Node 18 - Deprecated)
 
-**FDK 9 is deprecated (ends March 2026)**. Migrate to FDK 10 when possible.
+**FDK 9 is deprecated (ends May 30, 2026)**. Migrate to FDK 10 when possible.
 
 **If you must use FDK 9**:
 ```bash

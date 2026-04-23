@@ -21,7 +21,7 @@
 
 > **FDK VERSION SUPPORT**: 
 > - **FDK 10.x + Node 24.x** (Recommended) - Required for publishing, supported until Dec 2027
-> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends March 2026
+> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends May 30, 2026
 
 > **PLATFORM 3.0 ONLY**: Platform 2.3 is deprecated. Both FDK versions support Platform 3.0.
 
@@ -76,7 +76,7 @@ Check available commands:
 - **Command:** `/fdk-setup-install` (default)
 
 ### FDK 9.x + Node 18.x (Deprecated)
-- **Status:** Deprecated, support ends March 2026
+- **Status:** Deprecated, support ends May 30, 2026
 - **Use for:** Development only (legacy projects)
 - **Publishing:** NOT SUPPORTED
 - **Command:** `/fdk-setup-downgrade` (shows deprecation warning)
@@ -134,7 +134,7 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_L
 **Downgrade (`/fdk-setup-downgrade`):**
 - Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
 - Optional **pinned 9.x.y** (`v9.x.y.tgz`) or **latest** 9 line (`latest.tgz`) after HTTP check
-- Shows deprecation warning (FDK 9.x ends March 2026)
+- Shows deprecation warning (FDK 9.x ends May 30, 2026)
 - Requires confirmation before proceeding
 - Complete cleanup of FDK 10.x before installing 9.x
 - Warns that publishing requires FDK 10.x

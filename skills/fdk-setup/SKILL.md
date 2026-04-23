@@ -1,6 +1,6 @@
 ---
 name: fdk-setup
-description: "Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated March 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24."
+description: "Installs and manages Freshworks Development Kit (FDK) with Node.js via nvm for Platform 3.0 development. Supports FDK 10.x (Node 24, recommended) and FDK 9.x (Node 18, deprecated May 30, 2026). Slash commands: /fdk-setup-install (--version), /fdk-setup-upgrade (--to), /fdk-setup-downgrade, /fdk-setup-uninstall, /fdk-setup-status (--verbose), /fdk-setup-troubleshoot (--fix), /fdk-setup-use (workspace nvm + .nvmrc). Legacy /fdk-install, etc. Publishing requires FDK 10.x + Node 24."
 compatibility: "Node.js 24.x (FDK 10.x) or Node.js 18.x (FDK 9.x), nvm, Platform 3.0"
 argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
 allowed-tools: "shell, task, read, write, strreplace, glob, grep"
@@ -33,7 +33,7 @@ Parse user request and execute the appropriate operation:
 
 **FDK 9.x Deprecation Warning (Always show when installing/downgrading to FDK 9.x):**
 ```
-WARNING: FDK 9.x + Node 18.x is DEPRECATED (ends March 2026)
+WARNING: FDK 9.x + Node 18.x is DEPRECATED (ends May 30, 2026)
 
 - Development: Allowed for Platform 3.0 apps
 - Publishing: NOT SUPPORTED - requires FDK 10.x + Node 24.x
@@ -46,7 +46,7 @@ Continue with FDK 9.x installation? (y/N)
 
 - **Platform 3.0 ONLY** - Platform 2.3 is deprecated, NEVER support it - ZERO TOLERANCE
 - **FDK 10.x + Node 24 RECOMMENDED** - Primary stack for Platform 3.0 development and publishing
-- **FDK 9.x + Node 18 ALLOWED** - Supported for Platform 3.0 development until March 2026 (deprecated)
+- **FDK 9.x + Node 18 ALLOWED** - Supported for Platform 3.0 development until May 30, 2026 (deprecated)
 - **Publishing requires FDK 10.x** - Marketplace submission requires Node 24 + FDK 10.x
 - **Use nvm ALWAYS** - NEVER install Node globally, NEVER use `sudo npm`
 - **FDK CLI only** - Use official commands from Freshworks documentation
@@ -55,7 +55,7 @@ Continue with FDK 9.x installation? (y/N)
 - **Complete cleanup** - Downgrade/uninstall MUST remove ~/.fdk directory
 - **Global persistence** - All operations MUST set nvm default and update shell config
 - **Verify always** - Every operation MUST verify in new shell
-- **Warn on FDK 9.x** - Always warn that FDK 9.x is deprecated (March 2026)
+- **Warn on FDK 9.x** - Always warn that FDK 9.x is deprecated (May 30, 2026)
 - If certainty < 100%, respond: "Insufficient FDK installation certainty."
 
 **CRITICAL UNIVERSAL RULES - NO EXCEPTIONS:**
@@ -64,7 +64,7 @@ Continue with FDK 9.x installation? (y/N)
 
 2. **FDK Version Support Matrix:**
    - **FDK 10.x + Node 24.x** - Recommended, required for publishing, supported until Dec 2027
-   - **FDK 9.x + Node 18.x** - Allowed for development, DEPRECATED (ends March 2026), cannot publish
+   - **FDK 9.x + Node 18.x** - Allowed for development, DEPRECATED (ends May 30, 2026), cannot publish
 
 3. **Complete Uninstall Before Version Switch** - When switching between FDK 10.x ↔ 9.x, ALWAYS uninstall current version completely (npm + ~/.fdk + cache) before installing target version.
 

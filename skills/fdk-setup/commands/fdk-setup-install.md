@@ -20,9 +20,9 @@ argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 | `/fdk-setup-install --version 9.8.2` | `9.8.2` | `https://cdn.freshdev.io/fdk/v9.8.2.tgz` | 18.20 |
 | `/fdk-setup-install --both` | `both` | Both latest-v24.tgz + latest 9.x | 24.11 + 18.20 |
 
-**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends March 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 30, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
-**`--both` flag:** Installs both FDK 10.0.1 on Node 24.11 AND FDK 9.8.2 on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10 as primary).
+**`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10 as primary).
 
 ## Agent pre-step
 
@@ -33,10 +33,10 @@ Parse version from:
 - Default (no args): `latest` → FDK 10 line on Node 24
 
 Replace **`__FDK_INSTALL_VERSION__`** with:
-- **`latest`** — default FDK 10 line
-- **`10.x.y`** — FDK 10 semver (strip leading `v`)
-- **`9.x.y`** — FDK 9 semver (strip leading `v`); **SHOW DEPRECATION NOTICE**
-- **`both`** — install both FDK 10.0.1 on Node 24.11 AND FDK 9.8.2 on Node 18.20
+- **`latest`** — latest FDK 10.x (default)
+- **`10.x.y`** — specific FDK 10 semver (strip leading `v`)
+- **`9.x.y`** — specific FDK 9 semver (strip leading `v`); **SHOW DEPRECATION NOTICE**
+- **`both`** — install both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20
 
 ## Execution
 
@@ -59,8 +59,8 @@ if [[ "$FDK_VER" == "both" ]]; then
   echo "========================================="
   echo "INSTALLING BOTH FDK STACKS"
   echo "========================================="
-  echo "Stack 1: FDK 10.0.1 on Node 24.11 (primary)"
-  echo "Stack 2: FDK 9.8.2 on Node 18.20 (deprecated, expires March 2026)"
+  echo "Stack 1: Latest FDK 10.x on Node 24.11 (primary)"
+  echo "Stack 2: Latest FDK 9.x on Node 18.20 (deprecated, expires May 30, 2026)"
   echo ""
   
   # Check existing installations
@@ -103,10 +103,10 @@ if [[ "$FDK_VER" == "both" ]]; then
     exit 0
   fi
   
-  # Install Stack 1 (FDK 10) if missing
+  # Install Stack 1 (latest FDK 10.x) if missing
   if [[ $HAS_FDK_10 -eq 0 ]]; then
     echo ""
-    echo "=== Installing Stack 1: FDK 10.0.1 on Node 24.11 ==="
+    echo "=== Installing Stack 1: Latest FDK 10.x on Node 24.11 ==="
     nvm install 24.11 2>/dev/null || true
     nvm use 24.11
     npm uninstall -g @freshworks/fdk 2>/dev/null || true
@@ -119,16 +119,16 @@ if [[ "$FDK_VER" == "both" ]]; then
     echo "✓ Installed FDK $FDK_10_VER on $NODE_24_VER"
   fi
   
-  # Install Stack 2 (FDK 9) if missing
+  # Install Stack 2 (latest FDK 9.x) if missing
   if [[ $HAS_FDK_9 -eq 0 ]]; then
     echo ""
-    echo "=== Installing Stack 2: FDK 9.8.2 on Node 18.20 ==="
+    echo "=== Installing Stack 2: Latest FDK 9.x on Node 18.20 ==="
     nvm install 18.20 2>/dev/null || true
     nvm use 18.20
     npm uninstall -g @freshworks/fdk 2>/dev/null || true
     npm uninstall -g fdk 2>/dev/null || true
     npm cache clean --force
-    npm install -g https://cdn.freshdev.io/fdk/v9.8.2.tgz || exit 1
+    npm install -g https://cdn.freshdev.io/fdk/latest.tgz || exit 1
     
     FDK_9_VER=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
     NODE_18_VER=$(node --version)
@@ -161,7 +161,7 @@ if [[ "$FDK_VER" =~ ^9\\. ]]; then
   echo "========================================="
   echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
   echo "========================================="
-  echo "Support ends: March 2026"
+  echo "Support ends: May 30, 2026"
   echo "Publishing to marketplace requires FDK 10.x + Node 24.x"
   echo "Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/"
   echo ""

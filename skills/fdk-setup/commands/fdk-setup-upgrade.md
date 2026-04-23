@@ -15,7 +15,7 @@ Matches **`/fdk-setup upgrade`** with optional **`--to X.Y.Z`**.
 |-------------|--------|
 | `/fdk-setup-upgrade` or “upgrade fdk” (no version) | Install **latest FDK 10 line** from `https://cdn.freshdev.io/fdk/latest-v24.tgz` on **Node 24.11.x**. |
 | `/fdk-setup-upgrade --to 10.1.0` or “upgrade fdk to 10.1.0” | Install **exact semver** from `https://cdn.freshdev.io/fdk/v10.1.0.tgz` (same pattern for other 10.x.y). |
-| `--to 9.x.y` | **Deprecated:** FDK 9 on **Node 18** only; show March 2026 + publishing warning before proceeding. |
+| `--to 9.x.y` | **Deprecated:** FDK 9 on **Node 18** only; show May 30, 2026 + publishing warning before proceeding. |
 
 **Before building the Task prompt:** read the user’s target from **`--to`** or phrases like “to 10.1.0”. Substitute **`FDK_TARGET`** in the shell block below:
 
@@ -60,7 +60,7 @@ if [[ "$TARGET" == latest ]]; then
   nvm use 24.11
   nvm alias default 24.11
 elif [[ "$TARGET" =~ ^9\\. ]]; then
-  echo "DEPRECATED: FDK 9.x ends March 2026; publishing requires FDK 10 + Node 24."
+  echo "DEPRECATED: FDK 9.x ends May 30, 2026; publishing requires FDK 10 + Node 24."
   read -p "Continue install of FDK $TARGET on Node 18? (y/N): " ok
   [[ "$ok" == [yY]* ]] || exit 1
   FDK_URL="https://cdn.freshdev.io/fdk/v${TARGET}.tgz"
