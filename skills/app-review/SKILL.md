@@ -17,13 +17,10 @@ Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the
 
 The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and is **not** assumed to exist in generic CI images. Jenkins or Kubernetes **node** images typically include **Node only**, not `fdk`. Verify the fdk is installed using command `fdk-setup-status` in fdk-setup skill.
 
-1. **Structure** — Read `manifest.json` (platform version, product, app type, events, modules).
-2. **Installation parameters** — Inspect the review rules under the [iparam-rules.md]. Follow the discovery order there.
-3. **Frontend** — `manifest.json`, `app/app.js` or `app/**/*.js`, `src/**/*.js` or `src/**/*.jsx`, `config/requests.json`, `config/oauth_config.json`, `app/**/*.html`, `server/server.js` . Rules in [frontend-files-rules.md].
-4. Emit the report as per [rules/report.md](rules/report.md)
-
-
-
+1. **Structure** — Read `manifest.json` first for platform version, modules, requests, events, and install flow.
+2. **Installation parameters** — Review `config/iparams.json` or custom `config/iparams.html` / `config/assets/iparams.js` using [rules/iparam-rules.md](rules/iparam-rules.md). Follow the discovery order in that file.
+3. **Deterministic script checks** — For each script-backed rule ID in [rules/script-check-rules.md](rules/script-check-rules.md), run the mapped JS file from `scripts/`.
+4. **Frontend logical checks** — Review [rules/frontend-files-rules.md](rules/frontend-files-rules.md) for FF-* rules that do not have a one-to-one script.
 
 ## Rules
 
@@ -37,6 +34,56 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - [rules/report.md](rules/report.md) — Output format for the final **App Review Result** block only.
 - [rules/iparam-rules.md](rules/iparam-rules.md) — IP-04A, IP-05A, IP-06A (and iparam scope for IP-03A).
 - [rules/frontend-files-rules.md](rules/frontend-files-rules.md) — All FF-* rules.
+- [rules/script-check-rules.md](rules/script-check-rules.md) — Script-backed SC-* rule IDs mapped to `scripts/*.js`.
+
+## Script-backed rule mapping
+
+Run these from the `marketplace/` repo root. Use the app root as the argument, for example `../freshreview`.
+
+- `SC-01A` -> `scripts/external-import-sources.js`
+  ```bash
+  node "skills/app-review/scripts/external-import-sources.js" "../freshreview"
+  ```
+- `SC-02A` -> `scripts/https-imports.js`
+  ```bash
+  node "skills/app-review/scripts/https-imports.js" "../freshreview"
+  ```
+- `SC-03A` -> `scripts/image-resolution.js`
+  ```bash
+  node "skills/app-review/scripts/image-resolution.js" "../freshreview"
+  ```
+- `SC-04A` -> `scripts/settings-update-handler.js`
+  ```bash
+  node "skills/app-review/scripts/settings-update-handler.js" "../freshreview"
+  ```
+- `SC-05A` -> `scripts/oauth-config-usage.js`
+  ```bash
+  node "skills/app-review/scripts/oauth-config-usage.js" "../freshreview"
+  ```
+- `SC-06A` -> `scripts/global-variables.js`
+  ```bash
+  node "skills/app-review/scripts/global-variables.js" "../freshreview"
+  ```
+- `SC-07A` -> `scripts/unused-library-imports.js`
+  ```bash
+  node "skills/app-review/scripts/unused-library-imports.js" "../freshreview"
+  ```
+- `SC-08A` -> `scripts/fdk-errors-warnings.js`
+  ```bash
+  node "skills/app-review/scripts/fdk-errors-warnings.js" "../freshreview"
+  ```
+- `SC-09A` -> `scripts/sensitive-console-logs.js`
+  ```bash
+  node "skills/app-review/scripts/sensitive-console-logs.js" "../freshreview"
+  ```
+- `SC-10A` -> `scripts/freshworks-css-only.js`
+  ```bash
+  node "skills/app-review/scripts/freshworks-css-only.js" "../freshreview"
+  ```
+- `SC-11A` -> `scripts/platform-version-upgrade.js`
+  ```bash
+  node "skills/app-review/scripts/platform-version-upgrade.js" "../freshreview"
+  ```
 
 ## Rule ID summary (authoritative list of evaluated rule IDs)
 
@@ -44,3 +91,4 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 |------|-----|
 | iparams | IP-03A, IP-04A, IP-05A, IP-06A |
 | Frontend | FF-01A, FF-07A, FF-02M, FF-03A, FF-04A, FF-05A, FF-06A |
+| Script checks | SC-01A, SC-02A, SC-03A, SC-04A, SC-05A, SC-06A, SC-07A, SC-08A, SC-09A, SC-10A, SC-11A |
