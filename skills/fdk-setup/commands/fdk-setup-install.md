@@ -44,18 +44,51 @@ Replace **`__FDK_INSTALL_VERSION__`** with:
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Install FDK with Node (supports single or both stacks)",
+  description: "Install FDK with Node (cross-platform: nvm/brew/choco)",
   prompt: `
-Install FDK with Node.js using nvm + Freshworks CDN tarball.
+Install FDK with Node.js - auto-detects installation method (nvm, Homebrew, Chocolatey, nvm-windows).
 
 FDK_VER="__FDK_INSTALL_VERSION__"
 # Host must replace token: "latest" OR "10.1.0" OR "9.8.2" OR "both"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# Detect installation method
+detect_install_method() {
+  if command -v brew >/dev/null 2>&1; then
+    echo "homebrew"
+  elif command -v choco >/dev/null 2>&1; then
+    echo "chocolatey"
+  elif [ -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "nvm"
+  elif command -v nvm >/dev/null 2>&1 && [[ "$OSTYPE" =~ ^(msys|win32|cygwin) ]]; then
+    echo "nvm-windows"
+  else
+    echo "npm-global"
+  fi
+}
 
-# --both flag: install both stacks (skip existing)
+INSTALL_METHOD=$(detect_install_method)
+echo "Installation method: $INSTALL_METHOD"
+
+# Load nvm if available
+if [[ "$INSTALL_METHOD" == "nvm" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+elif [[ "$INSTALL_METHOD" == "nvm-windows" ]]; then
+  # nvm-windows is already on PATH
+  true
+fi
+
+# --both flag: install both stacks (nvm/nvm-windows only)
 if [[ "$FDK_VER" == "both" ]]; then
+  if [[ "$INSTALL_METHOD" != "nvm" ]] && [[ "$INSTALL_METHOD" != "nvm-windows" ]]; then
+    echo "ERROR: --both flag requires nvm or nvm-windows"
+    echo "Homebrew and Chocolatey only support one FDK version system-wide"
+    echo ""
+    echo "Options:"
+    echo "1. Install nvm: https://github.com/nvm-sh/nvm"
+    echo "2. Or install one FDK version: /fdk-setup-install (for FDK 10.x)"
+    exit 1
+  fi
   echo "========================================="
   echo "INSTALLING BOTH FDK STACKS"
   echo "========================================="
@@ -156,49 +189,103 @@ if [[ "$FDK_VER" == "both" ]]; then
   exit 0
 fi
 
-# Single stack installation (existing logic)
-if [[ "$FDK_VER" =~ ^9\\. ]]; then
-  echo "========================================="
-  echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
-  echo "========================================="
-  echo "Support ends: May 30, 2026"
-  echo "Publishing to marketplace requires FDK 10.x + Node 24.x"
-  echo "Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/"
-  echo ""
-  read -p "Continue installing FDK 9.x? (y/N): " confirm
-  if [[ "$confirm" != [yY] ]]; then
-    echo "Installation cancelled. Use /fdk-setup-install (no args) for FDK 10.x"
+# Single stack installation - method-specific
+case "$INSTALL_METHOD" in
+  homebrew)
+    echo "Installing FDK via Homebrew (system-wide)..."
+    if [[ "$FDK_VER" =~ ^9\\. ]]; then
+      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "Homebrew formula for FDK 9.x may not be available"
+      exit 1
+    fi
+    brew uninstall fdk 2>/dev/null || true
+    brew install fdk || exit 1
+    echo "✓ FDK installed via Homebrew (system-wide)"
+    fdk version
     exit 0
-  fi
-fi
+    ;;
+    
+  chocolatey)
+    echo "Installing FDK via Chocolatey (system-wide)..."
+    if [[ "$FDK_VER" =~ ^9\\. ]]; then
+      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      choco uninstall fdk -y 2>/dev/null || true
+      choco install fdk --version=9.8.2 -y || exit 1
+    elif [[ "$FDK_VER" == "latest" ]]; then
+      choco uninstall fdk -y 2>/dev/null || true
+      choco install fdk -y || exit 1
+    else
+      choco uninstall fdk -y 2>/dev/null || true
+      choco install fdk --version=$FDK_VER -y || exit 1
+    fi
+    echo "✓ FDK installed via Chocolatey (system-wide)"
+    refreshenv 2>/dev/null || true
+    fdk version
+    exit 0
+    ;;
+    
+  nvm|nvm-windows|npm-global)
+    # Deprecation warning for FDK 9.x
+    if [[ "$FDK_VER" =~ ^9\\. ]]; then
+      echo "========================================="
+      echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
+      echo "========================================="
+      echo "Support ends: May 30, 2026"
+      echo "Publishing to marketplace requires FDK 10.x + Node 24.x"
+      echo ""
+      read -p "Continue installing FDK 9.x? (y/N): " confirm
+      if [[ "$confirm" != [yY] ]]; then
+        echo "Installation cancelled. Use /fdk-setup-install (no args) for FDK 10.x"
+        exit 0
+      fi
+    fi
 
-if [[ "$FDK_VER" == latest ]]; then
-  FDK_URL="https://cdn.freshdev.io/fdk/latest-v24.tgz"
-  NODE_VER="24.11"
-elif [[ "$FDK_VER" =~ ^9\\. ]]; then
-  FDK_URL="https://cdn.freshdev.io/fdk/v${FDK_VER}.tgz"
-  NODE_VER="18.20"
-else
-  FDK_URL="https://cdn.freshdev.io/fdk/v${FDK_VER}.tgz"
-  NODE_VER="24.11"
-fi
+    # Determine FDK URL and Node version
+    if [[ "$FDK_VER" == latest ]]; then
+      FDK_URL="https://cdn.freshdev.io/fdk/latest-v24.tgz"
+      NODE_VER="24.11"
+    elif [[ "$FDK_VER" =~ ^9\\. ]]; then
+      FDK_URL="https://cdn.freshdev.io/fdk/v${FDK_VER}.tgz"
+      NODE_VER="18.20"
+    else
+      FDK_URL="https://cdn.freshdev.io/fdk/v${FDK_VER}.tgz"
+      NODE_VER="24.11"
+    fi
 
-HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
-[[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
+    # Verify CDN URL
+    HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
+    [[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
 
-echo "OS: $(uname -s)"
-echo "Installing from: $FDK_URL"
+    echo "OS: $(uname -s)"
+    echo "Installing from: $FDK_URL"
 
-nvm install $NODE_VER 2>/dev/null || true
-nvm use $NODE_VER
-nvm alias default $NODE_VER
+    # Install Node if using nvm
+    if [[ "$INSTALL_METHOD" == "nvm" ]]; then
+      nvm install $NODE_VER 2>/dev/null || true
+      nvm use $NODE_VER
+      nvm alias default $NODE_VER
+    elif [[ "$INSTALL_METHOD" == "nvm-windows" ]]; then
+      nvm install $NODE_VER 2>/dev/null || true
+      nvm use $NODE_VER
+      nvm alias default $NODE_VER
+    fi
 
-npm uninstall -g @freshworks/fdk 2>/dev/null || true
-npm uninstall -g fdk 2>/dev/null || true
-rm -rf ~/.fdk
-npm cache clean --force
+    # Uninstall existing FDK
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    rm -rf ~/.fdk
+    npm cache clean --force
 
-npm install -g "$FDK_URL" || exit 1
+    # Install FDK
+    npm install -g "$FDK_URL" || exit 1
+    ;;
+    
+  *)
+    echo "ERROR: Could not detect installation method"
+    echo "Please install nvm, Homebrew, or Chocolatey first"
+    exit 1
+    ;;
+esac
 
 MANDATORY VERIFICATION (ALL TESTS MUST PASS):
   fdk version || echo "FAILED: FDK not in current shell"
