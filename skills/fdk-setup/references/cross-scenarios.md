@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-1. [Legacy Migration (FDK 9 → 10)](#scenario-1-legacy-migration)
+1. [Legacy Migration (FDK 9.x → 10)](#scenario-1-legacy-migration)
 2. [Existing Node Installation](#scenario-2-existing-node)
 3. [Downgrade to Legacy FDK](#scenario-3-downgrade-to-legacy)
 4. [Troubleshooting Broken FDK](#scenario-4-troubleshooting)
@@ -16,7 +16,7 @@
 
 ---
 
-## Scenario 1: Legacy Migration (FDK 9 → 10)
+## Scenario 1: Legacy Migration (FDK 9.x → 10)
 
 ### Context
 
@@ -38,7 +38,7 @@ User currently has:
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Migrate FDK 9 to FDK 10 with Node 24",
+  description: "Migrate FDK 9.x to FDK 10.x with Node 24",
   prompt: `Migrate from FDK 9.x (Node 18) to FDK 10.x (Node 24).
 
 CONTEXT:
@@ -121,10 +121,10 @@ Print summary:
 Old setup: FDK 9.x on Node 18
 New setup: FDK 10.x on Node 24
 Node 18 preserved: nvm use 18
-Default: Node 24 (FDK 10)
+Default: Node 24 (FDK 10.x)
 
 COMMANDS TO SWITCH:
-- Use FDK 10 (Node 24): nvm use fdk
+- Use FDK 10.x (Node 24): nvm use fdk
 - Use legacy Node 18: nvm use 18
 
 ERROR HANDLING:
@@ -152,7 +152,7 @@ Old: FDK 9.8.2 + Node 18.20.0
 New: FDK 10.11.0 + Node 24.11.0
 
 Node 18 still available: nvm use 18
-Default: Node 24 (FDK 10)
+Default: Node 24 (FDK 10.x)
 ```
 
 ---
@@ -177,7 +177,7 @@ Task({
   subagent_type: "shell",
   model: "fast",
   description: "Install FDK with nvm alongside system Node",
-  prompt: `Install FDK 10 + Node 24 via nvm on system with existing Node installation.
+  prompt: `Install FDK 10.x + Node 24 via nvm on system with existing Node installation.
 
 CONTEXT:
 - User has system Node (not via nvm)
@@ -312,7 +312,7 @@ User needs to:
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Downgrade FDK 10 to 9.x for legacy app",
+  description: "Downgrade FDK 10.x to 9.x for legacy app",
   prompt: `Downgrade from FDK 10.x to FDK 9.8.2 for legacy app support.
 
 CONTEXT:
@@ -351,11 +351,11 @@ NODE 18 INSTALLATION:
 6. Create fdk alias:
    nvm alias fdk 18
 
-FDK 10 COMPLETE UNINSTALLATION (IMPROVED):
+FDK 10.x COMPLETE UNINSTALLATION (IMPROVED):
 7. Switch to Node 24:
    nvm use 24
 
-8. Completely uninstall FDK 10:
+8. Completely uninstall FDK 10.x:
    echo "Completely removing FDK 10..."
    
    # Uninstall npm package
@@ -373,7 +373,7 @@ FDK 10 COMPLETE UNINSTALLATION (IMPROVED):
    rm -rf "$NPM_PREFIX/lib/node_modules/@freshworks/fdk"
 
 9. Verify complete removal:
-   fdk version 2>&1 | grep "command not found" && echo "FDK 10 completely removed"
+   fdk version 2>&1 | grep "command not found" && echo "FDK 10.x completely removed"
    [ ! -d ~/.fdk ] && echo "~/.fdk directory removed"
 
 FDK 9.8.2 INSTALLATION:
@@ -403,7 +403,7 @@ GLOBAL VERSION SWITCH (IMPROVED):
     sed -i.tmp '/nvm use fdk/d' "$SHELL_RC"
     rm -f "$SHELL_RC.tmp"
     
-    # Add new FDK 9 reference
+    # Add new FDK 9.x reference
     echo "" >> "$SHELL_RC"
     echo "# FDK 9.8.2 (downgraded on $(date +%Y-%m-%d))" >> "$SHELL_RC"
     echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
@@ -416,7 +416,7 @@ GLOBAL VERSION SWITCH (IMPROVED):
     echo "FDK 9.8.2 set as global active version"
 
 VERIFICATION:
-16. Test FDK 9:
+16. Test FDK 9.x:
     fdk version
     node --version
     fdk validate --help
@@ -435,23 +435,23 @@ IMPORTANT NOTES:
 - FDK 9.x is for Platform 2.x apps only
 - Platform 3.0 apps will NOT work with FDK 9
 - Node 24 still available: nvm use 24
-- Previous FDK 10 completely removed (no conflicts)
+- Previous FDK 10.x completely removed (no conflicts)
 
 ACTIVE GLOBALLY:
 - Current terminal: Verified
 - New terminals: Verified
 - System-wide: Verified
 
-TO UPGRADE BACK TO FDK 10:
+TO UPGRADE BACK TO FDK 10.x:
   nvm use 24
   npm install https://cdn.freshdev.io/fdk/latest.tgz -g
   nvm alias default 24
   echo "nvm use fdk > /dev/null 2>&1" >> ~/.zshrc
 
 ERROR HANDLING:
-- If FDK 10 uninstall fails: Use npm uninstall --force, manual removal
+- If FDK 10.x uninstall fails: Use npm uninstall --force, manual removal
 - If ~/.fdk removal fails: Check permissions, use sudo
-- If FDK 9 install fails: Check npm registry access
+- If FDK 9.x install fails: Check npm registry access
 - If Node 18 install fails: Check nvm installation
 - If global switch fails: Manually edit shell config
 `
@@ -914,7 +914,7 @@ Node 20 installed
 Node 22 installed
 Node 24 installed
 nvm aliases configured
-FDK 10 installed on Node 24
+FDK 10.x installed on Node 24
 .nvmrc files created
 Auto-switching configured
 
@@ -946,7 +946,7 @@ ERROR HANDLING:
 
 | Scenario | macOS | Windows | Linux |
 |----------|-------|---------|-------|
-| 1. Legacy Migration (FDK 9→10) | Supported | Supported | Supported |
+| 1. Legacy Migration (FDK 9.x→10) | Supported | Supported | Supported |
 | 2. Existing Node | Supported | Supported | Supported |
 | 3. Downgrade | Supported | Supported | Supported |
 | 4. Troubleshooting | Supported | Supported | Supported |
@@ -960,7 +960,7 @@ ERROR HANDLING:
 
 | Need | Use Scenario |
 |------|--------------|
-| Upgrade from FDK 9 to 10 | Scenario 1 |
+| Upgrade from FDK 9.x to 10 | Scenario 1 |
 | Already have Node installed | Scenario 2 |
 | Downgrade to legacy FDK | Scenario 3 (use /fdk-setup-downgrade) |
 | FDK not working | Scenario 4 |

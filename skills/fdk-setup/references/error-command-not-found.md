@@ -1,6 +1,6 @@
 # Error: `fdk: command not found`
 
-User reports `zsh: command not found: fdk` (or `fdk` missing in any shell) after installing Freshworks FDK, especially FDK 10 (`@freshworks/fdk`) with nvm.
+User reports `zsh: command not found: fdk` (or `fdk` missing in any shell) after installing Freshworks FDK, especially FDK 10.x (`@freshworks/fdk`) with nvm.
 
 ## Windows / PowerShell first
 
@@ -13,14 +13,14 @@ On **Windows PowerShell**, two common false alarms:
 
 - Terminal: `fdk -v`, `fdk version`, or `fdk` → `command not found: fdk`
 - `which fdk` → empty
-- User may have just upgraded to FDK 10 via `npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz`
+- User may have just upgraded to FDK 10.x via `npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz`
 - User may have `nvm use fdk` (or similar) in `~/.zshrc`
 
 ## Root Cause (Most Common)
 
 **The active Node version's global `bin/` is not the one where `fdk` was installed.**
 
-For FDK 10 on the Node-24 line, the supported install is typically:
+For FDK 10.x on the Node-24 line, the supported install is typically:
 
 - Package: `@freshworks/fdk` (scoped), not the legacy global name `fdk` alone
 - Node: `v24.11.x` (FDK enforces this minor line for the v24 tarball)
@@ -70,7 +70,7 @@ export NVM_DIR="$HOME/.nvm"
 # Ensure Node 24.11.x is installed
 nvm install 24.11
 
-# Install FDK 10 on Node 24.11.x
+# Install FDK 10.x on Node 24.11.x
 nvm use 24.11
 npm uninstall -g @freshworks/fdk 2>/dev/null
 npm uninstall -g fdk 2>/dev/null
@@ -100,7 +100,7 @@ nvm use 24.14   # example
 npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz   # only if valid for that Node per release notes
 ```
 
-**Prefer the "align Node to 24.11.x" approach** when using the FDK 10 + latest-v24.tgz flow described in internal upgrade docs.
+**Prefer the "align Node to 24.11.x" approach** when using the FDK 10.x + latest-v24.tgz flow described in internal upgrade docs.
 
 ## Verification
 

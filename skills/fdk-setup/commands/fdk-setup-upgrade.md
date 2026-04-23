@@ -1,6 +1,6 @@
 ---
 name: fdk-setup-upgrade
-description: Upgrade FDK — latest FDK 10 line (Node 24.11) or pinned version via --to X.Y.Z
+description: Upgrade FDK — latest FDK 10.x line (Node 24.11) or pinned version via --to X.Y.Z
 always: true
 argument-hint: "[--to X.Y.Z|latest]"
 ---
@@ -13,9 +13,9 @@ Matches **`/fdk-setup upgrade`** with optional **`--to X.Y.Z`**.
 
 | User intent | Action |
 |-------------|--------|
-| `/fdk-setup-upgrade` or “upgrade fdk” (no version) | Install **latest FDK 10 line** from `https://cdn.freshdev.io/fdk/latest-v24.tgz` on **Node 24.11.x**. |
+| `/fdk-setup-upgrade` or “upgrade fdk” (no version) | Install **latest FDK 10.x line** from `https://cdn.freshdev.io/fdk/latest-v24.tgz` on **Node 24.11.x**. |
 | `/fdk-setup-upgrade --to 10.1.0` or “upgrade fdk to 10.1.0” | Install **exact semver** from `https://cdn.freshdev.io/fdk/v10.1.0.tgz` (same pattern for other 10.x.y). |
-| `--to 9.x.y` | **Deprecated:** FDK 9 on **Node 18** only; show March 2026 + publishing warning before proceeding. |
+| `--to 9.x.y` | **Deprecated:** FDK 9.x on **Node 18** only; show May 30, 2026 + publishing warning before proceeding. |
 
 **Before building the Task prompt:** read the user’s target from **`--to`** or phrases like “to 10.1.0”. Substitute **`FDK_TARGET`** in the shell block below:
 
@@ -60,7 +60,7 @@ if [[ "$TARGET" == latest ]]; then
   nvm use 24.11
   nvm alias default 24.11
 elif [[ "$TARGET" =~ ^9\\. ]]; then
-  echo "DEPRECATED: FDK 9.x ends March 2026; publishing requires FDK 10 + Node 24."
+  echo "DEPRECATED: FDK 9.x ends May 30, 2026; publishing requires FDK 10.x + Node 24."
   read -p "Continue install of FDK $TARGET on Node 18? (y/N): " ok
   [[ "$ok" == [yY]* ]] || exit 1
   FDK_URL="https://cdn.freshdev.io/fdk/v${TARGET}.tgz"
@@ -77,10 +77,33 @@ fi
 HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
 [[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
 
+# Remove FDK from current Node
 npm uninstall -g @freshworks/fdk 2>/dev/null || true
 npm uninstall -g fdk 2>/dev/null || true
 rm -rf ~/.fdk
 npm cache clean --force
+
+# If upgrading to FDK 10.x, remove FDK 9.x from Node 18 (exclusive operation)
+if [[ "$TARGET" == latest ]] || [[ "$TARGET" =~ ^10\\. ]]; then
+  if nvm list | grep -q "v18"; then
+    echo "Removing FDK 9.x from Node 18 (exclusive upgrade to FDK 10.x)..."
+    nvm use 18 2>/dev/null || nvm use 18.20 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    nvm use "$TARGET" == "latest" && echo "24.11" || echo "$TARGET" | sed 's/\([0-9]*\)\..*/24.11/'
+  fi
+fi
+
+# If upgrading to FDK 9.x, remove FDK 10.x from Node 24 (exclusive downgrade)
+if [[ "$TARGET" =~ ^9\\. ]]; then
+  if nvm list | grep -q "v24"; then
+    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)..."
+    nvm use 24 2>/dev/null || nvm use 24.11 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    nvm use 18
+  fi
+fi
 
 npm install -g "$FDK_URL" || exit 1
 

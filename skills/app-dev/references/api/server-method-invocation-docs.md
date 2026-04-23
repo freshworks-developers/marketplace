@@ -103,7 +103,7 @@ exports = {
 
 # Syntax of JSON payload for SMI
 1. `app.js` sending the payload while `client.request.invoke()`.
-2. JSON payload recieved by the function defined in `server.js`.
+2. JSON payload received by the function defined in `server.js`.
 
 ## `app.js` sending the payload while `client.request.invoke()`
 >code:
@@ -113,7 +113,7 @@ let data = await client.request.invoke("serverMethod", {
 });
 ```
 
-## JSON payload recieved by the function defined in `server.js`
+## JSON payload received by the function defined in `server.js`
 >code:
 ```json
 {
@@ -409,7 +409,7 @@ async function saveTicketInDb(agentId, ticketId, ticketSubject) {
 }
 ```
 
-This is what SMI function declared in server.js recieves Sample JSON request Payload:
+This is what SMI function declared in server.js receives Sample JSON request Payload:
 ```json
 {
   "url": "https://api.github.com/users/sample",

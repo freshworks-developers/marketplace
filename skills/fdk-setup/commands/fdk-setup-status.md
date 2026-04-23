@@ -27,28 +27,24 @@ echo "nvm: $(nvm --version 2>&1 || echo 'Not installed')"
 echo "FDK binary: $(command -v fdk || echo 'Not on PATH')"
 echo "FDK cache: $([ -d ~/.fdk ] && echo 'Present (~/.fdk)' || echo 'Not found')"
 
-# FDK version - simplified to handle "Installed: X.Y.Z" format
+# FDK version - diagnose PATH/Node mismatch if version check fails
 if command -v fdk >/dev/null 2>&1; then
-  # Try current shell first
+  FDK_PATH=$(command -v fdk)
   FDK_OUT=$(fdk version 2>&1)
-  if echo "$FDK_OUT" | grep -q "Installed:"; then
-    FDK_VER=$(echo "$FDK_OUT" | grep "Installed:" | head -1 | sed 's/Installed: //')
+  FDK_EXIT=$?
+  
+  if [ $FDK_EXIT -eq 0 ]; then
+    # Success - extract version (handles both "Installed: X.Y.Z" and "X.Y.Z" formats)
+    FDK_VER=$(echo "$FDK_OUT" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
     echo "FDK version: $FDK_VER"
   else
-    # Try with nvm loaded in fresh shell (for restricted environments)
-    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
-    if [ -s "$NVM_DIR/nvm.sh" ]; then
-      FDK_OUT_FRESH=$(bash -c '. "$NVM_DIR/nvm.sh" 2>/dev/null; fdk version 2>&1')
-      if echo "$FDK_OUT_FRESH" | grep -q "Installed:"; then
-        FDK_VER=$(echo "$FDK_OUT_FRESH" | grep "Installed:" | head -1 | sed 's/Installed: //')
-        echo "FDK version: $FDK_VER (from nvm shell)"
-      else
-        echo "FDK version: Binary found at $(which fdk) but version check failed"
-        echo "  Run 'fdk version' manually to diagnose"
-      fi
-    else
-      echo "FDK version: Binary found at $(which fdk) but version check failed (nvm not loaded)"
-    fi
+    # Failed - diagnose Node/npm prefix mismatch
+    echo "FDK version: Binary at $FDK_PATH but 'fdk version' failed"
+    echo "  Current Node: $(node --version 2>&1 || echo 'not found')"
+    echo "  npm prefix: $(npm config get prefix 2>&1 || echo 'not found')"
+    echo ""
+    echo "  DIAGNOSIS: Node version mismatch (FDK installed on different Node version)"
+    echo "  → Load references/error-command-not-found.md for fix"
   fi
 else
   echo "FDK version: Not installed"

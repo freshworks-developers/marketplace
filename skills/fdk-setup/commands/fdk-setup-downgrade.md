@@ -11,14 +11,14 @@ argument-hint: "[version|latest]"
 1. **FDK 10.x → 10.0.y** (e.g., 10.1.0 → 10.0.1) on Node 24
 2. **FDK 10.x → 9.x** (e.g., 10.x → 9.8.2) on Node 18 with deprecation notice
 
-**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends March 2026. Publishing to marketplace requires FDK 10.x + Node 24.x. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends May 30, 2026. Publishing to marketplace requires FDK 10.x + Node 24.x. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
 ## Agent pre-step
 
 Replace **`__FDK_DOWNGRADE_TARGET__`** in the Task prompt:
 
 - **`latest`** — user did not pass a semver (use **`https://cdn.freshdev.io/fdk/latest.tgz`** FDK 9.x on Node 18).
-- **`10.x.y`** — from **`/fdk-setup-downgrade 10.0.1`** (downgrade within FDK 10 line, stays on Node 24).
+- **`10.x.y`** — from **`/fdk-setup-downgrade 10.0.1`** (downgrade within FDK 10.x line, stays on Node 24).
 - **`9.x.y`** — from **`/fdk-setup-downgrade 9.6.0`**, **`--to 9.6.0`**, or natural language. Strip leading **`v`**.
 
 ## Execution
@@ -43,7 +43,7 @@ if [[ "$TARGET_VER" == latest ]] || [[ "$TARGET_VER" =~ ^9\\. ]]; then
   echo "========================================="
   echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
   echo "========================================="
-  echo "Support ends: March 2026"
+  echo "Support ends: May 30, 2026"
   echo "Publishing requires FDK 10.x + Node 24.x"
   echo "Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/"
   echo ""
@@ -65,21 +65,53 @@ else
 fi
 
 HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
-[[ "$HTTP" == "200" ]] || { echo "FAILED: tarball not reachable (HTTP $HTTP): $FDK_URL"; exit 1; }
+if [[ "$HTTP" != "200" ]]; then
+  echo "========================================="
+  echo "ERROR: FDK tarball not available"
+  echo "========================================="
+  echo "URL: $FDK_URL"
+  echo "HTTP Status: $HTTP"
+  echo ""
+  if [[ "$TARGET_VER" =~ ^9\\. ]]; then
+    echo "This FDK 9.x version may not be published to the CDN."
+    echo "Try: /fdk-setup-downgrade (no version, uses latest 9.x)"
+    echo "Or check https://cdn.freshdev.io/fdk/ for available versions"
+  fi
+  exit 1
+fi
 
 echo "Downgrading to FDK $TARGET_VER on Node $NODE_VER"
 
+# Remove FDK from current Node
 npm uninstall -g @freshworks/fdk 2>/dev/null || true
 npm uninstall -g fdk 2>/dev/null || true
 rm -rf ~/.fdk
 npm cache clean --force
 
 if [[ "$IS_NINE" == 1 ]]; then
-  nvm list | grep v18 || nvm install 18
-  nvm use 18
+  # Downgrading to FDK 9.x: remove FDK 10.x from Node 24 (exclusive operation)
+  if nvm list | grep -q "v24"; then
+    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)..."
+    nvm use 24 2>/dev/null || nvm use 24.11 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+  fi
+  
+  nvm list | grep v18 || nvm install 18.20
+  nvm use 18.20
+  NODE_VER="18.20"
 else
+  # Downgrading within FDK 10.x line: remove FDK 9.x from Node 18 if exists
+  if nvm list | grep -q "v18"; then
+    echo "Removing FDK 9.x from Node 18 (staying on FDK 10.x line)..."
+    nvm use 18 2>/dev/null || nvm use 18.20 2>/dev/null || true
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+  fi
+  
   nvm list | grep "v24\\.11" || nvm install 24.11
   nvm use 24.11
+  NODE_VER="24.11"
 fi
 node --version
 
@@ -87,34 +119,37 @@ npm install -g "$FDK_URL" || exit 1
 
 if [[ "$IS_NINE" == 1 ]]; then
   fdk version | grep -E '^9\\.' || { echo "FAILED: Not FDK 9.x"; exit 1; }
-  nvm alias default 18
-  SHELL_RC="$HOME/.zshrc"
-  [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
-  if [ -f "$SHELL_RC" ]; then
-    cp "$SHELL_RC" "$SHELL_RC.bak.fdk-downgrade.$(date +%Y%m%d_%H%M%S)"
-    sed -i '/nvm use 24/d' "$SHELL_RC" 2>/dev/null || sed -i '' '/nvm use 24/d' "$SHELL_RC" 2>/dev/null || true
-    echo "" >> "$SHELL_RC"
-    echo "# FDK 9.x (Node 18) - DEPRECATED, ends March 2026" >> "$SHELL_RC"
-    echo "nvm use 18 > /dev/null 2>&1" >> "$SHELL_RC"
-  fi
-  echo "Downgrade complete: FDK 9.x on Node 18 (DEPRECATED)"
+  
+  # Get actual installed Node 18 version
+  NODE_18_VER=$(nvm current)
+  nvm alias default "$NODE_18_VER"
+  
+  echo "Downgrade complete: FDK 9.x on $NODE_18_VER (DEPRECATED)"
+  echo ""
+  echo "nvm alias default set to $NODE_18_VER — new terminals will use Node 18"
+  echo "Current terminal: already on $NODE_18_VER"
 else
   fdk version | grep -E '^10\\.' || { echo "FAILED: Not FDK 10.x"; exit 1; }
   nvm alias default 24.11
   echo "Downgrade complete: FDK 10.x on Node 24.11"
 fi
-fi
 
-MANDATORY VERIFICATION:
-  fdk version | grep -E '^9\\.' || echo "FAILED: Not FDK 9.x"
-  node --version | grep -E '^v18\\.' || echo "FAILED: Not Node 18"
-  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 18 >/dev/null; fdk version' | grep -E '^9\\.' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use 18 >/dev/null; fdk version' | grep -E '^9\\.' || echo "FAILED: Not persistent"
-  [ ! -d ~/.fdk ] || echo "FAILED: ~/.fdk still exists"
-  nvm current | grep -E '^v18\\.' || echo "FAILED: nvm current is not Node 18"
+MANDATORY VERIFICATION (auto-decline FDK upgrade prompts):
+  printf 'n\n' | fdk version || echo "FAILED: FDK not in current shell"
+  if [[ "$IS_NINE" == 1 ]]; then
+    printf 'n\n' | fdk version | grep -q "Installed: 9\\." || echo "FAILED: Not FDK 9.x"
+    node --version | grep -E '^v18\\.' || echo "FAILED: Not Node 18"
+    nvm current | grep -E '^v18\\.' || echo "FAILED: nvm current is not Node 18"
+  else
+    printf 'n\n' | fdk version | grep -q "Installed: 10\\." || echo "FAILED: Not FDK 10.x"
+    node --version | grep -E '^v24\\.11\\.' || echo "WARNING: Node 24.11.x recommended"
+    nvm current | grep -E '^v24\\.' || echo "FAILED: nvm current is not Node 24"
+  fi
+  zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; printf "n\n" | fdk version' || echo "FAILED: Not persistent"
 
 REPORT:
-  echo "FDK downgrade complete — URL: $NINE_URL"
-  echo "Return to FDK 10: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-migrate"
+  echo "FDK downgrade complete — URL: $FDK_URL"
+  echo "Return to FDK 10.x: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-install"
 
 SLASH_COMMAND_CLOSEOUT: Return after REPORT (or abort). No fdk run/tunnel in this Task.
   `

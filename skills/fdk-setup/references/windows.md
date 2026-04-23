@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - **nvm-windows** — Recommended for managing Node.js versions
-- **Node.js v24.11.x** — Recommended line for **FDK 10** + `latest-v24.tgz` (same single source of truth as `SKILL.md`; avoid bare `24` if it drifts to non-24.11 builds)
+- **Node.js v24.11.x** — Recommended line for **FDK 10.x** + `latest-v24.tgz` (same single source of truth as `SKILL.md`; avoid bare `24` if it drifts to non-24.11 builds)
 - **PowerShell** — Run as Administrator for installation
 
 ## PowerShell: `&&`, PATH, and finding `fdk`
@@ -92,7 +92,7 @@ choco install nvm
 nvm version
 ```
 
-## Step 2: Install Node.js (24.11 line for FDK 10)
+## Step 2: Install Node.js (24.11 line for FDK 10.x)
 
 ```powershell
 # Pin the 24.11 line (matches fdk-setup commands + publishing expectations)
@@ -114,7 +114,7 @@ node --version  # Should show v24.11.x
 # Save to C:\Users\<YourUsername>\fdk-env.bat
 @echo off
 nvm use 24.11
-echo FDK environment active (Node.js 24.11 — FDK 10)
+echo FDK environment active (Node.js 24.11 — FDK 10.x)
 ```
 
 **Or add to PowerShell profile:**
@@ -126,7 +126,7 @@ notepad $PROFILE
 # Add these lines:
 function Use-FDK {
     nvm use 24.11
-    Write-Host "FDK environment active (Node.js 24.11 — FDK 10 line)" -ForegroundColor Green
+    Write-Host "FDK environment active (Node.js 24.11 — FDK 10.x line)" -ForegroundColor Green
 }
 Set-Alias fdk-env Use-FDK
 ```
@@ -134,7 +134,7 @@ Set-Alias fdk-env Use-FDK
 ## Step 4: Install FDK via npm
 
 ```powershell
-# Authoritative stack for FDK 10 + Platform 3.0 publishing: Node 24.11.x (same as SKILL.md / commands)
+# Authoritative stack for FDK 10.x + Platform 3.0 publishing: Node 24.11.x (same as SKILL.md / commands)
 nvm install 24.11 2>$null
 nvm use 24.11
 
@@ -142,7 +142,7 @@ nvm use 24.11
 npm uninstall -g @freshworks/fdk 2>$null
 npm uninstall -g fdk 2>$null
 
-# Install FDK 10 line globally (CDN — not registry.npmjs.org)
+# Install FDK 10.x line globally (CDN — not registry.npmjs.org)
 npm install -g "https://cdn.freshdev.io/fdk/latest-v24.tgz"
 
 # Verify (use where.exe — see section above)
@@ -178,11 +178,11 @@ nvm install 20
 nvm install 22
 
 # Switch between versions
-nvm use 24.11       # FDK 10 + latest-v24.tgz stack
+nvm use 24.11       # FDK 10.x + latest-v24.tgz stack
 nvm use 20          # Use Node 20 for other projects
 
 # Set default version (optional)
-nvm use 24.11       # Sets as current for new terminals when working on FDK 10 apps
+nvm use 24.11       # Sets as current for new terminals when working on FDK 10.x apps
 ```
 
 ## PATH Configuration
@@ -222,7 +222,7 @@ nvm-windows automatically manages PATH. If `fdk` is not recognized:
 ## Important Notes
 
 - Use **npm** (not YARN) for FDK installation
-- For **FDK 10**, use **Node 24.11.x**: `nvm use 24.11` (aligns with `fdk-setup` slash commands)
+- For **FDK 10.x**, use **Node 24.11.x**: `nvm use 24.11` (aligns with `fdk-setup` slash commands)
 - nvm-windows requires Administrator privileges for installation
 - After nvm installation, restart PowerShell
 
@@ -231,13 +231,13 @@ nvm-windows automatically manages PATH. If `fdk` is not recognized:
 ### `fdk` not found after installation
 
 ```powershell
-# Switch to the SAME Node line you used for npm install -g (FDK 10 → 24.11)
+# Switch to the SAME Node line you used for npm install -g (FDK 10.x → 24.11)
 nvm use 24.11
 
 # Refresh PATH in this window (see PowerShell section above)
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-# Reinstall FDK 10 line if needed
+# Reinstall FDK 10.x line if needed
 npm install -g "https://cdn.freshdev.io/fdk/latest-v24.tgz"
 
 # Check installation — use where.exe, not "where"

@@ -3,8 +3,8 @@
 **Problem**: Wrong Node version active, or need to switch between Node versions.
 
 **Use Cases**:
-- FDK 10 requires Node 24.11+
-- FDK 9 requires Node 18.x (deprecated)
+- FDK 10.x requires Node 24.11+
+- FDK 9.x requires Node 18.x (deprecated)
 - Multiple projects need different Node versions
 
 ---
@@ -16,8 +16,8 @@
 node --version
 ```
 
-**For FDK 10**: Should see `v24.11.x` or later v24.x  
-**For FDK 9** (deprecated): Should see `v18.x.x`
+**For FDK 10.x**: Should see `v24.11.x` or later v24.x  
+**For FDK 9.x** (deprecated): Should see `v18.x.x`
 
 **If wrong version or `command not found`**: Follow this guide
 
@@ -170,20 +170,20 @@ node --version
 
 ### Use Case: Different Projects Need Different Versions
 
-**Project A** (FDK 10 app): Needs Node 24.11  
-**Project B** (legacy FDK 9 app): Needs Node 18
+**Project A** (FDK 10.x app): Needs Node 24.11  
+**Project B** (legacy FDK 9.x app): Needs Node 18
 
 ### Solution 1: `.nvmrc` Files (Recommended)
 
 **Create `.nvmrc` in project root**:
 
-**For FDK 10 project**:
+**For FDK 10.x project**:
 ```bash
 cd ~/projects/my-fdk10-app
 echo "24.11" > .nvmrc
 ```
 
-**For FDK 9 project**:
+**For FDK 9.x project**:
 ```bash
 cd ~/projects/my-fdk9-app
 echo "18.20" > .nvmrc
@@ -342,7 +342,7 @@ nvm uninstall 18
 
 ## FDK-Specific Recommendations
 
-### For FDK 10 Users (Node 24.11+)
+### For FDK 10.x Users (Node 24.11+)
 
 **Install Node 24.11 specifically**:
 ```bash
@@ -356,19 +356,19 @@ nvm alias fdk 24.11
 - FDK CDN tarball `latest-v24.tgz` targets 24.11 specifically
 - Using different 24.x versions can cause PATH issues (see `references/error-command-not-found.md`)
 
-### For FDK 9 Users (Node 18 - Deprecated)
+### For FDK 9.x Users (Node 18 - Deprecated)
 
-**FDK 9 is deprecated (ends March 2026)**. Migrate to FDK 10 when possible.
+**FDK 9.x is deprecated (ends May 30, 2026)**. Migrate to FDK 10.x when possible.
 
-**If you must use FDK 9**:
+**If you must use FDK 9.x**:
 ```bash
 nvm install 18.20
 nvm alias fdk9 18.20  # Named alias for legacy projects
 ```
 
 **Then**:
-- FDK 10 projects: `nvm use fdk` (points to 24.11)
-- FDK 9 projects: `nvm use fdk9` (points to 18.20)
+- FDK 10.x projects: `nvm use fdk` (points to 24.11)
+- FDK 9.x projects: `nvm use fdk9` (points to 18.20)
 
 ---
 

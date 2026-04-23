@@ -252,7 +252,7 @@ action-u-r-l="/no-api"
 ```javascript
 const fileUploader3 = document.querySelector('#file-uploader-3');
 const succeedToggle = document.querySelector('#succeed-toggle');
-fileYploader3.fileUploadError = 'Toggle the switch to successfully upload the file'; // Error message text
+fileUploader3.fileUploadError = 'Toggle the switch to successfully upload the file'; // Error message text
 succeedToggle.addEventListener('fwChange', (event) => {
 if (event.currentTarget.checked === true) {
 fileUploader3.actionURL = 'https://mocktarget.apigee.net/echo';
@@ -366,7 +366,7 @@ action-u-r-l="/no-api"
 <script type="application/javascript">
 const fileUploader3 = document.querySelector('#file-uploader-3');
 const succeedToggle = document.querySelector('#succeed-toggle');
-fileYploader3.fileUploadError = 'Toggle the switch to successfully upload the file'; // Error message text
+fileUploader3.fileUploadError = 'Toggle the switch to successfully upload the file'; // Error message text
 succeedToggle.addEventListener('fwChange', (event) => {
 if (event.currentTarget.checked === true) {
 fileUploader3.actionURL = 'https://mocktarget.apigee.net/echo';

@@ -487,7 +487,7 @@ npm install @freshworks/fdk@10.0.0 -g
 
 When FDK installation fails, check in this order:
 
-1. **Node version**: `node --version` (should be 24.x for FDK 10)
+1. **Node version**: `node --version` (should be 24.x for FDK 10.x)
 2. **nvm installed**: `command -v nvm` (should output path)
 3. **nvm PATH**: `echo $NVM_DIR` (should be ~/.nvm)
 4. **npm permissions**: `npm config get prefix` (should be ~/.nvm/...)

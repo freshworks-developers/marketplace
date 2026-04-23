@@ -2,6 +2,8 @@
 
 Load this file **on demand** when the task needs: full Platform 2.x rejection tables, deep OAuth/iparams setup, extended validation checklists, reference index, product module tables, install commands, or test-pattern lists. The primary skill entry point remains [`SKILL.md`](../SKILL.md).
 
+**FDK / Node installs:** **app-dev** does not install **`fdk`** or **Node**; use **`fdk-setup`** (or prompt the user to add that skill). See [`SKILL.md`](../SKILL.md) → *FDK / Node.js toolchain — not provided by app-dev*.
+
 ---
 
 ## Forbidden Patterns – Platform 2.x immediate rejection
@@ -75,6 +77,7 @@ Load this file **on demand** when the task needs: full Platform 2.x rejection ta
 ### Runtime & APIs
 - SMI → `references/api/server-method-invocation-docs.md`
 - External requests → `references/api/request-method-docs.md`
+- Request templates with **Object Store file refs**, limits, and **ProxyMS / EKS** context → `references/api/request-template-file-uploads-proxyms-infrastructure-kb.md`
 - OAuth flows → `references/api/oauth-docs.md`
 - Interface / instance → `references/api/interface-method-docs.md`, `instance-method-docs.md`
 - Iparams → `references/runtime/iparams-comparison.md`, `installation-parameters-docs.md`, `custom-iparams-docs.md`
@@ -169,7 +172,6 @@ Cursor / Claude Code variants – see marketplace README for current install URL
 
 ## Test-driven validation
 
-- **Golden:** `references/tests/golden.json` – structural patterns to match
 - **Refusal:** `references/tests/refusal.json` – never emit these
 - **Violations:** `references/tests/violations.json` – common mistakes to avoid
 - **Security refusal/violation details:** `rules/security.mdc`

@@ -94,7 +94,7 @@ Task({
   model: "fast",
   description: "Auto-fix FDK/nvm shell PATH (zshrc-safe)",
   prompt: `
-You are fixing a broken FDK 10 + nvm setup on macOS or Linux. Be conservative with dotfiles.
+You are fixing a broken FDK 10.x + nvm setup on macOS or Linux. Be conservative with dotfiles.
 
 export NVM_DIR="$HOME/.nvm"
 
@@ -141,7 +141,7 @@ nvm alias default 24.11
 nvm alias fdk 24.11 2>/dev/null || true
 
 # 5) Idempotent hint lines (do not duplicate endlessly)
-hint="# FDK 10 / Node 24.11 (fdk-setup-troubleshoot --fix $TS)"
+hint="# FDK 10.x / Node 24.11 (fdk-setup-troubleshoot --fix $TS)"
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
   [ -f "$rc" ] || continue
   grep -qF "fdk-setup-troubleshoot" "$rc" 2>/dev/null && continue
@@ -166,7 +166,7 @@ SLASH_COMMAND_CLOSEOUT: Return immediately after REPORT. No fdk run / tunnel / w
 
 **Notes**
 
-- **`--fix`** targets **FDK 10 on Node 24.11**. It does **not** switch users to FDK 9 / Node 18.
+- **`--fix`** targets **FDK 10.x on Node 24.11**. It does **not** switch users to FDK 9.x / Node 18.
 - If **`~/.zshrc`** already sources **`nvm.sh`**, the Task **does not** duplicate it — it only adds **nvm use 24.11** hint lines when the marker is missing.
 
 **Closeout:** without **`--fix`**, never spawn this Task.
