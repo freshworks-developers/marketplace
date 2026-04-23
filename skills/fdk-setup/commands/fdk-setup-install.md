@@ -70,7 +70,7 @@ if [[ "$FDK_VER" == "both" ]]; then
   if nvm list | grep -q "v24"; then
     nvm use 24.11 2>/dev/null || nvm use 24 2>/dev/null || true
     if command -v fdk >/dev/null 2>&1; then
-      FDK_VER_CHECK=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      FDK_VER_CHECK=$(fdk version 2>&1 | grep -m 1 -oE '[0-9]+\.[0-9]+\.[0-9]+')
       if [[ "$FDK_VER_CHECK" =~ ^10\\. ]]; then
         HAS_FDK_10=1
         echo "✓ FDK 10.x already installed on Node 24 (skipping)"
@@ -81,7 +81,7 @@ if [[ "$FDK_VER" == "both" ]]; then
   if nvm list | grep -q "v18"; then
     nvm use 18.20 2>/dev/null || nvm use 18 2>/dev/null || true
     if command -v fdk >/dev/null 2>&1; then
-      FDK_VER_CHECK=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      FDK_VER_CHECK=$(fdk version 2>&1 | grep -m 1 -oE '[0-9]+\.[0-9]+\.[0-9]+')
       if [[ "$FDK_VER_CHECK" =~ ^9\\. ]]; then
         HAS_FDK_9=1
         echo "✓ FDK 9.x already installed on Node 18 (skipping)"
@@ -114,7 +114,7 @@ if [[ "$FDK_VER" == "both" ]]; then
     npm cache clean --force
     npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz || exit 1
     
-    FDK_10_VER=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    FDK_10_VER=$(fdk version 2>&1 | grep -m 1 -oE '[0-9]+\.[0-9]+\.[0-9]+')
     NODE_24_VER=$(node --version)
     echo "✓ Installed FDK $FDK_10_VER on $NODE_24_VER"
   fi
@@ -130,7 +130,7 @@ if [[ "$FDK_VER" == "both" ]]; then
     npm cache clean --force
     npm install -g https://cdn.freshdev.io/fdk/latest.tgz || exit 1
     
-    FDK_9_VER=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    FDK_9_VER=$(fdk version 2>&1 | grep -m 1 -oE '[0-9]+\.[0-9]+\.[0-9]+')
     NODE_18_VER=$(node --version)
     echo "✓ Installed FDK $FDK_9_VER on $NODE_18_VER"
   fi
