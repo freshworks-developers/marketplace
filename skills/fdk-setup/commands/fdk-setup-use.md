@@ -1,13 +1,17 @@
 ---
 name: fdk-setup-use
-description: Workspace FDK stack switch — nvm use from .nvmrc or explicit 10/9 (Node 24.11 vs 18); optional --write-nvmrc
+description: Workspace FDK stack switch — nvm use from .nvmrc or explicit 10/9 (Node 24.11 vs 18); optional --write-nvmrc and --global flags
 always: true
-argument-hint: "[10|9|24.11|18] [--write-nvmrc] [directory]"
+argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 ---
 
 # FDK setup — use (`/fdk-setup-use`)
 
 **`/fdk-setup use`**: align **this shell** (and optionally **`.nvmrc`**) with the **Node + FDK** stack the workspace needs. **Does not** install or change FDK semver by itself — if **`fdk`** is missing on the chosen Node, route to **`/fdk-setup-install`**, **`/fdk-setup-upgrade`**, or **`/fdk-setup-downgrade`**.
+
+**Scope:**
+- **Without `--global`**: Changes only current shell (`nvm use`)
+- **With `--global`**: Sets as default for all new shells (`nvm alias default`)
 
 ## When to use
 
@@ -21,8 +25,10 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [directory]"
 |-------------|------------|
 | **`/fdk-setup-use`** only, **`.nvmrc`** present | **`cd`** app root → load **nvm** → **`nvm use`** → **`node --version`**, **`fdk version`**. |
 | **`/fdk-setup-use`** only, **no** **`.nvmrc`** | Tell user: add **`.nvmrc`** (**`24.11`** for FDK 10.x, **`18`** for FDK 9.x) or pass **`10`**, **`9`**, **`24.11`**, or **`18`**. |
-| **`/fdk-setup-use 10`** or **`24.11`** | **`nvm use 24.11`** (install that line via nvm if needed), then verify **`fdk version`** is **10.x**. |
-| **`/fdk-setup-use 9`** or **`18`** | **`nvm use 18`**, then verify **`fdk version`** is **9.x** (deprecated). |
+| **`/fdk-setup-use 10`** or **`24.11`** | **`nvm use 24.11`** (current shell only), then verify **`fdk version`** is **10.x**. |
+| **`/fdk-setup-use 9`** or **`18`** | **`nvm use 18`** (current shell only), then verify **`fdk version`** is **9.x** (deprecated). |
+| **`/fdk-setup-use 10 --global`** | **`nvm use 24.11`** + **`nvm alias default 24.11`** (sets for all new shells). |
+| **`/fdk-setup-use 9 --global`** | **`nvm use 18`** + **`nvm alias default 18`** (sets for all new shells). |
 | **`--write-nvmrc`** with **`10`** / **`24.11`** | Write **`.nvmrc`** containing **`24.11`**, then **`nvm use`**. |
 | **`--write-nvmrc`** with **`9`** / **`18`** | Write **`.nvmrc`** containing **`18`**, then **`nvm use`**. |
 | Path at end (e.g. **`/fdk-setup-use 10 ./my-app`**) | **`cd`** that directory first; same rules. |
@@ -49,12 +55,16 @@ Before running the block, set shell variables (or inline the values):
 
 - **`WORK_DIR`** — app root (default **`.`**); use the path the user gave (absolute or relative).
 - **`STACK`** — **`auto`** (use **`.nvmrc`** only), **`10`** or **`24.11`**, **`9`** or **`18`**.
+- **`SET_GLOBAL`** — **`true`** if user passed **`--global`** flag, otherwise **`false`** (default).
 
 ```bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" || { echo "nvm not found"; exit 1; }
 
 cd "${WORK_DIR:-.}" || exit 1
+
+# Parse --global flag (default: false)
+SET_GLOBAL="${SET_GLOBAL:-false}"
 
 pick_node() {
   case "${STACK:-auto}" in
@@ -69,10 +79,18 @@ pick_node() {
     10|24.11)
       nvm install 24.11 2>/dev/null || true
       nvm use 24.11
+      if [[ "$SET_GLOBAL" == "true" ]]; then
+        nvm alias default 24.11
+        echo "Set as global default (all new shells)"
+      fi
       ;;
     9|18)
       nvm install 18 2>/dev/null || true
       nvm use 18
+      if [[ "$SET_GLOBAL" == "true" ]]; then
+        nvm alias default 18
+        echo "Set as global default (all new shells)"
+      fi
       ;;
     *)
       echo "Unknown STACK=${STACK:-}"
@@ -126,8 +144,20 @@ fi
 echo "====================="
 ```
 
-If user passed **`--write-nvmrc`**, after choosing **STACK** **`10`**/**`24.11`** write **`24.11`** to **`.nvmrc`**; for **`9`**/**`18`** write **`18`**, then **`nvm use`** again.
+**Additional flags:**
 
-**Closeout:** No **`fdk run`** / tunnel. This command is **read-only** except for optional **`.nvmrc`** creation.
+- **`--write-nvmrc`**: After choosing **STACK** **`10`**/**`24.11`** write **`24.11`** to **`.nvmrc`**; for **`9`**/**`18`** write **`18`**, then **`nvm use`** again.
+- **`--global`**: Run **`nvm alias default <version>`** to set chosen Node as default for all new shells.
+
+**Scope summary:**
+
+| Command | Current shell | New shells | .nvmrc file |
+|---------|---------------|------------|-------------|
+| `/fdk-setup-use 10` | ✅ Node 24 | ❌ Unchanged | ❌ Not created |
+| `/fdk-setup-use 10 --global` | ✅ Node 24 | ✅ Node 24 (default) | ❌ Not created |
+| `/fdk-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Created (24.11) |
+| `/fdk-setup-use 10 --global --write-nvmrc` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Created (24.11) |
+
+**Closeout:** No **`fdk run`** / tunnel. This command modifies shell state and optionally **`.nvmrc`** / **nvm default alias**.
 
 **See also:** **`references/macos.md`** (**.nvmrc**), **`references/cross-scenarios.md`** (multi-project switching), **`references/error-command-not-found.md`**.
