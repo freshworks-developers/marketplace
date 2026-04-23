@@ -12,20 +12,24 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **This skill does not install, upgrade, or repair** the Freshworks CLI (**`fdk`**) or **Node.js** (nvm aliases, PATH, global npm prefix). Those workflows live in the **`fdk-setup`** skill (`skills/fdk-setup/` in this repo), not here.
 
-**MANDATORY PREREQUISITE CHECK — RUN BEFORE ANY APP-DEV TASK:**
+**MANDATORY PREREQUISITE CHECK — BLOCKING REQUIREMENT:**
 
-Before generating apps, fixing errors, migrating, refactoring, or reviewing:
+**YOU MUST RUN THIS CHECK FIRST.** Do not read any other instructions until this check passes.
 
-1. Run these checks:
-   ```bash
-   node --version  # Must be v24.x.x
-   fdk version     # Must be 10.x or newer
-   ```
+Before ANY task (creating apps, fixing errors, migrating, refactoring, reviewing), run:
 
-2. **If Node is NOT 24.x OR fdk is NOT 10.x OR either command fails:**
-   - **STOP immediately**
-   - **Do NOT generate any files**
-   - **Respond with:**
+```bash
+node --version && fdk version
+```
+
+**Parse the output:**
+- Node version MUST start with `v24.`
+- FDK version MUST start with `10.` or higher
+
+**If EITHER check fails (wrong version OR command not found):**
+- **STOP ALL WORK**
+- **DO NOT generate, edit, or validate ANY files**
+- **Output this error and NOTHING ELSE:**
      ```
      ⚠️ PREREQUISITES NOT MET
      
