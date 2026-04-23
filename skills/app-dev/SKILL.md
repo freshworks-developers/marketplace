@@ -12,47 +12,41 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **This skill does not install, upgrade, or repair** the Freshworks CLI (**`fdk`**) or **Node.js** (nvm aliases, PATH, global npm prefix). Those workflows live in the **`fdk-setup`** skill (`skills/fdk-setup/` in this repo), not here.
 
-**MANDATORY PREREQUISITE CHECK — BLOCKING REQUIREMENT:**
+**MANDATORY PREREQUISITE CHECK — RUN INLINE BEFORE ANY TASK:**
 
-**BEFORE ANY TASK:** Spawn the app-dev-prerequisites agent to check FDK and Node versions.
+**FIRST ACTION: Check prerequisites (no files, no planning, just check):**
 
-```javascript
-Agent({
-  subagent_type: "general-purpose",
-  description: "Check FDK/Node prerequisites",
-  prompt: `
-You are the app-dev prerequisites checker. Follow skills/app-dev/references/app-dev-prerequisites-agent.md exactly.
-
-TASK: Verify Node.js 24.x + FDK 10.x are installed.
-
-Steps:
-1. Check if fdk command exists: command -v fdk
-2. Check versions: node --version && fdk version
-3. Parse versions (extract major numbers)
-4. If Node 24 + FDK 10: return "OK - Ready for app-dev"
-5. Otherwise: delegate to fdk-setup with specific slash command
-
-DO NOT generate any app files. Only check prerequisites.
-
-Return one of:
-- OK - prerequisites met
-- MISSING_FDK - run /fdk-setup-install
-- UPGRADE_FDK - run /fdk-setup-upgrade
-- SWITCH_NODE - run /fdk-setup-use 10
-- MISSING_SETUP_SKILL - install fdk-setup first
-
-Report exact Node and FDK versions detected.
-  `
-})
+Run inline:
+```bash
+node --version 2>&1
+fdk version 2>&1
 ```
 
-**If agent returns anything OTHER than "OK":**
-- **STOP ALL WORK**
-- **DO NOT generate, edit, or validate ANY files**
-- **Show the agent's error message to user**
-- **Wait for user to fix prerequisites**
+**Parse output and enforce:**
 
-**Only proceed with app-dev tasks if agent returns "OK"**
+| Condition | Action |
+|-----------|--------|
+| `fdk` command not found | STOP → tell user to run `/fdk-setup-install` |
+| Node version NOT v24.x | STOP → tell user to run `/fdk-setup-use 10` or `/fdk-setup-install` |
+| FDK version NOT 10.x | STOP → tell user to run `/fdk-setup-upgrade` |
+| Node v24.x AND FDK 10.x | ✅ PROCEED with task |
+
+**If prerequisites fail, output ONLY this:**
+```
+⚠️ PREREQUISITES NOT MET
+
+app-dev requires Node.js 24.x + FDK 10.x
+
+Current:
+- Node: [version or "not found"]
+- FDK: [version or "not found"]
+
+Fix: [specific command - /fdk-setup-install, /fdk-setup-upgrade, or /fdk-setup-use 10]
+
+Then retry your command.
+```
+
+**STOP. Do not generate files, do not continue. Wait for user to fix.**
 
 **When the user’s shell is missing FDK, on the wrong Node major, or stuck on FDK 9.x for a Platform 3.0 app:**
 
