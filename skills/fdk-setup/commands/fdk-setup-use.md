@@ -20,7 +20,7 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [directory]"
 | User intent | What to do |
 |-------------|------------|
 | **`/fdk-setup-use`** only, **`.nvmrc`** present | **`cd`** app root → load **nvm** → **`nvm use`** → **`node --version`**, **`fdk version`**. |
-| **`/fdk-setup-use`** only, **no** **`.nvmrc`** | Tell user: add **`.nvmrc`** (**`24.11`** for FDK 10, **`18`** for FDK 9) or pass **`10`**, **`9`**, **`24.11`**, or **`18`**. |
+| **`/fdk-setup-use`** only, **no** **`.nvmrc`** | Tell user: add **`.nvmrc`** (**`24.11`** for FDK 10.x, **`18`** for FDK 9.x) or pass **`10`**, **`9`**, **`24.11`**, or **`18`**. |
 | **`/fdk-setup-use 10`** or **`24.11`** | **`nvm use 24.11`** (install that line via nvm if needed), then verify **`fdk version`** is **10.x**. |
 | **`/fdk-setup-use 9`** or **`18`** | **`nvm use 18`**, then verify **`fdk version`** is **9.x** (deprecated). |
 | **`--write-nvmrc`** with **`10`** / **`24.11`** | Write **`.nvmrc`** containing **`24.11`**, then **`nvm use`**. |
@@ -32,7 +32,7 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [directory]"
 ## Per-app checklist (run in order)
 
 1. **`cd`** to app root (directory with **`manifest.json`**, if any).
-2. If **`.nvmrc`** missing and user wants FDK 10 line → recommend **`24.11`** (not bare **`24`**, avoids drift off **24.11**).
+2. If **`.nvmrc`** missing and user wants FDK 10.x line → recommend **`24.11`** (not bare **`24`**, avoids drift off **24.11**).
 3. **`export NVM_DIR="$HOME/.nvm"`** and **`[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"`**.
 4. **`nvm use`** (reads **`.nvmrc`**) or **`nvm use 24.11`** / **`nvm use 18`** per table above.
 5. **`node --version`** and **`fdk version`** — **any FDK 10.y** with **any Node 24.x**, **any FDK 9.y** with **any Node 18.x**.
@@ -41,7 +41,7 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [directory]"
      - **STOP and ask user:** "You have Node 24.11 and Node 18, but FDK is only installed on Node X. Would you like me to install FDK on the missing Node version? (yes/no)"
      - **If yes:** Use `/fdk-setup-install X.Y.Z` (for FDK 10.x on Node 24) or `/fdk-setup-downgrade X.Y.Z` (for FDK 9.x on Node 18)
      - **After install:** Re-run `nvm use` and verify both `node --version` and `fdk version` match expected stack
-   - If **`fdk`** completely missing: Route to **`/fdk-setup-install`** (FDK 10) or **`/fdk-setup-downgrade`** (FDK 9)
+   - If **`fdk`** completely missing: Route to **`/fdk-setup-install`** (FDK 10.x) or **`/fdk-setup-downgrade`** (FDK 9.x)
 
 ## Execution (inline only — no Task)
 

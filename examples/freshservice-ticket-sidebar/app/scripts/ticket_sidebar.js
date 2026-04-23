@@ -10,6 +10,11 @@
         });
       });
     }).catch(function (err) {
+      const el = document.querySelector('fw-inline-message.intro');
+      if (el) {
+        el.setAttribute('type', 'error');
+        el.textContent = 'App could not start. Open the browser console for technical details.';
+      }
       console.error('App init failed:', err);
     });
   }

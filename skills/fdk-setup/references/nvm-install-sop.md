@@ -170,7 +170,7 @@ nvm --version
 Once nvm is working:
 
 ```bash
-# Install Node.js 24.11 (for FDK 10)
+# Install Node.js 24.11 (for FDK 10.x)
 nvm install 24.11
 
 # Set as default

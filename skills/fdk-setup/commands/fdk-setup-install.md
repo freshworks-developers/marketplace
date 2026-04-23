@@ -1,6 +1,6 @@
 ---
 name: fdk-setup-install
-description: Install FDK (10.x or 9.x) with Node.js via nvm; supports bare version (X.Y.Z) or --version flag; use --both to install both FDK 10 + FDK 9 stacks
+description: Install FDK (10.x or 9.x) with Node.js via nvm; supports bare version (X.Y.Z) or --version flag; use --both to install both FDK 10.x + FDK 9.x stacks
 always: true
 argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 ---
@@ -22,7 +22,7 @@ argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 
 **FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 30, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
-**`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10 as primary).
+**`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10.x as primary).
 
 ## Agent pre-step
 
@@ -30,12 +30,12 @@ Parse version from:
 - Bare version: `/fdk-setup-install 10.1.0` or `/fdk-setup-install 9.8.2`
 - Flag syntax: `/fdk-setup-install --version 10.1.0`
 - Both stacks: `/fdk-setup-install --both`
-- Default (no args): `latest` → FDK 10 line on Node 24
+- Default (no args): `latest` → FDK 10.x line on Node 24
 
 Replace **`__FDK_INSTALL_VERSION__`** with:
 - **`latest`** — latest FDK 10.x (default)
-- **`10.x.y`** — specific FDK 10 semver (strip leading `v`)
-- **`9.x.y`** — specific FDK 9 semver (strip leading `v`); **SHOW DEPRECATION NOTICE**
+- **`10.x.y`** — specific FDK 10.x semver (strip leading `v`)
+- **`9.x.y`** — specific FDK 9.x semver (strip leading `v`); **SHOW DEPRECATION NOTICE**
 - **`both`** — install both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20
 
 ## Execution
@@ -147,8 +147,8 @@ if [[ "$FDK_VER" == "both" ]]; then
   echo "Secondary: Node 18.20 + FDK 9.x"
   echo ""
   echo "Switch stacks:"
-  echo "  /fdk-setup-use 10  → Node 24 + FDK 10"
-  echo "  /fdk-setup-use 9   → Node 18 + FDK 9"
+  echo "  /fdk-setup-use 10  → Node 24 + FDK 10.x"
+  echo "  /fdk-setup-use 9   → Node 18 + FDK 9.x"
   echo ""
   echo "Verify:"
   echo "  node --version && fdk version"

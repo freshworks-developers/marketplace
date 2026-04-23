@@ -23,8 +23,8 @@ Parse user request and execute the appropriate operation:
 | Trigger | Operation |
 |---------|-----------|
 | "install fdk", "setup fdk", `/fdk-setup-install`, `/fdk-install` (legacy); optional version **`X.Y.Z`** or **`--version X.Y.Z`** | Install FDK 10.x (default) or 9.x with deprecation notice (see `commands/fdk-setup-install.md`) |
-| "upgrade fdk", "update fdk", `/fdk-setup-upgrade`, `/fdk-upgrade` (legacy); optional **`--to X.Y.Z`** | Upgrade to latest FDK 10 line or pinned semver (see `commands/fdk-setup-upgrade.md`) |
-| "migrate fdk 9 to 10", "fdk 9 to 10" | Use `/fdk-setup-install` (installs FDK 10 on Node 24) or `/fdk-setup-upgrade` |
+| "upgrade fdk", "update fdk", `/fdk-setup-upgrade`, `/fdk-upgrade` (legacy); optional **`--to X.Y.Z`** | Upgrade to latest FDK 10.x line or pinned semver (see `commands/fdk-setup-upgrade.md`) |
+| "migrate fdk 9 to 10", "fdk 9 to 10" | Use `/fdk-setup-install` (installs FDK 10.x on Node 24) or `/fdk-setup-upgrade` |
 | "downgrade fdk", "use fdk 9", `/fdk-setup-downgrade 9.6.0`, `/fdk-downgrade` (legacy) | Downgrade FDK 10.x → 10.0.y or 10.x → 9.x (see `commands/fdk-setup-downgrade.md`) |
 | "uninstall fdk", "remove fdk", `/fdk-setup-uninstall`, `/fdk-uninstall` (legacy) | Uninstall FDK only (keeps Node/nvm; no `--all`) |
 | "check fdk", "fdk status", `/fdk-setup-status`, `/fdk-status` (legacy); optional **`--verbose`** | Status (inline; verbose adds PATH/nvm/rc diagnostics) |
@@ -120,7 +120,7 @@ npm uninstall -g fdk 2>/dev/null
 rm -rf ~/.fdk
 npm cache clean --force
 
-# Install FDK 10 on Node 24.11.x
+# Install FDK 10.x on Node 24.11.x
 nvm install 24.11
 nvm use 24.11
 nvm alias default 24.11
@@ -172,7 +172,7 @@ DETECTION:
 3. Spawn subagent with this prompt:
 
 ```
-Install FDK 10 with Node 24 using official Freshworks CLI.
+Install FDK 10.x with Node 24 using official Freshworks CLI.
 
 DETECTION:
 - OS: [detected from step 1]
@@ -251,10 +251,10 @@ Next steps:
 
 **Canonical command:** `commands/fdk-setup-upgrade.md` (`/fdk-setup-upgrade`, optional **`--to X.Y.Z`**).
 
-- **Latest FDK 10 line:** CDN `https://cdn.freshdev.io/fdk/latest-v24.tgz` on Node **24.11.x** (uninstall scoped + legacy `fdk`, remove `~/.fdk`, then install).
+- **Latest FDK 10.x line:** CDN `https://cdn.freshdev.io/fdk/latest-v24.tgz` on Node **24.11.x** (uninstall scoped + legacy `fdk`, remove `~/.fdk`, then install).
 - **Pinned 10.x.y / 9.x.y:** CDN `https://cdn.freshdev.io/fdk/vX.Y.Z.tgz` (verify **HTTP 200** with `curl` before `npm install -g`).
 
-Do **not** use `npm install -g @freshworks/fdk@latest` from the public npm registry for FDK 10 (see **CDN Tarball Reality** above).
+Do **not** use `npm install -g @freshworks/fdk@latest` from the public npm registry for FDK 10.x (see **CDN Tarball Reality** above).
 
 **CRITICAL RULES:**
 - [VALID] ALWAYS verify upgrade in a new shell after install
@@ -518,7 +518,7 @@ Do not load these files unless the operation fails or user has a complex setup.
 | Check | Requirement |
 |-------|-------------|
 | FDK version | Must be 10.0.0+ for Platform 3.0 |
-| Node version | Must be 24.x (recommended for FDK 10) |
+| Node version | Must be 24.x (recommended for FDK 10.x) |
 | nvm | Must be installed and configured |
 | Global access | `which fdk` must return path |
 | New shell | `zsh -c 'fdk version'` must succeed |

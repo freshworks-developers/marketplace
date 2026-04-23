@@ -95,16 +95,16 @@ Check available commands:
 ```bash
 /fdk-setup-install              # Install FDK 10.x + Node 24 (recommended)
 /fdk-setup-install --version 10.1.0  # Pin FDK 10.x.y (CDN v10.1.0.tgz)
-/fdk-setup-upgrade              # Upgrade to latest FDK 10 line (Node 24.11)
+/fdk-setup-upgrade              # Upgrade to latest FDK 10.x line (Node 24.11)
 /fdk-setup-upgrade --to 10.1.0 # Pin semver (CDN v10.1.0.tgz)
-/fdk-setup-downgrade            # FDK 9 latest line + Node 18 (deprecated)
+/fdk-setup-downgrade            # FDK 9.x latest line + Node 18 (deprecated)
 /fdk-setup-downgrade 9.6.0      # Pin FDK 9.x.y (CDN v9.6.0.tgz)
 /fdk-setup-uninstall            # Remove FDK only (npm + ~/.fdk + cache; keeps nvm)
 /fdk-setup-status               # Inline status
 /fdk-setup-status --verbose     # PATH, npm prefix, nvm, rc snippets
 /fdk-setup-troubleshoot         # Diagnose (inline)
-/fdk-setup-troubleshoot --fix   # Shell Task: zshrc-safe nvm + FDK 10 on 24.11
-/fdk-setup-use                  # Workspace: nvm use + .nvmrc (FDK 10 vs 9); optional --write-nvmrc
+/fdk-setup-troubleshoot --fix   # Shell Task: zshrc-safe nvm + FDK 10.x on 24.11
+/fdk-setup-use                  # Workspace: nvm use + .nvmrc (FDK 10.x vs 9); optional --write-nvmrc
 # Legacy: /fdk-install, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall, /fdk-status
 ```
 
@@ -124,12 +124,12 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_L
 - Comprehensive verification in new shells
 
 **Upgrade (`/fdk-setup-upgrade`):**
-- Upgrades to latest FDK 10 line, or **`--to X.Y.Z`** for a pinned release (`https://cdn.freshdev.io/fdk/vX.Y.Z.tgz`)
+- Upgrades to latest FDK 10.x line, or **`--to X.Y.Z`** for a pinned release (`https://cdn.freshdev.io/fdk/vX.Y.Z.tgz`)
 - Complete uninstall of previous version before upgrade
 - Removes ~/.fdk directory to prevent conflicts
 - Preserves Node 24 configuration
 
-- Moves from FDK 9 + Node 18 to FDK 10 + Node 24.11 (keeps Node 18 in nvm)
+- Moves from FDK 9.x + Node 18 to FDK 10.x + Node 24.11 (keeps Node 18 in nvm)
 
 **Downgrade (`/fdk-setup-downgrade`):**
 - Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
@@ -156,7 +156,7 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fdk-setup-runs/` unless `FDK_RUN_L
 
 **Use (`/fdk-setup-use`) — workspace stack (inline):**
 - **`nvm use`** from **`.nvmrc`** or explicit **10** / **9** (Node **24.11** vs **18**)
-- Optional **`--write-nvmrc`** to pin **`24.11`** (FDK 10) or **`18`** (FDK 9) in the app repo
+- Optional **`--write-nvmrc`** to pin **`24.11`** (FDK 10.x) or **`18`** (FDK 9.x) in the app repo
 - Does not change global default alias by itself; switches the **active shell** (and documents next steps if **`fdk`** is missing on that Node)
 
 ### ⚠️ IMPORTANT: Run Before Creating Apps
@@ -268,7 +268,7 @@ Commands are registered in `plugin.json`:
   "commands": [
     {
       "name": "fdk-setup-install",
-      "description": "Install FDK 10 + Node 24",
+      "description": "Install FDK 10.x + Node 24",
       "file": "commands/fdk-setup-install.md"
     }
   ]

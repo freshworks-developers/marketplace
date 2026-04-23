@@ -18,7 +18,7 @@ argument-hint: "[version|latest]"
 Replace **`__FDK_DOWNGRADE_TARGET__`** in the Task prompt:
 
 - **`latest`** — user did not pass a semver (use **`https://cdn.freshdev.io/fdk/latest.tgz`** FDK 9.x on Node 18).
-- **`10.x.y`** — from **`/fdk-setup-downgrade 10.0.1`** (downgrade within FDK 10 line, stays on Node 24).
+- **`10.x.y`** — from **`/fdk-setup-downgrade 10.0.1`** (downgrade within FDK 10.x line, stays on Node 24).
 - **`9.x.y`** — from **`/fdk-setup-downgrade 9.6.0`**, **`--to 9.6.0`**, or natural language. Strip leading **`v`**.
 
 ## Execution
@@ -89,9 +89,9 @@ rm -rf ~/.fdk
 npm cache clean --force
 
 if [[ "$IS_NINE" == 1 ]]; then
-  # Downgrading to FDK 9: remove FDK 10 from Node 24 (exclusive operation)
+  # Downgrading to FDK 9.x: remove FDK 10.x from Node 24 (exclusive operation)
   if nvm list | grep -q "v24"; then
-    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9)..."
+    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)..."
     nvm use 24 2>/dev/null || nvm use 24.11 2>/dev/null || true
     npm uninstall -g @freshworks/fdk 2>/dev/null || true
     npm uninstall -g fdk 2>/dev/null || true
@@ -101,9 +101,9 @@ if [[ "$IS_NINE" == 1 ]]; then
   nvm use 18.20
   NODE_VER="18.20"
 else
-  # Downgrading within FDK 10 line: remove FDK 9 from Node 18 if exists
+  # Downgrading within FDK 10.x line: remove FDK 9.x from Node 18 if exists
   if nvm list | grep -q "v18"; then
-    echo "Removing FDK 9.x from Node 18 (staying on FDK 10 line)..."
+    echo "Removing FDK 9.x from Node 18 (staying on FDK 10.x line)..."
     nvm use 18 2>/dev/null || nvm use 18.20 2>/dev/null || true
     npm uninstall -g @freshworks/fdk 2>/dev/null || true
     npm uninstall -g fdk 2>/dev/null || true
@@ -149,7 +149,7 @@ MANDATORY VERIFICATION (auto-decline FDK upgrade prompts):
 
 REPORT:
   echo "FDK downgrade complete — URL: $FDK_URL"
-  echo "Return to FDK 10: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-install"
+  echo "Return to FDK 10.x: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-install"
 
 SLASH_COMMAND_CLOSEOUT: Return after REPORT (or abort). No fdk run/tunnel in this Task.
   `

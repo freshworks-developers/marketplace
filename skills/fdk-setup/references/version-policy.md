@@ -25,8 +25,8 @@ All fdk-setup commands default to **latest** versions unless user specifies exac
 - **Primary:** Node 24 + FDK 10
 
 ### Specific Versions (Pinned)
-- **FDK 10:** `/fdk-setup-install 10.1.0` or `/fdk-setup-upgrade --to 10.1.0`
-- **FDK 9:** `/fdk-setup-downgrade 9.8.2`
+- **FDK 10.x:** `/fdk-setup-install 10.1.0` or `/fdk-setup-upgrade --to 10.1.0`
+- **FDK 9.x:** `/fdk-setup-downgrade 9.8.2`
 - **CDN URL:** `https://cdn.freshdev.io/fdk/v{VERSION}.tgz`
 
 ## Manifest Engines (Use Pinned for Validation)
