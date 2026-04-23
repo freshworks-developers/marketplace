@@ -1,13 +1,13 @@
 ---
 name: fdk-setup-install
-description: Install FDK (10.x or 9.x) with Node.js via nvm; supports bare version (X.Y.Z) or --version flag
+description: Install FDK (10.x or 9.x) with Node.js via nvm; supports bare version (X.Y.Z) or --version flag; use --both to install both FDK 10 + FDK 9 stacks
 always: true
-argument-hint: “[X.Y.Z|--version X.Y.Z]”
+argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 ---
 
 # FDK setup — install (`/fdk-setup-install`)
 
-**`/fdk-setup install`**. Supports **FDK 10.x** (Node 24) and **FDK 9.x** (Node 18, deprecated).
+**`/fdk-setup install`**. Supports **FDK 10.x** (Node 24), **FDK 9.x** (Node 18, deprecated), and **both stacks** simultaneously.
 
 ## Behaviour
 
@@ -18,20 +18,25 @@ argument-hint: “[X.Y.Z|--version X.Y.Z]”
 | `/fdk-setup-install --version 10.1.0` | `10.1.0` | `https://cdn.freshdev.io/fdk/v10.1.0.tgz` | 24.11 |
 | `/fdk-setup-install 9.8.2` | `9.8.2` | `https://cdn.freshdev.io/fdk/v9.8.2.tgz` | 18.20 |
 | `/fdk-setup-install --version 9.8.2` | `9.8.2` | `https://cdn.freshdev.io/fdk/v9.8.2.tgz` | 18.20 |
+| `/fdk-setup-install --both` | `both` | Both latest-v24.tgz + latest 9.x | 24.11 + 18.20 |
 
 **FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends March 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+
+**`--both` flag:** Installs both FDK 10.0.1 on Node 24.11 AND FDK 9.8.2 on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10 as primary).
 
 ## Agent pre-step
 
 Parse version from:
 - Bare version: `/fdk-setup-install 10.1.0` or `/fdk-setup-install 9.8.2`
 - Flag syntax: `/fdk-setup-install --version 10.1.0`
+- Both stacks: `/fdk-setup-install --both`
 - Default (no args): `latest` → FDK 10 line on Node 24
 
 Replace **`__FDK_INSTALL_VERSION__`** with:
 - **`latest`** — default FDK 10 line
 - **`10.x.y`** — FDK 10 semver (strip leading `v`)
 - **`9.x.y`** — FDK 9 semver (strip leading `v`); **SHOW DEPRECATION NOTICE**
+- **`both`** — install both FDK 10.0.1 on Node 24.11 AND FDK 9.8.2 on Node 18.20
 
 ## Execution
 
@@ -39,17 +44,119 @@ Replace **`__FDK_INSTALL_VERSION__`** with:
 Task({
   subagent_type: "shell",
   model: "fast",
-  description: "Install FDK 10 with Node 24 (optional pinned semver)",
+  description: "Install FDK with Node (supports single or both stacks)",
   prompt: `
-Install FDK 10 with Node 24.11 using nvm + Freshworks CDN tarball only.
+Install FDK with Node.js using nvm + Freshworks CDN tarball.
 
 FDK_VER="__FDK_INSTALL_VERSION__"
-# Host must replace token: "latest" OR "10.1.0" (FDK 10 semver only)
+# Host must replace token: "latest" OR "10.1.0" OR "9.8.2" OR "both"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-# FDK 9.x deprecation notice
+# --both flag: install both stacks (skip existing)
+if [[ "$FDK_VER" == "both" ]]; then
+  echo "========================================="
+  echo "INSTALLING BOTH FDK STACKS"
+  echo "========================================="
+  echo "Stack 1: FDK 10.0.1 on Node 24.11 (primary)"
+  echo "Stack 2: FDK 9.8.2 on Node 18.20 (deprecated, expires March 2026)"
+  echo ""
+  
+  # Check existing installations
+  HAS_FDK_10=0
+  HAS_FDK_9=0
+  
+  if nvm list | grep -q "v24"; then
+    nvm use 24.11 2>/dev/null || nvm use 24 2>/dev/null || true
+    if command -v fdk >/dev/null 2>&1; then
+      FDK_VER_CHECK=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      if [[ "$FDK_VER_CHECK" =~ ^10\\. ]]; then
+        HAS_FDK_10=1
+        echo "✓ FDK 10.x already installed on Node 24 (skipping)"
+      fi
+    fi
+  fi
+  
+  if nvm list | grep -q "v18"; then
+    nvm use 18.20 2>/dev/null || nvm use 18 2>/dev/null || true
+    if command -v fdk >/dev/null 2>&1; then
+      FDK_VER_CHECK=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+      if [[ "$FDK_VER_CHECK" =~ ^9\\. ]]; then
+        HAS_FDK_9=1
+        echo "✓ FDK 9.x already installed on Node 18 (skipping)"
+      fi
+    fi
+  fi
+  
+  if [[ $HAS_FDK_10 -eq 1 ]] && [[ $HAS_FDK_9 -eq 1 ]]; then
+    echo ""
+    echo "Both stacks already installed. Nothing to do."
+    nvm use 24.11 2>/dev/null || nvm use 24 2>/dev/null
+    nvm alias default 24.11 2>/dev/null || nvm alias default 24 2>/dev/null
+    exit 0
+  fi
+  
+  read -p "Continue? (y/N): " confirm
+  if [[ "$confirm" != [yY] ]]; then
+    echo "Installation cancelled."
+    exit 0
+  fi
+  
+  # Install Stack 1 (FDK 10) if missing
+  if [[ $HAS_FDK_10 -eq 0 ]]; then
+    echo ""
+    echo "=== Installing Stack 1: FDK 10.0.1 on Node 24.11 ==="
+    nvm install 24.11 2>/dev/null || true
+    nvm use 24.11
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    npm cache clean --force
+    npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz || exit 1
+    
+    FDK_10_VER=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    NODE_24_VER=$(node --version)
+    echo "✓ Installed FDK $FDK_10_VER on $NODE_24_VER"
+  fi
+  
+  # Install Stack 2 (FDK 9) if missing
+  if [[ $HAS_FDK_9 -eq 0 ]]; then
+    echo ""
+    echo "=== Installing Stack 2: FDK 9.8.2 on Node 18.20 ==="
+    nvm install 18.20 2>/dev/null || true
+    nvm use 18.20
+    npm uninstall -g @freshworks/fdk 2>/dev/null || true
+    npm uninstall -g fdk 2>/dev/null || true
+    npm cache clean --force
+    npm install -g https://cdn.freshdev.io/fdk/v9.8.2.tgz || exit 1
+    
+    FDK_9_VER=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    NODE_18_VER=$(node --version)
+    echo "✓ Installed FDK $FDK_9_VER on $NODE_18_VER"
+  fi
+  
+  # Set primary to Node 24
+  nvm use 24.11 2>/dev/null || nvm use 24 2>/dev/null
+  nvm alias default 24.11 2>/dev/null || nvm alias default 24 2>/dev/null
+  
+  echo ""
+  echo "========================================="
+  echo "BOTH STACKS READY"
+  echo "========================================="
+  echo "Primary (current): Node 24.11 + FDK 10.x"
+  echo "Secondary: Node 18.20 + FDK 9.x"
+  echo ""
+  echo "Switch stacks:"
+  echo "  /fdk-setup-use 10  → Node 24 + FDK 10"
+  echo "  /fdk-setup-use 9   → Node 18 + FDK 9"
+  echo ""
+  echo "Verify:"
+  echo "  node --version && fdk version"
+  
+  exit 0
+fi
+
+# Single stack installation (existing logic)
 if [[ "$FDK_VER" =~ ^9\\. ]]; then
   echo "========================================="
   echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
