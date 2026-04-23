@@ -88,11 +88,13 @@ rm -rf ~/.fdk
 npm cache clean --force
 
 if [[ "$IS_NINE" == 1 ]]; then
-  nvm list | grep v18 || nvm install 18
-  nvm use 18
+  nvm list | grep v18 || nvm install 18.20
+  nvm use 18.20
+  NODE_VER="18.20"
 else
   nvm list | grep "v24\\.11" || nvm install 24.11
   nvm use 24.11
+  NODE_VER="24.11"
 fi
 node --version
 
@@ -100,12 +102,15 @@ npm install -g "$FDK_URL" || exit 1
 
 if [[ "$IS_NINE" == 1 ]]; then
   fdk version | grep -E '^9\\.' || { echo "FAILED: Not FDK 9.x"; exit 1; }
-  nvm alias default 18
-  echo "Downgrade complete: FDK 9.x on Node 18 (DEPRECATED)"
+  
+  # Get actual installed Node 18 version
+  NODE_18_VER=$(nvm current)
+  nvm alias default "$NODE_18_VER"
+  
+  echo "Downgrade complete: FDK 9.x on $NODE_18_VER (DEPRECATED)"
   echo ""
-  echo "NOTE: nvm alias set to Node 18. Shell RC files NOT modified."
-  echo "To persist across new terminals, add to your ~/.zshrc or ~/.bashrc:"
-  echo "  nvm use 18 > /dev/null 2>&1"
+  echo "nvm alias default set to $NODE_18_VER — new terminals will use Node 18"
+  echo "Current terminal: already on $NODE_18_VER"
 else
   fdk version | grep -E '^10\\.' || { echo "FAILED: Not FDK 10.x"; exit 1; }
   nvm alias default 24.11
