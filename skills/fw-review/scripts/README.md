@@ -1,6 +1,6 @@
 # App Review Scripts
 
-These scripts are deterministic checks used by the `app-review` skill. Each script takes an app root path and prints JSON:
+These scripts are deterministic checks used by the **fw-review** skill. Each script takes an app root path and prints JSON:
 
 ```bash
 node scripts/<script-name>.js /path/to/app

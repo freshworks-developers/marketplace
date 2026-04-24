@@ -19,6 +19,10 @@
 
 <p align="center"><code>Platform 3.0</code> · <code>Validation</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>Auto-fix</code></p>
 
+## Overview
+
+**fw-app-dev** is the primary skill for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`. It does **not** install FDK or Node — use **fw-setup** for the toolchain.
+
 ## Features
 
 - ✅ Platform 3.0 enforcement with zero tolerance for legacy patterns

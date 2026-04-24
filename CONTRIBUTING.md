@@ -53,6 +53,7 @@ marketplace/
 │   │   ├── references/       # Documentation loaded on-demand
 │   │   └── assets/           # Templates and resources
 │   ├── fw-ai-app-dev/        # AI Actions + third-party integrations (actions.json, SMI)
+│   ├── fw-review/            # Automated app review (rules + scripts, structured report)
 │   ├── fw-setup/             # FDK + Node install / lifecycle (nvm)
 │   └── fw-publish/           # Marketplace publish (MCP) guidance
 ├── scripts/                  # Build and utility scripts

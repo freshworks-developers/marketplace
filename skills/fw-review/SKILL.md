@@ -1,9 +1,9 @@
 ---
-name: app-reviewer
+name: fw-review
 description: Full Freshworks marketplace app review — iparams, frontend, serverless, FDK, security, and structured text report output — in one skill.
 ---
 
-# App reviewer
+# fw-review
 
 This is an automated pipeline. Do not ask questions or interact with the user. Execute silently.
 
@@ -15,7 +15,7 @@ Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the
 
 ### FDK CLI availability (Docker / CI / local)
 
-The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and is **not** assumed to exist in generic CI images. Jenkins or Kubernetes **node** images typically include **Node only**, not `fdk`. Verify the fdk is installed using command `fdk-setup-status` in fdk-setup skill.
+The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and is **not** assumed to exist in generic CI images. Jenkins or Kubernetes **node** images typically include **Node only**, not `fdk`. Verify FDK is installed (for example `/fw-setup-status` from the **fw-setup** skill, or `fdk --version` when the CLI is on `PATH`).
 
 1. **Structure** — Read `manifest.json` first for platform version, modules, requests, events, and install flow.
 2. **Installation parameters** — Review `config/iparams.json` or custom `config/iparams.html` / `config/assets/iparams.js` using [rules/iparam-rules.md](rules/iparam-rules.md). Follow the discovery order in that file.

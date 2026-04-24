@@ -1,0 +1,28 @@
+{
+  "name": "fw-review",
+  "displayName": "Freshworks App Review",
+  "version": "1.0.0",
+  "description": "Automated Freshworks marketplace app audit: iparams, frontend, script-backed checks, security, and structured report output (rules + scripts).",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-review",
+  "license": "MIT",
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "review",
+    "validation",
+    "fdk"
+  ],
+  "interface": {
+    "displayName": "Freshworks App Review (fw-review)",
+    "shortDescription": "Structured app review: rules, deterministic scripts, report format.",
+    "longDescription": "Silent pipeline over manifest, iparams, frontend rules, and SC-* script checks. Pair with fw-setup for FDK availability and fw-app-dev for fixes after review."
+  }
+}

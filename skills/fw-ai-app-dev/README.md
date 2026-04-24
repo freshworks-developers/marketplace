@@ -1,6 +1,10 @@
-# fw-ai-app-dev (AI Actions)
+# fw-ai-app-dev
 
 Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation).
+
+## Overview
+
+**fw-ai-app-dev** complements **fw-app-dev**: it focuses on `actions.json`, serverless handlers, flat request schemas, and integration guardrails without covering full UI app locations. It does **not** install FDK or Node — use **fw-setup** for the toolchain.
 
 ## Features
 
@@ -28,22 +32,31 @@ app-root/
 └── README.md
 ```
 
-## Installation
+## Install
+
+### Install via CLI
 
 ```bash
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
 ```
 
-Or copy this folder into `.cursor/skills/fw-ai-app-dev/` (or your tool’s skills directory).
+**Local copy:** copy this folder into `.cursor/skills/fw-ai-app-dev/` (or your tool’s skills directory).
 
 ### Install as Claude plugin
 
+**Step 1**
+
 ```bash
 claude plugin marketplace add freshworks-developers/marketplace
+```
+
+**Step 2**
+
+```bash
 claude plugin install fw-ai-app-dev@freshworks-developers
 ```
 
-## Contents
+## What's included
 
 - **SKILL.md** — Orchestrator; points to rules and references
 - **agents/** — Integration scoper, scope implementer, AI action integration validator
@@ -54,7 +67,7 @@ claude plugin install fw-ai-app-dev@freshworks-developers
 
 ## Requirements
 
-- Node.js **24.x** and **FDK 10.x** (see **fw-setup** and **fw-app-dev** skills in this repo for toolchain and general app guidance)
+- Node.js **24.x** and **FDK 10.x** (see **fw-setup** and **fw-app-dev** in this repo for toolchain and general app guidance)
 
 ## Support
 

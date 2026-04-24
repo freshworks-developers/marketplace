@@ -27,6 +27,10 @@
 
 > **IMPORTANT**: Run **`/fw-setup-install`** (or legacy **`/fdk-install`**) before creating Freshworks apps. This skill does NOT auto-check prerequisites on generic “create app” prompts.
 
+## Overview
+
+**fw-setup** installs and manages the Freshworks Development Kit (**FDK**) and **Node.js** via **nvm** on macOS, Windows, and Linux. Use it when the CLI is missing, the wrong major version, or broken across shells; marketplace publishing expects **FDK 10.x** on **Node 24.x**.
+
 ## Install
 
 ### Install via CLI:

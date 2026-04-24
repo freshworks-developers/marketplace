@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Plugins-4-764abc?style=flat-square" alt="Plugins">
+  <img src="https://img.shields.io/badge/Plugins-5-764abc?style=flat-square" alt="Plugins">
 </p>
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
@@ -32,6 +32,7 @@
 ```bash
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-review
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
 ```
@@ -43,6 +44,7 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill fw-p
 |-------|-------------|----------------|
 | [**fw-app-dev**](skills/fw-app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
 | [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions: `actions.json`, SMI, request templates, integrations, validation | Direct |
+| [**fw-review**](skills/fw-review/) | Automated marketplace app audit: iparams, frontend, script checks, structured report | Direct |
 | [**fw-setup**](skills/fw-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
 | [**fw-publish**](skills/fw-publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
 
@@ -89,7 +91,9 @@ Each skill follows the Agent Skills Specification:
 ```
 skill-name/
 ├── SKILL.md           # Main skill file with frontmatter + instructions
-├── commands/          # Slash commands with always: true (fw-setup)
+├── commands/          # Slash commands (e.g. fw-setup, fw-app-dev)
+├── rules/             # Editor rules (.mdc) or review rules (.md)
+├── scripts/           # Optional deterministic checks (e.g. fw-review)
 ├── references/        # Additional documentation loaded on demand
 └── assets/            # Templates, logos, etc.
 ```
@@ -120,7 +124,7 @@ version: "1.0.0"
 ---
 ```
 
-No manifest generation or registry required. Each skill is self-contained and declarative.
+Other skills in this repo use `name` values such as `fw-setup`, `fw-publish`, `fw-ai-app-dev`, and `fw-review` in the same frontmatter shape. No manifest generation or registry required; each skill is self-contained and declarative.
 
 ## MCP (marketplace publish)
 

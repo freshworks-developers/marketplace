@@ -1,6 +1,6 @@
 {
   "name": "freshworks-developer-tooling",
-  "description": "Freshworks Platform 3.0 Cursor skills: FDK setup, app development, AI Actions, and marketplace publishing.",
+  "description": "Freshworks Platform 3.0 Cursor skills: FDK setup, app development, AI Actions, automated app review, and marketplace publishing.",
   "version": "1.0.0",
   "owner": {
     "name": "Freshworks Developers",
@@ -94,6 +94,35 @@
         "displayName": "Freshworks AI Actions (fw-ai-app-dev)",
         "shortDescription": "actions.json, SMI handlers, request templates, and API integrations.",
         "longDescription": "Flat request parameters, nested response mapping in server.js, iparams/OAuth, test data guardrails, debugging broken endpoints, and scoping checklists. Complements fw-app-dev for full marketplace apps."
+      }
+    },
+    {
+      "name": "fw-review",
+      "description": "Automated Freshworks marketplace app review: iparams, frontend, deterministic script checks, security, and structured report output.",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/marketplace",
+      "repository": "https://github.com/freshworks-developers/marketplace",
+      "source": "./skills/fw-review",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "platform-3.0",
+        "marketplace",
+        "review",
+        "validation",
+        "fdk"
+      ],
+      "rulesPath": "./skills/fw-review/rules",
+      "interface": {
+        "displayName": "Freshworks App Review",
+        "shortDescription": "Rules + scripts for structured marketplace app audits.",
+        "longDescription": "Evaluates manifest, iparams, frontend, and SC-* script-backed checks with a fixed report format. Pair with fw-setup for FDK and fw-app-dev to remediate findings."
       }
     },
     {
