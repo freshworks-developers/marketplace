@@ -27,6 +27,7 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - Do **not** invent rule IDs or Pass/Fail criteria beyond the **Rule ID summary** in this file and the criteria defined in the linked `rules/*.md` files for those IDs.
 - Every rule ID **in the Rule ID summary** below must be evaluated to Pass, Fail, or Not Applicable.
 - Emit the **App Review Result** block exactly as specified in [rules/report.md](rules/report.md) (output layout only; which rules exist is defined here, not in report.md).
+- Use rule IDs internally for evaluation only. Omit rule IDs from the final user-visible report.
 - For each **Fail**, cite file and line (or identifiable block) where possible.
 
 ## Supporting files
@@ -36,54 +37,6 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - [rules/frontend-files-rules.md](rules/frontend-files-rules.md) — All FF-* rules.
 - [rules/script-check-rules.md](rules/script-check-rules.md) — Script-backed SC-* rule IDs mapped to `scripts/*.js`.
 
-## Script-backed rule mapping
-
-Run these from the `marketplace/` repo root. Use the app root as the argument, for example `../freshreview`.
-
-- `SC-01A` -> `scripts/external-import-sources.js`
-  ```bash
-  node "skills/app-review/scripts/external-import-sources.js" "../freshreview"
-  ```
-- `SC-02A` -> `scripts/https-imports.js`
-  ```bash
-  node "skills/app-review/scripts/https-imports.js" "../freshreview"
-  ```
-- `SC-03A` -> `scripts/image-resolution.js`
-  ```bash
-  node "skills/app-review/scripts/image-resolution.js" "../freshreview"
-  ```
-- `SC-04A` -> `scripts/settings-update-handler.js`
-  ```bash
-  node "skills/app-review/scripts/settings-update-handler.js" "../freshreview"
-  ```
-- `SC-05A` -> `scripts/oauth-config-usage.js`
-  ```bash
-  node "skills/app-review/scripts/oauth-config-usage.js" "../freshreview"
-  ```
-- `SC-06A` -> `scripts/global-variables.js`
-  ```bash
-  node "skills/app-review/scripts/global-variables.js" "../freshreview"
-  ```
-- `SC-07A` -> `scripts/unused-library-imports.js`
-  ```bash
-  node "skills/app-review/scripts/unused-library-imports.js" "../freshreview"
-  ```
-- `SC-08A` -> `scripts/fdk-errors-warnings.js`
-  ```bash
-  node "skills/app-review/scripts/fdk-errors-warnings.js" "../freshreview"
-  ```
-- `SC-09A` -> `scripts/sensitive-console-logs.js`
-  ```bash
-  node "skills/app-review/scripts/sensitive-console-logs.js" "../freshreview"
-  ```
-- `SC-10A` -> `scripts/freshworks-css-only.js`
-  ```bash
-  node "skills/app-review/scripts/freshworks-css-only.js" "../freshreview"
-  ```
-- `SC-11A` -> `scripts/platform-version-upgrade.js`
-  ```bash
-  node "skills/app-review/scripts/platform-version-upgrade.js" "../freshreview"
-  ```
 
 ## Rule ID summary (authoritative list of evaluated rule IDs)
 
