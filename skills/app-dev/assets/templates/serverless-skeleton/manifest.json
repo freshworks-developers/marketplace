@@ -1,5 +1,9 @@
 {
   "platform-version": "3.0",
+  "app": {
+    "tracking_id": "",
+    "start_time": ""
+  },
   "modules": {
     "common": {
       "events": {

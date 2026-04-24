@@ -1,137 +1,196 @@
 ---
 name: publish
-description: "Upload any Freshworks Platform 3.0 custom app to AMP (US): FDK validate/pack, multipart POST/PATCH to collections/modularApps, then optional move to test. Use when the user wants to push an app to the Marketplace backend for QA (test) or upload-only (dev), AMP upload, Developer Portal JWT, fdk pack, .fdk/app-info.json, or modularApps API. Pair with app-dev for manifest or module fixes. Not for generic non-AMP deploys unless explicitly tied to this flow."
+description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, presigned S3 upload, and submit/update through openai-server. Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
 ---
 
-# AMP upload (any custom app → test or dev)
+# Publish (Platform 3.0 custom app)
 
-**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and upload it to **AMP** using the multipart contract implemented in this repo. **Non-production:** either promote the new version to **test** (default) or leave it in **dev** mode (no second PATCH).
+**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
 
-## Multipart contract
+## Agent playbook (MCP tools)
 
-**`scripts/amp_upload.py`** is the **source of truth** for field names and sequence (`version[zip_file]` with `type=application/zip`, `app[locales][0][texts][*]`, `app[publisher][support_email]`, `version[modules][]`, `version[platform_version]`, `app[products][]`, tracking fields, etc.). Read and follow **`amp_upload.py`** and **[references/amp-modular-upload.md](./references/amp-modular-upload.md)**—do not invent multipart keys from ad hoc examples.
+### 1. Auth token preflight (MUST be step 1)
 
-## One command
+Before any MCP tool call, verify that the MCP publish tools are available and authenticated:
+- Attempt to call `list_marketplace_apps`
+- If tools are not available or the call returns an auth error, **STOP and notify the user:**
+
+```
+Publish requires a Marketplace API token configured in your MCP settings.
+
+To set this up:
+1. Go to https://developers.freshworks.com/developer/
+2. Find the **"API key for Freddy AI Copilot VS Code plugin"** section and click **Copy**
+3. Configure it for your IDE:
+
+   Claude Code:
+     The freshworks plugin prompts for "MCP server URL" and
+     "Marketplace API token (JWT)" at install time. If you skipped the
+     prompts, run /config and update the plugin settings. The token is
+     stored securely in the system keychain.
+
+   Cursor:
+     Add the server to ~/.cursor/mcp.json (global) or
+     .cursor/mcp.json (project-level):
+     {
+       "mcpServers": {
+         "freshworks-marketplace": {
+           "url": "https://mcp.freshworks.dev/mcp",
+           "headers": {
+             "Authorization": "Bearer <your-jwt-token>"
+           }
+         }
+       }
+     }
+     Replace <your-jwt-token> with your Developer Portal JWT, then
+     restart Cursor.
+
+4. Re-run the publish command
+```
+
+The JWT is a **single credential** — it authenticates to `openai-server` and is forwarded verbatim to MAPI. It contains `developer_account_id` and `uuid` claims. There is no separate MAPI token.
+
+**DO NOT proceed with any publish step until auth is confirmed.**
+
+### 2. Check Node.js and FDK versions (before pack)
+
+- Read `engines.node` and `engines.fdk` from `manifest.json`
+- Check active versions: `node --version` and `fdk --version`
+- **If mismatch, STOP and inform user:**
+  ```
+  Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
+
+  Current environment: Node vW.X.Y, FDK vP.Q.R
+
+  Would you like me to install/switch to the required versions? (yes/no)
+
+  If yes, I'll use the fdk-setup skill to:
+  - Install Node.js X.Y.Z (if not present) and switch to it
+  - Install/upgrade to FDK A.B.C
+
+  If no, you can manually run:
+  - /fdk-setup-use (in app directory) - switches Node version
+  - /fdk-setup-install --version A.B.C - installs FDK version
+  - /fdk-setup-upgrade --to A.B.C - upgrades FDK version
+  ```
+- **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
+
+### 3. Resolve APP_DIR
+
+Absolute path to the folder containing `manifest.json`.
+
+### 4. fdk validate
+
+Run `fdk validate` — zero platform errors and zero lint errors required. On failure, suggest using the **app-dev** skill to fix issues.
+
+### 5. fdk pack
 
 ```bash
-# JWT: export FRESHWORKS_API_KEY=eyJ…  OR  ~/.freshworks/publish-config.json → apiKey
-./skills/publish/scripts/publish.sh /absolute/path/to/app-dir \
-  --support-email=you@your-domain.freshdesk.com
+printf 'Y\n' | fdk pack --skip-coverage --skip-lint
 ```
 
-### Node.js and FDK version handling (CRITICAL)
+Produces `dist/*.zip`. Reuse an existing zip only if `--force-pack` is not needed (agent judgment).
 
-**`fdk pack` respects `manifest.json` engines:**
-- Reads `engines.node` and `engines.fdk` from app's `manifest.json`
-- Uses currently active Node.js version (via `nvm` or system Node)
-- Prompts to continue if active Node doesn't match manifest requirement
-- Auto-answers "Y" to engines prompt when called via `publish.sh` (pipe `printf 'Y\n'`)
+### 6. Determine new vs update
 
-**AGENT MUST:**
-1. **Before running `publish.sh`, check manifest engines vs active versions**
-2. **If mismatch detected, STOP and inform user with exact commands:**
-   - To switch Node: `/fdk-setup-use` in app directory OR `nvm use X.Y.Z`
-   - To install Node: `/fdk-setup-install --version X.Y.Z` OR use fdk-setup skill
-   - To install FDK: `/fdk-setup-install --version A.B.C` OR `/fdk-setup-upgrade --to A.B.C`
-3. **Wait for user confirmation before proceeding with pack/publish**
+- Check `.fdk/app-info.json` for `id`
+- If `id` exists: this is an **update** — use `update_marketplace_app_version`
+- If no `id`: call `list_marketplace_apps` to see if the app already exists
+  - If found: ask user to pick the app, then use `update_marketplace_app_version`
+  - If not found or user confirms new: use `submit_marketplace_app`
 
-**Example manifest engines:**
-```json
-"engines": {
-  "node": "24.11.0",
-  "fdk": "10.0.1"
-}
-```
+### 7. Create upload URL
 
-**Recommended workflow:**
-1. Check `manifest.json` engines
-2. Verify active versions: `node --version` && `fdk --version`
-3. If needed, use `/fdk-setup-use` to create `.nvmrc` and switch Node version
-4. If needed, use `/fdk-setup-install` or `/fdk-setup-upgrade` for FDK
-5. Recheck versions, then run `publish.sh`
+Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSeconds`.
 
-### What `publish.sh` does first (clean AMP path)
-
-These steps are **built in**—no manual curl unless you are debugging.
-
-1. **JWT preflight (default):** `curl` **`GET ${AMP_BASE}/api/v2/apps?per_page=1&page=1&type=custom`** with `Authorization: Bearer …`. **HTTP 200** required before `fdk validate` / pack (fail fast on **401**). Skip with **`--no-preflight`** (e.g. minimal CI).
-2. **Stale app id repair:** If **`.fdk/app-info.json`** contains an **`id`** but **`GET …/api/v2/apps/{id}`** returns **404** (e.g. new API key = different developer account), the script **removes `id`** from that file and continues with **POST create** instead of PATCH.
-3. **Upload:** **`amp_upload.py`** → multipart modularApps, then optional move-to-test.
-
-**Default `target=test`:** after POST (new app) or PATCH (new version), a follow-up PATCH sets `version[state]=test` so the build is installable for QA in the product.
-
-**`target=dev`:** upload the zip only; **skip** move-to-test (same as `--no-move-to-test`). Use when you only need the package on AMP or want AMP’s default post-upload state.
+### 8. Upload zip to S3
 
 ```bash
-./skills/publish/scripts/publish.sh /path/to/app --target=dev
+curl -X PUT --data-binary @dist/<app>.zip "<uploadUrl>"
 ```
 
-Other useful flags: `--pack-only` (no AMP), `--force-pack`, `--skip-validate`, **`--no-preflight`**, `--name=`, `--description=`, `--support-email=` (or `supportEmail` in config).
+Do **not** base64-encode the zip. Do **not** paste the presigned URL into chat or tickets.
+
+### 9. Read manifest.json
+
+Extract:
+- `platform-version` (e.g. `"3.0"`)
+- `modules` keys (e.g. `["common", "support_ticket"]`)
+- `name` (if present) for `appName`
+
+### 10. Call the appropriate MCP tool
+
+**New app** — `submit_marketplace_app`:
+
+| Parameter | Source |
+|-----------|--------|
+| `appName` | manifest `name` or directory name |
+| `appDescription` | ask user or default |
+| `appOverview` | ask user or derive from description (max 150 chars) |
+| `supportEmail` | ask user (required for new app; no separate on-disk token file) |
+| `alternateEmail` | optional |
+| `platformVersion` | manifest `platform-version` |
+| `modules` | manifest `modules` keys |
+| `uploadId` | from step 7 |
+| `targetState` | `"test"` (default) or `"review"` (ask user) |
+| `appType` | `"custom"` (default) unless user specifies |
+| `worksWith` | optional; include `"ai_actions"` if AI Actions app |
+
+**Existing app** — `update_marketplace_app_version`:
+
+| Parameter | Source |
+|-----------|--------|
+| `appId` | from `.fdk/app-info.json` `id` or `list_marketplace_apps` |
+| `platformVersion` | manifest `platform-version` |
+| `modules` | manifest `modules` keys |
+| `uploadId` | from step 7 |
+| `targetState` | `"test"` (default) or `"review"` |
+| `worksWith` | optional |
+
+### 11. Persist app identity
+
+On success, write/update `.fdk/app-info.json` with `id` and `version` from the response so the next run routes to update.
+
+### 12. Verify status
+
+Call `get_marketplace_app_status(appId)` to confirm the version state.
+
+### 13. Report to user
+
+Tell the user: **app id**, **version state**, and where to install custom apps in their product (**Admin -> Apps** or equivalent).
+
+## MCP tools reference
+
+| Tool | Purpose |
+|------|---------|
+| `list_marketplace_apps` | List all apps on the developer account |
+| `create_app_upload_url` | Get presigned S3 URL for zip upload |
+| `submit_marketplace_app` | Create a new app + first version |
+| `update_marketplace_app_version` | Upload a new version to an existing app |
+| `get_marketplace_app_status` | Check app state and latest version |
+
+## Error handling
+
+- **401/403 from any MCP tool:** STOP immediately and show the auth setup instructions from step 1. The token may be expired, misconfigured, or missing. Do not retry — prompt the user to fix their token and re-run.
+- **Validation errors (400):** Suggest manifest fixes or use app-dev skill. Common: products vs modules mismatch.
+- **Upload failures:** Retry `create_app_upload_url` + re-upload.
+- **fdk validate / fdk pack failures:** Use app-dev skill to fix; check Node/FDK version alignment.
 
 ## Preconditions
 
 | Requirement | Notes |
 |-------------|--------|
-| `manifest.json` | App root; modules drive `app[products][]` via `amp_upload.py` mapping. |
-| `fdk` on PATH | `fdk validate` + `fdk pack --skip-coverage --skip-lint` (script may reuse existing `dist/*.zip`). |
-| Developer Portal JWT | `FRESHWORKS_API_KEY` or `apiKey` in `~/.freshworks/publish-config.json`. Never ask users to paste JWT into chat for routine automation. |
-| Support email | Required for **create**; updates reuse publisher/locale from AMP + fallbacks. Config key `supportEmail` supported. |
-| App identity for updates | `.fdk/app-info.json` with `id` after first successful publish; otherwise first run creates a new AMP app. If `id` is **404** on this account, `publish.sh` clears it automatically. |
+| `manifest.json` | App root; must be Platform 3.0 with `modules`. |
+| `fdk` on PATH | `fdk validate` + `fdk pack`. |
+| MCP tools configured | Claude Code: auto-loaded from plugin `.mcp.json` (prompted at install via `userConfig`). Cursor: add server to `~/.cursor/mcp.json`. |
+| Support email | Required for **create** (new app); updates reuse publisher metadata from the existing marketplace app. |
+| App identity for updates | `.fdk/app-info.json` with `id` after first successful publish. |
 
-## Agent playbook
+## Optional: list apps
 
-1. **Check Node.js and FDK versions** (before pack):
-   - Read `engines.node` and `engines.fdk` from `manifest.json`
-   - Check active versions: `node --version` and `fdk --version`
-   - **If mismatch, EXPLICITLY tell the user:**
-     ```
-     Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
-     
-     Current environment: Node vW.X.Y, FDK vP.Q.R
-     
-     Would you like me to install/switch to the required versions? (yes/no)
-     
-     If yes, I'll use the fdk-setup skill to:
-     - Install Node.js X.Y.Z (if not present) and switch to it
-     - Install/upgrade to FDK A.B.C
-     
-     If no, you can manually run:
-     - /fdk-setup-use (in app directory) - switches Node version
-     - /fdk-setup-install --version A.B.C - installs FDK version
-     - /fdk-setup-upgrade --to A.B.C - upgrades FDK version
-     ```
-   - **If user says YES:**
-     - Use `/fdk-setup-use` command in the app directory (handles Node switching and .nvmrc)
-     - If FDK version mismatch, use `/fdk-setup-install --version A.B.C` or `/fdk-setup-upgrade --to A.B.C`
-     - Verify versions again after installation
-   - **If user says NO or manually installs:**
-     - Wait for user to confirm they've switched versions
-     - Verify versions before proceeding
-   - **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
-
-2. Resolve **`APP_DIR`** (absolute path to folder containing `manifest.json`).
-
-3. Choose **test** vs **dev** from user intent; map to `publish.sh` **`--target`** (default test).
-
-4. Run **`publish.sh`** (preflight + stale-id repair are automatic). Stream or summarize stderr; **do not** paste presigned S3 URLs from AMP JSON into tickets or chat.
-
-5. On **401** (including preflight), rotate the Developer Portal API key in config; on **400**, compare manifest modules to **`MODULE_TO_PRODUCT`** in **`amp_upload.py`** or use **app-dev** skill.
-
-6. Tell the user: **app id**, **version state**, and where to install **custom** apps in their product (**Admin → Apps** / equivalent for their Freshworks product).
-
-## Optional: list apps on the account
-
-```bash
-./skills/publish/scripts/list-apps.sh
-```
-
-Uses `GET …/api/v2/apps?type=custom` (server-side filter on AMP).
-
-## Deeper reference
-
-Technical detail, endpoints, and troubleshooting: **[references/amp-modular-upload.md](./references/amp-modular-upload.md)**
+Call `list_marketplace_apps` MCP tool (no parameters). Returns app id, name, type, products, and latest version for each app.
 
 ## Links
 
 - Developer Portal (API key): [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
-- AMP v2 overview (public): [api.freshworks.com/marketplace/v2](https://api.freshworks.com/marketplace/v2)
+- Marketplace API overview (public): [api.freshworks.com/marketplace/v2](https://api.freshworks.com/marketplace/v2)

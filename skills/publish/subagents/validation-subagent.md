@@ -1,10 +1,5 @@
-# Validation (stub)
+# Validation before publish (subagent stub)
 
-Prefer the unified script: **`../scripts/publish.sh`** runs **`fdk validate`** unless **`--skip-validate`**.
+Follow **[../SKILL.md](../SKILL.md)**: run **`fdk validate`** in the app root with **zero** platform errors and **zero** lint errors before **`fdk pack`**.
 
-**Common fixes**
-
-- Wrong Node / FDK version for the app’s `platform-version` — see **fdk-setup** skill.
-- Missing dependencies — `npm install` in app root before pack.
-
-For manifest and Platform 3.0 rules, use the **app-dev** (or **freshworks-platform3**) skill.
+If validation fails repeatedly, use the **app-dev** skill to fix manifest, `requests.json`, modules, or lint issues.

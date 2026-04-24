@@ -1,12 +1,9 @@
-# Packing (stub)
+# Packing for publish (subagent stub)
 
-**Default:** **`../scripts/publish.sh`** runs **`fdk pack --skip-coverage --skip-lint`** when no suitable **`dist/*.zip`** exists, or when **`--force-pack`**.
+Follow **[../SKILL.md](../SKILL.md)**:
 
-**Pack only:** `publish.sh <APP_DIR> --pack-only` (no JWT).
+```bash
+printf 'Y\n' | fdk pack --skip-coverage --skip-lint
+```
 
-**Common fixes**
-
-- Missing **`.report.json`** — run **`fdk test`** once, or rely on script’s skip-coverage path.
-- Pack prompts — script pipes `Y` for engines confirmation when shown.
-
-Output artifact: **`dist/*.zip`** (newest used).
+Produces **`dist/*.zip`**. Align active **Node** and **FDK** versions with **`manifest.json` `engines`** before packing (see the publish skill playbook).

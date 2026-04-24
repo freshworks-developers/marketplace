@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "freshworks-marketplace": {
+      "url": "https://mcp.freshworks.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${user_config.mcp_auth_token}"
+      }
+    }
+  }
+}

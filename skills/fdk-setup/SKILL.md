@@ -235,6 +235,46 @@ Next steps:
    3. Create app: fdk create
    ```
 
+6. **Post-install: MCP server configuration (optional, skippable)**
+
+   After a successful install, offer to configure the MCP connection for publish tools:
+
+   ```
+   Would you like to configure the Marketplace MCP server for publishing?
+   This connects your IDE to the Freshworks openai-server so you can
+   use publish tools (list apps, submit, update, check status).
+   You can skip this and set it up later.  (y/N)
+   ```
+
+   **If user says yes:**
+   - Ask for their **API key** from the Developer Portal profile page: [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **"API key for Freddy AI Copilot VS Code plugin"** section → click **Copy**
+   - The MCP server URL is fixed: `https://mcp.freshworks.dev/mcp`
+   - Detect IDE and write config:
+
+     **Claude Code:** Guide them to run `/config` and set the plugin's `mcp_auth_token` field (stored in system keychain via `userConfig`). The server URL is already bundled in `.mcp.json`.
+
+     **Cursor:** Write or update `~/.cursor/mcp.json`:
+     ```json
+     {
+       "mcpServers": {
+         "freshworks-marketplace": {
+           "url": "https://mcp.freshworks.dev/mcp",
+           "headers": {
+             "Authorization": "Bearer <JWT>"
+           }
+         }
+       }
+     }
+     ```
+   - Confirm: "MCP server configured. Publish tools are now available."
+
+   **If user says no or skips:**
+   - "Skipped. Configure MCP later via your IDE settings (see AGENTS.md)."
+
+   **Rules:**
+   - NEVER ask the user to paste the JWT into chat — write to config file or direct to IDE settings UI
+   - Only offer this step after **successful install or upgrade**, not during status/troubleshoot/downgrade/uninstall
+
 **Error handling:** If installation fails, read `references/macos.md` or `references/windows.md` for OS-specific troubleshooting.
 
 **CRITICAL RULES:**

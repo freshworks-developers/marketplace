@@ -309,7 +309,23 @@ REPORT FORMAT:
 
 CRITICAL: If ANY mandatory test fails, do not say "installation complete".
 
-SLASH_COMMAND_CLOSEOUT: After verification and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task.
+POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
+  echo ""
+  echo "=== Marketplace MCP server (optional) ==="
+  echo "Would you like to configure the MCP server for publish tools?"
+  echo "This connects your IDE to the Freshworks openai-server."
+  echo "(y/N)"
+  # If user says yes:
+  #   1. Ask for API key from https://developers.freshworks.com/developer/ → "API key for Freddy AI Copilot VS Code plugin" section → Copy
+  #   2. MCP server URL is fixed: https://mcp.freshworks.dev/mcp
+  #   3. Detect IDE:
+  #      - Claude Code: direct user to /config → set mcp_auth_token (URL already in .mcp.json)
+  #      - Cursor: write ~/.cursor/mcp.json with freshworks-marketplace server entry (url: https://mcp.freshworks.dev/mcp)
+  #   4. Confirm: "MCP server configured. Publish tools are now available."
+  # If user says no: "Skipped. Configure MCP later via IDE settings (see AGENTS.md)."
+  # NEVER let the user paste JWT into chat — write to config file or direct to IDE settings UI.
+
+SLASH_COMMAND_CLOSEOUT: After verification, optional MCP config, and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task.
   `
 })
 ```

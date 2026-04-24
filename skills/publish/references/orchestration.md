@@ -1,8 +1,10 @@
 # Orchestration note
 
-The older **multi-subagent phase** workflow has been **retired** in favor of a single path:
+Publishing uses a **single MCP-backed path** documented in **[../SKILL.md](../SKILL.md)**:
 
-1. Run **`scripts/publish.sh`** (see **[../SKILL.md](../SKILL.md)**).
-2. Use **[amp-modular-upload.md](./amp-modular-upload.md)** for AMP multipart details and test vs dev behavior.
+1. Auth preflight (`list_marketplace_apps`).
+2. `fdk validate` and `fdk pack`.
+3. `create_app_upload_url`, upload zip to S3 with `curl`, then `submit_marketplace_app` or `update_marketplace_app_version`.
+4. `get_marketplace_app_status` and update `.fdk/app-info.json` as needed.
 
-The files under **`../subagents/`** are short troubleshooting stubs only.
+The files under **`../subagents/`** are short troubleshooting stubs aligned with that playbook.

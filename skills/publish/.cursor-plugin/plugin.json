@@ -1,8 +1,8 @@
 {
   "name": "publish",
-  "displayName": "Freshworks AMP upload",
-  "version": "1.0.0",
-  "description": "Pack and upload any Platform 3.0 custom app to AMP (test or dev)",
+  "displayName": "Freshworks Marketplace Publish",
+  "version": "1.1.0",
+  "description": "Publish Platform 3.0 apps to Freshworks Marketplace via MCP tools (presigned S3 upload, submit/update). MCP server config is bundled at the plugin root .mcp.json. Supports new apps and version updates, auth preflight, and status checks.",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"

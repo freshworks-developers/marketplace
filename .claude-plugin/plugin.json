@@ -1,12 +1,21 @@
 {
   "name": "freshworks",
-  "description": "Freshworks Platform 3.0 app development skill",
-  "version": "1.0.0",
+  "description": "Freshworks Platform 3.0 app development, publishing, and FDK management skills. Bundles MCP server config (.mcp.json) — on install you will be prompted for your Developer Portal JWT.",
+  "version": "1.1.0",
   "author": {
     "name": "Freshworks Developers"
   },
   "homepage": "https://github.com/freshworks-developers/marketplace",
   "repository": "https://github.com/freshworks-developers/marketplace",
   "license": "MIT",
-  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"]
+  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"],
+  "userConfig": {
+    "mcp_auth_token": {
+      "type": "string",
+      "title": "Marketplace API token (JWT)",
+      "description": "API key from https://developers.freshworks.com/developer/ — find 'API key for Freddy AI Copilot VS Code plugin' section and click Copy.",
+      "sensitive": true,
+      "required": true
+    }
+  }
 }
