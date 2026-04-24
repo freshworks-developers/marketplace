@@ -40,7 +40,7 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`freshworks
 
 If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-app-dev** (by task), optionally **fw-review** before submission, then **fw-publish** when publishing.
 
-**End-to-end reference (cold machine → ship):** **fw-setup** (FDK/Node) → **fw-app-dev** (full UI app) and/or **fw-ai-app-dev** (`actions.json` / SMI) → optional **fw-review** (structured audit; not the same as **fw-app-dev** `/fdk-review`) → **fw-publish** (MCP upload/submit). The human **`README.md`** lists skills in this order with one-line links only; detail stays in each skill’s `SKILL.md` / `README.md` and in this file.
+**End-to-end reference (cold machine → ship):** **fw-setup** (FDK/Node) → **fw-app-dev** (full UI app) and/or **fw-ai-app-dev** (`actions.json` / SMI) → optional **fw-review** (structured audit; not the same as **fw-app-dev** `/fdk-review`) → **fw-publish** (MCP upload/submit). Humans: expanded narrative under **`README.md`** *From toolchain to marketplace (lifecycle)*; agents: tables above plus per-skill `SKILL.md`.
 
 ## Non-negotiables (app work)
 
