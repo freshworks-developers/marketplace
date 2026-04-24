@@ -41,6 +41,9 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 ```
 marketplace/
+├── .mcp.json                 # Bundled MCP: freshworks-marketplace (URL + Authorization)
+├── .claude/
+│   └── settings.json         # Claude Code permissions (MCP tool deny list; must match .mcp.json server key)
 ├── .cursor/
 │   └── rules/                # Cursor workspace rules (.mdc files) - plugin root
 ├── .claude-plugin/           # Claude Code plugin config

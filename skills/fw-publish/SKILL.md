@@ -32,7 +32,7 @@ To set this up:
    Cursor:
      Add the server to ~/.cursor/mcp.json (global) or
      .cursor/mcp.json (project-level). The canonical template is
-     **`skills/fw-publish/.mcp.json`** in this repo (same `mcpServers` shape);
+     **`.mcp.json`** at this repository’s root (same `mcpServers` shape);
      use **`Bearer <your-jwt-token>`** in place of Claude’s
      **`${user_config.mcp_auth_token}`** — Cursor does not expand
      **`user_config`**.
@@ -186,7 +186,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 |-------------|--------|
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
 | `fdk` on PATH | `fdk validate` + `fdk pack`. |
-| MCP tools configured | Claude Code: from **`skills/fw-publish/.mcp.json`** when the publish plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
+| MCP tools configured | Claude Code: from root **`.mcp.json`** when the marketplace plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
 | Support email | Required for **create** (new app); updates reuse publisher metadata from the existing marketplace app. |
 | App identity for updates | `.fdk/app-info.json` with `id` after first successful publish. |
 

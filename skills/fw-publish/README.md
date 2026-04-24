@@ -4,7 +4,7 @@ Guide for publishing **Freshworks Platform 3.0** custom apps to the **Freshworks
 
 ## Overview
 
-**fw-publish** documents auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps. MCP server reference config lives at **`skills/fw-publish/.mcp.json`**. Pair with **fw-app-dev** for manifest and validation fixes before packing.
+**fw-publish** documents auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps. MCP server reference config is **`.mcp.json`** at the **repository root** (same monorepo as this skill). Pair with **fw-app-dev** for manifest and validation fixes before packing.
 
 ## Install
 
@@ -39,7 +39,7 @@ claude plugin install fw-publish@freshworks-developers
 | Path | Purpose |
 |------|---------|
 | `SKILL.md` | Orchestration, MCP tool usage, error handling |
-| `.mcp.json` | Reference `freshworks-marketplace` server block (URL + `Authorization`) |
+| *(repo root)* `.mcp.json` | Reference `freshworks-marketplace` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
 | `subagents/` | Optional deep dives (validation, packing, metadata, API publishing) |
 | `references/` | Extra orchestration notes |
 | `examples/test-app/` | Minimal sample app for dry runs |
