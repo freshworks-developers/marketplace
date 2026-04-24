@@ -44,6 +44,8 @@ claude plugin install fw-publish@freshworks-developers
 | `references/` | Extra orchestration notes |
 | `examples/test-app/` | Minimal sample app for dry runs |
 
+This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `subagents/`, `references/`). Repo-wide inventory: [`AGENTS.md`](../../AGENTS.md) → **fw-publish**.
+
 ## Requirements
 
 - **Developer Portal** JWT for MCP (`Authorization: Bearer …`); see **AGENTS.md** and **SKILL.md** for Cursor vs Claude Code token placement

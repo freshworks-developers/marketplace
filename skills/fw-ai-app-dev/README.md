@@ -60,7 +60,7 @@ claude plugin install fw-ai-app-dev@freshworks-developers
 
 - **SKILL.md** — Orchestrator; points to rules and references
 - **agents/** — Integration scoper, scope implementer, AI action integration validator
-- **rules/** — Scoped `.mdc` rules (platform, schemas, server, requests, validation, test data, README, API docs)
+- **rules/** — Scoped `.mdc` rules (no slash `commands/` in this skill). Filenames: `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc` — full table in repo [`AGENTS.md`](../../AGENTS.md) (*Rules and slash commands* → **fw-ai-app-dev**).
 - **references/** — `ai-actions-guide.md`, quick reference, core constraints
 - **scripts/ai-actions-skeleton/** — Minimal starter files
 - **assets/templates/ai-actions-skeleton/** — Fuller template (manifest, sample actions)

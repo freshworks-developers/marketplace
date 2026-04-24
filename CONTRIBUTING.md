@@ -67,6 +67,8 @@ marketplace/
 
 ## How to Contribute
 
+When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`.cursor-plugin/marketplace.json`** stay aligned with what ships.
+
 ### Reporting Bugs
 
 Before submitting a bug report:

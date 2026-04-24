@@ -53,15 +53,64 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 ## Repository layout (skills)
 
 - **`skills/{fw-app-dev|fw-ai-app-dev|fw-review|fw-setup|fw-publish}/SKILL.md`** — skill entry and frontmatter
-- **`skills/*/rules/*.mdc`** — always-on rules (referenced by plugins)
-- **`skills/*/commands/*.md`** — slash-command bodies (IDE-agnostic)
+- **`skills/*/rules/*.{mdc,md}`** — editor rules (`.mdc`) or **fw-review** audit rules (`.md`); loaded via each plugin’s `rulesDirectory` / `rulesPath`
+- **`skills/*/commands/*.md`** — slash-command bodies where the skill defines them (**fw-app-dev**, **fw-setup** only); stem of filename → `/command-name` in the IDE
+- **`skills/fw-review/scripts/*.js`** — deterministic SC-* checks (not slash commands); mapped from `skills/fw-review/rules/script-check-rules.md`
 - **`skills/*/references/**`** — load **on demand** (API, errors, events, playbooks); index: `skills/fw-app-dev/references/skill-advanced-topics.md`
 - **`skills/*/assets/templates/**`** — app skeletons
+- **`skills/fw-publish/subagents/**`** — optional deep-dive prompts (no `rules/` or `commands/` trees in that skill)
 - **`.mcp.json`** (repository root) — canonical **`freshworks-marketplace`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
 - **`.claude/settings.json`** — Claude Code project permissions (MCP defaults for this repo; server key must match **`.mcp.json`**)
 - **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-developer-tooling`**; each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface`, like [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json))
 
-**Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/`; IDE plugin JSON points there—do not duplicate command/rule trees under `.cursor/` inside skills.
+**Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/` where present; IDE plugin JSON points there—do not duplicate command/rule trees under `.cursor/` inside skills.
+
+## Rules and slash commands (inventory)
+
+Use this list when adding or renaming files so **`.cursor-plugin/marketplace.json`** `rulesPath` / `commandsPath` and plugin `plugin.json` entries stay aligned.
+
+### fw-setup — `skills/fw-setup/`
+
+| Slash command | Command file |
+|---------------|----------------|
+| `/fw-setup-install` | `commands/fw-setup-install.md` |
+| `/fw-setup-upgrade` | `commands/fw-setup-upgrade.md` |
+| `/fw-setup-downgrade` | `commands/fw-setup-downgrade.md` |
+| `/fw-setup-uninstall` | `commands/fw-setup-uninstall.md` |
+| `/fw-setup-status` | `commands/fw-setup-status.md` |
+| `/fw-setup-troubleshoot` | `commands/fw-setup-troubleshoot.md` |
+| `/fw-setup-use` | `commands/fw-setup-use.md` |
+
+**Rules (`.mdc`):** `rules/fdk-enforcement.mdc`
+
+*(Legacy `/fdk-*` names may still appear in some environments if the client registered aliases; prefer `/fw-setup-*`.)*
+
+### fw-app-dev — `skills/fw-app-dev/`
+
+| Slash command | Command file |
+|---------------|----------------|
+| `/fdk-fix` | `commands/fdk-fix.md` |
+| `/fdk-migrate` | `commands/fdk-migrate.md` |
+| `/fdk-refactor` | `commands/fdk-refactor.md` |
+| `/fdk-review` | `commands/fdk-review.md` |
+
+**Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
+
+### fw-ai-app-dev — `skills/fw-ai-app-dev/`
+
+**Commands:** none (orchestration in `SKILL.md`, optional prompts under `agents/`).
+
+**Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
+
+### fw-review — `skills/fw-review/`
+
+**Commands:** none (silent pipeline in `SKILL.md`; checks via `scripts/*.js` per `rules/script-check-rules.md`).
+
+**Rules (`.md`):** `frontend-files-rules.md`, `iparam-rules.md`, `report.md`, `script-check-rules.md`
+
+### fw-publish — `skills/fw-publish/`
+
+**Commands:** none. **Rules:** none. Playbooks in `SKILL.md`, `references/`, and `subagents/`; MCP in repo root **`.mcp.json`**.
 
 ## Editing this repo (maintenance)
 

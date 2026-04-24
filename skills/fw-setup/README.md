@@ -31,6 +31,13 @@
 
 **fw-setup** installs and manages the Freshworks Development Kit (**FDK**) and **Node.js** via **nvm** on macOS, Windows, and Linux. Use it when the CLI is missing, the wrong major version, or broken across shells; marketplace publishing expects **FDK 10.x** on **Node 24.x**.
 
+## Rules and slash commands (files)
+
+- **Rules:** `rules/fdk-enforcement.mdc`
+- **Commands:** `/fw-setup-install` … `/fw-setup-use` → `commands/fw-setup-*.md` (seven files; command name matches filename stem)
+
+Canonical table: repository [`AGENTS.md`](../../AGENTS.md) → **Rules and slash commands (inventory)** → **fw-setup**.
+
 ## Install
 
 ### Install via CLI:

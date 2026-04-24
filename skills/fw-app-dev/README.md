@@ -62,23 +62,23 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 
 **Skill entrypoint:** `SKILL.md` (core). **On-demand references:** `references/skill-advanced-topics.md` (OAuth depth, reference map, extended checklists). **Maintainers:** `SKILL_REFACTOR_ROLLBACK.md` documents the token refactor and how to restore removed `SKILL.md` text via git.
 
-**Rules:**
-- `freshworks-platform3.mdc` - Platform 3.0 enforcement
-- `async-patterns.mdc` - SMI `renderData()`, events, manifest ↔ server.js alignment, async/await patterns
-- `security.mdc` - Security enforcement
-- `validation-workflow.mdc` - Auto-validation & fixes
-- `app-building-blocking-gates.mdc` - Mandatory gates
-- `platform3-modules-locations.mdc` - Module reference
-- `app-templates.mdc` - Template selection
-- `complexity-reduction.mdc` - Fix complexity
-- `async-patterns.mdc` - Fix async/await
-- `confusion.mdc` - Disambiguation
+**Rules (all under `rules/`; canonical list in repo [`AGENTS.md`](../../AGENTS.md) § *Rules and slash commands*):**
+- `app-building-blocking-gates.mdc` — Mandatory gates
+- `app-templates.mdc` — Template selection
+- `async-patterns.mdc` — SMI `renderData()`, events, manifest ↔ server.js, async/await
+- `complexity-reduction.mdc` — Fix complexity
+- `confusion.mdc` — Disambiguation
+- `freshworks-platform3.mdc` — Platform 3.0 enforcement
+- `platform3-modules-locations.mdc` — Module reference
+- `prerequisites-check.mdc` — Toolchain / app prerequisites
+- `security.mdc` — Security enforcement
+- `validation-workflow.mdc` — Auto-validation and fixes
 
-**Commands:**
-- `/fdk-migrate` - Migrate **Platform 2.3** (2.x), **FDK 9.x**, **Node 18** → **Platform 3.0**, **FDK 10.0.1**, **Node 24**
-- `/fdk-fix` - Fix all platform and lint errors
-- `/fdk-refactor` - Reduce function complexity (≤ 7)
-- `/fdk-review` - Run 3 rounds of `fdk validate`
+**Commands (all under `commands/`; same inventory in [`AGENTS.md`](../../AGENTS.md)):**
+- `/fdk-fix` — `commands/fdk-fix.md` — Fix platform and lint errors
+- `/fdk-migrate` — `commands/fdk-migrate.md` — Migrate **Platform 2.3** (2.x), **FDK 9.x**, **Node 18** → **Platform 3.0**, **FDK 10.0.1**, **Node 24**
+- `/fdk-refactor` — `commands/fdk-refactor.md` — Reduce function complexity (≤ 7)
+- `/fdk-review` — `commands/fdk-review.md` — Run 3 rounds of `fdk validate`
 
 **References:**
 - Progressive disclosure documentation (140+ files)

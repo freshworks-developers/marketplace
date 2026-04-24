@@ -115,6 +115,8 @@ Skills are also available project-wide via `.cursor/skills/`:
 
 This allows project contributors to use skills without global installation.
 
+**Rules, slash commands, and check scripts:** every `rules/*` and `commands/*` file (and **fw-review** `scripts/*`) is enumerated in **[`AGENTS.md`](AGENTS.md)** under **Rules and slash commands (inventory)**—update that section when you add or rename files so marketplace `rulesPath` / `commandsPath` stay accurate.
+
 
 ## Skill Discovery
 

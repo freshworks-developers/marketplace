@@ -39,8 +39,8 @@ claude plugin install fw-review@freshworks-developers
 | Path | Purpose |
 |------|---------|
 | `SKILL.md` | Workflow, rule ID summary, prerequisites |
-| `rules/` | IP-*, FF-*, SC-* criteria and report layout |
-| `scripts/` | Node CLIs for script-backed checks (see `scripts/README.md`) |
+| `rules/` | `frontend-files-rules.md`, `iparam-rules.md`, `report.md`, `script-check-rules.md` (IP-*, FF-*, SC-* criteria) |
+| `scripts/` | Node CLIs for script-backed checks (see `scripts/README.md`; inventory in repo [`AGENTS.md`](../../AGENTS.md)) |
 | `.claude-plugin/` / `.cursor-plugin/` | Plugin metadata for marketplace installs |
 
 ## Requirements
