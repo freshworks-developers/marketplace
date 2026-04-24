@@ -30,27 +30,44 @@
 ### npx skills
 
 ```bash
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-review
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
 ```
 
 
 ## Available Skills
 
+Skills are ordered roughly how you use them from a **cold machine** through a **shipped marketplace app**. You do not need every skill for every task (for example, AI Actions–only work may never touch **fw-app-dev** UI locations).
+
 | Skill | Description | Execution Mode |
 |-------|-------------|----------------|
-| [**fw-app-dev**](skills/fw-app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
-| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions: `actions.json`, SMI, request templates, integrations, validation | Direct |
-| [**fw-review**](skills/fw-review/) | Automated marketplace app audit: iparams, frontend, script checks, structured report | Direct |
-| [**fw-setup**](skills/fw-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
-| [**fw-publish**](skills/fw-publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+| [**fw-setup**](skills/fw-setup/) | Install, upgrade, and troubleshoot **FDK** and **Node.js** (nvm), including persistence across shells | **Subagent-Based** |
+| [**fw-app-dev**](skills/fw-app-dev/) | Build, debug, migrate, and validate full **Platform 3.0** marketplace apps (manifest, modules, requests, OAuth, serverless, Crayons) | Direct |
+| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | **AI Actions** and integrations: `actions.json`, SMI, request templates, schemas, test data, `fdk validate` | Direct |
+| [**fw-review**](skills/fw-review/) | Structured **pre-submission audit**: iparams, frontend rules, deterministic `scripts/*.js` checks, fixed report format | Direct |
+| [**fw-publish**](skills/fw-publish/) | **Marketplace publish** via MCP: `fdk validate` / `fdk pack`, app upload, submit or update version | Direct |
 
-### Automated app review (`fw-review`)
+### From toolchain to marketplace (complete lifecycle)
 
-[**fw-review**](skills/fw-review/) is a separate skill from **fw-app-dev**’s `/fdk-review` (validate rounds). It runs a **fixed, silent pipeline**: read `manifest.json` and iparams per `rules/*.md`, execute **deterministic** checks from `scripts/*.js` for SC-* rule IDs, apply frontend FF-* rules, and emit a structured **App Review Result** (format in `skills/fw-review/rules/report.md`). Use it when you want a **repeatable audit** before QA or marketplace submission. **FDK** is not bundled with the repo—ensure `fdk` is available (e.g. via [**fw-setup**](skills/fw-setup/)) for phases that need it. More detail: [`skills/fw-review/README.md`](skills/fw-review/README.md).
+1. **Toolchain — [fw-setup](skills/fw-setup/)**  
+   Start here on a new machine, CI image, or broken shell: install **FDK 10.x** on **Node 24.x** (recommended for publishing), align **nvm** / PATH, and recover from version drift. Without a working `fdk`, later steps (`fdk validate`, `fdk pack`, review scripts that assume FDK) stall. Slash commands such as `/fw-setup-install`, `/fw-setup-status`, and `/fw-setup-troubleshoot` wrap that work (see **Subagent-Based Skills** below for how **fw-setup** runs).
+
+2. **Application development — [fw-app-dev](skills/fw-app-dev/)**  
+   Build or migrate the **full** Platform 3.0 app: `manifest.json` (`modules`), `config/requests.json`, OAuth, serverless handlers, frontend locations, Crayons UI, and `fdk validate` with guided fixes. Commands like `/fdk-fix`, `/fdk-migrate`, `/fdk-refactor`, and `/fdk-review` (validate rounds) live here. This skill does **not** install FDK—pair it with **fw-setup**.
+
+3. **AI Actions & APIs — [fw-ai-app-dev](skills/fw-ai-app-dev/)**  
+   When the product surface is **`actions.json`** plus serverless SMI (not a full sidebar UI app), use this skill for flat request schemas, `$request.invokeTemplate`, `server/server.js` patterns, test payloads, and integration checklists. It complements **fw-app-dev**; for a combined app (UI + actions), use both as the work requires.
+
+4. **Pre-flight audit — [fw-review](skills/fw-review/)**  
+   Before heavy QA or marketplace submission, run a **repeatable, policy-driven** pass: manifest and iparams rules, frontend FF-* checks, and SC-* checks backed by `scripts/*.js`, producing an **App Review Result** per `skills/fw-review/rules/report.md`. This is **not** the same as **fw-app-dev**’s `/fdk-review` (which re-runs `fdk validate`). Ensure **FDK** is on PATH when a phase needs it (**fw-setup**).
+
+5. **Publish — [fw-publish](skills/fw-publish/)**  
+   After the app validates and packs: configure the **`freshworks-marketplace`** MCP client (repo root **`.mcp.json`** template), then drive upload and **submit** or **update version** tools. Requires a Developer Portal JWT and a built zip from `fdk pack`. **fw-app-dev** (or **fw-ai-app-dev**) fixes validation issues; **fw-review** is optional but reduces surprises at upload.
+
+**Typical thread:** **fw-setup** → **fw-app-dev** (and/or **fw-ai-app-dev**) → optional **fw-review** → **fw-publish**.
 
 ### Subagent-Based Skills
 
