@@ -46,13 +46,15 @@ marketplace/
 ├── .claude-plugin/           # Claude Code plugin config
 ├── .cursor-plugin/           # Cursor plugin config
 ├── skills/
-│   ├── app-dev/              # Core app development skill
+│   ├── fw-app-dev/           # Core app development skill
 │   │   ├── SKILL.md          # Main skill definition
 │   │   ├── README.md         # Skill documentation
-│   │   ├── commands/         # Slash commands (/migrate, /review, etc.)
+│   │   ├── commands/         # Slash commands (/fdk-fix, /fdk-migrate, etc.)
 │   │   ├── references/       # Documentation loaded on-demand
 │   │   └── assets/           # Templates and resources
-│   └── app-dev/              # App development skill
+│   ├── fw-ai-app-dev/        # AI Actions + third-party integrations (actions.json, SMI)
+│   ├── fw-setup/             # FDK + Node install / lifecycle (nvm)
+│   └── fw-publish/           # Marketplace publish (MCP) guidance
 ├── scripts/                  # Build and utility scripts
 ├── AGENTS.md                 # Agent entry point (routing + repo norms)
 ├── CODE_OF_CONDUCT.MD        # Community guidelines
@@ -202,7 +204,7 @@ head -20 skills/your-skill/SKILL.md
 
 1. Copy the skill to your Cursor skills directory:
    ```bash
-   cp -r skills/app-dev ~/.cursor/skills/
+   cp -r skills/fw-app-dev ~/.cursor/skills/
    ```
 2. Open Cursor and verify the skill loads
 3. Test commands and rules work as expected

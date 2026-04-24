@@ -1,0 +1,126 @@
+---
+name: prerequisites-check
+description: Enforce Node.js 24.x + FDK 10.x prerequisites before any fw-app-dev task
+---
+
+# Prerequisites Check — Mandatory Before Any Task
+
+**CRITICAL: Run this check BEFORE generating apps, fixing errors, migrating, refactoring, or reviewing.**
+
+## Check Commands
+
+```bash
+node --version  # Must output v24.x.x
+fdk version     # Must output 10.x or newer
+```
+
+## Decision Logic
+
+### ✅ PASS (both conditions met)
+- Node version starts with `v24.`
+- FDK version starts with `10.` or higher
+- **ACTION:** Proceed with user's request
+
+### ❌ FAIL (either condition fails)
+- Node is NOT 24.x
+- FDK is NOT 10.x or newer
+- Either command fails / not found
+- **ACTION:** STOP immediately, do NOT generate any files, respond with error below
+
+## Error Response Template
+
+When prerequisites fail, respond EXACTLY with:
+
+```
+⚠️ PREREQUISITES NOT MET
+
+fw-app-dev requires:
+- Node.js 24.x (current: [detected version or "not found"])
+- FDK 10.x (current: [detected version or "not found"])
+
+Install prerequisites first:
+
+[if fw-setup skill is available in this workspace:]
+1. Run: /fw-setup-install
+2. Verify: node --version && fdk version
+3. Then retry your command
+
+[if fw-setup skill is NOT available:]
+1. Install fw-setup skill:
+   npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+2. Run: /fw-setup-install
+3. Then retry your command
+```
+
+Replace `[detected version or "not found"]` with actual output from commands.
+
+## Examples
+
+### Example 1: Node 18 detected
+```
+⚠️ PREREQUISITES NOT MET
+
+fw-app-dev requires:
+- Node.js 24.x (current: v18.20.8)
+- FDK 10.x (current: 9.8.2)
+
+Install prerequisites first:
+
+1. Run: /fw-setup-install
+2. Verify: node --version && fdk version
+3. Then retry your command
+```
+
+### Example 2: FDK not found
+```
+⚠️ PREREQUISITES NOT MET
+
+fw-app-dev requires:
+- Node.js 24.x (current: v24.11.1)
+- FDK 10.x (current: not found)
+
+Install prerequisites first:
+
+1. Run: /fw-setup-install
+2. Verify: node --version && fdk version
+3. Then retry your command
+```
+
+### Example 3: Both missing
+```
+⚠️ PREREQUISITES NOT MET
+
+fw-app-dev requires:
+- Node.js 24.x (current: not found)
+- FDK 10.x (current: not found)
+
+Install prerequisites first:
+
+1. Install fw-setup skill:
+   npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+2. Run: /fw-setup-install
+3. Then retry your command
+```
+
+## Implementation Notes
+
+- Check runs **inline** (no Task/Agent spawn)
+- Takes <1 second
+- Version extraction: use regex `grep -oE '[0-9]+\.[0-9]+\.[0-9]+'` for robust parsing
+- If check fails, **do not** attempt to install FDK/Node yourself
+- **Never** improvise shell scripts to fix prerequisites
+- Always point to `/fw-setup-install`
+
+## Edge Cases
+
+**Q: User has FDK 10.x but wrong Node (e.g., Node 18)?**
+A: FAIL. Both must be correct.
+
+**Q: User has multiple Node versions via nvm but wrong one active?**
+A: FAIL. Direct to `/fw-setup-use 10` then retry.
+
+**Q: User explicitly says "skip the check"?**
+A: Still FAIL. Prerequisites are non-negotiable for fw-app-dev.
+
+**Q: Check passes initially but FDK disappears mid-task?**
+A: Re-check before `fdk validate` / `fdk run` and show same error.

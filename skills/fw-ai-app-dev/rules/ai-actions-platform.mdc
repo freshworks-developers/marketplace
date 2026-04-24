@@ -1,0 +1,319 @@
+---
+description: "Freshworks Platform 3.0 AI Actions manifest, modules, engines, and serverless app structure when editing actions or platform config."
+globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/iparams.json,**/manifest.json,**/README.md"
+---
+
+# AI Actions Platform 3.0 - Complete Reference
+
+**SELF-CONTAINED:** This skill has everything needed for AI Actions app development. No other skill required.
+
+## AI Actions App Structure
+
+AI Actions apps are **serverless-only** - NO frontend, NO locations, NO product events:
+
+```
+app-root/
+├── actions.json              # Action definitions (display_name, parameters, response)
+├── manifest.json             # Platform 3.0 manifest
+├── server/
+│   ├── server.js            # SMI function implementations
+│   └── test_data/
+│       └── actionName.json  # Test payload per action
+├── config/
+│   ├── requests.json        # Request templates for external APIs
+│   ├── iparams.json         # Installation parameters
+│   └── oauth_config.json    # Optional: for OAuth-based APIs
+└── README.md
+```
+
+**CRITICAL:** Function names in actions.json MUST match server.js exactly (case-sensitive).
+
+---
+
+## Manifest Structure (Platform 3.0)
+
+```json
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
+      "requests": {
+        "requestTemplateName": {}
+      },
+      "functions": {
+        "actionFunctionName": { "timeout": 20 }
+      }
+    },
+    "support_ticket": {},
+    "chat_conversation": {}
+  },
+  "engines": {
+    "node": "24.11.0",
+    "fdk": "10.0.0"
+  }
+}
+```
+
+**Rules:**
+- ✅ `platform-version` MUST be "3.0"
+- ✅ At least ONE product module required (support_ticket, chat_conversation, service_ticket, deal, etc.) - can be empty `{}`
+- ✅ All request templates declared in `modules.common.requests`
+- ✅ All action functions declared in `modules.common.functions` with timeout (recommended: 20)
+- ✅ `engines` block required with node and fdk versions
+- ❌ NO `product` block (use modules)
+- ❌ NO `whitelisted-domains`
+- ❌ NO locations, NO events (AI Actions are serverless-only)
+
+### Product Module Mapping
+
+| Target Product | Include Module |
+|----------------|----------------|
+| Freshdesk | support_ticket |
+| Freshchat | chat_conversation |
+| Freshservice | service_ticket |
+| Freshsales/CRM | deal, contact |
+| Multi-product | support_ticket, chat_conversation |
+
+---
+
+## actions.json Structure
+
+Each action has: display_name, description, parameters (JSON Schema), response (JSON Schema).
+
+### Parameters Schema
+- ✅ Flat preferred: string, number, integer, boolean
+- ✅ Arrays of primitives allowed: `"type": "array", "items": {"type": "string"}`
+- ✅ Use `$schema`: "http://json-schema.org/draft-07/schema#"
+- ✅ All properties need `description`
+- ❌ Avoid nested objects in parameters - flatten or construct in server.js
+
+### Response Schema
+- ✅ Nested objects allowed
+- ✅ Arrays allowed
+- ✅ Use `additionalProperties: true` for flexible API responses
+- ✅ Include essential fields only
+
+### Example
+```json
+{
+  "getResource": {
+    "display_name": "Get Resource",
+    "description": "Retrieve a resource by ID",
+    "parameters": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "resource_id": { "type": "string", "description": "Resource ID" }
+      },
+      "required": ["resource_id"]
+    },
+    "response": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    }
+  }
+}
+```
+
+---
+
+## config/requests.json
+
+```json
+{
+  "getResource": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources/<%= context.resource_id %>",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Accept": "application/json"
+      }
+    }
+  },
+  "createResource": {
+    "schema": {
+      "method": "POST",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}
+```
+
+**Rules:**
+- ✅ Host: FQDN only (api.example.com) - no path in host
+- ✅ Path: Start with `/`
+- ✅ Use `<%= iparam.name %>` for installation params
+- ✅ Use `<%= context.name %>` for runtime params from args
+- ✅ Use `<%= access_token %>` for OAuth
+- ❌ NEVER use `{{variable}}` - use `<%= %>` (ERB syntax)
+
+---
+
+## config/iparams.json
+
+```json
+{
+  "api_key": {
+    "display_name": "API Key",
+    "description": "Your API key for authentication",
+    "type": "text",
+    "required": true,
+    "secure": true
+  },
+  "api_base_url": {
+    "display_name": "API Base URL",
+    "description": "Base URL (e.g., api.example.com)",
+    "type": "text",
+    "required": true
+  }
+}
+```
+
+---
+
+## server.js Pattern
+
+```javascript
+const __formatError = (error, functionName) => {
+  console.error(`[${functionName}] Error:`, error);
+  let message;
+  try {
+    message = error.response ? JSON.parse(error.response) : error.message;
+  } catch {
+    message = error.response || error.message || 'Unknown error';
+  }
+  return { status: error.status || 500, message: typeof message === 'object' ? JSON.stringify(message) : message };
+};
+
+exports = {
+  actionName: async function(args) {
+    try {
+      const { param1 } = args;
+      const response = await $request.invokeTemplate('requestTemplateName', {
+        context: { param1: param1 },
+        body: JSON.stringify({ ... })  // if POST/PUT
+      });
+      const data = JSON.parse(response.response);
+      renderData(null, data);
+    } catch (error) {
+      renderData(__formatError(error, 'actionName'), null);
+    }
+  }
+};
+```
+
+**renderData signature:** `renderData(error, data)`
+- Success: `renderData(null, data)`
+- Error: `renderData({ status, message }, null)`
+
+**Rules:**
+- ✅ Helper functions BEFORE exports allowed
+- ✅ Use `$request.invokeTemplate()` - NEVER $request.post/get/put/delete
+- ✅ Access iparams via `args.iparams` in server (or use iparam in request template)
+- ✅ Create test_data/actionName.json for each action
+
+---
+
+## External Libraries (npm packages)
+
+Declare in manifest.json `dependencies` block:
+
+```json
+{
+  "dependencies": {
+    "jsonwebtoken": "8.1.1",
+    "strong-soap": "4.1.14"
+  }
+}
+```
+
+**Common packages:**
+- ✅ `jsonwebtoken` - Generate JWT tokens
+- ✅ `strong-soap` - SOAP WSDL introspection + XML parsing (recommended for SOAP APIs)
+- ✅ `underscore` - Utilities
+- ✅ `crypto-js` - Hashing/encryption
+- ❌ `axios`, `request`, `node-fetch` - Use request templates instead
+
+**SOAP best practice:** Use `strong-soap` for WSDL + fault parsing, but keep request templates for transport/auth (OAuth token injection).
+
+---
+
+## OAuth (Optional)
+
+For OAuth-based APIs (e.g., Monday, GitHub):
+
+**config/oauth_config.json:**
+```json
+{
+  "integrations": {
+    "provider_name": {
+      "display_name": "Provider Name",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
+      "authorize_url": "https://provider.com/oauth/authorize",
+      "token_url": "https://provider.com/oauth/token",
+      "token_type": "account",
+      "oauth_iparams": {
+        "client_id": { "display_name": "Client ID", "type": "text", "required": true },
+        "client_secret": { "display_name": "Client Secret", "type": "text", "required": true }
+      }
+    }
+  }
+}
+```
+
+**Request template with OAuth:**
+```json
+{
+  "getData": {
+    "schema": {
+      "method": "GET",
+      "host": "api.provider.com",
+      "path": "/v1/data",
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>"
+      }
+    },
+    "options": { "oauth": "provider_name" }
+  }
+}
+```
+
+---
+
+## README Template
+
+```markdown
+# [App Name] AI Actions App
+
+A Freshworks marketplace app that provides AI actions for [integration].
+
+## Features
+- **Action 1** - Description
+- **Action 2** - Description
+
+## Setup
+1. Install the app in your Freshworks product
+2. Configure credentials in app settings
+
+## Actions Available
+- `actionName1` - Description
+- `actionName2` - Description
+
+## Testing
+cd <app-directory>
+fdk run
+# Open https://localhost:10001/web/test, select "actions"
+```

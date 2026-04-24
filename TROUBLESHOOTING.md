@@ -13,13 +13,13 @@ This guide covers **real problems you'll actually encounter** when installing an
 **Cursor:**
 ```bash
 ls ~/.cursor/skills/
-# Should show: app-dev  fdk-setup
+# Should show: fw-app-dev  fw-setup  (and fw-publish if installed)
 ```
 
 **Claude Code:**
 ```bash
 ls ~/.claude/skills/
-# Should show: app-dev  fdk-setup
+# Should show: fw-app-dev  fw-setup  (and fw-publish if installed)
 ```
 
 **If empty:** You need to install skills first. See [Installation](#installation-from-scratch).
@@ -81,12 +81,12 @@ const result = await $request.post('https://api.example.com', {});
 
 ```bash
 # For Cursor
-npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 
 # For Claude Code  
-npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 ```
 
 **Then restart your IDE.**
@@ -105,17 +105,17 @@ cd marketplace
 
 # 2. For Cursor:
 mkdir -p ~/.cursor/skills
-cp -r skills/app-dev ~/.cursor/skills/
-cp -r skills/fdk-setup ~/.cursor/skills/
+cp -r skills/fw-app-dev ~/.cursor/skills/
+cp -r skills/fw-setup ~/.cursor/skills/
 
 # 2. For Claude Code:
 mkdir -p ~/.claude/skills
-cp -r skills/app-dev ~/.claude/skills/
-cp -r skills/fdk-setup ~/.claude/skills/
+cp -r skills/fw-app-dev ~/.claude/skills/
+cp -r skills/fw-setup ~/.claude/skills/
 
 # 3. Verify installation
-ls ~/.cursor/skills/app-dev/SKILL.md  # Should exist
-ls ~/.cursor/skills/app-dev/.cursor-plugin/plugin.json  # Should exist
+ls ~/.cursor/skills/fw-app-dev/SKILL.md  # Should exist
+ls ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json  # Should exist
 
 # 4. Restart your IDE completely (close ALL windows)
 ```
@@ -148,7 +148,7 @@ The skill you installed has a broken or outdated `plugin.json` file. It's missin
 
 **Check If This Is Your Issue:**
 ```bash
-cat ~/.cursor/skills/app-dev/.cursor-plugin/plugin.json
+cat ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json
 ```
 
 Look for these lines:
@@ -162,7 +162,7 @@ Look for these lines:
 **If missing, you need to manually fix the skill:**
 
 ```bash
-cd ~/.cursor/skills/app-dev/
+cd ~/.cursor/skills/fw-app-dev/
 
 # Backup original
 cp .cursor-plugin/plugin.json .cursor-plugin/plugin.json.backup
@@ -197,8 +197,8 @@ cat .cursor-plugin/plugin.json | \
 **Symptom:**
 ```
 Have both:
-  skills/app-dev/rules/*.mdc
-  skills/app-dev/.cursor/rules/*.mdc
+  skills/fw-app-dev/rules/*.mdc
+  skills/fw-app-dev/.cursor/rules/*.mdc
 
 Cursor only finds one or gets confused
 Updates don't apply
@@ -229,7 +229,7 @@ skill/
 
 **Fix:**
 ```bash
-cd ~/.cursor/skills/app-dev/
+cd ~/.cursor/skills/fw-app-dev/
 
 # Remove old structure
 rm -rf .cursor/commands
@@ -266,12 +266,12 @@ Type / and see other commands but not the skill commands
 **Quick Check - Is the skill actually installed?**
 ```bash
 # Cursor
-ls ~/.cursor/skills/app-dev/SKILL.md
-ls ~/.cursor/skills/app-dev/commands/
+ls ~/.cursor/skills/fw-app-dev/SKILL.md
+ls ~/.cursor/skills/fw-app-dev/commands/
 
 # Claude Code
-ls ~/.claude/skills/app-dev/SKILL.md
-ls ~/.claude/skills/app-dev/commands/
+ls ~/.claude/skills/fw-app-dev/SKILL.md
+ls ~/.claude/skills/fw-app-dev/commands/
 ```
 
 **If files don't exist:** Skill isn't installed. See [Installation from Scratch](#installation-from-scratch).
@@ -284,11 +284,11 @@ ls ~/.claude/skills/app-dev/commands/
 **Option 2: Reinstall the skill**
 ```bash
 # For Cursor - remove and reinstall
-rm -rf ~/.cursor/skills/app-dev
+rm -rf ~/.cursor/skills/fw-app-dev
 # Then follow installation steps again
 
 # For Claude Code - remove and reinstall  
-rm -rf ~/.claude/skills/app-dev
+rm -rf ~/.claude/skills/fw-app-dev
 # Then follow installation steps again
 ```
 
@@ -296,7 +296,7 @@ rm -rf ~/.claude/skills/app-dev
 
 Check if command files actually exist:
 ```bash
-ls ~/.cursor/skills/app-dev/commands/*.md
+ls ~/.cursor/skills/fw-app-dev/commands/*.md
 ```
 
 **Should see files like:**
@@ -310,7 +310,7 @@ fdk-review.md
 **If you see NO .md files or they're in wrong location:**
 - The skill you installed is broken
 - Report it: https://github.com/freshworks-developers/marketplace/issues
-- Include: "Commands missing from app-dev skill" + what you see when you run `ls` above
+- Include: "Commands missing from fw-app-dev skill" + what you see when you run `ls` above
 
 **For Claude Code specifically:**
 
@@ -335,7 +335,7 @@ Rules just... don't work
 **Quick Test:**
 ```bash
 # Check if rules exist
-ls ~/.cursor/skills/app-dev/rules/*.mdc
+ls ~/.cursor/skills/fw-app-dev/rules/*.mdc
 
 # Should show multiple .mdc files
 ```
@@ -351,7 +351,7 @@ The skill developer broke the rule files. This is a skill bug, not your fault.
 **Report it:**
 ```bash
 # Get diagnostic info
-cd ~/.cursor/skills/app-dev/
+cd ~/.cursor/skills/fw-app-dev/
 cat .cursor-plugin/plugin.json | grep rules
 ls -la rules/*.mdc
 ```
@@ -361,7 +361,7 @@ Post this output at: https://github.com/freshworks-developers/marketplace/issues
 **Temporary Workaround:**
 Reinstall from the latest version (skill may have been fixed):
 ```bash
-rm -rf ~/.cursor/skills/app-dev
+rm -rf ~/.cursor/skills/fw-app-dev
 # Reinstall using Method 2 (manual installation)
 ```
 
@@ -372,10 +372,10 @@ rm -rf ~/.cursor/skills/app-dev
 **Symptom:**
 ```
 Installed to:
-  ~/.cursor/skills/marketplace/skills/app-dev/
+  ~/.cursor/skills/marketplace/skills/fw-app-dev/
 
 Instead of:
-  ~/.cursor/skills/app-dev/
+  ~/.cursor/skills/fw-app-dev/
 ```
 
 **Root Cause:**
@@ -385,9 +385,9 @@ Instead of:
 Cursor skill loader expects:
 ```
 ~/.cursor/skills/
-├── app-dev/
+├── fw-app-dev/
 │   └── SKILL.md
-└── fdk-setup/
+└── fw-setup/
     └── SKILL.md
 ```
 
@@ -396,8 +396,8 @@ Not:
 ~/.cursor/skills/
 └── marketplace/
     └── skills/
-        ├── app-dev/
-        └── fdk-setup/
+        ├── fw-app-dev/
+        └── fw-setup/
 ```
 
 Extra layers are ignored.
@@ -411,8 +411,8 @@ mv marketplace/skills/* .
 rm -rf marketplace
 
 # Verify
-ls -la app-dev/SKILL.md
-ls -la fdk-setup/SKILL.md
+ls -la fw-app-dev/SKILL.md
+ls -la fw-setup/SKILL.md
 ```
 
 **Why This Happens:**
@@ -426,7 +426,7 @@ ls -la fdk-setup/SKILL.md
 
 **Symptom:**
 ```bash
-./scripts/fdk-run-background.sh
+./scripts/fw-setup-run-background.sh
 # zsh: operation not permitted
 ```
 
@@ -441,7 +441,7 @@ macOS 13+ Ventura requires:
 
 **Fix (Quick):**
 ```bash
-cd ~/.cursor/skills/fdk-setup/
+cd ~/.cursor/skills/fw-setup/
 
 # Remove quarantine attribute
 xattr -r -d com.apple.quarantine scripts/
@@ -458,7 +458,7 @@ Then allow the script when prompted.
 
 **Verification:**
 ```bash
-xattr -l scripts/fdk-run-background.sh
+xattr -l scripts/fw-setup-run-background.sh
 # Should NOT show com.apple.quarantine
 ```
 
@@ -497,8 +497,8 @@ Complexity rule doesn't work:
 
 Environment:
 - Cursor version: 0.41.3
-- Skill: app-dev
-- Rules exist: ls ~/.cursor/skills/app-dev/rules/*.mdc shows 9 files
+- Skill: fw-app-dev
+- Rules exist: ls ~/.cursor/skills/fw-app-dev/rules/*.mdc shows 9 files
 ```
 
 ---
@@ -557,15 +557,15 @@ Cursor changed how skills work between versions. Your old skill format is outdat
 
 ```bash
 # 1. Remove old skills
-rm -rf ~/.cursor/skills/app-dev
-rm -rf ~/.cursor/skills/fdk-setup
+rm -rf ~/.cursor/skills/fw-app-dev
+rm -rf ~/.cursor/skills/fw-setup
 
 # 2. Reinstall latest version
 cd ~/Downloads
 git clone https://github.com/freshworks-developers/marketplace.git
 cd marketplace
-cp -r skills/app-dev ~/.cursor/skills/
-cp -r skills/fdk-setup ~/.cursor/skills/
+cp -r skills/fw-app-dev ~/.cursor/skills/
+cp -r skills/fw-setup ~/.cursor/skills/
 
 # 3. Restart Cursor (close ALL windows)
 ```
@@ -602,12 +602,12 @@ git clone https://github.com/freshworks-developers/marketplace.git
 cd marketplace/
 
 # 2. For Cursor:
-cp -r skills/app-dev ~/.cursor/skills/
-cp -r skills/fdk-setup ~/.cursor/skills/
+cp -r skills/fw-app-dev ~/.cursor/skills/
+cp -r skills/fw-setup ~/.cursor/skills/
 
 # 3. For Claude Code:
-cp -r skills/app-dev ~/.claude/skills/
-cp -r skills/fdk-setup ~/.claude/skills/
+cp -r skills/fw-app-dev ~/.claude/skills/
+cp -r skills/fw-setup ~/.claude/skills/
 
 # 4. Restart IDE
 ```
@@ -762,7 +762,7 @@ Type: "Toggle Developer Tools"
 **Console Tab:**
 Look for skill loading errors:
 ```
-Failed to load skill: app-dev
+Failed to load skill: fw-app-dev
 Error: rulesDirectory not specified
 ```
 
@@ -788,11 +788,11 @@ Should respond with accurate list. If not, skill didn't load.
 
 ```bash
 # All files should be readable
-find ~/.cursor/skills/app-dev -type f ! -perm -u=r
+find ~/.cursor/skills/fw-app-dev -type f ! -perm -u=r
 
 # Should output nothing
 # If shows files, fix with:
-chmod -R u+r ~/.cursor/skills/app-dev
+chmod -R u+r ~/.cursor/skills/fw-app-dev
 ```
 
 ---
@@ -884,9 +884,9 @@ Check settings for custom path option (may vary by version)
 - ✅ Exact error message from dev tools console
 - ✅ Output of:
   ```bash
-  ls -la ~/.cursor/skills/app-dev/
-  cat ~/.cursor/skills/app-dev/.cursor-plugin/plugin.json
-  head -20 ~/.cursor/skills/app-dev/SKILL.md
+  ls -la ~/.cursor/skills/fw-app-dev/
+  cat ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json
+  head -20 ~/.cursor/skills/fw-app-dev/SKILL.md
   ```
 - ✅ What you've already tried from this guide
 - ✅ Minimal reproduction steps
@@ -899,7 +899,7 @@ https://github.com/freshworks-developers/marketplace/issues
 **Environment:**
 - IDE: Cursor 0.41.3 / Claude Code vX.X.X
 - OS: macOS 14.2.1
-- Skill: app-dev
+- Skill: fw-app-dev
 
 **Problem:**
 [Specific issue]

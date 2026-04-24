@@ -102,7 +102,7 @@ TODO.md
 skills-lock.json
 
 # Publish skill local examples (not versioned)
-skills/publish/examples/
+skills/fw-publish/examples/
 
 # Root-level examples directory (local testing)
 /examples/

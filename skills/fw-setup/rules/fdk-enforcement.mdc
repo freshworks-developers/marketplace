@@ -1,0 +1,58 @@
+# FDK Setup Skill - Enforcement Rules
+
+## Scope
+
+This skill handles **FDK installation and management only**. It does NOT create apps.
+
+## How This Skill Works
+
+**User must explicitly invoke commands (Confluence-style primary names):**
+- `/fw-setup-install` (optional `--version X.Y.Z` for FDK **10.x.y** CDN pin)
+- `/fw-setup-status` (optional `--verbose`; inline only)
+- `/fw-setup-upgrade` (optional `--to X.Y.Z` for pinned semver)
+- **FDK 9 + Node 18 → FDK 10 + Node 24.11:** use **`/fw-setup-install`** / **`/fw-setup-upgrade`** on an active **Node 24** shell (see **`SKILL.md`**); there is no separate **`/fw-setup-migrate`** command file in this skill.
+- `/fw-setup-downgrade` (optional pinned **9.x.y**; else latest 9 line)
+- `/fw-setup-uninstall` (FDK only — no `--all` / no nvm removal)
+- `/fw-setup-troubleshoot` (inline diagnose; **`--fix`** = shell Task)
+- `/fw-setup-use` (workspace **`nvm use`** / **`.nvmrc`** for FDK 10 vs 9 stack; optional **`--write-nvmrc`**; inline only)
+
+**Legacy aliases (same flows):** `/fdk-install`, `/fdk-status`, `/fdk-upgrade`, `/fdk-downgrade`, `/fdk-uninstall`
+
+**What happens:**
+1. User types slash command
+2. Command file under `commands/fw-setup-*.md` defines the Task (or inline status)
+3. Subagent spawned with full context for mutating operations
+4. Operation executes autonomously
+5. Reports back results
+
+## Important Limitation
+
+**This skill does NOT automatically check for FDK when users request app creation.**
+
+If user says "create a freshdesk app" without first running **`/fw-setup-install`** (or legacy **`/fdk-install`**), the agent may create files manually without proper FDK setup.
+
+## Recommended Workflow for App Creation
+
+**Before creating any Freshworks app, users should:**
+
+1. **First, install FDK:** `/fw-setup-install` (or legacy `/fdk-install`)
+
+2. **Then, optionally install fw-app-dev skill** for templates, Crayons, and app-specific slash commands (those live in fw-app-dev, not fw-setup).
+
+3. **Then proceed with app creation** using `fdk create` where possible.
+
+### Best Practices
+
+✅ **Remind users** to run `/fw-setup-install` before creating apps  
+✅ **Use `fdk create`** instead of creating files manually when possible  
+✅ **Verify FDK** with `fdk version` before using FDK commands  
+
+### Known Limitations
+
+⚠️ **This skill cannot automatically enforce FDK installation** — users must invoke a setup command first.  
+⚠️ **No automatic prerequisite checking** when only natural language is used — route to this skill when FDK is needed.
+
+## Skill Location
+
+- **This skill**: `skills/fw-setup/SKILL.md`
+- **App dev skill**: `skills/fw-app-dev/SKILL.md` (separate installation)

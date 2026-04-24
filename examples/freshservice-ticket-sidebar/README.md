@@ -4,7 +4,7 @@ Minimal Freshservice app that renders in **Ticket details → sidebar** (`servic
 
 ## Prerequisites
 
-- **FDK 10.x** and **Node.js 24.x** (see repo `skills/fdk-setup` if you need to install the toolchain).
+- **FDK 10.x** and **Node.js 24.x** (see repo `skills/fw-setup` if you need to install the toolchain).
 
 ## Run locally
 

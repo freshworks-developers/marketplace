@@ -1,33 +1,127 @@
 {
-  "name": "marketplace",
+  "name": "freshworks-developer-tooling",
+  "description": "Freshworks Platform 3.0 Cursor skills: FDK setup, app development, AI Actions, and marketplace publishing.",
+  "version": "1.0.0",
   "owner": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
-  "metadata": {
-    "description": "Cursor plugins for building Freshworks marketplace applications",
-    "version": "1.0.0",
-    "pluginRoot": "skills"
-  },
   "plugins": [
     {
-      "name": "fdk-setup",
-      "source": "./skills/fdk-setup",
-      "description": "Automated FDK 10 installation, upgrade, downgrade, and uninstall for macOS and Windows along with Node.js 24 installation and management",
-      "rulesPath": "./skills/fdk-setup/rules",
-      "commandsPath": "./skills/fdk-setup/commands"
+      "name": "fw-setup",
+      "description": "Install, upgrade, downgrade, and uninstall the Freshworks Development Kit (FDK) with Node.js via nvm (macOS, Windows, Linux).",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/marketplace",
+      "repository": "https://github.com/freshworks-developers/marketplace",
+      "source": "./skills/fw-setup",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "fdk",
+        "node",
+        "nvm",
+        "platform-3.0",
+        "cli"
+      ],
+      "rulesPath": "./skills/fw-setup/rules",
+      "commandsPath": "./skills/fw-setup/commands",
+      "interface": {
+        "displayName": "Freshworks FDK Setup",
+        "shortDescription": "FDK and Node.js toolchain install and lifecycle via nvm.",
+        "longDescription": "Automates FDK 10.x on Node 24 (recommended for publishing), optional FDK 9.x on Node 18 for legacy work, shell troubleshooting, and workspace nvm/.nvmrc alignment. Slash commands: /fw-setup-install, /fw-setup-upgrade, /fw-setup-downgrade, /fw-setup-uninstall, /fw-setup-status, /fw-setup-troubleshoot, /fw-setup-use; legacy /fdk-* aliases where registered."
+      }
     },
     {
-      "name": "app-dev",
-      "source": "./skills/app-dev",
-      "description": "Expert-level development skill for building, debugging, and reviewing Freshworks marketplace apps",
-      "rulesPath": "./skills/app-dev/rules",
-      "commandsPath": "./skills/app-dev/commands"
+      "name": "fw-app-dev",
+      "description": "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications.",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/marketplace",
+      "repository": "https://github.com/freshworks-developers/marketplace",
+      "source": "./skills/fw-app-dev",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "platform-3.0",
+        "marketplace",
+        "fdk",
+        "crayons",
+        "validation"
+      ],
+      "rulesPath": "./skills/fw-app-dev/rules",
+      "commandsPath": "./skills/fw-app-dev/commands",
+      "interface": {
+        "displayName": "Freshworks App Development",
+        "shortDescription": "Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI.",
+        "longDescription": "Enforces Platform 3.0 patterns (modules, request templates, engines), Crayons UI, validation workflows, and slash commands /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review. Does not install FDK or Node — pair with fw-setup."
+      }
     },
     {
-      "name": "publish",
-      "source": "./skills/publish",
-      "description": "Publish Platform 3.0 apps to Freshworks Marketplace via MCP tools (submit/update); supports new apps and version updates"
+      "name": "fw-ai-app-dev",
+      "description": "AI Actions and third-party integrations on Platform 3.0: actions.json, SMI, request templates, schemas, validation, and integration workflows.",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/marketplace",
+      "repository": "https://github.com/freshworks-developers/marketplace",
+      "source": "./skills/fw-ai-app-dev",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "platform-3.0",
+        "ai-actions",
+        "fdk",
+        "serverless",
+        "actions-json"
+      ],
+      "rulesPath": "./skills/fw-ai-app-dev/rules",
+      "interface": {
+        "displayName": "Freshworks AI Actions (fw-ai-app-dev)",
+        "shortDescription": "actions.json, SMI handlers, request templates, and API integrations.",
+        "longDescription": "Flat request parameters, nested response mapping in server.js, iparams/OAuth, test data guardrails, debugging broken endpoints, and scoping checklists. Complements fw-app-dev for full marketplace apps."
+      }
+    },
+    {
+      "name": "fw-publish",
+      "description": "Publish Platform 3.0 custom apps to the Freshworks Marketplace using MCP tools (validate, pack, app-upload, submit/update).",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/marketplace",
+      "repository": "https://github.com/freshworks-developers/marketplace",
+      "source": "./skills/fw-publish",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.1.0",
+      "keywords": [
+        "freshworks",
+        "marketplace",
+        "publish",
+        "mcp",
+        "platform-3.0"
+      ],
+      "interface": {
+        "displayName": "Freshworks Marketplace Publish",
+        "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
+        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. Bundled .mcp.json for Cursor. Pair with fw-app-dev for manifest and validation fixes."
+      }
     }
   ]
 }

@@ -1,0 +1,224 @@
+---
+description: Platform 3.0 app template selection guide. Use when creating or fixing apps to determine which skeleton template to use based on requirements (frontend-only, serverless, hybrid, or OAuth).
+alwaysApply: false
+globs: ["**/manifest.json", "**/server/**/*.js", "**/app/**/*.js"]
+---
+
+# Platform 3.0 App Template Selection
+
+**When to use this rule:** Creating a new Freshworks Platform 3.0 app.
+
+## Template Selection Decision Tree
+
+### Step 1: Does the app need a UI?
+
+**YES** → Go to Step 2
+**NO** → Use **Serverless Template** (`assets/templates/serverless-skeleton/`)
+
+### Step 2: Does the app need backend logic (events, external APIs, data processing)?
+
+**YES** → Go to Step 3
+**NO** → Use **Frontend Template** (`assets/templates/frontend-skeleton/`)
+
+### Step 3: Does the app need OAuth authentication?
+
+**YES** → Use **OAuth Template** (`assets/templates/oauth-skeleton/`)
+**NO** → Use **Hybrid Template** (`assets/templates/hybrid-skeleton/`)
+
+## Template Overview
+
+| Template | Location | Use Case | Key Files |
+|----------|----------|----------|-----------|
+| **Frontend** | `assets/templates/frontend-skeleton/` | UI only, no backend | app/, manifest.json, config/iparams.json |
+| **Serverless** | `assets/templates/serverless-skeleton/` | Backend events, no UI | server/server.js, manifest.json |
+| **Hybrid** | `assets/templates/hybrid-skeleton/` | UI + Backend + External APIs | app/, server/, config/requests.json |
+| **OAuth** | `assets/templates/oauth-skeleton/` | UI + Backend + OAuth | app/, server/, config/oauth_config.json |
+
+## Template Usage Instructions
+
+### 1. Analyze Requirements BEFORE Copying Template
+
+**CRITICAL: Do NOT blindly copy templates. Analyze what the app actually needs:**
+
+**Ask these questions:**
+- Does the app need to respond to product events? (e.g., onTicketCreate, onContactUpdate)
+- Does the app need app lifecycle handlers? (onAppInstall, onAppUninstall)
+- Does the app need SMI functions? (frontend calling backend)
+- Does the app need external API calls?
+- Does the app need OAuth?
+
+**Only include handlers that are actually needed for the use case.**
+
+### 2. Copy Template Files
+
+```bash
+cp -r assets/templates/<template-name>/* <new-app-directory>/
+```
+
+### 3. Remove Unnecessary Handlers
+
+**Templates contain EXAMPLE handlers. Remove handlers not needed for the use case:**
+
+**Example: "Display ticket details in sidebar"**
+- KEEP: SMI functions (if fetching data)
+- REMOVE: onTicketCreateHandler (not listening to events)
+- REMOVE: onAppInstall/onAppUninstall (unless storing config)
+
+**Example: "Send webhook when ticket is created"**
+- KEEP: onTicketCreateHandler
+- REMOVE: SMI functions (no frontend interaction)
+- REMOVE: onAppInstall/onAppUninstall (unless needed)
+
+### 4. Customize for Product
+
+Update `manifest.json` module names based on target product:
+
+- **Freshdesk:** `support_ticket`, `support_contact`, `support_company`
+- **Freshservice:** `service_ticket`, `service_asset`, `service_change`
+- **Freshsales:** `deal`, `contact`, `account`, `lead`
+
+### 5. Verify Mandatory Files
+
+**Frontend apps MUST have:**
+- [VALID] `app/index.html` with Crayons CDN
+- [VALID] `app/scripts/app.js`
+- [VALID] `app/styles/style.css`
+- [VALID] `app/styles/images/icon.svg` (CRITICAL - validation fails without it)
+- [VALID] `config/iparams.json` (can be empty `{}`)
+
+**Serverless apps MUST have:**
+- [VALID] `server/server.js`
+- [VALID] `config/iparams.json` (can be empty `{}`)
+
+**Hybrid apps MUST have:**
+- [VALID] All frontend files
+- [VALID] All serverless files
+- [VALID] `config/requests.json` (if external APIs used)
+
+**OAuth apps MUST have:**
+- [VALID] All hybrid files
+- [VALID] `config/oauth_config.json` with `integrations` wrapper
+
+## Critical Template Rules
+
+### Platform 3.0 Enforcement
+
+- [VALID] Use `"platform-version": "3.0"`
+- [VALID] Use `"modules"` structure (NOT `"product"`)
+- [VALID] Use Crayons components (NOT plain HTML)
+- [VALID] Use `$request.invokeTemplate()` (NOT `$request.post()`)
+
+### Mandatory Patterns
+
+**If manifest declares `location`:**
+- MUST create `app/` directory
+- MUST create `app/index.html`
+- MUST create `app/styles/images/icon.svg`
+
+**If app uses external APIs:**
+- MUST create `config/requests.json`
+- MUST declare templates in `manifest.json` under `modules.common.requests`
+
+**If app uses OAuth:**
+- MUST create `config/oauth_config.json`
+- MUST have `integrations` wrapper
+- MUST have `oauth_iparams` (NOT in regular `config/iparams.json`)
+
+## Template Locations Reference
+
+All templates are in: `skills/fw-app-dev/assets/templates/`
+
+```
+assets/templates/
+├── frontend-skeleton/       # UI only
+│   ├── app/
+│   ├── manifest.json
+│   └── config/iparams.json
+├── serverless-skeleton/     # Backend only
+│   ├── server/server.js
+│   ├── manifest.json
+│   └── config/iparams.json
+├── hybrid-skeleton/         # UI + Backend
+│   ├── app/
+│   ├── server/server.js
+│   ├── config/requests.json
+│   └── manifest.json
+└── oauth-skeleton/          # UI + Backend + OAuth
+    ├── app/
+    ├── server/server.js
+    ├── config/oauth_config.json
+    ├── config/requests.json
+    └── manifest.json
+```
+
+## Quick Reference: Common Scenarios
+
+| Scenario | Template | Why |
+|----------|----------|-----|
+| Display data in sidebar | Frontend | No backend needed |
+| Send webhook on ticket create | Serverless | No UI needed |
+| Fetch external API data | Hybrid | UI + backend API calls |
+| Integrate with GitHub | OAuth | Requires OAuth flow |
+| Scheduled sync | Serverless | Background task only |
+| Dashboard with charts | Frontend | UI only (if data from product) |
+| Two-way sync with external system | Hybrid or OAuth | Depends on auth method |
+
+## Related Rules
+
+- **app-building-blocking-gates.mdc** - Validation gates before completion
+- **freshworks-platform3.mdc** - Platform 3.0 enforcement patterns
+- **security.mdc** - Security requirements for all templates
+- **complexity-reduction.mdc** - Lint rules and complexity reduction patterns for generated code
+
+## Template Modification Guidelines
+
+When customizing templates:
+
+1. **Remove unnecessary handlers** - Templates are examples, not requirements
+2. **Keep the base structure** - Don't remove mandatory files
+3. **Follow naming conventions** - Use kebab-case for directories
+4. **Validate early** - Run `fdk validate` after template copy
+5. **Reference, don't duplicate** - Point to these templates instead of copying code into other rules
+
+## Handler Necessity Checklist
+
+**Before adding ANY handler to server.js, verify it's needed:**
+
+| Handler Type | When to Include | When to Remove |
+|--------------|----------------|----------------|
+| `onAppInstallHandler` | App needs to store config, create external resources, or validate setup | App has no setup requirements |
+| `onAppUninstallHandler` | App needs to clean up external resources or revoke tokens | App has no cleanup requirements |
+| `onTicketCreateHandler` | App responds to ticket creation events | App doesn't listen to ticket events |
+| `onContactUpdateHandler` | App responds to contact update events | App doesn't listen to contact events |
+| SMI functions (e.g., `fetchData`) | Frontend needs to call backend for data/processing | App is frontend-only or serverless-only |
+| Job functions | App needs scheduled background tasks | App has no scheduled tasks |
+
+## Parameter Requirements Validation
+
+**CRITICAL: Only declare parameters that the handler actually uses:**
+
+```javascript
+// [INVALID] WRONG: Declares args but never uses it
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('App installed');
+    renderData();
+  }
+};
+
+// [VALID] CORRECT: No parameter if not used
+exports = {
+  onAppInstallHandler: function() {
+    console.log('App installed');
+    renderData();
+  }
+};
+
+// [VALID] CORRECT: Parameter used
+exports = {
+  onAppInstallHandler: function(args) {
+    console.log('Installed for account:', args.iparams.account_id);
+    renderData();
+  }
+};
+```

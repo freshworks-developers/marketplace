@@ -1,0 +1,208 @@
+---
+name: freshworks-platform3
+description: Platform 3.0 enforcement - ZERO TOLERANCE for Platform 2.x patterns. Immediately reject whitelisted-domains, product structure, plain HTML, and legacy APIs. Reference SKILL.md for detailed patterns.
+alwaysApply: true
+---
+
+# Freshworks Platform 3.0 Enforcement
+
+**Role:** Strict enforcement layer with ZERO TOLERANCE for Platform 2.x patterns.
+
+## Immediate Rejection Patterns
+
+### [INVALID] NEVER Generate These (Platform 2.x)
+
+| Pattern | Platform 2.x (FORBIDDEN) | Platform 3.0 (REQUIRED) |
+|---------|--------------------------|-------------------------|
+| Manifest structure | `"product": { "freshdesk": {} }` | `"modules": { "common": {}, "support_ticket": {} }` |
+| Platform version | `"platform-version": "2.3"` | `"platform-version": "3.0"` |
+| Domain whitelist | `"whitelisted-domains": ["https://..."]` | Request templates in `config/requests.json` |
+| Request API | `$request.post('url', opts)` | `$request.invokeTemplate('templateName', {})` |
+| UI components | `<button>`, `<input>`, `<select>` | `<fw-button>`, `<fw-input>`, `<fw-select>` |
+| OAuth structure | Flat config | `{ "integrations": { "service": {...} } }` |
+
+### [VALID] ALWAYS Enforce These (Platform 3.0)
+
+1. **Engines:** New apps MUST start with `"engines": { "node": "24.11.0", "fdk": "10.0.1" }`. **fw-app-dev** does not install **fdk** or **Node** — use **fw-setup** (or prompt the user to add it; **SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*). Prefer **fw-setup** if validate will not run. **One-time** downgrade to `"node": "18.20.8", "fdk": "9.8.2"` is **LAST RESORT only** after **six** `fdk validate` fix iterations (or CLI cannot run on 10.0.1+24.11.0) and toolchain-only failure — full rules in **SKILL.md**.
+2. **Manifest:** `"platform-version": "3.0"` with `"modules"` structure
+3. **Request Templates:** FQDN hosts only (no paths), use `<%= variable %>` syntax
+4. **Crayons Components:** All UI elements must use Crayons (fw-* components)
+5. **Request API:** Only `$request.invokeTemplate()` (never `.post()`, `.get()`, etc.)
+6. **OAuth:** Must have `integrations` wrapper in `oauth_config.json`
+
+## Critical Enforcement Rules
+
+### Rule 1: Manifest Structure
+
+```json
+// [INVALID] FORBIDDEN (Platform 2.x)
+{
+  "platform-version": "2.3",
+  "product": {
+    "freshdesk": {
+      "location": { "ticket_sidebar": {...} }
+    }
+  }
+}
+
+// [VALID] REQUIRED (Platform 3.0)
+{
+  "platform-version": "3.0",
+  "modules": {
+    "common": {},
+    "support_ticket": {
+      "location": { "ticket_sidebar": {...} }
+    }
+  }
+}
+```
+
+### Rule 2: Request Templates
+
+```json
+// [INVALID] FORBIDDEN (whitelisted-domains)
+{
+  "whitelisted-domains": ["https://api.example.com"]
+}
+
+// [VALID] REQUIRED (request templates)
+// config/requests.json
+{
+  "apiCall": {
+    "schema": {
+      "method": "GET",
+      "host": "api.example.com",
+      "path": "/v2/data"
+    }
+  }
+}
+
+// manifest.json
+{
+  "modules": {
+    "common": {
+      "requests": { "apiCall": {} }
+    }
+  }
+}
+```
+
+### Rule 3: Request API
+
+```javascript
+// [INVALID] FORBIDDEN (Platform 2.x)
+const result = await $request.post('https://api.example.com/data', {
+  headers: { 'Authorization': 'Bearer token' }
+});
+
+// [VALID] REQUIRED (Platform 3.0)
+const result = await $request.invokeTemplate('apiCall', {
+  body: JSON.stringify({ data: 'value' })
+});
+```
+
+### Rule 4: UI Components
+
+```html
+<!-- [INVALID] FORBIDDEN (Plain HTML) -->
+<button onclick="handleClick()">Click Me</button>
+<input type="text" id="name" />
+<select id="priority">
+  <option value="1">Low</option>
+</select>
+
+<!-- [VALID] REQUIRED (Crayons) -->
+<fw-button id="btn">Click Me</fw-button>
+<fw-input id="name" placeholder="Enter name"></fw-input>
+<fw-select id="priority">
+  <fw-select-option value="1">Low</fw-select-option>
+</fw-select>
+```
+
+### Rule 5: OAuth Structure
+
+```json
+// [INVALID] FORBIDDEN (Flat structure)
+{
+  "client_id": "...",
+  "client_secret": "...",
+  "authorize_url": "..."
+}
+
+// [VALID] REQUIRED (Integrations wrapper)
+{
+  "integrations": {
+    "service_name": {
+      "display_name": "Service Name",
+      "token_type": "account",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
+      "authorize_url": "...",
+      "token_url": "...",
+      "oauth_iparams": {
+        "client_id": {
+          "display_name": "Client ID",
+          "description": "Enter your OAuth App Client ID",
+          "type": "text",
+          "required": true
+        }
+      }
+    }
+  }
+}
+```
+
+## Blocking Gates
+
+**App building MUST NOT complete without passing ALL gates:**
+
+### Gate 1: Manifest Validation
+- [VALID] `"platform-version": "3.0"`
+- [VALID] `"modules"` structure (NOT `"product"`)
+- [VALID] No `"whitelisted-domains"`
+- [VALID] All locations/functions/requests declared
+
+### Gate 2: File Consistency
+- [VALID] If manifest has `location` → Files MUST exist (app/, index.html, icon.svg)
+- [VALID] If manifest has `functions` → server/server.js MUST exist with implementations
+- [VALID] If manifest has `requests` → config/requests.json MUST exist
+- [VALID] If manifest has `functions` or `events` → Every declared name MUST match `exports` in server.js; SMI MUST use `renderData()` (see `async-patterns.mdc`)
+
+### Gate 3: FDK Validation
+- [VALID] `fdk validate` shows 0 platform errors
+- [VALID] `fdk validate` shows 0 lint errors
+- [VALID] No missing files, no structure errors
+
+## Quick Decision Tree
+
+```
+Is this Platform 2.x pattern?
+├─ YES → REJECT immediately
+└─ NO → Is it Platform 3.0 compliant?
+    ├─ YES → Allow
+    └─ NO → REJECT
+```
+
+## Reference for Detailed Patterns
+
+**For comprehensive guidance, see:**
+- `skills/fw-app-dev/SKILL.md` - Complete Platform 3.0 specification
+- `app-building-blocking-gates.mdc` - Mandatory validation gates
+- `app-templates.mdc` - Template selection guide
+- `security.mdc` - Security enforcement
+- `async-patterns.mdc` - SMI `renderData()`, events, manifest handler alignment, async/await patterns
+- `validation-workflow.mdc` - Validation and auto-fix
+
+**This rule provides only critical enforcement. Reference SKILL.md for detailed patterns, examples, and API documentation.**
+
+## Enforcement Mode
+
+**You are NOT a tutor. You are a STRICT ENFORCEMENT LAYER.**
+
+- [INVALID] NEVER explain why Platform 2.x is wrong - just reject it
+- [INVALID] NEVER offer to "migrate" inline - reject and require Platform 3.0
+- [VALID] ALWAYS enforce Platform 3.0 patterns
+- [VALID] ALWAYS reference templates from `assets/templates/`
+- [VALID] ALWAYS validate before marking complete
+
+**Related:** `security.mdc`, `validation-workflow.mdc`, `app-building-blocking-gates.mdc`, `async-patterns.mdc`

@@ -1,0 +1,17 @@
+{
+  "description": "Patterns and assumptions agents must refuse for Platform 3.0 ticket serverless handlers",
+  "refusals": [
+    {
+      "id": "refusal_ticket_update_delta_001",
+      "topic": "onTicketUpdate field-level inference",
+      "forbidden_assumption": "If data.changes.model_changes is missing or empty, infer that only status or priority changed by comparing undocumented keys on data.ticket, or map Freshdesk priority semantics to Freshservice urgency without API verification.",
+      "required_behavior": "Load references/events/onTicketUpdate-payload-contract.md. If deltas are required and absent, use snapshot/API diff, broad handling with documented caveats, skip, or state Insufficient platform certainty — do not guess."
+    },
+    {
+      "id": "refusal_engines_001",
+      "topic": "manifest engines FDK / Node version",
+      "forbidden_assumption": "Setting engines to FDK 9.x or Node 18 at app creation, or downgrading before six validate+fix iterations / without toolchain-only failure, to avoid fixing app or lint errors.",
+      "required_behavior": "Start with `\"fdk\": \"10.0.1\"` and `\"node\": \"24.11.0\"`. Use fw-setup first. Downgrade to 9.8.2 / 18.20.8 only as LAST RESORT when SKILL.md bullets (six iterations or CLI cannot run on 10.0.1+24.11.0, toolchain-only) are all satisfied; print the mandatory warning."
+    }
+  ]
+}

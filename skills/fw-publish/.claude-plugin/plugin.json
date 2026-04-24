@@ -1,0 +1,27 @@
+{
+  "name": "fw-publish",
+  "displayName": "Freshworks Marketplace Publish",
+  "version": "1.1.0",
+  "description": "Publish Platform 3.0 apps to Freshworks Marketplace via MCP tools (app-upload, submit/update). MCP server config is bundled at the plugin root .mcp.json.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-publish",
+  "license": "MIT",
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "marketplace",
+    "publish",
+    "mcp",
+    "platform-3.0"
+  ],
+  "interface": {
+    "displayName": "Freshworks Marketplace Publish",
+    "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
+    "longDescription": "Auth preflight, fdk validate/pack, app-upload, submit/update via MCP. Configure Developer Portal JWT. Pair with fw-app-dev for manifest and validation fixes."
+  }
+}

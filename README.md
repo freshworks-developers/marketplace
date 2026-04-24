@@ -12,21 +12,28 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Plugins-3-764abc?style=flat-square" alt="Plugins">
+  <img src="https://img.shields.io/badge/Plugins-4-764abc?style=flat-square" alt="Plugins">
 </p>
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
 
 <p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code></p>
 
+> [!NOTE]
+> Feedback and bug reports: **[GitHub Issues](https://github.com/freshworks-developers/marketplace/issues)**. **AI agents:** start from **[AGENTS.md](AGENTS.md)** for routing, skills layout, and repo norms.
+
+> [!TIP]
+> **Human install & routing:** use **this README** (installation below), **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for Cursor / Claude Code skill issues, and the **[Freshworks Developer Portal](https://developers.freshworks.com/)** for product documentation and API keys.
+
 ## Installation
 
 ### npx skills
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fdk-setup
-npx skills add https://github.com/freshworks-developers/marketplace --skill publish
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
 ```
 
 
@@ -34,13 +41,14 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill publ
 
 | Skill | Description | Execution Mode |
 |-------|-------------|----------------|
-| [**app-dev**](skills/app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
-| [**fdk-setup**](skills/fdk-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
-| [**publish**](skills/publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+| [**fw-app-dev**](skills/fw-app-dev/) | Build, debug, review, and migrate Freshworks Platform 3.0 apps | Direct |
+| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions: `actions.json`, SMI, request templates, integrations, validation | Direct |
+| [**fw-setup**](skills/fw-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
+| [**fw-publish**](skills/fw-publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
 
 ### Subagent-Based Skills
 
-The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations:
+The **fw-setup** skill uses Cursor's Task tool to spawn dedicated shell subagents for complex multi-step operations:
 
 **Features:**
 - ✅ **nvm Integration** - Manages Node.js 24 alongside other versions
@@ -54,14 +62,13 @@ The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagen
 
 **Operations:**
 ```bash
-/fdk-setup-install          # Subagent: nvm → Node 24.11 → FDK 10 (CDN); optional --version X.Y.Z
-/fdk-setup-upgrade          # Subagent: latest FDK 10 line; optional --to X.Y.Z
-/fdk-setup-migrate          # Subagent: FDK 9 + Node 18 → FDK 10 + Node 24.11
-/fdk-setup-downgrade        # Subagent: FDK 10 → 9; optional 9.x.y semver (deprecated)
-/fdk-setup-uninstall        # Subagent: remove FDK only (keep Node/nvm)
-/fdk-setup-status           # Inline; optional --verbose diagnostics
-/fdk-setup-troubleshoot     # Inline diagnose; --fix = shell Task (rc + nvm + FDK)
-/fdk-setup-use              # Workspace: nvm use / .nvmrc for FDK 10 vs 9 stack (inline)
+/fw-setup-install          # Subagent: nvm → Node 24.11 → FDK 10 (CDN); optional --version X.Y.Z
+/fw-setup-upgrade          # Subagent: latest FDK 10 line; optional --to X.Y.Z
+/fw-setup-downgrade        # Subagent: FDK 10 → 9; optional 9.x.y semver (deprecated)
+/fw-setup-uninstall        # Subagent: remove FDK only (keep Node/nvm)
+/fw-setup-status           # Inline; optional --verbose diagnostics
+/fw-setup-troubleshoot     # Inline diagnose; --fix = shell Task (rc + nvm + FDK)
+/fw-setup-use              # Workspace: nvm use / .nvmrc for FDK 10 vs 9 stack (inline)
 ```
 
 **Cross-Scenarios (7 scenarios via subagents):**
@@ -73,7 +80,7 @@ The **fdk-setup** skill uses Cursor's Task tool to spawn dedicated shell subagen
 - 🛤️ **Node PATH Mismatch** - Fix FDK using wrong Node version
 - 🔀 **Multiple Node Versions** - Multiple projects with different Node versions
 
-See [cross-scenarios.md](skills/fdk-setup/references/cross-scenarios.md) for detailed subagent prompts.
+See [cross-scenarios.md](skills/fw-setup/references/cross-scenarios.md) for detailed subagent prompts.
 
 ## Structure
 
@@ -82,7 +89,7 @@ Each skill follows the Agent Skills Specification:
 ```
 skill-name/
 ├── SKILL.md           # Main skill file with frontmatter + instructions
-├── commands/          # Slash commands with always: true (fdk-setup)
+├── commands/          # Slash commands with always: true (fw-setup)
 ├── references/        # Additional documentation loaded on demand
 └── assets/            # Templates, logos, etc.
 ```
@@ -95,7 +102,7 @@ Skills are also available project-wide via `.cursor/skills/`:
 .cursor/
 ├── README.md          # Configuration documentation
 └── skills/
-    └── fdk-setup/     # Symlink to ../../skills/fdk-setup
+    └── fw-setup/     # Symlink to ../../skills/fw-setup
 ```
 
 This allows project contributors to use skills without global installation.
@@ -107,13 +114,17 @@ Skills are automatically discovered via `SKILL.md` frontmatter:
 
 ```yaml
 ---
-name: "freshworks-app-dev-skill"
+name: "fw-app-dev"
 description: "Build Platform 3.0 apps"
 version: "1.0.0"
 ---
 ```
 
 No manifest generation or registry required. Each skill is self-contained and declarative.
+
+## MCP (marketplace publish)
+
+Publishing uses the **`freshworks-marketplace`** server. This repo’s **reference config** is **`.mcp.json`** at the **repository root** (URL + `Authorization` header). **Claude Code** can use the plugin’s **`userConfig`** token with that file’s **`${user_config.mcp_auth_token}`** placeholder; **Cursor** should merge the same server block into **`.cursor/mcp.json`** with a real **`Bearer <JWT>`** (see **`AGENTS.md`** and **`skills/fw-publish/SKILL.md`**).
 
 ## Troubleshooting
 

@@ -1,14 +1,29 @@
 {
-  "name": "freshworks",
-  "description": "Freshworks Platform 3.0 app development, publishing, and FDK management skills. Bundles MCP server config (.mcp.json) — on install you will be prompted for your Developer Portal JWT.",
+  "name": "freshworks-developer-tooling",
+  "description": "Freshworks Platform 3.0 app development, AI Actions integrations, publishing, and FDK management skills. Bundles MCP server config (.mcp.json) — on install you will be prompted for your Developer Portal JWT.",
   "version": "1.1.0",
   "author": {
-    "name": "Freshworks Developers"
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
   },
   "homepage": "https://github.com/freshworks-developers/marketplace",
   "repository": "https://github.com/freshworks-developers/marketplace",
   "license": "MIT",
-  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"],
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "fdk",
+    "app-development",
+    "mcp"
+  ],
+  "interface": {
+    "displayName": "Freshworks Developer Tooling",
+    "shortDescription": "FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish.",
+    "longDescription": "Aggregate plugin for Freshworks marketplace development: install and manage FDK with fw-setup, build full apps with fw-app-dev, AI Actions integrations with fw-ai-app-dev, and publish with fw-publish via MCP. Configure Marketplace API token when prompted for .mcp.json."
+  },
   "userConfig": {
     "mcp_auth_token": {
       "type": "string",

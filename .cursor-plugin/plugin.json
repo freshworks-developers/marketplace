@@ -1,8 +1,8 @@
 {
-  "name": "freshworks",
+  "name": "freshworks-developer-tooling",
   "displayName": "Freshworks",
-  "description": "Freshworks Platform 3.0 app development, publishing, and FDK management skills. For MCP: add the freshworks-marketplace server to ~/.cursor/mcp.json or .cursor/mcp.json with your API key from the Developer Portal profile.",
-  "version": "1.0.0",
+  "description": "Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add the freshworks-marketplace server to ~/.cursor/mcp.json or .cursor/mcp.json with your API key from the Developer Portal profile.",
+  "version": "1.1.0",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -10,7 +10,21 @@
   "homepage": "https://github.com/freshworks-developers/marketplace",
   "repository": "https://github.com/freshworks-developers/marketplace",
   "license": "MIT",
-  "keywords": ["freshworks", "platform-3.0", "marketplace", "fdk", "app-development"],
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "fdk",
+    "app-development",
+    "mcp"
+  ],
+  "interface": {
+    "displayName": "Freshworks Developer Tooling",
+    "shortDescription": "FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish.",
+    "longDescription": "Cursor plugin root for Freshworks skills: fw-setup (FDK/nvm), fw-app-dev (Platform 3.0 apps), fw-ai-app-dev (AI Actions), fw-publish (MCP). Add the freshworks-marketplace MCP server and Developer Portal API key per project .cursor/mcp.json."
+  },
   "skills": "./skills/",
-  "logo": "skills/app-dev/assets/logo.svg"
+  "logo": "skills/fw-app-dev/assets/logo.svg"
 }

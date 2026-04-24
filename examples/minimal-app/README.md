@@ -10,7 +10,7 @@ Small **Freshdesk** app (**Platform 3.0**) with a **full-page** shell under `mod
 
 ## Setup
 
-1. Use **Node 24.x** and **FDK 10.x**; `manifest.json` → **`engines`** default **`24.11.0`** + **`10.0.1`** (CLI may bump `fdk` to your installed 10.x). See **fdk-setup** if needed.
+1. Use **Node 24.x** and **FDK 10.x**; `manifest.json` → **`engines`** default **`24.11.0`** + **`10.0.1`** (CLI may bump `fdk` to your installed 10.x). See **fw-setup** if needed.
 2. From this folder: `fdk validate` then `fdk run`.
 
 ## Usage
