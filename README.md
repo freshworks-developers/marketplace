@@ -17,7 +17,7 @@
 
 <p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
 
-<p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code></p>
+<p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code> · <code>fw-review</code></p>
 
 > [!NOTE]
 > Feedback and bug reports: **[GitHub Issues](https://github.com/freshworks-developers/marketplace/issues)**. **AI agents:** start from **[AGENTS.md](AGENTS.md)** for routing, skills layout, and repo norms.
@@ -47,6 +47,10 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill fw-p
 | [**fw-review**](skills/fw-review/) | Automated marketplace app audit: iparams, frontend, script checks, structured report | Direct |
 | [**fw-setup**](skills/fw-setup/) | Automated FDK 10 installation with Node.js 24 via nvm using subagents | **Subagent-Based** |
 | [**fw-publish**](skills/fw-publish/) | Guide for publishing Freshworks apps to the marketplace | Direct |
+
+### Automated app review (`fw-review`)
+
+[**fw-review**](skills/fw-review/) is a separate skill from **fw-app-dev**’s `/fdk-review` (validate rounds). It runs a **fixed, silent pipeline**: read `manifest.json` and iparams per `rules/*.md`, execute **deterministic** checks from `scripts/*.js` for SC-* rule IDs, apply frontend FF-* rules, and emit a structured **App Review Result** (format in `skills/fw-review/rules/report.md`). Use it when you want a **repeatable audit** before QA or marketplace submission. **FDK** is not bundled with the repo—ensure `fdk` is available (e.g. via [**fw-setup**](skills/fw-setup/)) for phases that need it. More detail: [`skills/fw-review/README.md`](skills/fw-review/README.md).
 
 ### Subagent-Based Skills
 
