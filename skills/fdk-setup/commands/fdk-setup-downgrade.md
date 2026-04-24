@@ -156,6 +156,183 @@ SLASH_COMMAND_CLOSEOUT: Return after REPORT (or abort). No fdk run/tunnel in thi
 })
 ```
 
-**Windows (nvm-windows + PowerShell):** Do not chain with **`&&`** on **PowerShell 5.1** — use separate lines or **`;`** / **`$LASTEXITCODE`** checks (see **`references/windows.md`**). To confirm the CLI on PATH, use **`where.exe fdk`** — **`where fdk`** is **`Where-Object`**, not a PATH search, and often looks “empty” even when **`fdk`** is installed.
+**Windows (nvm-windows + PowerShell):** 
+
+The bash script above is for Unix systems. For Windows PowerShell, use this PowerShell-native implementation:
+
+```powershell
+Task({
+  subagent_type: “shell”,
+  model: “fast”,
+  description: “Downgrade FDK version (10.x → 10.0.y or 10.x → 9.x) - Windows”,
+  prompt: `
+Downgrade FDK to a specific version on Windows.
+
+$TARGET_VER = “__FDK_DOWNGRADE_TARGET__”
+# Host must replace with: “latest” OR “9.6.0” OR “10.0.1” etc.
+
+# Determine target major version
+$IS_NINE = $false
+if ($TARGET_VER -eq “latest” -or $TARGET_VER -match “^9\.”) {
+  $IS_NINE = $true
+  Write-Host “=========================================” -ForegroundColor Yellow
+  Write-Host “WARNING: FDK 9.x + Node 18.x DEPRECATED” -ForegroundColor Yellow
+  Write-Host “=========================================” -ForegroundColor Yellow
+  Write-Host “Support ends: May 30, 2026”
+  Write-Host “Publishing requires FDK 10.x + Node 24.x”
+  Write-Host “Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/”
+  Write-Host “”
+  $confirm = Read-Host “Continue with FDK 9.x downgrade? (y/N)”
+  if ($confirm -ne “y” -and $confirm -ne “Y”) {
+    Write-Host “Downgrade cancelled.”
+    exit 0
+  }
+  $NODE_VER = “18.20”
+} else {
+  $IS_NINE = $false
+  $NODE_VER = “24.11”
+}
+
+if ($TARGET_VER -eq “latest”) {
+  $FDK_URL = “https://cdn.freshdev.io/fdk/latest.tgz”
+} else {
+  $FDK_URL = “https://cdn.freshdev.io/fdk/v$TARGET_VER.tgz”
+}
+
+# Check if tarball exists
+try {
+  $response = Invoke-WebRequest -Uri $FDK_URL -Method Head -UseBasicParsing -ErrorAction Stop
+  $HTTP = $response.StatusCode
+} catch {
+  $HTTP = “000”
+}
+
+if ($HTTP -ne 200) {
+  Write-Host “=========================================” -ForegroundColor Red
+  Write-Host “ERROR: FDK tarball not available” -ForegroundColor Red
+  Write-Host “=========================================” -ForegroundColor Red
+  Write-Host “URL: $FDK_URL”
+  Write-Host “HTTP Status: $HTTP”
+  Write-Host “”
+  if ($TARGET_VER -match “^9\.”) {
+    Write-Host “This FDK 9.x version may not be published to the CDN.”
+    Write-Host “Try: /fdk-setup-downgrade (no version, uses latest 9.x)”
+    Write-Host “Or check https://cdn.freshdev.io/fdk/ for available versions”
+  } elseif ($TARGET_VER -match “^10\.0\.”) {
+    Write-Host “Downgrade to FDK 10.0.y is supported (stays on Node 24.11).”
+    Write-Host “Verify the version exists at: https://cdn.freshdev.io/fdk/”
+  }
+  exit 1
+}
+
+Write-Host “Downgrading to FDK $TARGET_VER on Node $NODE_VER” -ForegroundColor Green
+
+# Remove FDK from current Node
+npm uninstall -g @freshworks/fdk 2>$null
+npm uninstall -g fdk 2>$null
+if (Test-Path “$env:USERPROFILE\.fdk”) {
+  Remove-Item -Recurse -Force “$env:USERPROFILE\.fdk”
+}
+npm cache clean --force
+
+if ($IS_NINE) {
+  # Downgrading to FDK 9.x: remove FDK 10.x from Node 24 (exclusive operation)
+  $nvmList = nvm list
+  if ($nvmList -match “24”) {
+    Write-Host “Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)...”
+    nvm use 24 2>$null
+    npm uninstall -g @freshworks/fdk 2>$null
+    npm uninstall -g fdk 2>$null
+  }
+  
+  if (-not ($nvmList -match “18”)) {
+    nvm install 18.20
+  }
+  nvm use 18.20
+  $NODE_VER = “18.20”
+} else {
+  # Downgrading within FDK 10.x line: remove FDK 9.x from Node 18 if exists
+  $nvmList = nvm list
+  if ($nvmList -match “18”) {
+    Write-Host “Removing FDK 9.x from Node 18 (staying on FDK 10.x line)...”
+    nvm use 18 2>$null
+    npm uninstall -g @freshworks/fdk 2>$null
+    npm uninstall -g fdk 2>$null
+  }
+  
+  if (-not ($nvmList -match “24\.11”)) {
+    nvm install 24.11
+  }
+  nvm use 24.11
+  $NODE_VER = “24.11”
+}
+
+node --version
+
+npm install -g “$FDK_URL”
+if ($LASTEXITCODE -ne 0) {
+  Write-Host “ERROR: npm install failed” -ForegroundColor Red
+  exit 1
+}
+
+# Verify installation
+$fdkVer = fdk version 2>&1 | Out-String
+if ($IS_NINE) {
+  if ($fdkVer -notmatch “9\.”) {
+    Write-Host “FAILED: Not FDK 9.x” -ForegroundColor Red
+    exit 1
+  }
+  
+  # Set nvm default to Node 18
+  $currentNode = nvm current
+  nvm alias default $currentNode
+  
+  Write-Host “Downgrade complete: FDK 9.x on $currentNode (DEPRECATED)” -ForegroundColor Green
+  Write-Host “”
+  Write-Host “nvm alias default set to $currentNode — new terminals will use Node 18”
+  Write-Host “Current terminal: already on $currentNode”
+} else {
+  if ($fdkVer -notmatch “10\.”) {
+    Write-Host “FAILED: Not FDK 10.x” -ForegroundColor Red
+    exit 1
+  }
+  nvm alias default 24.11
+  Write-Host “Downgrade complete: FDK 10.x on Node 24.11” -ForegroundColor Green
+}
+
+# MANDATORY VERIFICATION
+Write-Host “`nVerification:” -ForegroundColor Cyan
+fdk version
+if ($IS_NINE) {
+  if ((fdk version 2>&1 | Out-String) -notmatch “9\.”) {
+    Write-Host “FAILED: Not FDK 9.x” -ForegroundColor Red
+  }
+  if ((node --version) -notmatch “v18\.”) {
+    Write-Host “FAILED: Not Node 18” -ForegroundColor Red
+  }
+} else {
+  if ((fdk version 2>&1 | Out-String) -notmatch “10\.”) {
+    Write-Host “FAILED: Not FDK 10.x” -ForegroundColor Red
+  }
+  if ((node --version) -notmatch “v24\.11\.”) {
+    Write-Host “WARNING: Node 24.11.x recommended” -ForegroundColor Yellow
+  }
+}
+
+# REPORT
+Write-Host “`nFDK downgrade complete — URL: $FDK_URL” -ForegroundColor Green
+Write-Host “Return to FDK 10.x: /fdk-setup-upgrade (latest or --to 10.x.y) or /fdk-setup-install”
+
+# SLASH_COMMAND_CLOSEOUT: Return after REPORT
+  `
+})
+```
+
+**Key differences from Unix version:**
+- Uses PowerShell-native syntax (`$VAR`, `-match`, `if/else`, `2>$null`)
+- Uses `Invoke-WebRequest` instead of `curl` for HTTP checks
+- Uses `Test-Path` and `Remove-Item` for file operations
+- No `&&` chaining (not supported in PowerShell 5.1)
+- Uses `where.exe fdk` for PATH verification (not `where fdk`)
 
 **Legacy alias:** **`/fdk-downgrade`**.

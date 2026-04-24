@@ -72,6 +72,20 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 
 Do **not** assume names like **`latest-v18.tgz`** unless Freshworks documentation or an HTTP check confirms they exist for your session.
 
+### FDK Downgrade Support (Windows)
+
+**FDK 10.x → 10.0.y** (e.g., 10.1.0 → 10.0.1):
+- **Supported** - Downgrades within the FDK 10.x line while staying on Node 24.11
+- Use `/fdk-setup-downgrade 10.0.1` (or desired 10.0.y version)
+- PowerShell-native implementation handles version detection correctly
+- No Node version switch required (stays on 24.11)
+
+**FDK 10.x → 9.x** (e.g., 10.1.0 → 9.8.2):
+- **Supported** - Cross-major downgrade with Node 24 → Node 18 switch
+- Use `/fdk-setup-downgrade 9.8.2` or `/fdk-setup-downgrade` (latest 9.x)
+- Shows deprecation warning before proceeding
+- Automatically switches from Node 24.11 to Node 18.20
+
 ## Step 1: Install nvm-windows
 
 **Download and Install:**
