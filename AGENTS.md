@@ -15,7 +15,7 @@ This repository is a **multi-IDE skill marketplace** for AI assistants working o
 
 ### MCP tools (openai-server, publish)
 
-This repository’s **canonical MCP server definition** is **`.mcp.json`** at the **repository root** (`freshworks-marketplace` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the plugin loads MCP from that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`** in the bundled file). In **Cursor**, copy or merge that entry into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **"API key for Freddy AI Copilot VS Code plugin"** → **Copy**.
+This repository’s **canonical MCP server definition** lives only under the publish skill: **`skills/fw-publish/.mcp.json`** (`freshworks-marketplace` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the **fw-publish** plugin (or marketplace that includes it) uses that file’s shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge that entry into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **"API key for Freddy AI Copilot VS Code plugin"** → **Copy**.
 
 | Tool | Purpose |
 |------|---------|
@@ -55,8 +55,8 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **`skills/*/commands/*.md`** — slash-command bodies (IDE-agnostic)
 - **`skills/*/references/**`** — load **on demand** (API, errors, events, playbooks); index: `skills/fw-app-dev/references/skill-advanced-topics.md`
 - **`skills/*/assets/templates/**`** — app skeletons
-- **`.mcp.json`** (repo root) — canonical **`freshworks-marketplace`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
-- **`.claude/settings.json`** — Claude Code project permissions (MCP defaults for this repo; server key must match `.mcp.json`)
+- **`skills/fw-publish/.mcp.json`** — canonical **`freshworks-marketplace`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
+- **`.claude/settings.json`** — Claude Code project permissions (MCP defaults for this repo; server key must match **`skills/fw-publish/.mcp.json`**)
 - **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-developer-tooling`**; each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface`, like [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json))
 
 **Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/`; IDE plugin JSON points there—do not duplicate command/rule trees under `.cursor/` inside skills.

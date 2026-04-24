@@ -251,7 +251,7 @@ Next steps:
    - The MCP server URL is fixed: `https://mcp.freshworks.dev/mcp`
    - Detect IDE and write config:
 
-     **Claude Code:** Guide them to run `/config` and set the plugin's `mcp_auth_token` field (stored in system keychain via `userConfig`). The server URL is already bundled in `.mcp.json`.
+     **Claude Code:** Guide them to run `/config` and set the plugin's `mcp_auth_token` field (stored in system keychain via `userConfig`). The server URL is defined in **`skills/fw-publish/.mcp.json`**.
 
      **Cursor:** Write or update `~/.cursor/mcp.json`:
      ```json

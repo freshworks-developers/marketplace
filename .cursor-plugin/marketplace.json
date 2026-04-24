@@ -120,7 +120,7 @@
       "interface": {
         "displayName": "Freshworks Marketplace Publish",
         "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
-        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. Bundled .mcp.json for Cursor. Pair with fw-app-dev for manifest and validation fixes."
+        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: **skills/fw-publish/.mcp.json**. Pair with fw-app-dev for manifest and validation fixes."
       }
     }
   ]

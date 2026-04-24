@@ -124,7 +124,7 @@ No manifest generation or registry required. Each skill is self-contained and de
 
 ## MCP (marketplace publish)
 
-Publishing uses the **`freshworks-marketplace`** server. This repo’s **reference config** is **`.mcp.json`** at the **repository root** (URL + `Authorization` header). **Claude Code** can use the plugin’s **`userConfig`** token with that file’s **`${user_config.mcp_auth_token}`** placeholder; **Cursor** should merge the same server block into **`.cursor/mcp.json`** with a real **`Bearer <JWT>`** (see **`AGENTS.md`** and **`skills/fw-publish/SKILL.md`**).
+Publishing uses the **`freshworks-marketplace`** server. This repo’s **reference config** is **`skills/fw-publish/.mcp.json`** (URL + `Authorization` header). **Claude Code** can use the plugin’s **`userConfig`** token with that file’s **`${user_config.mcp_auth_token}`** placeholder; **Cursor** should merge the same server block into **`.cursor/mcp.json`** with a real **`Bearer <JWT>`** (see **`AGENTS.md`** and **`skills/fw-publish/SKILL.md`**).
 
 ## Troubleshooting
 

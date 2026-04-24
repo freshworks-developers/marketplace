@@ -319,7 +319,7 @@ POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
   #   1. Ask for API key from https://developers.freshworks.com/developer/ → "API key for Freddy AI Copilot VS Code plugin" section → Copy
   #   2. MCP server URL is fixed: https://mcp.freshworks.dev/mcp
   #   3. Detect IDE:
-  #      - Claude Code: direct user to /config → set mcp_auth_token (URL already in .mcp.json)
+  #      - Claude Code: direct user to /config → set mcp_auth_token (URL in skills/fw-publish/.mcp.json)
   #      - Cursor: write ~/.cursor/mcp.json with freshworks-marketplace server entry (url: https://mcp.freshworks.dev/mcp)
   #   4. Confirm: "MCP server configured. Publish tools are now available."
   # If user says no: "Skipped. Configure MCP later via IDE settings (see AGENTS.md)."
