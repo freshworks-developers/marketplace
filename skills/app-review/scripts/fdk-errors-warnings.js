@@ -29,6 +29,7 @@ async function runCli(run) {
 }
 
 async function run(targetDir) {
+  // This checker inspects only manifest.json, so it applies to app structure rather than frontend/server files.
   const manifest = await readManifest(targetDir);
   const details = [];
 

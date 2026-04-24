@@ -21,6 +21,7 @@ const OAUTH_PATTERNS = [
   /oauth[_-]?token\s*[:=]\s*['"][^'"]{10,}['"]/gi
 ];
 
+// Walk matching text files across the app root so OAuth values can be flagged when they leak outside config.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

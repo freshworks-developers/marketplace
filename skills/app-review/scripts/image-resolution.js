@@ -15,6 +15,7 @@ const IGNORED_DIRECTORIES = new Set([
   'node_modules'
 ]);
 
+// Walk the app root for matching image files so icon/logo assets can be checked.
 async function walkFiles(rootDir, extensions) {
   const files = [];
   const allowedExtensions = Array.isArray(extensions) ? extensions : extensions?.extensions || [];

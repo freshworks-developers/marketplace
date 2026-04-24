@@ -31,6 +31,7 @@ async function runCli(run) {
 }
 
 async function run(targetDir) {
+  // This checker inspects only manifest.json, so it validates app metadata rather than source files.
   const manifest = await readManifest(targetDir);
   const details = [];
 

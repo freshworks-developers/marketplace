@@ -33,6 +33,7 @@ const TRUSTED_SOURCES = [
   'unpkg.com'
 ];
 
+// Walk app text files with matching extensions across the whole app root so import-style URLs can be inspected.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

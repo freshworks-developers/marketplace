@@ -17,6 +17,7 @@ const IGNORED_DIRECTORIES = new Set([
 
 const SENSITIVE_LOG_PATTERN = /(?:console\.(?:log|info|warn|error|debug)|logger\.(?:log|info|warn|error|debug))\s*\([^)]*(?:password|secret|token|api[_-]?key|bearer|pii|credit[_-]?card|ssn)/gi;
 
+// Walk HTML and JS/TS files across the app root so logging statements can be checked for sensitive values.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

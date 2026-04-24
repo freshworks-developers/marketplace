@@ -15,6 +15,7 @@ const IGNORED_DIRECTORIES = new Set([
   'node_modules'
 ]);
 
+// Walk JS and TS source files across the app root so assignments to browser globals can be flagged wherever they appear.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

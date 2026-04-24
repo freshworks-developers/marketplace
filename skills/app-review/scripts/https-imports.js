@@ -15,6 +15,7 @@ const IGNORED_DIRECTORIES = new Set([
   'node_modules'
 ]);
 
+// Walk app text files with matching extensions across the whole app root so insecure import URLs can be found.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

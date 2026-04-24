@@ -15,6 +15,7 @@ const IGNORED_DIRECTORIES = new Set([
   'node_modules'
 ]);
 
+// Walk matching source files across the app root so manifest-declared settings update hooks can be matched to code.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

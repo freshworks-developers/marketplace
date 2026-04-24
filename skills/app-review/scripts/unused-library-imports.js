@@ -19,6 +19,7 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// Walk JS and TS source files across the app root so third-party imports can be compared against usage in the same file.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 

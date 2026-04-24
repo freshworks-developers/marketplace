@@ -23,6 +23,7 @@ const BLOCKED_FILES = [
   'freshteam.css'
 ];
 
+// Walk HTML and CSS files across the app root so linked or imported stylesheet assets can be checked.
 async function walkFiles(rootDir, extensions) {
   const files = [];
 
