@@ -10,12 +10,17 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 **`/fdk-setup use`**: align **this shell** (and optionally **`.nvmrc`**) with the **Node + FDK** stack the workspace needs. **Does not** install or change FDK semver by itself — if **`fdk`** is missing on the chosen Node, route to **`/fdk-setup-install`**, **`/fdk-setup-upgrade`**, or **`/fdk-setup-downgrade`**.
 
 **Scope:**
-- **Without `--global`**: Changes only current shell (`nvm use`)
+- **Without `--global`**: 
+  - **macOS/Linux (nvm)**: Changes only current shell (`nvm use`)
+  - **Windows (nvm-windows)**: ⚠️ **PLATFORM-SPECIFIC**: `nvm use` on Windows automatically sets the global default for all new shells (nvm-windows behavior)
+  - **Homebrew/Chocolatey**: System-wide already (no version switching)
 - **With `--global`**: Sets as default for all new shells across all environments:
   - **nvm (macOS/Linux)**: `nvm alias default <version>` + updates `~/.zshrc` and `~/.bashrc` with `nvm use` line
+  - **nvm-windows**: Explicitly sets default via `nvm alias default` (same result as without flag due to platform behavior)
   - **Homebrew (macOS)**: System-wide already (no action needed)
   - **Chocolatey (Windows)**: System-wide already (no action needed)
-  - **nvm-windows**: Sets default via nvm-windows alias
+
+**Important Windows Note:** On Windows with nvm-windows, running `nvm use <version>` automatically changes the system-wide default Node version for all new terminals. This is different from Unix where `nvm use` only affects the current shell. Use `--global` flag explicitly for clarity and consistency, even though Windows behavior makes it redundant.
 
 ## When to use
 
@@ -224,12 +229,14 @@ echo "====================="
 
 **Scope summary:**
 
-| Command | Current shell | New shells | .nvmrc file |
-|---------|---------------|------------|-------------|
-| `/fdk-setup-use 10` | ✅ Node 24 | ❌ Unchanged | ❌ Not created |
-| `/fdk-setup-use 10 --global` | ✅ Node 24 | ✅ Node 24 (default) | ❌ Not created |
-| `/fdk-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Created (24.11) |
-| `/fdk-setup-use 10 --global --write-nvmrc` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Created (24.11) |
+| Command | Current shell | New shells (macOS/Linux) | New shells (Windows) | .nvmrc file |
+|---------|---------------|-------------------------|---------------------|-------------|
+| `/fdk-setup-use 10` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (auto-default)* | ❌ Not created |
+| `/fdk-setup-use 10 --global` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Node 24 (default) | ❌ Not created |
+| `/fdk-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (auto-default)* | ✅ Created (24.11) |
+| `/fdk-setup-use 10 --global --write-nvmrc` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Node 24 (default) | ✅ Created (24.11) |
+
+*Windows nvm-windows automatically sets global default when you run `nvm use`, unlike Unix nvm which only affects current shell.
 
 **Closeout:** No **`fdk run`** / tunnel. This command modifies shell state and optionally **`.nvmrc`** / **nvm default alias**.
 

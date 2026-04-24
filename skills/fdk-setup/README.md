@@ -98,7 +98,8 @@ Check available commands:
 /fdk-setup-upgrade              # Upgrade to latest FDK 10.x line (Node 24.11)
 /fdk-setup-upgrade --to 10.1.0 # Pin semver (CDN v10.1.0.tgz)
 /fdk-setup-downgrade            # FDK 9.x latest line + Node 18 (deprecated)
-/fdk-setup-downgrade 9.6.0      # Pin FDK 9.x.y (CDN v9.6.0.tgz)
+/fdk-setup-downgrade 10.0.1     # Downgrade within FDK 10.x line (e.g., 10.1.0 → 10.0.1, stays on Node 24)
+/fdk-setup-downgrade 9.6.0      # Pin FDK 9.x.y (CDN v9.6.0.tgz, switches to Node 18)
 /fdk-setup-uninstall            # Remove FDK only (npm + ~/.fdk + cache; keeps nvm)
 /fdk-setup-status               # Inline status
 /fdk-setup-status --verbose     # PATH, npm prefix, nvm, rc snippets
