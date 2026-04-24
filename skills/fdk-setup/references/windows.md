@@ -79,12 +79,44 @@ Do **not** assume names like **`latest-v18.tgz`** unless Freshworks documentatio
 - Use `/fdk-setup-downgrade 10.0.1` (or desired 10.0.y version)
 - PowerShell-native implementation handles version detection correctly
 - No Node version switch required (stays on 24.11)
+- **PATH refresh**: Script automatically refreshes PATH in current session to make `fdk` immediately available
 
 **FDK 10.x → 9.x** (e.g., 10.1.0 → 9.8.2):
 - **Supported** - Cross-major downgrade with Node 24 → Node 18 switch
 - Use `/fdk-setup-downgrade 9.8.2` or `/fdk-setup-downgrade` (latest 9.x)
 - Shows deprecation warning before proceeding
 - Automatically switches from Node 24.11 to Node 18.20
+- **PATH refresh**: Script automatically refreshes PATH in current session
+
+**After downgrade, if `where.exe fdk` shows no path:**
+1. Close and reopen your PowerShell terminal (nvm-windows symlink may need new session)
+2. Or manually refresh PATH:
+```powershell
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+```
+
+### FDK Uninstall with Multiple Versions
+
+If you installed both FDK 10.x and FDK 9.x using `/fdk-setup-install --both`, the `/fdk-setup-uninstall` command will:
+- **Remove FDK from ALL Node versions** (both Node 24 and Node 18)
+- Delete the shared `~/.fdk` cache directory
+- Clean npm cache
+- Preserve Node.js and nvm-windows installation
+
+The uninstall script automatically detects and removes FDK from:
+1. Current active Node version
+2. Node 24.x (if present)
+3. Node 18.x (if present)
+
+### fdk-setup-use --global Flag (Windows-Specific Behavior)
+
+⚠️ **Important**: On Windows with nvm-windows, running `nvm use <version>` automatically sets the global default for all new terminals. This is different from macOS/Linux behavior where `nvm use` only affects the current shell.
+
+**Behavior:**
+- **Without `--global`**: On Windows, `nvm use 24.11` automatically sets Node 24.11 as the default for all new shells
+- **With `--global`**: Explicitly sets the default (same result on Windows, but recommended for clarity and cross-platform consistency)
+
+**Recommendation**: Always use `--global` flag when you want to set a permanent default, even though Windows makes it redundant. This ensures consistent behavior if scripts are shared with macOS/Linux users.
 
 ## Step 1: Install nvm-windows
 

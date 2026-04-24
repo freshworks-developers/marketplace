@@ -275,6 +275,11 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
+# Refresh PATH in current PowerShell session (Windows-specific)
+# This ensures 'fdk' command is immediately available after npm install
+Write-Host “Refreshing PATH in current session...” -ForegroundColor Cyan
+$env:Path = [System.Environment]::GetEnvironmentVariable(“Path”,”Machine”) + “;” + [System.Environment]::GetEnvironmentVariable(“Path”,”User”)
+
 # Verify installation
 $fdkVer = fdk version 2>&1 | Out-String
 if ($IS_NINE) {
@@ -302,6 +307,15 @@ if ($IS_NINE) {
 
 # MANDATORY VERIFICATION
 Write-Host “`nVerification:” -ForegroundColor Cyan
+
+# Check PATH first (use where.exe, NOT where - where is alias for Where-Object)
+$fdkPath = where.exe fdk 2>$null
+if ($fdkPath) {
+  Write-Host “✓ FDK found in PATH: $fdkPath” -ForegroundColor Green
+} else {
+  Write-Host “⚠ WARNING: FDK not found in PATH (try closing and reopening terminal)” -ForegroundColor Yellow
+}
+
 fdk version
 if ($IS_NINE) {
   if ((fdk version 2>&1 | Out-String) -notmatch “9\.”) {
