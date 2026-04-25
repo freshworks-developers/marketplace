@@ -1,10 +1,6 @@
 # App Review Scripts
 
-<<<<<<< HEAD:skills/fw-review/scripts/README.md
 These scripts are deterministic checks used by the **fw-review** skill. Each script takes an app root path and prints JSON:
-=======
-These scripts are deterministic checks used by the `app-review` skill. Each script accepts an app root and prints JSON:
->>>>>>> 8c11b9c (changes in logical rules):skills/app-review/scripts/README.md
 
 ```bash
 node scripts/<script-name>.js /path/to/app
@@ -154,44 +150,26 @@ Shared helper in `common.js`:
 
 - Internal rule ID: `FFS-05L`
 - Image file types discovered:
-  - `.gif`, `.ico`, `.jpeg`, `.jpg`, `.png`, `.svg`, `.webp`
-- Accepted upload file types:
-  - `.jpeg`, `.jpg`, `.png`
+  - `.gif`, `.ico`, `.jpeg`, `.jpg`, `.png`
+- SVG file checked:
+  - `icon.svg`
 - Purpose:
-  - Mirror DevPortal frontend image-upload validation for marketplace assets.
-  - Enforce accepted image type, upload size, dimensions, aspect ratio, count limits, and S3-safe filenames.
+  - Match freshreview's baseline image-resolution rule.
+  - Flag suspiciously small icon/logo image files.
+  - Validate that `icon.svg` declares `64x64` dimensions.
 - Validation flow:
-  1. Recursively collect image assets from the app root.
+  1. Recursively collect asset paths from the app root.
   2. Skip ignored folders such as `node_modules`, `dist`, `.git`, and `.fdk`.
-  3. Fail image uploads whose extension is not `.jpeg`, `.jpg`, or `.png`.
-  4. Fail any image larger than `2 MB` (`2097152` bytes).
-  5. Fail filenames that do not match the S3-safe filename regex:
-     - `/^[A-Za-z0-9!_.\-*'()]+$/`
-  6. Classify files by path/name:
-     - cover art: path/name contains `cover_arts`, `cover-art`, or `cover_art`
-     - screenshot: path/name contains `screenshot` or `screenshots`
-     - module screenshot: screenshot path/name also contains `module`
-  7. Read `.png`, `.jpg`, and `.jpeg` dimensions directly from the image file bytes.
-  8. Apply cover art validation:
-     - minimum `400x400`
-     - must be square (`1:1` aspect ratio)
-     - max count `1`
-  9. Apply screenshot validation:
-     - minimum `850x850`
-     - max count `5`
-  10. Apply module screenshot validation:
-     - same minimum `850x850`
-     - max `2` screenshots per module
-- DevPortal copy vs validation:
-  - App icon UI copy recommends/displays `500x500`.
-  - The validation logic accepts any square image at least `400x400`.
-  - Screenshot UI copy recommends/displays `1600x1000`.
-  - The validation logic accepts screenshots at least `850x850`.
+  3. For `.gif`, `.ico`, `.jpeg`, `.jpg`, and `.png` files, fail when:
+     - file size is greater than `0` and less than `1024` bytes, and
+     - the relative path contains `icon` or `logo`.
+  4. Find `icon.svg`.
+  5. Read `width` and `height` attributes from `icon.svg`.
+  6. Fail when `icon.svg` declares dimensions other than `64x64`.
 - Notes:
-  - PNG dimensions are read from the PNG header.
-  - JPEG dimensions are read from JPEG Start Of Frame markers.
-  - Duplicate screenshot removal by filename happens in DevPortal upload behavior; this script validates filenames and count constraints but does not mutate or remove duplicate files.
-  - Module detection is path-based, so module screenshot count depends on screenshot files being organized with module-related path names.
+  - The script does not inspect actual PNG/JPEG dimensions.
+  - The script does not enforce screenshot size, upload type allowlists, upload size limits, count limits, or S3-safe filenames.
+  - This is intentionally aligned with freshreview's `FFS-05L` implementation.
 
 ### `settings-update-handler.js`
 
@@ -327,6 +305,28 @@ Shared helper in `common.js`:
 - Matching behavior:
   - Uses `href.includes(cssFile)` style matching after lowercasing.
   - This allows detection in local paths, CDN paths, or nested asset URLs as long as the blocked file name appears in the string.
+
+### `fdk-errors-warnings.js`
+
+- Internal rule ID: `GN-02L`
+- Command executed:
+  - `fdk validate`
+- Purpose:
+  - Run FDK validation against the app root.
+  - Fail when FDK reports errors or warnings.
+  - Keep review output readable by showing at most the first 10 issue lines.
+- Validation flow:
+  1. Run `fdk validate` with the provided app root as the working directory.
+  2. Collect stdout and stderr.
+  3. Strip ANSI color codes.
+  4. Extract non-empty lines containing `error`, `warning`, or `warn`.
+  5. Ignore success summaries such as `0 errors` and `0 warnings`.
+  6. Fail when `fdk validate` exits unsuccessfully or warning/error lines are present.
+  7. Return at most the first 10 output issue lines in `details`.
+- Timeout:
+  - Fails if `fdk validate` does not finish within `120` seconds.
+- FDK availability:
+  - Fails with a clear message when `fdk` is not available on `PATH`.
 
 ### `platform-version-upgrade.js`
 

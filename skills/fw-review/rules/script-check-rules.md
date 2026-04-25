@@ -202,6 +202,31 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Remove product-specific CSS references and use the correct Freshworks CSS bundle instead.
 
+## GN-02L — FDK validation must not report errors or warnings
+
+**Goal:**
+- `fdk validate` should complete without reporting errors or warnings.
+
+**Inspect**
+
+- Run `scripts/fdk-errors-warnings.js`.
+
+**Pass**
+
+- `fdk validate` exits successfully and reports no warning/error lines.
+
+**Fail**
+
+- `fdk validate` exits unsuccessfully or reports one or more warning/error lines.
+
+**Not applicable**
+
+- FDK CLI is unavailable on `PATH`.
+
+**Fix message**
+
+- Fix the reported FDK validation issues, then rerun `fdk validate`. The script shows at most the first 10 issues per run.
+
 ## GN-12L — App must target the expected platform version
 
 **Goal:**
