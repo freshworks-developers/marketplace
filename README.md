@@ -32,8 +32,7 @@
 ```bash
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-skill
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-app
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-review
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
@@ -48,7 +47,7 @@ The table lists skills in lifecycle order. One-line summaries here; full playboo
 | [**fw-setup**](skills/fw-setup/) | FDK and Node.js install / lifecycle via nvm |
 | [**fw-app-dev**](skills/fw-app-dev/) | Full Platform 3.0 marketplace apps: manifest, requests, OAuth, serverless, UI |
 | [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions (`actions.json`), SMI, request templates, validation |
-| [**fw-ai-actions-skill**](skills/fw-ai-actions-skill/) | Standalone AI Actions skill: rules, references, optional integration agents |
+| [**fw-ai-actions-app**](skills/fw-ai-actions-skill/) | Standalone AI Actions skill: rules, references, optional integration agents |
 | [**fw-review**](skills/fw-review/) | Structured pre-submission audit (rules + scripts) |
 | [**fw-publish**](skills/fw-publish/) | Marketplace publish via MCP (validate, pack, upload, submit/update) |
 
@@ -97,7 +96,7 @@ skill-name/
 └── assets/            # Templates, logos, etc.
 ```
 
-**fw-ai-actions-skill** also ships **integration agent** prompts under `agents/`:
+**fw-ai-actions-app** also ships **integration agent** prompts under `agents/`:
 
 ```
 skills/

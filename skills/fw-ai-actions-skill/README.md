@@ -31,10 +31,10 @@ app-root/
 ## Installation
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-actions-skill
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-app
 ```
 
-Or copy this folder into `.cursor/skills/fw-ai-actions-skill/` (or your tool’s skills directory).
+Or copy this folder into `.cursor/skills/fw-ai-actions-app/` (or your tool’s skills directory).
 
 ## Contents
 
