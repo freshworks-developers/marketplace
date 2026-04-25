@@ -2,6 +2,9 @@
 
 const fs = require('fs/promises');
 const path = require('path');
+const { createRuleResult, runCli } = require('./common');
+
+const RULE_ID = 'FFS-05L';
 
 const IGNORED_DIRECTORIES = new Set([
   '.cache',
@@ -15,10 +18,19 @@ const IGNORED_DIRECTORIES = new Set([
   'node_modules'
 ]);
 
-// Walk the app root for matching image files so icon/logo assets can be checked.
-async function walkFiles(rootDir, extensions) {
+const ACCEPTED_IMAGE_EXTENSIONS = new Set(['.jpeg', '.jpg', '.png']);
+const IMAGE_EXTENSIONS = new Set(['.gif', '.ico', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+const MIN_COVER_ART_DIMENSION = 400;
+const MIN_SCREENSHOT_DIMENSION = 850;
+const MAX_COVER_ART_COUNT = 1;
+const MAX_SCREENSHOT_COUNT = 5;
+const MAX_MODULE_SCREENSHOT_COUNT = 2;
+const S3_SAFE_FILE_NAME_PATTERN = /^[A-Za-z0-9!_.\-*'()]+$/;
+
+// Walk the app root for image files so DevPortal upload constraints can be checked.
+async function walkImageFiles(rootDir) {
   const files = [];
-  const allowedExtensions = Array.isArray(extensions) ? extensions : extensions?.extensions || [];
 
   async function visit(currentDir) {
     const entries = await fs.readdir(currentDir, { withFileTypes: true }).catch(() => []);
@@ -31,7 +43,7 @@ async function walkFiles(rootDir, extensions) {
         continue;
       }
 
-      if (entry.isFile() && allowedExtensions.includes(path.extname(entry.name).toLowerCase())) {
+      if (entry.isFile() && IMAGE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
         files.push(fullPath);
       }
     }
@@ -41,74 +53,209 @@ async function walkFiles(rootDir, extensions) {
   return files;
 }
 
-async function pathExists(targetPath) {
-  try {
-    await fs.access(targetPath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function readText(filePath) {
-  return fs.readFile(filePath, 'utf8').catch(() => null);
-}
-
 function createDetail(file, message) {
   return { file, message };
 }
 
 function createResult(passed, summary, details = []) {
-  return { passed, summary, details };
+  return createRuleResult(RULE_ID, passed, summary, details);
 }
 
-async function runCli(run) {
-  const targetDir = path.resolve(process.argv[2] || process.cwd());
-  const result = await run(targetDir);
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-  process.exitCode = result.passed ? 0 : 1;
+function isPng(buffer) {
+  return buffer.length >= 24 && buffer.toString('hex', 0, 8) === '89504e470d0a1a0a';
+}
+
+function getPngDimensions(buffer) {
+  if (!isPng(buffer)) {
+    return null;
+  }
+
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20)
+  };
+}
+
+function isJpeg(buffer) {
+  return buffer.length >= 4 && buffer[0] === 0xff && buffer[1] === 0xd8;
+}
+
+function getJpegDimensions(buffer) {
+  if (!isJpeg(buffer)) {
+    return null;
+  }
+
+  let offset = 2;
+  while (offset < buffer.length) {
+    if (offset + 3 >= buffer.length) {
+      return null;
+    }
+
+    if (buffer[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+
+    const marker = buffer[offset + 1];
+    const length = buffer.readUInt16BE(offset + 2);
+    const isStartOfFrame =
+      (marker >= 0xc0 && marker <= 0xc3) ||
+      (marker >= 0xc5 && marker <= 0xc7) ||
+      (marker >= 0xc9 && marker <= 0xcb) ||
+      (marker >= 0xcd && marker <= 0xcf);
+
+    if (isStartOfFrame && offset + 8 < buffer.length) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7)
+      };
+    }
+
+    offset += 2 + length;
+  }
+
+  return null;
+}
+
+async function getImageDimensions(filePath) {
+  const buffer = await fs.readFile(filePath).catch(() => null);
+  if (!buffer) {
+    return null;
+  }
+
+  return getPngDimensions(buffer) || getJpegDimensions(buffer);
+}
+
+function getImageRole(relativePath) {
+  const normalizedPath = relativePath.toLowerCase();
+  const baseName = path.basename(normalizedPath);
+
+  if (normalizedPath.includes('cover_arts/') || normalizedPath.includes('cover-art') || /cover[_-]?art/.test(baseName)) {
+    return 'coverArt';
+  }
+
+  if (normalizedPath.includes('screenshot') || normalizedPath.includes('screenshots/')) {
+    return normalizedPath.includes('module') ? 'moduleScreenshot' : 'screenshot';
+  }
+
+  return 'image';
+}
+
+function getModuleKey(relativePath) {
+  const segments = relativePath.split('/');
+  const moduleIndex = segments.findIndex((segment) => /^modules?$/i.test(segment));
+  if (moduleIndex >= 0 && segments[moduleIndex + 1]) {
+    return segments[moduleIndex + 1];
+  }
+
+  const screenshotIndex = segments.findIndex((segment) => /screenshots?/i.test(segment));
+  if (screenshotIndex > 0) {
+    return segments[screenshotIndex - 1];
+  }
+
+  return 'unknown-module';
 }
 
 async function run(targetDir) {
   const details = [];
-  const imageFiles = await walkFiles(targetDir, {
-    extensions: ['.gif', '.ico', '.jpeg', '.jpg', '.png']
-  });
+  const imageFiles = await walkImageFiles(targetDir);
+  const coverArtFiles = [];
+  const screenshotFiles = [];
+  const moduleScreenshots = new Map();
 
   for (const filePath of imageFiles) {
     const stats = await fs.stat(filePath).catch(() => null);
-    if (!stats || !/icon|logo/i.test(path.basename(filePath))) {
+    if (!stats) {
       continue;
     }
 
-    if (stats.size > 0 && stats.size < 1024) {
+    const relativePath = path.relative(targetDir, filePath).split(path.sep).join('/');
+    const extension = path.extname(filePath).toLowerCase();
+    const fileName = path.basename(filePath);
+    const role = getImageRole(relativePath);
+
+    if (!ACCEPTED_IMAGE_EXTENSIONS.has(extension)) {
       details.push(
-        createDetail(
-          path.relative(targetDir, filePath).split(path.sep).join('/'),
-          `Image looks too small to be production ready (${stats.size} bytes).`
-        )
+        createDetail(relativePath, `Image upload type must be .jpeg, .jpg, or .png, but found "${extension}".`)
       );
+    }
+
+    if (stats.size > MAX_IMAGE_SIZE_BYTES) {
+      details.push(createDetail(relativePath, `Image upload size must be at most 2 MB, but found ${stats.size} bytes.`));
+    }
+
+    if (!S3_SAFE_FILE_NAME_PATTERN.test(fileName)) {
+      details.push(createDetail(relativePath, `Image filename "${fileName}" is not S3-safe.`));
+    }
+
+    if (role === 'coverArt') {
+      coverArtFiles.push(relativePath);
+    } else if (role === 'moduleScreenshot') {
+      const moduleKey = getModuleKey(relativePath);
+      const current = moduleScreenshots.get(moduleKey) || [];
+      current.push(relativePath);
+      moduleScreenshots.set(moduleKey, current);
+    } else if (role === 'screenshot') {
+      screenshotFiles.push(relativePath);
+    }
+
+    if (!ACCEPTED_IMAGE_EXTENSIONS.has(extension)) {
+      continue;
+    }
+
+    const dimensions = await getImageDimensions(filePath);
+    if (!dimensions) {
+      details.push(createDetail(relativePath, 'Image dimensions could not be read from the uploaded asset.'));
+      continue;
+    }
+
+    if (role === 'coverArt') {
+      if (dimensions.width < MIN_COVER_ART_DIMENSION || dimensions.height < MIN_COVER_ART_DIMENSION) {
+        details.push(
+          createDetail(
+            relativePath,
+            `App icon cover art must be at least 400x400, but found ${dimensions.width}x${dimensions.height}.`
+          )
+        );
+      }
+
+      if (dimensions.width !== dimensions.height) {
+        details.push(
+          createDetail(
+            relativePath,
+            `App icon cover art must use a 1:1 square aspect ratio, but found ${dimensions.width}x${dimensions.height}.`
+          )
+        );
+      }
+    } else if (role === 'screenshot' || role === 'moduleScreenshot') {
+      if (dimensions.width < MIN_SCREENSHOT_DIMENSION || dimensions.height < MIN_SCREENSHOT_DIMENSION) {
+        details.push(
+          createDetail(
+            relativePath,
+            `Screenshots must be at least 850x850, but found ${dimensions.width}x${dimensions.height}.`
+          )
+        );
+      }
     }
   }
 
-  const iconPath = path.join(targetDir, 'app', 'styles', 'images', 'icon.svg');
-  if (await pathExists(iconPath)) {
-    const content = await readText(iconPath);
-    const width = content && content.match(/width\s*=\s*["'](\d+)/i);
-    const height = content && content.match(/height\s*=\s*["'](\d+)/i);
-    if (width && height && (width[1] !== '64' || height[1] !== '64')) {
-      details.push(
-        createDetail(
-          'app/styles/images/icon.svg',
-          `Icon SVG should be 64x64 but is declared as ${width[1]}x${height[1]}.`
-        )
-      );
+  if (coverArtFiles.length > MAX_COVER_ART_COUNT) {
+    details.push(createDetail('cover_arts', `App icon cover art allows max 1 image, but found ${coverArtFiles.length}.`));
+  }
+
+  if (screenshotFiles.length > MAX_SCREENSHOT_COUNT) {
+    details.push(createDetail('screenshots', `Screenshots allow max 5 images, but found ${screenshotFiles.length}.`));
+  }
+
+  for (const [moduleKey, files] of moduleScreenshots) {
+    if (files.length > MAX_MODULE_SCREENSHOT_COUNT) {
+      details.push(createDetail(`module screenshots: ${moduleKey}`, `Module screenshots allow max 2 images, but found ${files.length}.`));
     }
   }
 
   return details.length === 0
-    ? createResult(true, 'Image assets look consistent with the expected resolution checks.')
-    : createResult(false, 'Some image assets do not meet the expected resolution checks.', details);
+    ? createResult(true, 'Image uploads match DevPortal validation constraints.')
+    : createResult(false, 'Some image uploads do not match DevPortal validation constraints.', details);
 }
 
 module.exports = { run };

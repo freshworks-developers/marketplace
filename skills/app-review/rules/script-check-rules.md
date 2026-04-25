@@ -2,10 +2,10 @@
 
 For every **Fail**, cite file path and line (or block) from the script output and give a concrete fix.
 
-## SC-01A — External imports must use trusted sources
+## FFS-02L — Dependencies from external sources must use allowlisted hosts
 
 **Goal:**
-- External script and style imports must come only from trusted sources.
+- External script and style imports must come only from allowlisted hosts.
 
 **Inspect**
 
@@ -13,11 +13,11 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 **Pass**
 
-- All detected external imports resolve to trusted sources.
+- All detected external imports resolve to allowlisted hosts.
 
 **Fail**
 
-- Any external import resolves to an untrusted or invalid source.
+- Any external import resolves to a non-allowlisted or invalid source.
 
 **Not applicable**
 
@@ -25,9 +25,9 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 **Fix message**
 
-- Replace the untrusted external import with an approved source or bundle the asset locally.
+- Replace the non-allowlisted external import with an approved host/source or bundle the asset locally.
 
-## SC-02A — External imports must use HTTPS
+## FFS-04L — Imports must use HTTPS
 
 **Goal:**
 - External script and style imports must use `https://`, not `http://`.
@@ -52,7 +52,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Change insecure import URLs from `http://` to `https://`.
 
-## SC-03A — Icon and image assets must meet baseline resolution expectations
+## FFS-05L — Images must meet baseline resolution expectations
 
 **Goal:**
 - App icon and image assets should meet the expected baseline resolution checks.
@@ -77,7 +77,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Provide production-ready icon assets and ensure `app/styles/images/icon.svg` is declared as `64x64`.
 
-## SC-04A — Settings update references must have a matching handler
+## DS-03L — Settings update references must have a matching handler
 
 **Goal:**
 - If the app references settings updates, it must implement the matching handler.
@@ -102,7 +102,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Add the missing settings update handler implementation or remove the unused settings update reference.
 
-## SC-05A — OAuth config values must stay in configuration files
+## FF-07L — OAuth config values must stay in configuration files
 
 **Goal:**
 - OAuth client IDs, secrets, and tokens must appear only in intended configuration files.
@@ -127,7 +127,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Move OAuth client IDs, secrets, and tokens into secure config files such as `oauth_config.json`, secure iparams, or `.env`.
 
-## SC-06A — Mutable browser globals must be avoided
+## CR-04L — Mutable browser globals must be avoided
 
 **Goal:**
 - Client code should avoid mutable globals on `window` or `globalThis`.
@@ -152,7 +152,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Replace mutable browser globals with module scope, closures, or explicit state containers.
 
-## SC-07A — Imported third-party libraries must be used
+## CR-05L — Imported third-party libraries must be used
 
 **Goal:**
 - Imported third-party libraries should be used in the file that imports them.
@@ -177,57 +177,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Remove unused third-party imports or use the imported dependency where intended.
 
-## SC-08A — Manifest must pass baseline FDK structure checks
-
-**Goal:**
-- `manifest.json` should satisfy baseline FDK structure expectations.
-
-**Inspect**
-
-- Run `scripts/fdk-errors-warnings.js`.
-
-**Pass**
-
-- The manifest passes the baseline FDK structure checks.
-
-**Fail**
-
-- The manifest is missing required baseline structure or contains deprecated structure.
-
-**Not applicable**
-
-- `manifest.json` is missing or unreadable.
-
-**Fix message**
-
-- Fix manifest structure issues such as missing `platform-version`, `modules`, or `engines`, and remove deprecated fields where required.
-
-## SC-09A — Sensitive values must not be logged
-
-**Goal:**
-- Sensitive values should never be logged to the console or logger output.
-
-**Inspect**
-
-- Run `scripts/sensitive-console-logs.js`.
-
-**Pass**
-
-- No sensitive logging patterns are detected.
-
-**Fail**
-
-- Sensitive values such as passwords, secrets, tokens, API keys, or PII are logged.
-
-**Not applicable**
-
-- No console or logger statements are present.
-
-**Fix message**
-
-- Remove sensitive values from logs and use safe redaction or high-level status messages instead.
-
-## SC-10A — Only Freshworks CSS should be referenced
+## GN-08L — Only Freshworks CSS should be referenced
 
 **Goal:**
 - Product-specific CSS bundles should not be referenced; only Freshworks CSS should be used.
@@ -252,7 +202,7 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Remove product-specific CSS references and use the correct Freshworks CSS bundle instead.
 
-## SC-11A — App must target the expected platform version
+## GN-12L — App must target the expected platform version
 
 **Goal:**
 - The app must declare and target the expected marketplace platform version.
