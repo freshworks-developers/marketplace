@@ -32,7 +32,7 @@ Requirements:
 
 - **Only** rules with result **Fail** appear; do not list passing or N/A rules.
 - **One** `->` line per failed rule.
-- Do **not** include internal rule IDs such as `IP-04A`, `FF-04A`, or `SC-03A` in the user-visible output.
+- Do **not** include internal rule IDs or internal JSON metadata such as `internal.rule_id` in the user-visible output.
 - **Fail reason**: concise, cite **file and line** (or identifiable block) when possible.
 - **Fix message**: actionable remediation; use the relevant **Fix messages** / **Goal** / **Pass** sections in [iparam-rules.md](iparam-rules.md), [frontend-files-rules.md](frontend-files-rules.md), and [script-check-rules.md](script-check-rules.md).
 
