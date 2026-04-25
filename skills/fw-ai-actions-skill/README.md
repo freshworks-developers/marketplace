@@ -9,7 +9,7 @@ Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0**
 - `server.js` SMI patterns (`renderData`, `$request.invokeTemplate`, safe errors)
 - Request templates and external API integration guardrails
 - `fdk validate` workflow and test data conventions
-- Optional **agents/** prompts for integration scoping, implementation, and validation (same layout idea as **app-dev** `agents/`)
+- Optional **agents/** prompts for integration scoping, implementation, and validation (same layout idea as **fw-app-dev** `agents/`)
 
 ## Typical app layout
 
@@ -31,10 +31,10 @@ app-root/
 ## Installation
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill ai-actions-skill
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-actions-skill
 ```
 
-Or copy this folder into `.cursor/skills/ai-actions-skill/` (or your tool’s skills directory).
+Or copy this folder into `.cursor/skills/fw-ai-actions-skill/` (or your tool’s skills directory).
 
 ## Contents
 
@@ -47,7 +47,7 @@ Or copy this folder into `.cursor/skills/ai-actions-skill/` (or your tool’s sk
 
 ## Requirements
 
-- Node.js **24.x** and **FDK 10.x** (see **fdk-setup** and **app-dev** skills in this repo for toolchain and general app guidance)
+- Node.js **24.x** and **FDK 10.x** (see **fw-setup** and **fw-app-dev** skills in this repo for toolchain and general app guidance)
 
 ## Support
 

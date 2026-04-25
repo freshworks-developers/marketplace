@@ -147,7 +147,7 @@
       }
     },
     {
-      "name": "ai-actions-skill",
+      "name": "fw-ai-actions-skill",
       "description": "AI Actions for Platform 3.0: actions.json, SMI, request templates, validation, integration workflows, and optional agent prompts.",
       "author": {
         "name": "Freshworks Developers",
@@ -156,7 +156,7 @@
       "license": "MIT",
       "homepage": "https://github.com/freshworks-developers/marketplace",
       "repository": "https://github.com/freshworks-developers/marketplace",
-      "source": "./skills/ai-actions-skill",
+      "source": "./skills/fw-ai-actions-skill",
       "category": "developer-tools",
       "strict": false,
       "version": "1.0.0",
@@ -169,7 +169,7 @@
         "actions-json"
       ],
       "interface": {
-        "displayName": "AI Actions skill",
+        "displayName": "Freshworks AI Actions (fw-ai-actions-skill)",
         "shortDescription": "actions.json, SMI, request templates, validation, and integration agents.",
         "longDescription": "Standalone AI Actions skill with rules, references, and optional scoper, implementer, and validator prompts under agents/. Pairs with fw-setup and fw-app-dev for full apps."
       }

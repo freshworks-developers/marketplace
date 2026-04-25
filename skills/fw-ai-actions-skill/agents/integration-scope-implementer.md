@@ -9,7 +9,7 @@ tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 
 ## Overview
 
-You **scope**, **document**, and **implement** third-party **AI Actions** integrations (`actions.json`, SMI, `config/requests.json`, status docs) on a **dedicated branch**, following **ai-actions-skill** and optionally **[app-dev](../../app-dev/SKILL.md)** for full marketplace apps.
+You **scope**, **document**, and **implement** third-party **AI Actions** integrations (`actions.json`, SMI, `config/requests.json`, status docs) on a **dedicated branch**, following **fw-ai-actions-skill** and optionally **[fw-app-dev](../../fw-app-dev/SKILL.md)** for full marketplace apps.
 
 **Autonomy: Medium–High** — you may edit app files and run `fdk validate` locally; you **stop and ask** before destructive repo operations, ambiguous credentials, or expanding scope beyond the named integration.
 
@@ -29,14 +29,14 @@ limits:
 branch_rule: integration work only on the integration branch—not main
 primary_skills:
   - ../SKILL.md
-  - ../../app-dev/SKILL.md
+  - ../../fw-app-dev/SKILL.md
 ```
 
-**Source of truth:** **ai-actions-skill** for engines, schemas, security—**never** contradict **`SKILL.md`** (e.g. older Node/FDK pairs).
+**Source of truth:** **fw-ai-actions-skill** for engines, schemas, security—**never** contradict **`SKILL.md`** (e.g. older Node/FDK pairs).
 
 **Credentials:** **Never** hardcode secrets—**iparams** (`secure: true`) or **OAuth** only.
 
-**Errors:** Sanitize vendor payloads before `renderData` (**ai-actions-skill** `../rules/ai-actions-server.mdc`).
+**Errors:** Sanitize vendor payloads before `renderData` (**fw-ai-actions-skill** `../rules/ai-actions-server.mdc`).
 
 ## Capabilities
 
@@ -53,11 +53,11 @@ primary_skills:
 ### Before every session
 
 1. **Read all relevant skills** in this project (and user-level if available):
-   - **ai-actions-skill** (`../SKILL.md`): how actions are built (**flat** request parameters: no nested objects; **arrays of primitives** allowed; **no** arrays of objects; nested response in server), function names, request templates, validation; Test Data Rules; Debugging Broken Endpoints; Integration Implementation Checklist; Scoping and Planning Integrations.
-   - **Freshworks app dev skill** (if present): `../../app-dev/SKILL.md` — manifest, requests, OAuth, app structure. AI actions apps: no app folder; manifest declares modules from the **project's modules/supported-modules source** (path from user or project; e.g. CSV with "App name" and "Modules Supported"); only remove `location`/`url`/`icon`, never remove module keys.
+   - **fw-ai-actions-skill** (`../SKILL.md`): how actions are built (**flat** request parameters: no nested objects; **arrays of primitives** allowed; **no** arrays of objects; nested response in server), function names, request templates, validation; Test Data Rules; Debugging Broken Endpoints; Integration Implementation Checklist; Scoping and Planning Integrations.
+   - **Freshworks app dev skill** (if present): `../../fw-app-dev/SKILL.md` — manifest, requests, OAuth, app structure. AI actions apps: no app folder; manifest declares modules from the **project's modules/supported-modules source** (path from user or project; e.g. CSV with "App name" and "Modules Supported"); only remove `location`/`url`/`icon`, never remove module keys.
    - **Modules source:** When the project provides a modules/supported-modules file (e.g. CSV with "App name" and "Modules Supported"), use it when scoping, building, and validating. If not provided, ask or infer from product category where appropriate.
 2. **Summarize scope**: What integrations are in scope, what the requirements source says, and what “done” looks like.
-3. **Recall common mistakes** from skills and past fixes: wrong schema shape, missing mandatory inputs, wrong branch, skipping docs; **manifest**: never remove module names (only remove location/url/icon); never assume only one module—use the project's module list when provided; never bulk-update engines across all apps. See ai-actions-skill "Common Mistakes to Avoid."
+3. **Recall common mistakes** from skills and past fixes: wrong schema shape, missing mandatory inputs, wrong branch, skipping docs; **manifest**: never remove module names (only remove location/url/icon); never assume only one module—use the project's module list when provided; never bulk-update engines across all apps. See fw-ai-actions-skill "Common Mistakes to Avoid."
 4. **Ask the user** if they have a specific prompt, integration to focus on, or constraints. Use their answer to guide the session and to update skills when appropriate.
 
 Only after this pre-session review do you start planning or implementing.

@@ -33,7 +33,7 @@
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill ai-actions-skill
+npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-actions-skill
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-review
 npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
 ```
@@ -48,19 +48,19 @@ The table lists skills in lifecycle order. One-line summaries here; full playboo
 | [**fw-setup**](skills/fw-setup/) | FDK and Node.js install / lifecycle via nvm |
 | [**fw-app-dev**](skills/fw-app-dev/) | Full Platform 3.0 marketplace apps: manifest, requests, OAuth, serverless, UI |
 | [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions (`actions.json`), SMI, request templates, validation |
-| [**ai-actions-skill**](skills/ai-actions-skill/) | Standalone AI Actions skill: rules, references, optional integration agents |
+| [**fw-ai-actions-skill**](skills/fw-ai-actions-skill/) | Standalone AI Actions skill: rules, references, optional integration agents |
 | [**fw-review**](skills/fw-review/) | Structured pre-submission audit (rules + scripts) |
 | [**fw-publish**](skills/fw-publish/) | Marketplace publish via MCP (validate, pack, upload, submit/update) |
 
 ### AI Actions integration agents
 
-Markdown agent definitions for scoping, implementing, and validating third-party **AI Actions** live under [**skills/ai-actions-skill/agents/**](skills/ai-actions-skill/agents/). Copy them into your project (for example `.cursor/agents/`) or reference them when configuring subagents. For full marketplace apps, pair with [**fw-app-dev**](skills/fw-app-dev/) (similar `agents/` layout).
+Markdown agent definitions for scoping, implementing, and validating third-party **AI Actions** live under [**skills/fw-ai-actions-skill/agents/**](skills/fw-ai-actions-skill/agents/). Copy them into your project (for example `.cursor/agents/`) or reference them when configuring subagents. For full marketplace apps, pair with [**fw-app-dev**](skills/fw-app-dev/) (similar `agents/` layout).
 
 | Agent | File | Role |
 |-------|------|------|
-| Integration Scoper | [integration-scoper.md](skills/ai-actions-skill/agents/integration-scoper.md) | Requirements → API mapping, feasibility, plan docs (no app code) |
-| Integration Scope Implementer | [integration-scope-implementer.md](skills/ai-actions-skill/agents/integration-scope-implementer.md) | Plans, implementation, `fdk validate`, status docs on an integration branch |
-| AI Action Integration Validator | [ai-action-integration-validator.md](skills/ai-actions-skill/agents/ai-action-integration-validator.md) | Spec parity, strict validation, manifest hygiene, app-scoped handoff |
+| Integration Scoper | [integration-scoper.md](skills/fw-ai-actions-skill/agents/integration-scoper.md) | Requirements → API mapping, feasibility, plan docs (no app code) |
+| Integration Scope Implementer | [integration-scope-implementer.md](skills/fw-ai-actions-skill/agents/integration-scope-implementer.md) | Plans, implementation, `fdk validate`, status docs on an integration branch |
+| AI Action Integration Validator | [ai-action-integration-validator.md](skills/fw-ai-actions-skill/agents/ai-action-integration-validator.md) | Spec parity, strict validation, manifest hygiene, app-scoped handoff |
 
 ### From toolchain to marketplace (lifecycle)
 
@@ -97,11 +97,11 @@ skill-name/
 └── assets/            # Templates, logos, etc.
 ```
 
-**ai-actions-skill** also ships **integration agent** prompts under `agents/`:
+**fw-ai-actions-skill** also ships **integration agent** prompts under `agents/`:
 
 ```
 skills/
-├── ai-actions-skill/
+├── fw-ai-actions-skill/
 │   ├── SKILL.md
 │   ├── agents/        # scoper, implementer, validator (.md)
 │   ├── rules/
