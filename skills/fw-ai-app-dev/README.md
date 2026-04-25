@@ -37,7 +37,7 @@ app-root/
 ### Install via CLI
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-app-dev
 ```
 
 **Local copy:** copy this folder into `.cursor/skills/fw-ai-app-dev/` (or your tool’s skills directory).
@@ -47,7 +47,7 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill fw-a
 **Step 1**
 
 ```bash
-claude plugin marketplace add freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 **Step 2**
@@ -72,7 +72,7 @@ claude plugin install fw-ai-app-dev@freshworks-developers
 ## Support
 
 - [AI Actions — Freshworks Developer Docs](https://developers.freshworks.com/docs/app-sdk/v3.0/common/actions/)
-- [Issues — marketplace](https://github.com/freshworks-developers/marketplace/issues)
+- [GitHub issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ## License
 

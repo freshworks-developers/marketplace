@@ -37,7 +37,7 @@
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
 ```
 
 ### Install as Claude Plugin
@@ -45,7 +45,7 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill fw-a
 **Step1**
 
 ```bash
-claude plugin marketplace add freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 **Step2**
@@ -105,7 +105,7 @@ Invoke with `@fw-app-dev` in chat, or it activates automatically when working on
 
 For issues or questions:
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ## License
 

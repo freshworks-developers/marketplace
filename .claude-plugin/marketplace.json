@@ -1,7 +1,7 @@
 {
-  "name": "freshworks-developer-tooling",
+  "name": "freshworks-dev-tools",
   "description": "Freshworks Platform 3.0 developer skills: FDK and Node lifecycle, app development, AI Actions integrations, automated app review, and marketplace publishing.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "owner": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -15,8 +15,8 @@
         "email": "skills@dev-assist.freshservice.com"
       },
       "license": "MIT",
-      "homepage": "https://github.com/freshworks-developers/marketplace",
-      "repository": "https://github.com/freshworks-developers/marketplace",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
       "source": "./skills/fw-setup",
       "category": "developer-tools",
       "strict": false,
@@ -43,8 +43,8 @@
         "email": "skills@dev-assist.freshservice.com"
       },
       "license": "MIT",
-      "homepage": "https://github.com/freshworks-developers/marketplace",
-      "repository": "https://github.com/freshworks-developers/marketplace",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
       "source": "./skills/fw-app-dev",
       "category": "developer-tools",
       "strict": false,
@@ -71,8 +71,8 @@
         "email": "skills@dev-assist.freshservice.com"
       },
       "license": "MIT",
-      "homepage": "https://github.com/freshworks-developers/marketplace",
-      "repository": "https://github.com/freshworks-developers/marketplace",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
       "source": "./skills/fw-ai-app-dev",
       "category": "developer-tools",
       "strict": false,
@@ -99,8 +99,8 @@
         "email": "skills@dev-assist.freshservice.com"
       },
       "license": "MIT",
-      "homepage": "https://github.com/freshworks-developers/marketplace",
-      "repository": "https://github.com/freshworks-developers/marketplace",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
       "source": "./skills/fw-review",
       "category": "developer-tools",
       "strict": false,
@@ -127,8 +127,8 @@
         "email": "skills@dev-assist.freshservice.com"
       },
       "license": "MIT",
-      "homepage": "https://github.com/freshworks-developers/marketplace",
-      "repository": "https://github.com/freshworks-developers/marketplace",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
       "source": "./skills/fw-publish",
       "category": "developer-tools",
       "strict": false,

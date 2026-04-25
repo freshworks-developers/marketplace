@@ -11,13 +11,13 @@ Automated **Freshworks Platform 3.0** marketplace app audit: manifest and iparam
 ### Install via CLI
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-review
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-review
 ```
 
 **Local clone:**
 
 ```bash
-npx skills add file:///path/to/marketplace-main --skill fw-review
+npx skills add file:///path/to/fw-dev-tools-main --skill fw-review
 ```
 
 ### Install as Claude plugin
@@ -25,7 +25,7 @@ npx skills add file:///path/to/marketplace-main --skill fw-review
 **Step 1**
 
 ```bash
-claude plugin marketplace add freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 **Step 2**
@@ -52,7 +52,7 @@ claude plugin install fw-review@freshworks-developers
 ## Support
 
 - [Freshworks Developer Docs](https://developers.freshworks.com/)
-- [Issues — marketplace](https://github.com/freshworks-developers/marketplace/issues)
+- [GitHub issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ## License
 

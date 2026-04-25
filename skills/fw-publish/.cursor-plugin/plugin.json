@@ -7,10 +7,9 @@
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
-  "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-publish",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-publish",
   "license": "MIT",
-  "logo": "assets/logo.svg",
   "keywords": [
     "freshworks",
     "marketplace",

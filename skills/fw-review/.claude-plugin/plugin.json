@@ -7,8 +7,8 @@
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
-  "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-review",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-review",
   "license": "MIT",
   "category": "developer-tools",
   "strict": false,
