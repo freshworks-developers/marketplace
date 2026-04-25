@@ -5,10 +5,10 @@
   "description": "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Slash: /fw-setup-install (--version), /fw-setup-upgrade (--to), /fw-setup-downgrade, /fw-setup-uninstall, /fw-setup-status (--verbose), /fw-setup-troubleshoot (--fix), /fw-setup-use (workspace nvm stack). Legacy: /fdk-install, etc.",
   "author": {
     "name": "Freshworks Developers",
-    "email": "developers@freshworks.com"
+    "email": "skills@dev-assist.freshservice.com"
   },
-  "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-setup",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-setup",
   "license": "MIT",
   "keywords": [
     "freshworks",

@@ -5,10 +5,10 @@
   "description": "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. Provides /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review commands.",
   "author": {
     "name": "Freshworks Developers",
-    "email": "developers@freshworks.com"
+    "email": "skills@dev-assist.freshservice.com"
   },
-  "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace/skills/fw-app-dev",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-app-dev",
   "license": "MIT",
   "keywords": [
     "freshworks",

@@ -11,13 +11,13 @@ Guide for publishing **Freshworks Platform 3.0** custom apps to the **Freshworks
 ### Install via CLI
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
 
 **Local clone:**
 
 ```bash
-npx skills add file:///path/to/marketplace-main --skill fw-publish
+npx skills add file:///path/to/fw-dev-tools-main --skill fw-publish
 ```
 
 ### Install as Claude plugin
@@ -25,7 +25,7 @@ npx skills add file:///path/to/marketplace-main --skill fw-publish
 **Step 1**
 
 ```bash
-claude plugin marketplace add freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 **Step 2**
@@ -39,7 +39,7 @@ claude plugin install fw-publish@freshworks-developers
 | Path | Purpose |
 |------|---------|
 | `SKILL.md` | Orchestration, MCP tool usage, error handling |
-| *(repo root)* `.mcp.json` | Reference `freshworks-marketplace` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
+| *(repo root)* `.mcp.json` | Reference `fw-dev-mcp` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
 | `subagents/` | Optional deep dives (validation, packing, metadata, API publishing) |
 | `references/` | Extra orchestration notes |
 | `examples/test-app/` | Minimal sample app for dry runs |
@@ -55,7 +55,7 @@ This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `s
 ## Support
 
 - [Freshworks Developer Portal](https://developers.freshworks.com/developer/)
-- [Issues — marketplace](https://github.com/freshworks-developers/marketplace/issues)
+- [GitHub issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ## License
 

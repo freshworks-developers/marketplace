@@ -257,7 +257,7 @@ Next steps:
      ```json
      {
        "mcpServers": {
-         "freshworks-marketplace": {
+         "fw-dev-mcp": {
            "url": "https://mcp.freshworks.dev/mcp",
            "headers": {
              "Authorization": "Bearer <JWT>"

@@ -1,6 +1,8 @@
 ---
 name: fw-publish
 description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
+version: "1.1.0"
+compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
 # Publish (Platform 3.0 custom app)
@@ -38,7 +40,7 @@ To set this up:
      **`user_config`**.
      {
        "mcpServers": {
-         "freshworks-marketplace": {
+         "fw-dev-mcp": {
            "url": "https://mcp.freshworks.dev/mcp",
            "headers": {
              "Authorization": "Bearer <your-jwt-token>"

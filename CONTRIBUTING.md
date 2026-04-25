@@ -29,8 +29,8 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/marketplace.git
-   cd marketplace
+   git clone https://github.com/YOUR-USERNAME/fw-dev-tools.git
+   cd fw-dev-tools
    ```
 3. **Create a branch** for your changes:
    ```bash
@@ -40,8 +40,8 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ## Repository Structure
 
 ```
-marketplace/
-├── .mcp.json                 # Bundled MCP: freshworks-marketplace (URL + Authorization)
+fw-dev-tools/
+├── .mcp.json                 # Bundled MCP: fw-dev-mcp (URL + Authorization)
 ├── .claude/
 │   └── settings.json         # Claude Code permissions (MCP tool deny list; must match .mcp.json server key)
 ├── .cursor/
@@ -72,7 +72,7 @@ When you add, remove, or rename files under any skill’s **`rules/`** or **`com
 ### Reporting Bugs
 
 Before submitting a bug report:
-1. Check existing [issues](https://github.com/freshworks-developers/marketplace/issues) to avoid duplicates
+1. Check existing [issues](https://github.com/freshworks-developers/fw-dev-tools/issues) to avoid duplicates
 2. Use the latest version of the skills
 
 When reporting bugs, include:
@@ -302,7 +302,7 @@ When contributing examples or documentation:
 
 ## Questions?
 
-- Check existing [issues](https://github.com/freshworks-developers/marketplace/issues) and discussions
+- Check existing [issues](https://github.com/freshworks-developers/fw-dev-tools/issues) and discussions
 - Review the [Freshworks Developer Docs](https://developers.freshworks.com/)
 - Contact devrels@freshworks.com for additional support
 

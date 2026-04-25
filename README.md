@@ -20,7 +20,7 @@
 <p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code></p>
 
 > [!NOTE]
-> Feedback and bug reports: **[GitHub Issues](https://github.com/freshworks-developers/marketplace/issues)**. **AI agents:** start from **[AGENTS.md](AGENTS.md)** for routing, skills layout, and repo norms.
+> Feedback and bug reports: **[GitHub Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)**. **AI agents:** start from **[AGENTS.md](AGENTS.md)** for routing, skills layout, and repo norms.
 
 > [!TIP]
 > **Human install & routing:** use **this README** (installation below), **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for Cursor / Claude Code skill issues, and the **[Freshworks Developer Portal](https://developers.freshworks.com/)** for product documentation and API keys.
@@ -30,11 +30,11 @@
 ### npx skills
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-ai-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-review
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-publish
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-review
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
 
 
@@ -67,7 +67,7 @@ Typical path from a **cold machine** to a **listed or testable marketplace app**
    Optional **repeatable, policy-driven** pass before heavy QA or submission: iparams and manifest rules, frontend FF-* checks, SC-* checks via `scripts/*.js`, and an **App Review Result** per `skills/fw-review/rules/report.md`. **Not** the same as **fw-app-dev**’s `/fdk-review` (which re-runs `fdk validate`). Ensure **FDK** on PATH when a phase needs it.
 
 5. **Publish — [fw-publish](skills/fw-publish/)**  
-   After validate and pack: configure **`freshworks-marketplace`** MCP using the repo root **`.mcp.json`** shape, then app upload and **submit** or **update version**. Requires a Developer Portal JWT. **fw-app-dev** / **fw-ai-app-dev** fix validation issues; **fw-review** reduces surprises before upload.
+   After validate and pack: configure **`fw-dev-mcp`** MCP using the repo root **`.mcp.json`** shape, then app upload and **submit** or **update version**. Requires a Developer Portal JWT. **fw-app-dev** / **fw-ai-app-dev** fix validation issues; **fw-review** reduces surprises before upload.
 
 **Typical thread:** **fw-setup** → **fw-app-dev** (and/or **fw-ai-app-dev**) → optional **fw-review** → **fw-publish**.
 
@@ -117,7 +117,7 @@ Other skills use the same frontmatter shape with their own `name` (see the **Ava
 
 ## MCP (marketplace publish)
 
-Publishing uses the **`freshworks-marketplace`** server. This repo **bundles** **`.mcp.json`** at the repository root (URL + `Authorization` header). **Claude Code** vs **Cursor** token placement, copy-paste blocks, and tool names are documented in **[`AGENTS.md`](AGENTS.md)** (MCP section) and the publish skill’s own files under **`skills/fw-publish/`**—not duplicated here.
+Publishing uses the **`fw-dev-mcp`** server. This repo **bundles** **`.mcp.json`** at the repository root (URL + `Authorization` header). **Claude Code** vs **Cursor** token placement, copy-paste blocks, and tool names are documented in **[`AGENTS.md`](AGENTS.md)** (MCP section) and the publish skill’s own files under **`skills/fw-publish/`**—not duplicated here.
 
 ## Troubleshooting
 
@@ -133,7 +133,7 @@ Having issues with skills installation or usage?
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 - 💡 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Skills installation & usage guide
 
 ## License

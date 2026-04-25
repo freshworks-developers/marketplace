@@ -43,12 +43,12 @@ Canonical table: repository [`AGENTS.md`](../../AGENTS.md) → **Rules and slash
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
 ```
 
 **For local development:**
 ```bash
-npx skills add file:///path/to/marketplace-main --skill fw-setup
+npx skills add file:///path/to/fw-dev-tools-main --skill fw-setup
 ```
 
 ### Install as Claude Plugin
@@ -56,7 +56,7 @@ npx skills add file:///path/to/marketplace-main --skill fw-setup
 **Step1**
 
 ```bash
-claude plugin marketplace add freshworks-developers/marketplace
+claude plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 **Step2**
@@ -122,7 +122,7 @@ Check available commands:
 
 **Local dev (background, not a slash command):** from your app directory (where `manifest.json` lives), run the script by absolute path, for example:
 
-`bash /path/to/marketplace/skills/fw-setup/scripts/fw-setup-run-background.sh`
+`bash /path/to/fw-dev-tools/skills/fw-setup/scripts/fw-setup-run-background.sh`
 
 Logs and a PID file go under `${TMPDIR:-/tmp}/fw-setup-runs/` unless `FDK_RUN_LOG_DIR` is set. To signal matching `fdk run` / `fdk tunnel` processes: `bash .../scripts/fw-setup-stop-shell-tasks.sh` (`--dry-run`, `--force`).
 
@@ -307,7 +307,7 @@ Claude Code/Cursor reads `plugin.json` to discover and register slash commands.
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/marketplace/issues)
+- 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ## License
 

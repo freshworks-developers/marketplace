@@ -81,12 +81,12 @@ const result = await $request.post('https://api.example.com', {});
 
 ```bash
 # For Cursor
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
 
 # For Claude Code  
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/marketplace --skill fw-setup
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
 ```
 
 **Then restart your IDE.**
@@ -100,8 +100,8 @@ npx skills add https://github.com/freshworks-developers/marketplace --skill fw-s
 ```bash
 # 1. Download this repo
 cd ~/Downloads
-git clone https://github.com/freshworks-developers/marketplace.git
-cd marketplace
+git clone https://github.com/freshworks-developers/fw-dev-tools.git
+cd fw-dev-tools
 
 # 2. For Cursor:
 mkdir -p ~/.cursor/skills
@@ -309,7 +309,7 @@ fdk-review.md
 
 **If you see NO .md files or they're in wrong location:**
 - The skill you installed is broken
-- Report it: https://github.com/freshworks-developers/marketplace/issues
+- Report it: https://github.com/freshworks-developers/fw-dev-tools/issues
 - Include: "Commands missing from fw-app-dev skill" + what you see when you run `ls` above
 
 **For Claude Code specifically:**
@@ -356,7 +356,7 @@ cat .cursor-plugin/plugin.json | grep rules
 ls -la rules/*.mdc
 ```
 
-Post this output at: https://github.com/freshworks-developers/marketplace/issues
+Post this output at: https://github.com/freshworks-developers/fw-dev-tools/issues
 
 **Temporary Workaround:**
 Reinstall from the latest version (skill may have been fixed):
@@ -372,7 +372,7 @@ rm -rf ~/.cursor/skills/fw-app-dev
 **Symptom:**
 ```
 Installed to:
-  ~/.cursor/skills/marketplace/skills/fw-app-dev/
+  ~/.cursor/skills/fw-dev-tools/skills/fw-app-dev/
 
 Instead of:
   ~/.cursor/skills/fw-app-dev/
@@ -485,7 +485,7 @@ Inconsistent enforcement
 **Report it with specifics:**
 1. Which rules work (give example of code that triggers warning)
 2. Which rules don't (give example of code that should warn but doesn't)
-3. Post at: https://github.com/freshworks-developers/marketplace/issues
+3. Post at: https://github.com/freshworks-developers/fw-dev-tools/issues
 
 **Example good bug report:**
 ```markdown
@@ -562,8 +562,8 @@ rm -rf ~/.cursor/skills/fw-setup
 
 # 2. Reinstall latest version
 cd ~/Downloads
-git clone https://github.com/freshworks-developers/marketplace.git
-cd marketplace
+git clone https://github.com/freshworks-developers/fw-dev-tools.git
+cd fw-dev-tools
 cp -r skills/fw-app-dev ~/.cursor/skills/
 cp -r skills/fw-setup ~/.cursor/skills/
 
@@ -585,8 +585,8 @@ cp -r skills/fw-setup ~/.cursor/skills/
 
 **Symptom:**
 ```bash
-git clone https://github.com/freshworks-developers/marketplace.git
-cd marketplace/
+git clone https://github.com/freshworks-developers/fw-dev-tools.git
+cd fw-dev-tools/
 
 # Now what? How do I install skills?
 ```
@@ -598,8 +598,8 @@ This repo is a MONOREPO. Skills are in `skills/` subdirectory.
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/freshworks-developers/marketplace.git
-cd marketplace/
+git clone https://github.com/freshworks-developers/fw-dev-tools.git
+cd fw-dev-tools/
 
 # 2. For Cursor:
 cp -r skills/fw-app-dev ~/.cursor/skills/
@@ -618,7 +618,7 @@ cp -r skills/fw-setup ~/.claude/skills/
 cp -r marketplace ~/.cursor/skills/
 
 # ❌ Wrong:
-ln -s $(pwd) ~/.cursor/skills/marketplace
+ln -s $(pwd) ~/.cursor/skills/fw-dev-tools
 
 # ❌ Wrong:
 mv marketplace ~/.cursor/skills/
@@ -892,7 +892,7 @@ Check settings for custom path option (may vary by version)
 - ✅ Minimal reproduction steps
 
 **Report Issues:**
-https://github.com/freshworks-developers/marketplace/issues
+https://github.com/freshworks-developers/fw-dev-tools/issues
 
 **Template:**
 ```markdown

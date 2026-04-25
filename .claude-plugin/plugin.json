@@ -1,13 +1,13 @@
 {
-  "name": "freshworks-developer-tooling",
+  "name": "freshworks-dev-tools",
   "description": "Freshworks Platform 3.0 app development, AI Actions integrations, publishing, and FDK management skills. Bundles MCP config (**.mcp.json** at repo root) — on install you will be prompted for your Developer Portal JWT.",
   "version": "1.1.0",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
-  "homepage": "https://github.com/freshworks-developers/marketplace",
-  "repository": "https://github.com/freshworks-developers/marketplace",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools",
   "license": "MIT",
   "category": "developer-tools",
   "strict": false,

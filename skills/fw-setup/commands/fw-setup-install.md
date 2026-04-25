@@ -320,7 +320,7 @@ POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
   #   2. MCP server URL is fixed: https://mcp.freshworks.dev/mcp
   #   3. Detect IDE:
   #      - Claude Code: direct user to /config → set mcp_auth_token (URL already in repo root .mcp.json)
-  #      - Cursor: write ~/.cursor/mcp.json with freshworks-marketplace server entry (url: https://mcp.freshworks.dev/mcp)
+  #      - Cursor: write ~/.cursor/mcp.json with fw-dev-mcp server entry (url: https://mcp.freshworks.dev/mcp)
   #   4. Confirm: "MCP server configured. Publish tools are now available."
   # If user says no: "Skipped. Configure MCP later via IDE settings (see AGENTS.md)."
   # NEVER let the user paste JWT into chat — write to config file or direct to IDE settings UI.

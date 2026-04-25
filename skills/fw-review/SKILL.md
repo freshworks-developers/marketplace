@@ -1,6 +1,8 @@
 ---
 name: fw-review
 description: Full Freshworks marketplace app review — iparams, frontend, serverless, FDK, security, and structured text report output — in one skill.
+version: "1.0.0"
+compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-oriented phases (use fw-setup when missing)"
 ---
 
 # fw-review
