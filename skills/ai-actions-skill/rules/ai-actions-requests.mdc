@@ -1,0 +1,305 @@
+---
+description: "config/requests.json templates, iparam placeholders, SOAP notes, and invokeTemplate usage for AI Actions apps."
+globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/iparams.json,**/manifest.json,**/README.md"
+---
+
+# AI Actions Request Templates
+
+## config/requests.json
+
+```json
+{
+  "getResource": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources/<%= context.resource_id %>",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Accept": "application/json"
+      }
+    }
+  },
+  "createResource": {
+    "schema": {
+      "method": "POST",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "listResources": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Accept": "application/json"
+      },
+      "query": {
+        "page": "<%= context.page %>",
+        "per_page": "<%= context.per_page %>"
+      }
+    }
+  },
+  "patchResource": {
+    "schema": {
+      "method": "PATCH",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources/<%= context.resource_id %>",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "deleteResource": {
+    "schema": {
+      "method": "DELETE",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/resources/<%= context.resource_id %>",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Accept": "application/json"
+      }
+    }
+  }
+}
+```
+
+## Substitution
+
+| Variable | Use |
+|----------|-----|
+| `<%= iparam.name %>` | Installation parameters |
+| `<%= context.name %>` | Runtime args from server.js |
+| `<%= access_token %>` | OAuth (with options.oauth) |
+
+## Rules
+
+- **Host:** FQDN only (api.example.com) — no protocol, no path
+- **Path:** Must start with `/`
+- **Syntax:** `<%= %>` (ERB) — never `{{ }}`
+- **Protocol:** Optional; use `"protocol": "https"` if needed
+
+## config/iparams.json
+
+```json
+{
+  "api_key": {
+    "display_name": "API Key",
+    "description": "Your API key",
+    "type": "text",
+    "required": true,
+    "secure": true
+  },
+  "api_base_url": {
+    "display_name": "API Base URL",
+    "description": "Base URL (e.g., api.example.com)",
+    "type": "text",
+    "required": true
+  },
+  "data_region": {
+    "display_name": "Data region",
+    "description": "Region for your vendor account API",
+    "type": "dropdown",
+    "required": true,
+    "options": ["US", "EU", "IND"],
+    "default_value": "US"
+  },
+  "subdomain": {
+    "display_name": "Subdomain",
+    "description": "Your account subdomain (lowercase, no spaces)",
+    "type": "text",
+    "required": true,
+    "regex": {
+      "subdomain-pattern": "^[a-z0-9-]+$",
+      "subdomain-pattern-error": "Use only lowercase letters, numbers, and hyphens"
+    }
+  }
+}
+```
+
+**`dropdown`:** `options` is a **string array**; `default_value` must be one of those strings.
+
+**`regex` (with `type: "text"`):** Use a `regex` object whose entries are a **pattern key** (regex string) and a matching **`<pattern-key>-error`** key for the message shown when validation fails.
+
+**Third-party sandbox vs production host:** Store the vendor API **FQDN** (or path segment) in **non-secure installation parameters (iparams)** in `config/iparams.json`, then substitute into **`schema.host`** or **`schema.path`** in **request templates** (`config/requests.json`) with `<%= iparam.<key> %>`. In **serverless** apps, **host** and **path** support **iparam** substitution only for **non-secure** values—use that pattern so account admins can point at a sandbox endpoint at install time without code changes.
+
+**Test vs production environment:** In **serverless** `server.js`, branch with **`process.env.ENV`** set to **`"test"`** or **`"production"`**. **Request templates** still resolve **`schema.host`**, **`schema.path`**, and headers via **`<%= iparam... %>`** and **`<%= context... %>`**. Build, run, and simulate locally with the **Freshworks Developer Kit (FDK)** (`fdk run`).
+
+### Text validation via iparams.js (dynamic callbacks)
+
+For rules that are easier to express in code—or when you rely on **official dynamic-iparam docs**—subscribe to `change` on the field and validate in **`iparams.js`**. See [Callback validations](https://developers.freshworks.com/docs/tutorials/intermediate/dynamic-iparams/callback-validations/) and [Leveraging utility methods](https://developers.freshworks.com/docs/tutorials/intermediate/dynamic-iparams/utility-methods/).
+
+**config/iparams.json** — wire a listener (example field name):
+
+```json
+{
+  "tenant_slug": {
+    "display_name": "Tenant slug",
+    "description": "Your tenant slug (letters, numbers, hyphen)",
+    "type": "text",
+    "required": true,
+    "events": [{ "change": "onTenantSlugChange" }]
+  }
+}
+```
+
+**config/iparams.js** — validate and surface hints:
+
+```javascript
+function onTenantSlugChange(newValue) {
+  const ok = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test(String(newValue || '').trim());
+  if (!ok) {
+    utils.set('tenant_slug', { hint: 'Use only letters, numbers, and hyphens.' });
+  }
+}
+```
+
+Use either the **static `regex` object** in `iparams.json` (above) or this **callback** pattern, depending on product/FDK support and readability.
+
+## OAuth (config/oauth_config.json)
+
+```json
+{
+  "integrations": {
+    "provider_name": {
+      "display_name": "Provider",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
+      "authorize_url": "https://provider.com/oauth/authorize",
+      "token_url": "https://provider.com/oauth/token",
+      "token_type": "account",
+      "oauth_iparams": {
+        "client_id": { "display_name": "Client ID", "type": "text", "required": true },
+        "client_secret": { "display_name": "Client Secret", "type": "text", "required": true }
+      }
+    }
+  }
+}
+```
+
+Request template with OAuth:
+```json
+{
+  "getData": {
+    "schema": {
+      "method": "GET",
+      "host": "api.provider.com",
+      "path": "/v1/data",
+      "headers": { "Authorization": "Bearer <%= access_token %>" }
+    },
+    "options": { "oauth": "provider_name" }
+  }
+}
+```
+
+## SOAP
+
+### Basic SOAP Template
+```json
+{
+  "soapRequest": {
+    "schema": {
+      "method": "POST",
+      "host": "<%= iparam.soap_host %>",
+      "path": "/service/<%= context.soap_service %>/<%= context.soap_version %>",
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>",
+        "Content-Type": "text/xml; charset=utf-8",
+        "SOAPAction": "<%= context.soap_action %>",
+        "Accept": "text/xml"
+      }
+    },
+    "options": { "oauth": "provider_oauth" }
+  }
+}
+```
+
+### SOAP with strong-soap (Recommended)
+Use `strong-soap` for WSDL + fault parsing, but keep request templates for transport:
+
+**SECURITY — operation names and XML:**
+- **`operation` must never come from end-user or untrusted input.** Validate against an explicit **allowlist** derived from the WSDL or vendor docs (e.g. `Set`/`Map` of permitted operation names) before building the envelope; reject unknown names with a clear error.
+- **Interpolating `operation` into XML** (`buildSoapEnvelope`) is only safe after allowlisting; do not use raw request parameters as the operation name.
+- **XXE:** Use SOAP/XML parsers with **external entity processing disabled** (no DTD expansion, no external entities). Prefer library defaults that are XXE-safe; do not parse untrusted XML with a naive DOM without hardening.
+
+**manifest.json:**
+```json
+{
+  "dependencies": {
+    "strong-soap": "4.1.14"
+  }
+}
+```
+
+**server.js pattern:**
+```javascript
+const { soap } = require('strong-soap');
+const wsdlClientCache = new Map();
+
+async function getWsdlClient(service, wsdlUrl) {
+  if (wsdlClientCache.has(service)) {
+    return wsdlClientCache.get(service);
+  }
+  
+  const client = await new Promise((resolve, reject) => {
+    soap.createClient(wsdlUrl, {}, (err, client) => {
+      err ? reject(err) : resolve(client);
+    });
+  });
+  
+  wsdlClientCache.set(service, client);
+  return client;
+}
+
+// Example allowlist — replace with operations from your WSDL / vendor contract
+const ALLOWED_SOAP_OPERATIONS = new Set(['ExampleOp']);
+
+function buildSoapEnvelope(operation, innerXml) {
+  if (!ALLOWED_SOAP_OPERATIONS.has(operation)) {
+    throw new Error(`SOAP operation not allowed: ${operation}`);
+  }
+  return `<?xml version="1.0"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="urn:namespace">
+  <soapenv:Body>
+    <ns:${operation}_Request>
+      ${innerXml}
+    </ns:${operation}_Request>
+  </soapenv:Body>
+</soapenv:Envelope>`;
+}
+
+async function invokeSoapOperation({ service, operation, requestInnerXml, args }) {
+  const wsdlClient = await getWsdlClient(service, `https://${args.iparams.host}/${service}?wsdl`);
+  const envelope = buildSoapEnvelope(operation, requestInnerXml);
+  
+  const { response } = await $request.invokeTemplate('soapRequest', {
+    context: {
+      soap_service: service,
+      soap_action: `urn:namespace/${operation}`
+    },
+    body: envelope
+  });
+  
+  // Use strong-soap for fault parsing
+  if (wsdlClient?.wsdl?.xmlToObject) {
+    const parsed = wsdlClient.wsdl.xmlToObject(response);
+    const fault = extractFaultFromParsed(parsed);
+    if (fault) throw { status: 400, message: fault };
+  }
+  
+  return response;
+}
+```
+
+**Why hybrid approach:**
+- ✅ WSDL introspection validates operations
+- ✅ Namespace-aware XML parsing
+- ✅ OAuth token injection via request templates
+- ✅ Freshworks-native auth flow preserved

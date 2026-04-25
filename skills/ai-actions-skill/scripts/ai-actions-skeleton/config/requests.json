@@ -1,0 +1,14 @@
+{
+  "requestTemplateName": {
+    "schema": {
+      "protocol": "https",
+      "method": "POST",
+      "host": "<%= iparam.api_base_url %>",
+      "path": "/api/v1/endpoint",
+      "headers": {
+        "Authorization": "Bearer <%= iparam.api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}

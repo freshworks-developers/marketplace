@@ -1,0 +1,21 @@
+{
+  "name": "ai-actions-skill",
+  "displayName": "AI Actions",
+  "version": "1.0.0",
+  "description": "AI Actions on Freshworks Platform 3.0: actions.json, SMI, request templates, validation, and integration workflows.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "developers@freshworks.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/marketplace",
+  "repository": "https://github.com/freshworks-developers/marketplace/skills/ai-actions-skill",
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "fdk",
+    "ai-actions",
+    "serverless"
+  ]
+}

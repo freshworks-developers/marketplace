@@ -1,0 +1,16 @@
+{
+  "api_key": {
+    "display_name": "API Key",
+    "description": "API key for authentication",
+    "type": "text",
+    "required": true,
+    "secure": true
+  },
+  "api_base_url": {
+    "display_name": "API Base URL",
+    "description": "Base URL (e.g., api.example.com)",
+    "type": "text",
+    "required": true,
+    "default_value": "api.example.com"
+  }
+}
