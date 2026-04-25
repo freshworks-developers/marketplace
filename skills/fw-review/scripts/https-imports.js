@@ -2,6 +2,9 @@
 
 const fs = require('fs/promises');
 const path = require('path');
+const { createRuleResult, runCli } = require('./common');
+
+const RULE_ID = 'FFS-04L';
 
 const IGNORED_DIRECTORIES = new Set([
   '.cache',
@@ -65,14 +68,7 @@ function createDetail(file, message, line, excerpt) {
 }
 
 function createResult(passed, summary, details = []) {
-  return { passed, summary, details };
-}
-
-async function runCli(run) {
-  const targetDir = path.resolve(process.argv[2] || process.cwd());
-  const result = await run(targetDir);
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-  process.exitCode = result.passed ? 0 : 1;
+  return createRuleResult(RULE_ID, passed, summary, details);
 }
 
 async function run(targetDir) {
