@@ -83,6 +83,8 @@ Both FDK versions can coexist on different Node versions:
 /fw-setup-use 10 --global  # All new shells
 ```
 
+**Windows note:** for nvm-windows, prefer the **`fw-setup-use.ps1`** path described in **`commands/fw-setup-use.md`** — non-`--global` switches are **session-scoped** and avoid flipping the global symlink.
+
 #### Homebrew (macOS)
 Only one FDK version system-wide:
 
@@ -201,8 +203,10 @@ All changes are system-wide and persistent by default.
 
 | Command | Current Shell | New Shells | Persistent? |
 |---------|---------------|------------|-------------|
-| `nvm use 24.11.0` | ✅ Changed | ❌ Unchanged | No |
+| `nvm use 24.11.0` | ✅ Changed | ✅ Changed | Yes (nvm-windows symlink is system-wide) |
 | `nvm alias default 24.11.0` | ❌ Unchanged | ✅ Changed | Yes |
+
+**Workspace-only switching (without changing the system-wide symlink):** use **`skills/fw-setup/scripts/fw-setup-use.ps1`** from **`/fw-setup-use`** on Windows — it prepends the selected Node install directory to the **current session** `PATH` and refreshes `PATH` from Machine+User.
 
 ---
 

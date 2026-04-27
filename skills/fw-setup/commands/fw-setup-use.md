@@ -12,15 +12,15 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 **Scope:**
 - **Without `--global`**: 
   - **macOS/Linux (nvm)**: Changes only current shell (`nvm use`)
-  - **Windows (nvm-windows)**: ⚠️ **PLATFORM-SPECIFIC**: `nvm use` on Windows automatically sets the global default for all new shells (nvm-windows behavior)
+  - **Windows (nvm-windows)**: **Use the PowerShell implementation** (`scripts/fw-setup-use.ps1`) — it avoids `nvm use` so the **system-wide nvm-windows symlink is not flipped**; it prepends the selected Node install directory to **this session’s** `PATH` and refreshes `PATH` from Machine+User (helps `fdk` resolve immediately).
   - **Homebrew/Chocolatey**: System-wide already (no version switching)
 - **With `--global`**: Sets as default for all new shells across all environments:
   - **nvm (macOS/Linux)**: `nvm alias default <version>` + updates `~/.zshrc` and `~/.bashrc` with `nvm use` line
-  - **nvm-windows**: Explicitly sets default via `nvm alias default` (same result as without flag due to platform behavior)
+  - **nvm-windows**: Runs `nvm use` + best-effort `nvm alias default` (persists via nvm-windows symlink semantics)
   - **Homebrew (macOS)**: System-wide already (no action needed)
   - **Chocolatey (Windows)**: System-wide already (no action needed)
 
-**Important Windows Note:** On Windows with nvm-windows, running `nvm use <version>` automatically changes the system-wide default Node version for all new terminals. This is different from Unix where `nvm use` only affects the current shell. Use `--global` flag explicitly for clarity and consistency, even though Windows behavior makes it redundant.
+**Important Windows Note:** Raw `nvm use` on nvm-windows flips a **single system-wide symlink**, which makes “workspace-only” switches look global. **`/fw-setup-use` on Windows should prefer `fw-setup-use.ps1`** unless the user explicitly passed **`--global`** (then persisting via `nvm use` is intended).
 
 ## When to use
 
@@ -34,8 +34,8 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 |-------------|------------|
 | **`/fw-setup-use`** only, **`.nvmrc`** present | **`cd`** app root → load **nvm** → **`nvm use`** → **`node --version`**, **`fdk version`**. |
 | **`/fw-setup-use`** only, **no** **`.nvmrc`** | Tell user: add **`.nvmrc`** (**`24.11`** for FDK 10.x, **`18`** for FDK 9.x) or pass **`10`**, **`9`**, **`24.11`**, or **`18`**. |
-| **`/fw-setup-use 10`** or **`24.11`** | **`nvm use 24.11`** (current shell only), then verify **`fdk version`** is **10.x**. |
-| **`/fw-setup-use 9`** or **`18`** | **`nvm use 18`** (current shell only), then verify **`fdk version`** is **9.x** (deprecated). |
+| **`/fw-setup-use 10`** or **`24.11`** | **macOS/Linux:** **`nvm use 24.11`** (current shell only) → verify **`fdk version`** is **10.x**. **Windows:** run **`fw-setup-use.ps1`** (session `PATH`; avoids flipping nvm-windows global symlink unless **`--global`**). |
+| **`/fw-setup-use 9`** or **`18`** | **macOS/Linux:** **`nvm use 18`** (current shell only) → verify **`fdk version`** is **9.x** (deprecated). **Windows:** run **`fw-setup-use.ps1`** (same semantics as the 10/24.11 row). |
 | **`/fw-setup-use 10 --global`** | **`nvm use 24.11`** + **`nvm alias default 24.11`** (sets for all new shells). |
 | **`/fw-setup-use 9 --global`** | **`nvm use 18`** + **`nvm alias default 18`** (sets for all new shells). |
 | **`--write-nvmrc`** with **`10`** / **`24.11`** | Write **`.nvmrc`** containing **`24.11`**, then **`nvm use`**. |
@@ -65,6 +65,32 @@ Before running the block, set shell variables (or inline the values):
 - **`WORK_DIR`** — app root (default **`.`**); use the path the user gave (absolute or relative).
 - **`STACK`** — **`auto`** (use **`.nvmrc`** only), **`10`** or **`24.11`**, **`9`** or **`18`**.
 - **`SET_GLOBAL`** — **`true`** if user passed **`--global`** flag, otherwise **`false`** (default).
+
+### Windows (PowerShell) — preferred for nvm-windows
+
+Run the repo-bundled script (path depends on how the skill is installed):
+
+```powershell
+# Typical: full dev-tools repo checkout
+pwsh -NoProfile -ExecutionPolicy Bypass -File "skills/fw-setup/scripts/fw-setup-use.ps1" `
+  -WorkDir "$env:WORK_DIR" `
+  -Stack "$env:STACK" `
+  $(if ($env:SET_GLOBAL -eq "true") { "-GlobalDefault" }) `
+  $(if ($env:WRITE_NVMRC -eq "true") { "-WriteNvmrc" })
+
+# Typical: skill copied into .cursor/skills/fw-setup
+pwsh -NoProfile -ExecutionPolicy Bypass -File ".cursor/skills/fw-setup/scripts/fw-setup-use.ps1" `
+  -WorkDir "$env:WORK_DIR" `
+  -Stack "$env:STACK" `
+  $(if ($env:SET_GLOBAL -eq "true") { "-GlobalDefault" }) `
+  $(if ($env:WRITE_NVMRC -eq "true") { "-WriteNvmrc" })
+```
+
+Notes:
+- **`--global`** maps to **`-GlobalDefault`** (PowerShell reserves `Set-*` verb naming; avoid a parameter literally named `SetGlobal`).
+- If the user did not pass **`--write-nvmrc`**, omit **`-WriteNvmrc`** (do not set `WRITE_NVMRC`).
+
+### macOS/Linux (bash) — nvm / Homebrew / Chocolatey
 
 ```bash
 # Detect installation method
@@ -231,12 +257,12 @@ echo "====================="
 
 | Command | Current shell | New shells (macOS/Linux) | New shells (Windows) | .nvmrc file |
 |---------|---------------|-------------------------|---------------------|-------------|
-| `/fw-setup-use 10` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (auto-default)* | ❌ Not created |
+| `/fw-setup-use 10` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (session PATH; symlink unchanged)** | ❌ Not created |
 | `/fw-setup-use 10 --global` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Node 24 (default) | ❌ Not created |
-| `/fw-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (auto-default)* | ✅ Created (24.11) |
+| `/fw-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (session PATH; symlink unchanged)** | ✅ Created (24.11) |
 | `/fw-setup-use 10 --global --write-nvmrc` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Node 24 (default) | ✅ Created (24.11) |
 
-*Windows nvm-windows automatically sets global default when you run `nvm use`, unlike Unix nvm which only affects current shell.
+**Windows nvm-windows:** when following this command file, use **`fw-setup-use.ps1`** for the non-`--global` rows so new shells stay on the prior default symlink while the current session picks up the right `node`/`npm` globals (including `fdk`).
 
 **Closeout:** No **`fdk run`** / tunnel. This command modifies shell state and optionally **`.nvmrc`** / **nvm default alias**.
 

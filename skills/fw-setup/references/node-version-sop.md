@@ -76,6 +76,8 @@ node --version
 
 **This ONLY affects current terminal**. New terminals will use default version.
 
+> **Windows (nvm-windows) exception:** `nvm use` updates a **system-wide** symlink, so **new terminals** typically see the same Node version too. For a **session-only** switch (leave the global symlink alone), use **`skills/fw-setup/scripts/fw-setup-use.ps1`** via **`/fw-setup-use`** (no `--global`).
+
 ### Permanent switch (set as default):
 
 ```bash
