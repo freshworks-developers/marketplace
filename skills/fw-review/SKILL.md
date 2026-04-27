@@ -36,7 +36,7 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 ## Supporting files
 
 - [rules/report.md](rules/report.md) — Output format for the final **App Review Result** block only.
-- [rules/iparam-rules.md](rules/iparam-rules.md) — IP-04A, IP-05A, IP-06A (and iparam scope for IP-03A).
+- [rules/iparam-rules.md](rules/iparam-rules.md) — IP-04A, IP-05A, IP-06A.
 - [rules/frontend-files-rules.md](rules/frontend-files-rules.md) — All FF-* rules.
 - [rules/script-check-rules.md](rules/script-check-rules.md) — Script-backed rule IDs mapped to `scripts/*.js`.
 
@@ -44,9 +44,8 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 
 | Area | IDs |
 |------|-----|
-| iparams | IP-03A, IP-04A, IP-05A, IP-06A |
+| iparams | IP-04A, IP-05A, IP-06A |
 | File and folder structure | FFS-02L, FFS-04L, FFS-05L |
-| Developer app settings | DS-03L |
 | Frontend | FF-01L, FF-07L, FF-02M, FF-03A, FF-04A, FF-05A, FF-06A |
-| Code readability | CR-04L, CR-05L |
-| Miscellaneous | GN-08L, GN-12L |
+| Code readability | CR-05L |
+| Miscellaneous | GN-02L, GN-08L, GN-12L |
