@@ -29,13 +29,34 @@ Task({
   model: "fast",
   description: "Downgrade FDK version (10.x → 10.0.y or 10.x → 9.x)",
   prompt: `
-Downgrade FDK to a specific version.
+Downgrade FDK to a specific version - auto-detects installation method (nvm, Homebrew, Chocolatey).
 
 TARGET_VER="__FDK_DOWNGRADE_TARGET__"
 # Host must replace with: "latest" OR "9.6.0" OR "10.0.1" etc.
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+# Detect installation method
+detect_install_method() {
+  if command -v brew >/dev/null 2>&1 && brew list fdk >/dev/null 2>&1; then
+    echo "homebrew"
+  elif command -v choco >/dev/null 2>&1 && choco list --local-only fdk 2>/dev/null | grep -q "^fdk"; then
+    echo "chocolatey"
+  elif [ -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "nvm"
+  elif command -v nvm >/dev/null 2>&1 && [[ "$OSTYPE" =~ ^(msys|win32|cygwin) ]]; then
+    echo "nvm-windows"
+  else
+    echo "npm-global"
+  fi
+}
+
+INSTALL_METHOD=$(detect_install_method)
+echo "Installation method: $INSTALL_METHOD"
+
+# Load nvm if available
+if [[ "$INSTALL_METHOD" == "nvm" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+fi
 
 # Determine target major version
 if [[ "$TARGET_VER" == latest ]] || [[ "$TARGET_VER" =~ ^9\\. ]]; then
@@ -80,6 +101,60 @@ if [[ "$HTTP" != "200" ]]; then
   exit 1
 fi
 
+echo "Downgrading to FDK $TARGET_VER"
+
+# Handle Homebrew (system-wide, no multi-version support)
+if [[ "$INSTALL_METHOD" == "homebrew" ]]; then
+  if [[ "$IS_NINE" == 1 ]]; then
+    echo "ERROR: Homebrew does not support FDK 9.x downgrade"
+    echo "FDK 9.x is deprecated. Use brew to stay on FDK 10.x or switch to nvm for multi-version support"
+    exit 1
+  fi
+  
+  echo "Downgrading FDK via Homebrew (system-wide)..."
+  brew uninstall fdk 2>/dev/null || true
+  
+  if [[ "$TARGET_VER" == latest ]]; then
+    brew install fdk || exit 1
+  else
+    # Homebrew doesn't easily support pinned versions via formula
+    echo "WARNING: Homebrew may not support specific FDK 10.0.y versions"
+    echo "Attempting install from CDN tarball..."
+    npm install -g "$FDK_URL" || exit 1
+  fi
+  
+  fdk version
+  echo "Downgrade complete (Homebrew/system-wide)"
+  exit 0
+fi
+
+# Handle Chocolatey (system-wide, no multi-version support)
+if [[ "$INSTALL_METHOD" == "chocolatey" ]]; then
+  echo "Downgrading FDK via Chocolatey (system-wide)..."
+  choco uninstall fdk -y 2>/dev/null || true
+  
+  if [[ "$TARGET_VER" == latest ]]; then
+    if [[ "$IS_NINE" == 1 ]]; then
+      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      # Chocolatey latest may be FDK 10.x; explicitly request 9.x if available
+      choco install fdk --version=9.8.2 -y || exit 1
+    else
+      choco install fdk -y || exit 1
+    fi
+  else
+    if [[ "$IS_NINE" == 1 ]]; then
+      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+    fi
+    choco install fdk --version=$TARGET_VER -y || exit 1
+  fi
+  
+  refreshenv 2>/dev/null || true
+  fdk version
+  echo "Downgrade complete (Chocolatey/system-wide)"
+  exit 0
+fi
+
+# For nvm/nvm-windows/npm-global: multi-version support via npm install
 echo "Downgrading to FDK $TARGET_VER on Node $NODE_VER"
 
 # Remove FDK from current Node
