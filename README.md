@@ -1,6 +1,6 @@
 <h1 align="center">Freshworks Developer Tools</h1>
 
-<p align="center"><strong>App Development Kit for AI coding assistants (Claude Code, Cursor, etc.) that provide Freshworks Platform 3.0 guidance.</strong></p>
+<p align="center"><strong>AI-powered toolkit for building Freshworks apps in Claude Code and Cursor</strong></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-3.0-blue?style=for-the-badge" alt="Platform 3.0">
@@ -15,19 +15,29 @@
   <img src="https://img.shields.io/badge/Plugins-6-764abc?style=flat-square" alt="Plugins">
 </p>
 
-<p align="center">Agentic App Development Kit for Freshworks app development.<br>Enforces <strong>Platform 3.0 patterns</strong> with zero tolerance for legacy code.</p>
+<p align="center">Build Freshworks marketplace apps faster with AI assistance.<br>Supports <strong>Platform 3.0</strong> with modern best practices.</p>
 
 <p align="center"><code>Platform 3.0</code> · <code>Cursor Plugins</code> · <code>Crayons</code> · <code>Request Templates</code> · <code>OAuth</code> · <code>fdk validate</code></p>
 
 > [!NOTE]
-> Feedback and bug reports: **[GitHub Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)**. **AI agents:** start from **[AGENTS.md](AGENTS.md)** for routing, skills layout, and repo norms.
+> **Need help?** Report issues on [GitHub Issues](https://github.com/freshworks-developers/fw-dev-tools/issues). For AI agents, see [AGENTS.md](AGENTS.md) for technical details.
 
 > [!TIP]
-> **Human install & routing:** use **this README** (installation below), **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for Cursor / Claude Code skill issues, and the **[Freshworks Developer Portal](https://developers.freshworks.com/)** for product documentation and API keys.
+> **Getting started?** Follow the installation steps below, check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) if you run into issues, and visit the [Freshworks Developer Portal](https://developers.freshworks.com/) for API keys.
 
-## Installation
+## What You Can Do
 
-### npx skills
+This toolkit helps you:
+
+- ✅ **Set up your development environment** - Install and manage the Freshworks Development Kit (FDK) and Node.js
+- ✅ **Build apps faster** - Create marketplace apps with AI guidance for Platform 3.0
+- ✅ **Add AI features** - Integrate AI Actions and third-party APIs into your apps
+- ✅ **Review your code** - Run automated checks before submitting to the marketplace
+- ✅ **Publish to marketplace** - Upload and submit your app versions directly
+
+## Quick Start
+
+Copy and paste these commands in your terminal to install all tools:
 
 ```bash
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
@@ -37,112 +47,87 @@ npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
 
+## Available Tools
 
-## Available Skills
+Each tool helps with a specific part of app development. Use them in order for a complete workflow:
 
-The table lists skills in lifecycle order. One-line summaries here; full playbooks in each folder’s **`README.md`** / **`SKILL.md`**. Slash commands, rules file inventory, and MCP wiring are in **[`AGENTS.md`](AGENTS.md)**.
+| Tool | What it does |
+|------|--------------|
+| [**fw-setup**](skills/fw-setup/) | Install and manage FDK (Freshworks Development Kit) and Node.js |
+| [**fw-app-dev**](skills/fw-app-dev/) | Build complete marketplace apps with UI, OAuth, and integrations |
+| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | Add AI Actions and connect to third-party services |
+| [**fw-ai-actions-app**](skills/fw-ai-actions-skill/) | Alternative AI Actions toolkit with extra templates |
+| [**fw-review**](skills/fw-review/) | Check your app for common issues before submission |
+| [**fw-publish**](skills/fw-publish/) | Upload and publish your app to the Freshworks Marketplace |
 
-| Skill | One-line summary |
-|-------|------------------|
-| [**fw-setup**](skills/fw-setup/) | FDK and Node.js install / lifecycle via nvm |
-| [**fw-app-dev**](skills/fw-app-dev/) | Full Platform 3.0 marketplace apps: manifest, requests, OAuth, serverless, UI |
-| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | AI Actions (`actions.json`), SMI, request templates, validation |
-| [**fw-ai-actions-app**](skills/fw-ai-actions-skill/) | Standalone AI Actions skill: rules, references, optional integration agents |
-| [**fw-review**](skills/fw-review/) | Structured pre-submission audit (rules + scripts) |
-| [**fw-publish**](skills/fw-publish/) | Marketplace publish via MCP (validate, pack, upload, submit/update) |
+## Step-by-Step Workflow
 
-### AI Actions integration agents
+Here's how to go from idea to published app:
 
-Markdown agent definitions for scoping, implementing, and validating third-party **AI Actions** live under [**skills/fw-ai-actions-skill/agents/**](skills/fw-ai-actions-skill/agents/). Copy them into your project (for example `.cursor/agents/`) or reference them when configuring subagents. For full marketplace apps, pair with [**fw-app-dev**](skills/fw-app-dev/) (similar `agents/` layout).
+### 1. Setup Your Environment
 
-| Agent | File | Role |
-|-------|------|------|
-| Integration Scoper | [integration-scoper.md](skills/fw-ai-actions-skill/agents/integration-scoper.md) | Requirements → API mapping, feasibility, plan docs (no app code) |
-| Integration Scope Implementer | [integration-scope-implementer.md](skills/fw-ai-actions-skill/agents/integration-scope-implementer.md) | Plans, implementation, `fdk validate`, status docs on an integration branch |
-| AI Action Integration Validator | [ai-action-integration-validator.md](skills/fw-ai-actions-skill/agents/ai-action-integration-validator.md) | Spec parity, strict validation, manifest hygiene, app-scoped handoff |
+Start with **fw-setup** to install the development tools you need (FDK 10.x and Node.js 24.x). This is required before building any apps.
 
-### From toolchain to marketplace (lifecycle)
+**Commands you can use:**
+- `/fw-setup-install` - Install FDK and Node.js
+- `/fw-setup-status` - Check what's currently installed
+- `/fw-setup-troubleshoot` - Fix common setup problems
 
-Typical path from a **cold machine** to a **listed or testable marketplace app**. Skip steps your task does not need (for example, AI Actions–only work may never open **fw-app-dev** UI locations).
+👉 [Read the fw-setup guide](skills/fw-setup/)
 
-1. **Toolchain — [fw-setup](skills/fw-setup/)**  
-   Install and stabilize **FDK** (10.x for publishing) and **Node** (24.x) with **nvm**, fix PATH and shell persistence, and recover from version drift. Without a working `fdk`, later steps (`fdk validate`, `fdk pack`, and some **fw-review** script assumptions) stall. Slash commands such as `/fw-setup-install`, `/fw-setup-status`, and `/fw-setup-troubleshoot` are defined in that skill’s `commands/` (see **AGENTS.md** inventory).
+### 2. Build Your App
 
-2. **Application development — [fw-app-dev](skills/fw-app-dev/)**  
-   Build or migrate the **full** Platform 3.0 app: `manifest.json` (`modules`), `config/requests.json`, OAuth, serverless handlers, frontend locations, Crayons, and `fdk validate` with guided fixes (`/fdk-fix`, `/fdk-migrate`, `/fdk-refactor`, `/fdk-review` for validate rounds). Does **not** install FDK—use **fw-setup** first when the toolchain is missing.
+Use **fw-app-dev** to create your marketplace app. This includes:
+- Creating the app structure
+- Adding UI components with Crayons
+- Setting up OAuth for third-party integrations
+- Adding serverless functions
+- Fixing validation errors
 
-3. **AI Actions & APIs — [fw-ai-app-dev](skills/fw-ai-app-dev/)**  
-   When the surface is **`actions.json`** plus serverless SMI (not a full sidebar UI app), use this skill for request templates, schemas, test data, and integration guardrails. Complements **fw-app-dev**; combined UI + actions apps may need both.
+**Commands you can use:**
+- `/fdk-fix` - Fix validation errors automatically
+- `/fdk-migrate` - Upgrade older apps to Platform 3.0
+- `/fdk-review` - Check your app for issues
 
-4. **Pre-flight audit — [fw-review](skills/fw-review/)**  
-   Optional **repeatable, policy-driven** pass before heavy QA or submission: iparams and manifest rules, frontend FF-* checks, SC-* checks via `scripts/*.js`, and an **App Review Result** per `skills/fw-review/rules/report.md`. **Not** the same as **fw-app-dev**’s `/fdk-review` (which re-runs `fdk validate`). Ensure **FDK** on PATH when a phase needs it.
+👉 [Read the fw-app-dev guide](skills/fw-app-dev/)
 
-5. **Publish — [fw-publish](skills/fw-publish/)**  
-   After validate and pack: configure **`fw-dev-mcp`** MCP using the repo root **`.mcp.json`** shape, then app upload and **submit** or **update version**. Requires a Developer Portal JWT. **fw-app-dev** / **fw-ai-app-dev** fix validation issues; **fw-review** reduces surprises before upload.
+### 3. Add AI Features (Optional)
 
-**Typical thread:** **fw-setup** → **fw-app-dev** (and/or **fw-ai-app-dev**) → optional **fw-review** → **fw-publish**.
+If you want to add AI-powered features, use **fw-ai-app-dev** to:
+- Connect to external APIs (Slack, Google, etc.)
+- Add AI Actions that automate tasks
+- Create request templates for API calls
+- Add test data for development
 
-## Structure
+👉 [Read the fw-ai-app-dev guide](skills/fw-ai-app-dev/)
 
-Each skill follows the Agent Skills Specification:
+### 4. Review Your App (Recommended)
 
-```
-skill-name/
-├── SKILL.md           # Main skill file with frontmatter + instructions
-├── commands/          # Slash commands (where the skill defines them)
-├── rules/             # Editor or audit rules (.mdc and/or .md)
-├── scripts/           # Optional deterministic checks
-├── references/        # Additional documentation loaded on demand
-└── assets/            # Templates, logos, etc.
-```
+Before publishing, run **fw-review** to catch common issues:
+- Check configuration files
+- Validate frontend code
+- Run security checks
+- Generate a review report
 
-**fw-ai-actions-app** also ships **integration agent** prompts under `agents/`:
+👉 [Read the fw-review guide](skills/fw-review/)
 
-```
-skills/
-├── fw-ai-actions-skill/
-│   ├── SKILL.md
-│   ├── agents/        # scoper, implementer, validator (.md)
-│   ├── rules/
-│   └── references/
-├── fw-app-dev/
-├── fw-ai-app-dev/
-└── fw-setup/
-```
+### 5. Publish to Marketplace
 
-### Project-Level Installation
+Finally, use **fw-publish** to upload your app:
+- Validate and package your app
+- Upload to Freshworks servers via the **fw-dev-mcp server**
+- Submit for review or update existing versions
+- Check publishing status
 
-Skills are also available project-wide via `.cursor/skills/`:
+**Setup required:**
+1. Get your API key from [Freshworks Developer Portal](https://developers.freshworks.com/developer/) (look for "API key for Freddy AI Copilot VS Code plugin")
+2. Configure the **fw-dev-mcp server** in your IDE (see MCP section below for details)
 
-```
-.cursor/
-├── README.md          # Configuration documentation
-└── skills/
-    └── <skill-name>/  # Symlink or copy from ../../skills/<skill-name>
-```
-
-This allows project contributors to use skills without global installation.
-
-**Rules, slash commands, and check scripts:** full file inventory and marketplace paths are in **[`AGENTS.md`](AGENTS.md)** under **Rules and slash commands (inventory)**—update that section when you add or rename files.
-
-
-## Skill Discovery
-
-Skills are automatically discovered via `SKILL.md` frontmatter:
-
-```yaml
----
-name: "<skill-id>"
-description: "Short description for discovery"
-version: "1.0.0"
----
-```
-
-Other skills use the same frontmatter shape with their own `name` (see the **Available Skills** table). No manifest generation or registry required; each skill is self-contained and declarative.
+👉 [Read the fw-publish guide](skills/fw-publish/)
 
 ## MCP (marketplace publish)
 
-Publishing uses the **`fw-dev-mcp`** server. This repo **bundles** **`.mcp.json`** at the repository root (URL + `Authorization` header). **Claude Code** vs **Cursor** token placement, copy-paste blocks, and tool names are documented in **[`AGENTS.md`](AGENTS.md)** (MCP section) and the publish skill’s own files under **`skills/fw-publish/`**—not duplicated here.
+Publishing uses the **fw-dev-mcp server**. This repo bundles `.mcp.json` at the repository root (URL + `Authorization` header). Claude Code vs Cursor token placement, copy-paste blocks, and tool names are documented in **[AGENTS.md](AGENTS.md)** (MCP section) and the publish skill's own files under **[skills/fw-publish/](skills/fw-publish/)**—not duplicated here.
 
 ## Troubleshooting
 
@@ -161,6 +146,14 @@ Having issues with skills installation or usage?
 - 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 - 💡 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Skills installation & usage guide
 
+## For Contributors
+
+Want to help improve these tools? 
+
+- Technical documentation for AI agents: [AGENTS.md](AGENTS.md)
+- Each skill folder has detailed `SKILL.md` and `README.md` files
+- Skills are auto-discovered and don't require manual registration
+
 ## License
 
-MIT
+MIT - free to use and modify

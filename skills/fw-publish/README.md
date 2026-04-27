@@ -48,9 +48,20 @@ This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `s
 
 ## Requirements
 
-- **Developer Portal** JWT for MCP (`Authorization: Bearer …`); see **AGENTS.md** and **SKILL.md** for Cursor vs Claude Code token placement
+- **Developer Portal API key** for MCP authentication (get from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → "API key for Freddy AI Copilot VS Code plugin" → Copy)
+- **MCP server configuration**: `fw-dev-mcp` at `https://mcp.freshworks.dev/mcp` with `Authorization` header
+  - **Claude Code**: API key stored in keychain via `userConfig.mcp_auth_token`, referenced as `${user_config.mcp_auth_token}`
+  - **Cursor**: Copy `.mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)
 - **FDK 10.x** and **Node 24.x** for validate/pack (see **fw-setup**)
 - Built zip from `fdk pack` before upload
+
+### MCP Tools Available
+
+- `list_marketplace_apps` - List all apps on developer account
+- `create_app_upload_url` - Get app-upload URL for zip binary
+- `submit_marketplace_app` - Create new app + first version
+- `update_marketplace_app_version` - Upload new version to existing app
+- `get_marketplace_app_status` - Check app state and latest version
 
 ## Support
 
