@@ -23,6 +23,6 @@
   "interface": {
     "displayName": "Freshworks App Review (fw-review)",
     "shortDescription": "Structured app review: rules, deterministic scripts, report format.",
-    "longDescription": "Silent pipeline over manifest, iparams, frontend rules, and SC-* script checks. Pair with fw-setup for FDK availability and fw-app-dev for fixes after review."
+    "longDescription": "Silent pipeline over manifest, iparams, frontend rules, and script-backed checks. Pair with fw-setup for FDK availability and fw-app-dev for fixes after review."
   }
 }

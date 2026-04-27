@@ -52,7 +52,7 @@ For every **Fail**, cite file path and line (or block) and give a concrete fix.
 - Mutually exclusive configuration: **either** default JSON iparams **or** custom `iparams.html` + assets — not both defining conflicting UIs.
 - Required user input has `"required": true` (default iparams) or equivalent enforcement in custom JS before submit.
 - Text fields that need format checks (email, URL path, numeric IDs, domains) have `regex` or custom validation.
-- Sensitive fields use `secure: true` where appropriate (see IP-03A).
+- Sensitive fields use `secure: true` where appropriate.
 - If `oauth_config.json` exists, `oauth_iparams` fields are defined with types and required flags as needed.
 - If iparams are non-empty and install validation is implied, `onAppInstall` + handler exist and align.
 

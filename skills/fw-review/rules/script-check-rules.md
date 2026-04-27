@@ -77,31 +77,6 @@ For every **Fail**, cite file path and line (or block) from the script output an
 
 - Provide production-ready icon assets and ensure `app/styles/images/icon.svg` is declared as `64x64`.
 
-## DS-03L — Settings update references must have a matching handler
-
-**Goal:**
-- If the app references settings updates, it must implement the matching handler.
-
-**Inspect**
-
-- Run `scripts/settings-update-handler.js`.
-
-**Pass**
-
-- Settings update handling is either implemented or not required.
-
-**Fail**
-
-- The manifest references settings updates but no matching handler implementation is found.
-
-**Not applicable**
-
-- The app does not reference settings updates.
-
-**Fix message**
-
-- Add the missing settings update handler implementation or remove the unused settings update reference.
-
 ## FF-07L — OAuth config values must stay in configuration files
 
 **Goal:**
@@ -126,31 +101,6 @@ For every **Fail**, cite file path and line (or block) from the script output an
 **Fix message**
 
 - Move OAuth client IDs, secrets, and tokens into secure config files such as `oauth_config.json`, secure iparams, or `.env`.
-
-## CR-04L — Mutable browser globals must be avoided
-
-**Goal:**
-- Client code should avoid mutable globals on `window` or `globalThis`.
-
-**Inspect**
-
-- Run `scripts/global-variables.js`.
-
-**Pass**
-
-- No mutable browser globals are detected.
-
-**Fail**
-
-- Client code assigns mutable values to `window.*` or `globalThis.*`.
-
-**Not applicable**
-
-- No client-side JS/TS files are present.
-
-**Fix message**
-
-- Replace mutable browser globals with module scope, closures, or explicit state containers.
 
 ## CR-05L — Imported third-party libraries must be used
 
