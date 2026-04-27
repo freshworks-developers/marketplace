@@ -310,20 +310,34 @@ REPORT FORMAT:
 CRITICAL: If ANY mandatory test fails, do not say "installation complete".
 
 POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
+  # Offer MCP configuration via dedicated subagent
+  # Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+  
   echo ""
-  echo "=== Marketplace MCP server (optional) ==="
-  echo "Would you like to configure the MCP server for publish tools?"
-  echo "This connects your IDE to the Freshworks openai-server."
-  echo "(y/N)"
-  # If user says yes:
-  #   1. Ask for API key from https://developers.freshworks.com/developer/ → "API key for Freddy AI Copilot VS Code plugin" section → Copy
-  #   2. MCP server URL is fixed: https://mcp.freshworks.dev/mcp
-  #   3. Detect IDE:
-  #      - Claude Code: direct user to /config → set mcp_auth_token (URL already in repo root .mcp.json)
-  #      - Cursor: write ~/.cursor/mcp.json with fw-dev-mcp server entry (url: https://mcp.freshworks.dev/mcp)
-  #   4. Confirm: "MCP server configured. Publish tools are now available."
-  # If user says no: "Skipped. Configure MCP later via IDE settings (see AGENTS.md)."
-  # NEVER let the user paste JWT into chat — write to config file or direct to IDE settings UI.
+  echo "═══════════════════════════════════════════════════════════"
+  echo "Optional: Configure Marketplace Publishing"
+  echo ""
+  echo "Would you like to set up publishing tools now?"
+  echo "This connects your IDE to the Freshworks Marketplace API."
+  echo ""
+  echo "You can skip this and configure later."
+  read -p "Configure MCP now? (y/N): " mcp_response
+  
+  if [[ "$mcp_response" =~ ^[yY]$ ]]; then
+    # Execute MCP configuration subagent
+    # Implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+    # This handles: API key prompt, IDE detection, config file creation, verification
+    echo ""
+    echo "Launching MCP configuration..."
+    echo "See: skills/fw-publish/subagents/mcp-config-prompt.md for full flow"
+    echo ""
+    # Agent should read and follow mcp-config-prompt.md from Step 3A.1 onwards
+  else
+    echo "Skipped. Configure MCP later:"
+    echo "- Run: /fw-setup-install (choose MCP option)"
+    echo "- Or see: README.md or AGENTS.md for manual setup"
+  fi
+  echo "═══════════════════════════════════════════════════════════"
 
 SLASH_COMMAND_CLOSEOUT: After verification, optional MCP config, and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task.
   `

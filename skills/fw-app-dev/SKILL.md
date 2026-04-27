@@ -698,6 +698,39 @@ Next steps:
 4. When ready to publish: use the publish skill
 ```
 
+**THEN, offer MCP configuration (one time only, if not already configured):**
+
+After showing the completion message, check if MCP is already configured and optionally offer setup:
+
+```javascript
+// Check if MCP tools are available
+try {
+  CallMcpTool("fw-dev-mcp", "list_marketplace_apps", {});
+  // Success: MCP already configured, skip prompt
+} catch {
+  // MCP not configured: offer setup
+  // Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+  Read and follow: skills/fw-publish/subagents/mcp-config-prompt.md
+}
+```
+
+**Brief inline version (if subagent not available):**
+```
+═══════════════════════════════════════════════════════════
+Optional: Configure Marketplace Publishing
+
+Would you like to set up publishing tools now?
+This connects your IDE to the Freshworks Marketplace API.
+
+You can skip this and configure later.
+
+Configure MCP now? (y/N)
+═══════════════════════════════════════════════════════════
+```
+
+If YES → Follow `skills/fw-publish/subagents/mcp-config-prompt.md` (Step 3A.1 onwards)
+If NO → Skip, user can configure later via `/fw-setup-install` or manually
+
 **DO NOT automatically generate:**
 - [INVALID] Detailed validation reports (.validation-report.md)
 - [INVALID] Apps summary documents (APPS-SUMMARY.md)
