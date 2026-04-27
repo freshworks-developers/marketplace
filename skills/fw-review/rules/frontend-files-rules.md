@@ -9,6 +9,9 @@
 **Fail:** 
 - `$.ajax`, `axios` (in client UI), `new XMLHttpRequest`, or `fetch()` used for APIs that should go through request templates—unless clearly justified (e.g. static asset, non-platform URL explicitly allowed).
 
+**Fix Message**
+- Use request templates instead for making api requests
+
 ## FF-07L — OAuth client ID and secrets only in OAuth / secure config
 
 **Goal:** 
@@ -19,6 +22,9 @@
 
 **Fail:** 
 - Client ID/secret/token patterns in `app/**/*.js`, sidebar scripts, etc., outside approved config files.
+
+**Fix Message**
+- Move clientid/secret & tokens to oauth config files
 
 ## FF-02M — SMI must not be used when request templates will suffice
 
