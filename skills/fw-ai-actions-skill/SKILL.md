@@ -18,6 +18,7 @@ You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the
 - **Use request templates** — `$request.invokeTemplate` for external HTTP (`rules/ai-actions-requests.mdc`).
 - **Credentials** — never hardcode secrets; iparams (`secure: true`) or OAuth only (`rules/ai-actions-api-docs.mdc`).
 - **Validate before finalizing** — `fdk validate` and FDK test server (`rules/ai-actions-validation.mdc`).
+- **Toolchain before validate** — **`../fw-app-dev/SKILL.md`** → *Manifest + toolchain gate* (**`fw-setup`** → **`/fdk-migrate`** on legacy → validate; **never** downgrade to **FDK 9 / Node 18** instead).
 
 ---
 

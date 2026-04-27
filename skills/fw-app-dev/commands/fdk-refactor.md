@@ -44,6 +44,8 @@ Apply these patterns:
 
 ## Step 5: Validate
 
+**First:** **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`* (same as **`/fdk-fix`**: **fw-setup** / **`/fdk-migrate`** / raise **`engines`** — no toolchain downgrade).
+
 **Toolchain:** If `fdk validate` cannot run, **fw-app-dev** does not install the CLI — use **fw-setup** or prompt the user to add it (**SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*).
 
 Run: `cd <app-directory> && fdk validate`

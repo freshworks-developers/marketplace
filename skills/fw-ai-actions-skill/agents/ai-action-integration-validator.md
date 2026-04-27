@@ -102,6 +102,7 @@ primary_skill: ../SKILL.md
 ##### 3a. Strict null check and fdk validate (mandatory)
 
 - **Strict null check (js-style):** In server code, no `!= null` or `== null`. Use `!== undefined && !== null` (or equivalent) for optional-parameter checks. Search for `!= null` and `== null` in the app’s `server/**/*.js`; fix every occurrence. This is part of validation—fix when you notice it.
+- **Before `fdk validate`:** **`../../fw-app-dev/SKILL.md`** → *Manifest + toolchain gate* (**`fw-setup`** if needed → **`/fdk-migrate`** on legacy **2.x** / **9.x–18** engines → validate). **Never** downgrade toolchain or **`engines`** to **9.x / 18** instead of migrate/setup.
 - **fdk validate:** Run `fdk validate` from the app root. The run **must** result in **0 platform errors** and **0 lint errors**. Fix any reported errors (unused variables, unused parameters, equality style, etc.). Warnings (e.g. complexity) may remain unless the project requires otherwise.
 
 #### 4. Endpoint and implementation re-validation

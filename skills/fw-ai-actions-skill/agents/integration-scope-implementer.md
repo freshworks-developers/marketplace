@@ -160,6 +160,7 @@ Maintain **one living document** (e.g. `INTEGRATIONS_STATUS.md` or equivalent in
 
 ## Error Handling
 
+- **Before chasing validate errors:** **`../../fw-app-dev/SKILL.md`** → *Manifest + toolchain gate* (**`fw-setup`** / **`/fdk-migrate`** on legacy; **never** downgrade toolchain or **`engines`** to **9.x / 18** instead).
 - **`fdk validate` fails:** fix lint/platform errors in-loop up to the configured retry ceiling; if still blocked, document in status doc and stop with the error summary—no silent skips.
 - **Missing modules source:** ask or document as a blocker; do not invent module lists.
 - **Ambiguous spec vs vendor doc:** prefer spec for names/descriptions, vendor doc for HTTP; flag conflicts in the plan.

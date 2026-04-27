@@ -52,6 +52,7 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **External HTTP** only via **`$request.invokeTemplate` / `client.request.invokeTemplate`** and **`config/requests.json`** templates (no `$request.post|get|put|delete`)
 - **OAuth** uses the **`integrations`** wrapper in `oauth_config.json`
 - **`fdk validate`**: **zero** platform errors and **zero** lint errors before calling an app complete; **`README.md`** and **`app/styles/images/icon.svg`** (frontend) where the skill requires them
+- **Before `fdk validate`:** **`skills/fw-app-dev/SKILL.md`** → *Manifest + toolchain gate* — **`fw-setup`** if **FDK 10 + Node 24** missing; **`/fdk-migrate`** if not **Platform 3.0** or legacy **`engines`**; **never** downgrade toolchain or manifest to **FDK 9 / Node 18** instead of setup/migrate (except **LAST RESORT** in that file)
 - **New app engines**: **`fdk` `10.0.1`** and **`node` `24.11.0`** unless **fw-app-dev** `SKILL.md` **LAST RESORT** rules apply
 
 ## Repository layout (skills)

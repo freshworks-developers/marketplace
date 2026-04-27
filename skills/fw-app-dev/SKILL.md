@@ -1,6 +1,6 @@
 ---
 name: fw-app-dev
-description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use the fw-setup skill (or prompt the user to add it). New apps MUST start with FDK 10.0.1 and Node.js 24.x in manifest engines; FDK 9.x / Node 18 engines are forbidden except the single last-resort downgrade in SKILL.md after six validate iterations when toolchain blocks validation. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
+description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use the fw-setup skill (or prompt the user to add it). Before fdk validate, runs the manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 instead). New apps MUST start with FDK 10.0.1 and Node.js 24.x in manifest engines; FDK 9.x / Node 18 engines are forbidden except the single last-resort downgrade in SKILL.md after six validate iterations when toolchain blocks validation. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
 allowed-tools: "shell read write strreplace glob grep"
@@ -58,6 +58,32 @@ Then retry your command.
 
 Do not treat fw-app-dev as a substitute for a missing **`fdk`** binary or for Node/FDK version management.
 
+## Manifest + toolchain gate **before** any `fdk validate`
+
+Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection.
+
+1. Run **`node --version`** and **`fdk version`** (installed toolchain).
+2. Read **`manifest.json`**: **`platform-version`**, **`engines.node`**, **`engines.fdk`**.
+
+**Decide (first match wins):**
+
+| Condition | Action |
+|-----------|--------|
+| **`fdk` missing**, Node major ≠ **24**, or FDK major ≠ **10** | **STOP** → **`fw-setup`** (`/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, …) per the prerequisite table. **Do not** lower **`manifest.json` → `engines`** to **18** / **9.x** to match a bad shell. **Do not** install **FDK 9** or switch to **Node 18** to satisfy a legacy manifest. |
+| Toolchain **OK** (Node **24.x** + FDK **10.x**) but **`platform-version`** is missing or not **`"3.0"`** | **Do not** use **`fdk validate`** as the first remediation. Run **`/fdk-migrate`** through Platform **3.0** + **`engines`** **`24.11.0` / `10.0.1`** (or newer **patch** lines that match the installed CLI), **then** **`fdk validate`**. |
+| Toolchain **OK**, **`platform-version`** is **`3.0`**, but **`engines`** still **`node` 18.x** and/or **`fdk` 9.x** | Treat as **incomplete migration**: **raise** **`engines`** to skill defaults (or installed patch versions) — same as **`/fdk-migrate`** Step 3 — **then** **`fdk validate`**. **Never** downgrade the shell to match the file. |
+| Toolchain **OK**, **`3.0`**, **`engines`** already **Node 24.x** + **FDK 10.x** | Run **`fdk validate`**. |
+
+**Scenarios (authoritative ordering):**
+
+1. **Latest FDK 10 + Node 24 not installed** and manifest is legacy (**2.x** and/or **9.x/18** engines) → **`fw-setup`** first → **`/fdk-migrate`** to **3.0** → **`fdk validate`**.
+2. **FDK 10 + Node 24 installed** and manifest is legacy → **`/fdk-migrate`** → **`fdk validate`** (no **`fw-setup`** step if prerequisites already pass).
+3. **FDK 10 + Node 24 installed** and manifest is **3.0** with **24.x / 10.x** engines → **`fdk validate`** directly.
+
+**`[WARN] App engines major version mismatch`** (FDK lists deleting **`coverage`**, **`node_modules`**, changing **`engines`**): when the **shell** already runs **Node 24.x + FDK 10.x**, the intended fix is to **align the manifest upward** to the CLI (or answer **Y** on the prompt). **Forbidden:** switching to **FDK 9 / Node 18** or editing **`engines` down** to silence the warning. Prefer setting **`engines`** from **`node --version`** / **`fdk version`** before validate to reduce prompts; use piped confirmation only where the user or policy accepts **`node_modules`** deletion.
+
+**LAST RESORT** (**`9.8.2` + `18.20.8`**) is **never** for this gate: it does **not** apply to engines mismatch with a working **FDK 10 + Node 24** install, and it is **not** a substitute for **`fw-setup`** or **`/fdk-migrate`**.
+
 **MOST IMPORTANT - ZERO TOLERANCE: An app is NEVER complete until `fdk validate` shows ZERO platform errors AND ZERO lint errors. NEVER say "app complete" or "app generated" with ANY errors remaining.**
 
 **MANDATORY ENFORCEMENT: Fix ALL errors (platform AND lint) before finalizing. Keep iterating max 6 times with command `fdk validate`, until errors = 0. No exceptions.**
@@ -93,6 +119,7 @@ Do not treat fw-app-dev as a substitute for a missing **`fdk`** binary or for No
    - **Either** you have completed **six** full validate→fix→re-validate iterations **without** reaching **0 platform + 0 lint** errors, **or** `fdk validate` **cannot be executed at all** while engines stay **`10.0.1` + `24.11.0`** (CLI / Node / FDK mismatch, not a shortcut before real fixes).
    - The failure is **toolchain / `engines` compatibility** with the installed FDK or Node (not “I do not want to fix lint”).
    - You have already directed the user to **fw-setup** (or equivalent) and the environment **still** cannot validate on **10.0.1** + **24.11.0** in this session.
+   - **Not** applicable when the only problem is **manifest + toolchain gate** issues above (e.g. **FDK 10 + Node 24** installed but **`engines`/`platform-version` legacy**) — fix with **`fw-setup`** + **`/fdk-migrate`** / **raise `engines`**, not downgrade.
 
    **Then:** apply the downgrade **once**, **immediately** print the warning block below (fill in `<reason>`), re-run `fdk validate`, and continue auto-fix until **0 / 0** if the CLI now runs. **Publishing / marketplace** still requires restoring **`10.0.1` + `24.11.0`** when the user upgrades their toolchain.
 

@@ -69,7 +69,7 @@ Typical path from a **cold machine** to a **listed or testable marketplace app**
    Install and stabilize **FDK** (10.x for publishing) and **Node** (24.x) with **nvm**, fix PATH and shell persistence, and recover from version drift. Without a working `fdk`, later steps (`fdk validate`, `fdk pack`, and some **fw-review** script assumptions) stall. Slash commands such as `/fw-setup-install`, `/fw-setup-status`, and `/fw-setup-troubleshoot` are defined in that skill’s `commands/` (see **AGENTS.md** inventory).
 
 2. **Application development — [fw-app-dev](skills/fw-app-dev/)**  
-   Build or migrate the **full** Platform 3.0 app: `manifest.json` (`modules`), `config/requests.json`, OAuth, serverless handlers, frontend locations, Crayons, and `fdk validate` with guided fixes (`/fdk-fix`, `/fdk-migrate`, `/fdk-refactor`, `/fdk-review` for validate rounds). Does **not** install FDK—use **fw-setup** first when the toolchain is missing.
+   Build or migrate the **full** Platform 3.0 app: `manifest.json` (`modules`), `config/requests.json`, OAuth, serverless handlers, frontend locations, Crayons, and `fdk validate` with guided fixes (`/fdk-fix`, `/fdk-migrate`, `/fdk-refactor`, `/fdk-review` for validate rounds). Does **not** install FDK—use **fw-setup** first when the toolchain is missing. **`fdk validate` order:** **`fw-setup`** if **FDK 10 + Node 24** missing → **`/fdk-migrate`** if the app is not **3.0** / legacy **`engines`** → validate; see **fw-app-dev** `SKILL.md` (*Manifest + toolchain gate*).
 
 3. **AI Actions & APIs — [fw-ai-app-dev](skills/fw-ai-app-dev/)**  
    When the surface is **`actions.json`** plus serverless SMI (not a full sidebar UI app), use this skill for request templates, schemas, test data, and integration guardrails. Complements **fw-app-dev**; combined UI + actions apps may need both.
@@ -80,7 +80,7 @@ Typical path from a **cold machine** to a **listed or testable marketplace app**
 5. **Publish — [fw-publish](skills/fw-publish/)**  
    After validate and pack: configure **`fw-dev-mcp`** MCP using the repo root **`.mcp.json`** shape, then app upload and **submit** or **update version**. Requires a Developer Portal JWT. **fw-app-dev** / **fw-ai-app-dev** fix validation issues; **fw-review** reduces surprises before upload.
 
-**Typical thread:** **fw-setup** → **fw-app-dev** (and/or **fw-ai-app-dev**) → optional **fw-review** → **fw-publish**.
+**Typical thread:** **fw-setup** (when **FDK 10 + Node 24** missing) → **`/fdk-migrate`** (when the app is **2.x** or **`engines`** still **9.x / 18**) → **fw-app-dev** or **fw-ai-app-dev** (including **`fdk validate`**) → optional **fw-review** → **fw-publish**.
 
 ## Structure
 
