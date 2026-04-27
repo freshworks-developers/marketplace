@@ -99,7 +99,7 @@ Most scripts use the same recursive scan approach:
 - Normalize output paths with forward slashes.
 - Read files as UTF-8 text unless the script only needs file stats.
 
-## Detailed Rules
+## Detailed Rules And Implementation
 
 ### Installation Parameters
 
@@ -111,13 +111,14 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Check default iparam fields whose name, description, or hint indicates domain, host, base URL, or endpoint host. For custom iparams, inspect JavaScript validation for string checks, regexes, trimming, and protocol rejection.
 
-**Pass:** The field rejects or strips `http://` and `https://`, validates the remaining hostname, and uses hints/placeholders that show host-only input such as `api.example.com`.
+**Implementation details:**
 
-**Fail:** A domain or host field accepts a full URL with scheme, or its regex explicitly allows `://`.
-
-**Not applicable:** No domain, host, or base-URL hostname fields exist.
-
-**Fix message:** Reject values matching `/^https?:\/\//i`, or strip the scheme after trim and validate the remaining hostname. Align hint text with host-only behavior.
+- Read `manifest.json` first so product modules, install flow, and config expectations are understood before iparam review.
+- Inspect default iparam schemas in `config/iparams.json` or `config/iparams.yaml`.
+- Inspect custom UI files such as `config/iparams.html` and `config/assets/iparams.js`.
+- Identify fields by names and copy such as `domain`, `host`, `baseUrl`, `base_url`, `url`, `endpoint`, `subdomain`, descriptions, hints, and placeholders.
+- For JSON/YAML iparams, check whether `regex`, `type`, `description`, `hint`, and `error` enforce host-only values.
+- For custom JS, check submit-time validation before `postConfigs`, including `trim()`, regex checks, and explicit rejection or normalization of `http://` and `https://`.
 
 #### IP-05A - Thorough Validation Of Installation Inputs
 
@@ -125,13 +126,15 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** For default iparams, review `required`, `type`, `regex`, `secure`, and dropdown choices. For custom iparams, review validation before `postConfigs` or save. Also check `manifest.json` and `server/server.js` when non-empty iparams imply install-time validation.
 
-**Pass:** The app has one clear iparam mode, required fields are enforced, format-sensitive fields are validated, sensitive fields use `secure: true`, OAuth iparams are typed and required where needed, and `onAppInstall` plus its handler align when install validation is required.
+**Implementation details:**
 
-**Fail:** Both default and custom iparams define conflicting UIs, required fields are not enforced, format-sensitive fields have no validation, or the manifest declares `onAppInstall` without a matching implementation.
-
-**Not applicable:** Only empty `{}` iparams exist and there is no custom UI, though duplicate config modes should still be checked.
-
-**Fix message:** Add `required`, `regex`, or custom validation. Add `onAppInstall` and `onAppInstallHandler` when install-time validation is required.
+- Detect whether default iparams, custom iparams, or both are present.
+- Treat both non-empty `iparams.json` and custom `iparams.html` as a possible conflict unless there is a clear single source of truth.
+- For each field, decide whether it should be required based on app behavior, API needs, OAuth setup, and install flow.
+- Check type constraints for strings, numbers, dropdowns, checkboxes, secure fields, and OAuth iparams.
+- Check format-sensitive fields for regex or equivalent JS validation: email, host/domain, URL path, numeric ID, API token shape, workspace ID, account ID, or region.
+- When iparams are non-empty and install validation is needed, verify `manifest.json` declares `onAppInstall` and `server/server.js` implements the referenced handler.
+- If `oauth_config.json` exists, verify `oauth_iparams` are defined with useful types and required flags.
 
 #### IP-06A - Helpful, Specific Validation Error Messages
 
@@ -139,13 +142,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** In default iparams, check `"error"` strings next to regex or validation metadata. In custom iparam JS, check user-visible toast, inline, or save error messages.
 
-**Pass:** Each validation rule has a specific error message that explains the expected format. User-facing `display_name`, `description`, and `hint` text should not be misleading.
+**Implementation details:**
 
-**Fail:** Messages are generic, missing, silent, or only logged to the console.
-
-**Not applicable:** There are no validation rules or meaningful inputs to validate.
-
-**Fix message:** Add descriptive `error` text for each regex. In custom JS, surface actionable messages with `fwNotify` or inline validation.
+- For default iparams, pair each `regex` or constrained input with a nearby `error` message.
+- For custom iparams, trace each validation branch and confirm it returns or displays a user-visible message before save is blocked.
+- Check that messages explain expected format, not only that a value is invalid.
+- Review `display_name`, `description`, `hint`, placeholder, and validation copy together so the admin sees consistent guidance.
+- Treat `console.error`, silent `return false`, or generic text such as `Invalid` as insufficient for user-facing validation.
 
 ### File And Folder Structure
 
@@ -157,7 +160,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Goal:** External script and stylesheet imports must come from known allowlisted delivery hosts.
 
-**Purpose:**
+**Implementation details:**
 
 - Detect externally hosted imports and fail when the hostname is not in the allowlist.
 - For npm-backed CDN or registry URLs, also fail when the package name does not match declared app dependencies.
@@ -193,19 +196,19 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 - `https://ga.jspm.io/npm:react@18/index.js` -> `react`
 - `https://registry.npmjs.org/@scope%2fpkg/-/pkg-1.0.0.tgz` -> `@scope/pkg`
 
-**Pass:** All external imports resolve to allowlisted hosts, and CDN npm packages are declared when dependency metadata exists.
+**Details emitted:**
 
-**Fail:** An external import uses a non-allowlisted host, an invalid URL, or an undeclared CDN npm package.
-
-**Not applicable:** No external script or style imports are present.
-
-**Fix message:** Replace the non-allowlisted external import with an approved host/source, declare the package dependency, or bundle the asset locally.
+- Adds a detail when the external source hostname is not allowlisted.
+- Adds a detail when the URL is malformed and no hostname can be extracted.
+- Adds a detail when an npm-backed external import points to a package that is not declared in app dependencies.
 
 **Security nuance:** Allowlisting these hosts does not mean packages served from them are inherently safe. Package safety still depends on package-level controls such as approved package allowlists, pinned versions, integrity verification, and review process.
 
 #### FFS-04L - Imports Must Use HTTPS
 
 **Implemented by:** `scripts/https-imports.js`
+
+**Implementation details:**
 
 **File types scanned:** `.css`, `.html`, `.js`, `.json`, `.jsx`, `.ts`, `.tsx`
 
@@ -224,17 +227,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 4. Capture the full trimmed line as the excerpt.
 5. Emit a failure detail for each insecure match.
 
-**Pass:** Zero `http://` import patterns are found.
-
-**Fail:** One or more insecure import matches are found.
-
-**Not applicable:** No external imports are present.
-
-**Fix message:** Change insecure import URLs from `http://` to `https://`.
+**Details emitted:** Adds one detail per insecure match, including the relative file path, line number, message, and trimmed line excerpt.
 
 #### FFS-05L - Images Must Meet Baseline Resolution Expectations
 
 **Implemented by:** `scripts/image-resolution.js`
+
+**Implementation details:**
 
 **Image file types discovered:** `.gif`, `.ico`, `.jpeg`, `.jpg`, `.png`
 
@@ -251,13 +250,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 5. Read `width` and `height` attributes from `icon.svg`.
 6. Fail when `icon.svg` declares dimensions other than `64x64`.
 
-**Pass:** Icon and logo assets satisfy the baseline checks.
-
-**Fail:** Icon or logo image files are too small, or `icon.svg` is not declared as `64x64`.
-
-**Not applicable:** No matching icon or logo assets are present.
-
-**Fix message:** Provide production-ready icon assets and ensure `app/styles/images/icon.svg` is declared as `64x64`.
+**Details emitted:** Adds a detail for each suspicious icon/logo image with file path and size, and adds a detail for `icon.svg` when declared dimensions are not `64x64`.
 
 **Notes:** The script does not inspect actual PNG/JPEG dimensions, screenshot size, upload type allowlists, upload size limits, count limits, or S3-safe filenames.
 
@@ -269,15 +262,20 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review product-facing UI and client bundles under paths such as `app/`, `src/`, and HTML/JS loaded in the product. Serverless `server/` code can use `axios`, `fetch`, or other HTTP clients for outbound calls, so judge ambiguous files by runtime context.
 
-**Pass:** No disallowed client HTTP patterns are present for API calls that should use request templates.
+**Implementation details:**
 
-**Fail:** Client UI uses `$.ajax`, `axios`, `new XMLHttpRequest`, or `fetch()` for API calls without a documented platform exception.
-
-**Fix message:** Move API calls to request templates and call them through `client.request.invoke` or `client.request.invokeTemplate`.
+- Inspect product-facing frontend paths such as `app/`, `src/`, sidebar scripts, modal scripts, and HTML-loaded JavaScript.
+- Search for `$.ajax`, `axios`, `fetch(`, `new XMLHttpRequest`, and other direct HTTP clients in client runtime code.
+- Compare each API call with `config/requests.json` to decide whether a request template should exist.
+- Check for `client.request.invoke` or `client.request.invokeTemplate` usage when request templates are already configured.
+- Do not fail serverless `server/` code just because it uses HTTP clients; decide based on whether the code runs in the browser or server.
+- Allow clearly non-API usage such as fetching a static local asset only when the context is obvious.
 
 #### FF-07L - OAuth Client ID And Secrets Only In OAuth / Secure Config
 
 **Implemented by:** `scripts/oauth-config-usage.js` plus frontend review criteria.
+
+**Implementation details:**
 
 **File types scanned:** `.env`, `.html`, `.js`, `.json`, `.jsx`, `.ts`, `.tsx`
 
@@ -302,13 +300,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 5. Ignore matches on obvious comment lines.
 6. Emit a failure detail for the remaining matches.
 
-**Pass:** OAuth values appear only in approved configuration files.
-
-**Fail:** OAuth client values appear in general app source, client scripts, HTML, or other non-config files.
-
-**Not applicable:** No OAuth client values are present.
-
-**Fix message:** Move OAuth client IDs, secrets, and tokens into secure config files such as `oauth_config.json`, secure iparams, request template bindings, or `.env`.
+**Details emitted:** Adds one detail per OAuth-looking value outside approved config paths, including relative file path, line number, message, and trimmed line excerpt.
 
 **Notes:** The `{10,}` minimum length is a heuristic to reduce obvious false positives. This check is text-based and does not evaluate runtime behavior.
 
@@ -318,13 +310,14 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review SMI functions in `server/server.js` and compare them with request templates. Event handlers are not judged by this rule.
 
-**Pass:** The SMI function performs real server-side logic beyond simply calling `$request.invokeTemplate()`.
+**Implementation details:**
 
-**Fail:** The SMI function only calls `$request.invokeTemplate()` and returns the result.
-
-**Not applicable:** There is no `server.js` or no request-template-backed SMI pattern.
-
-**Fix message:** Remove the unnecessary SMI function and invoke the request template directly from the client where appropriate.
+- Inspect exported SMI handlers in `server/server.js`.
+- Identify functions that only call `$request.invokeTemplate()` and return or resolve that result without additional server-side logic.
+- Compare the invoked template name with entries in `config/requests.json`.
+- Treat pass-through functions as replaceable by direct `client.request.invokeTemplate()` calls.
+- Do not apply this rule to event handlers such as install, uninstall, external event, ticket, or conversation handlers.
+- Consider SMI justified when it performs meaningful logic such as request orchestration, validation, transformation, pagination aggregation, product-event handling, or secure server-only operations.
 
 #### FF-03A - API Secrets Must Only Appear In Request Headers, Not URLs
 
@@ -332,13 +325,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review `config/requests.json` and API call templates for query parameters such as `?api_key=<%= iparam.api_key %>`.
 
-**Pass:** Credentials are placed in headers.
+**Implementation details:**
 
-**Fail:** Credentials appear in URLs or query strings.
-
-**Not applicable:** No request template or API calls use credentials.
-
-**Fix message:** Move credentials to request headers only.
+- Inspect every request template URL in `config/requests.json`.
+- Search URL query strings for credential-like names such as `api_key`, `apikey`, `token`, `access_token`, `secret`, `password`, `auth`, and `key`.
+- Check whether those values are bound from iparams or hardcoded literals.
+- Confirm credentials are instead sent through the request template `headers` object.
+- Treat path or query parameters as acceptable only when they are non-secret identifiers and not authentication material.
 
 #### FF-04A - API Errors Must Be Handled And Reported To Users
 
@@ -346,13 +339,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review `client.request.invoke()`, `client.request.invokeTemplate()`, `client.db.get()`, `client.db.set()`, and other FDK interfaces for `.catch()` blocks, error callbacks, and user-visible notifications.
 
-**Pass:** All errors are caught and user-visible messages are shown.
+**Implementation details:**
 
-**Fail:** Errors are uncaught, catch blocks are empty, or errors are only logged with `console.error`.
-
-**Not applicable:** No API or platform calls are made.
-
-**Fix message:** Catch errors and add appropriate user-visible messages.
+- Search frontend code for platform calls such as `client.request.invoke`, `client.request.invokeTemplate`, `client.db.get`, `client.db.set`, `client.iparams.get`, and similar promise-returning FDK interfaces.
+- For promise chains, verify `.catch(...)` exists and is not empty.
+- For `async/await`, verify calls are wrapped in `try/catch` or otherwise surfaced to a central error handler.
+- Check that the error path shows a user-visible notification, inline error, modal message, or equivalent product UI feedback.
+- Treat `console.error`, swallowed errors, or comments without user feedback as failures.
 
 #### FF-05A - Pagination Must Be Utilised When The API Supports It
 
@@ -360,13 +353,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review list endpoints and collection fetches for pagination parameters, loops, next-page handling, or documented bounds.
 
-**Pass:** List API calls implement pagination.
+**Implementation details:**
 
-**Fail:** The code makes a single unbounded request to fetch all records.
-
-**Not applicable:** No list API calls are made.
-
-**Fix message:** Implement pagination for list API calls.
+- Identify list-style API calls by endpoint shape and naming, such as tickets, contacts, users, conversations, companies, records, search results, or reports.
+- Check whether the API supports pagination through `page`, `per_page`, `limit`, `offset`, cursor, `next_page`, `next`, or link headers.
+- Verify the implementation requests bounded pages and iterates until all required data is fetched or until a documented limit is reached.
+- Fail single large or unbounded requests that assume all records are returned in one response.
+- Treat a rule as not applicable when no list API call exists or when the API endpoint is documented as non-paginated and bounded.
 
 #### FF-06A - No Hardcoded Credentials Or Secrets In Source Code
 
@@ -374,19 +367,21 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Inspect:** Review source files for literal secrets. Values should come from `client.iparams.get()`, request template iparam bindings, secure app settings, or approved config.
 
-**Pass:** Secrets are not hardcoded in source code.
+**Implementation details:**
 
-**Fail:** Hardcoded secrets appear in source code.
-
-**Not applicable:** No hardcoded secrets are present.
-
-**Fix message:** Use developer app settings, secure iparams, or request template bindings for secrets.
+- Search frontend and shared source files for credential-like names and literal values: `apiKey`, `api_key`, `token`, `secret`, `password`, `bearer`, `authorization`, `clientSecret`, and similar names.
+- Check JavaScript, TypeScript, HTML, JSON, and request-related code that ships with the app.
+- Treat long random-looking strings, bearer tokens, basic auth values, private keys, and hardcoded passwords as failures unless clearly placeholder-only and non-production.
+- Verify secrets are read from secure iparams, developer app settings, request template bindings, or approved configuration instead of source literals.
+- Do not expose the full secret in the final report; cite the file and line while redacting sensitive values when needed.
 
 ### Code Readability
 
 #### CR-05L - Imported Third-Party Libraries Must Be Used
 
 **Implemented by:** `scripts/unused-library-imports.js`
+
+**Implementation details:**
 
 **File types scanned:** `.js`, `.jsx`, `.ts`, `.tsx`
 
@@ -407,13 +402,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 6. If the identifier appears only once, treat it as unused because the single occurrence is the import statement itself.
 7. Emit a failure detail with the import statement as the excerpt.
 
-**Pass:** Imported third-party libraries appear to be used.
-
-**Fail:** A third-party library is imported but its identifier does not appear elsewhere in the file.
-
-**Not applicable:** No third-party imports are present.
-
-**Fix message:** Remove unused third-party imports or use the imported dependency where intended.
+**Details emitted:** Adds one detail per apparently unused third-party import, including the relative file path and import statement excerpt.
 
 **Known limitations:** This is a regex-based check. It does not fully analyze named imports, namespace imports, destructuring, side-effect-only imports, or alias-heavy import patterns.
 
@@ -422,6 +411,8 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 #### GN-02L - FDK Validation Must Not Report Errors Or Warnings
 
 **Implemented by:** `scripts/fdk-errors-warnings.js`
+
+**Implementation details:**
 
 **Command executed:** `fdk validate`
 
@@ -441,17 +432,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **FDK availability:** Fails with a clear message when `fdk` is not available on `PATH`.
 
-**Pass:** `fdk validate` exits successfully and produces no warning/error lines.
-
-**Fail:** `fdk validate` exits unsuccessfully, reports warning/error lines, cannot start, or times out.
-
-**Not applicable:** FDK CLI is unavailable on `PATH` for environments where validation cannot be run.
-
-**Fix message:** Fix the reported FDK validation issues, then rerun `fdk validate`. The script shows at most the first 10 issues per run.
+**Details emitted:** Adds details from warning/error output lines. If no warning/error lines are parsed but validation failed, it falls back to the first non-empty output lines, capped at 10.
 
 #### GN-08L - Only Freshworks CSS Should Be Referenced
 
 **Implemented by:** `scripts/freshworks-css-only.js`
+
+**Implementation details:**
 
 **File types scanned:** `.css`, `.html`
 
@@ -473,17 +460,13 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 
 **Matching behavior:** Uses `href.includes(cssFile)` style matching after lowercasing. This detects local paths, CDN paths, and nested asset URLs when the blocked file name appears in the string.
 
-**Pass:** Only allowed Freshworks CSS references are detected.
-
-**Fail:** Product-specific CSS bundles are referenced.
-
-**Not applicable:** No CSS imports or stylesheet links are present.
-
-**Fix message:** Remove product-specific CSS references and use the correct Freshworks CSS bundle instead.
+**Details emitted:** Adds one detail per blocked CSS reference, including the relative file path and the matched CSS filename or path.
 
 #### GN-12L - App Must Target The Expected Platform Version
 
 **Implemented by:** `scripts/platform-version-upgrade.js`
+
+**Implementation details:**
 
 **File read:** `manifest.json`
 
@@ -498,13 +481,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 3. Parse the declared version with `Number.parseFloat(String(manifest['platform-version']))`.
 4. Fail when parsing results in `NaN` or the parsed value is below `3.0`.
 
-**Pass:** `manifest.json` declares `platform-version` as `3.0` or newer.
-
-**Fail:** `manifest.json` is missing, does not declare `platform-version`, or declares a version below `3.0`.
-
-**Not applicable:** `manifest.json` is missing or unreadable.
-
-**Fix message:** Add `platform-version` to `manifest.json` or upgrade it to the expected version.
+**Details emitted:** Adds a detail against `manifest.json` explaining whether the platform version is missing, unparsable, or below the expected `3.0` threshold.
 
 **Notes:** This script only validates the version threshold. It does not validate broader manifest structure.
 
