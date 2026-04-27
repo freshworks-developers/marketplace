@@ -9,6 +9,8 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 
 **`/fw-setup use`**: align **this shell** (and optionally **`.nvmrc`**) with the **Node + FDK** stack the workspace needs. **Does not** install or change FDK semver by itself — if **`fdk`** is missing on the chosen Node, route to **`/fw-setup-install`**, **`/fw-setup-upgrade`**, or **`/fw-setup-downgrade`**.
 
+> **Windows users:** same slash-command experience — just run **`/fw-setup-use 9`** in your IDE. The agent automatically uses the correct implementation (`fw-setup-use.ps1`) behind the scenes.
+
 **Scope:**
 - **Without `--global`**: 
   - **macOS/Linux (nvm)**: Changes only current shell (`nvm use`)
