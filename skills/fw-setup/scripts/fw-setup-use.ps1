@@ -42,6 +42,38 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+function Get-InstallMethod {
+  # Check Chocolatey first (Windows-specific)
+  if (Get-Command choco -ErrorAction SilentlyContinue) {
+    $chocoList = choco list --local-only fdk 2>$null | Out-String
+    if ($chocoList -match "^fdk") {
+      return "chocolatey"
+    }
+  }
+  
+  # Check Homebrew (rare on Windows but possible via WSL)
+  if (Get-Command brew -ErrorAction SilentlyContinue) {
+    $brewList = brew list fdk 2>$null | Out-String
+    if ($brewList) {
+      return "homebrew"
+    }
+  }
+  
+  # Check nvm-windows (most common on Windows)
+  $nvmCandidates = @()
+  if ($env:NVM_HOME) { $nvmCandidates += $env:NVM_HOME }
+  $nvmCandidates += "C:\\ProgramData\\nvm"
+  if ($env:APPDATA) { $nvmCandidates += (Join-Path $env:APPDATA "nvm") }
+  
+  foreach ($candidate in $nvmCandidates) {
+    if (Test-Path -LiteralPath (Join-Path $candidate "nvm.exe")) {
+      return "nvm-windows"
+    }
+  }
+  
+  return "unknown"
+}
+
 function Refresh-WindowsPath {
   $machine = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
   $user = [System.Environment]::GetEnvironmentVariable("Path", "User")
@@ -152,6 +184,48 @@ function Invoke-NvmExe {
 }
 
 Refresh-WindowsPath
+
+$INSTALL_METHOD = Get-InstallMethod
+Write-Host "Installation method: $INSTALL_METHOD" -ForegroundColor Cyan
+
+# Handle Chocolatey/Homebrew (system-wide only, no version switching)
+if ($INSTALL_METHOD -eq "chocolatey" -or $INSTALL_METHOD -eq "homebrew") {
+  if ($GlobalDefault) {
+    Write-Host "✓ Already global ($INSTALL_METHOD installs are system-wide)" -ForegroundColor Green
+  } else {
+    Write-Host "⚠ $INSTALL_METHOD installations are system-wide; no per-session switching available" -ForegroundColor Yellow
+  }
+  
+  Write-Host "`n=== workspace use (windows - $INSTALL_METHOD) ==="
+  Write-Host ("PWD=" + (Get-Location).Path)
+  
+  try {
+    $nodeVer = (& node.exe --version 2>&1 | Out-String).Trim()
+    Write-Host ("node: " + $nodeVer)
+  } catch {
+    Write-Host ("node: ERROR " + $_.Exception.Message)
+  }
+  
+  try {
+    $fdkCmd = Get-Command fdk -ErrorAction SilentlyContinue
+    if ($fdkCmd) {
+      $fdkOut = (& fdk version 2>&1 | Out-String).Trim()
+      Write-Host ("fdk: " + $fdkOut)
+    } else {
+      Write-Host "fdk: MISSING (install via $INSTALL_METHOD)"
+    }
+  } catch {
+    Write-Host ("fdk: ERROR " + $_.Exception.Message)
+  }
+  
+  Write-Host "================================"
+  exit 0
+}
+
+# Only nvm-windows from here on
+if ($INSTALL_METHOD -ne "nvm-windows") {
+  throw "Unknown installation method: $INSTALL_METHOD (expected nvm-windows, chocolatey, or homebrew)"
+}
 
 $resolvedWork = if ([System.IO.Path]::IsPathRooted($WorkDir)) {
   $WorkDir

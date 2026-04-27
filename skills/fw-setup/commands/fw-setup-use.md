@@ -264,7 +264,11 @@ echo "====================="
 | `/fw-setup-use 10 --write-nvmrc` | ✅ Node 24 | ❌ Unchanged | ✅ Node 24 (session PATH; symlink unchanged)** | ✅ Created (24.11) |
 | `/fw-setup-use 10 --global --write-nvmrc` | ✅ Node 24 | ✅ Node 24 (default) | ✅ Node 24 (default) | ✅ Created (24.11) |
 
-**Windows nvm-windows:** when following this command file, use **`fw-setup-use.ps1`** for the non-`--global` rows so new shells stay on the prior default symlink while the current session picks up the right `node`/`npm` globals (including `fdk`).
+**Windows nvm-windows:** when following this command file, use **`fw-setup-use.ps1`** for the non-`--global` rows so new shells stay on the prior default symlink while the current session picks up the right `node`/`npm` globals (including `fdk`). **`fw-setup-use.ps1`** now auto-detects installation method (Chocolatey → Homebrew → nvm-windows) and handles `--global` flag appropriately:
+- **Chocolatey/Homebrew with `--global`**: prints confirmation message ("Already global")
+- **Chocolatey/Homebrew without `--global`**: prints warning message (system-wide, no per-session switching)
+- **nvm-windows with `--global`**: runs `nvm use` + `nvm alias default` (persists symlink)
+- **nvm-windows without `--global`**: session-only PATH change (no symlink flip)
 
 **Closeout:** No **`fdk run`** / tunnel. This command modifies shell state and optionally **`.nvmrc`** / **nvm default alias**.
 
