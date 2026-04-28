@@ -48,7 +48,7 @@ This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `s
 
 ## Requirements
 
-- **Developer Portal API key** for MCP authentication (get from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → "API key for Freddy AI Copilot VS Code plugin" → Copy)
+- **Developer Portal API key** for MCP authentication — [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**
 - **MCP server configuration**: `fw-dev-mcp` at `https://mcp.freshworks.dev/mcp` with `Authorization` header
   - **Claude Code**: API key stored in keychain via `userConfig.mcp_auth_token`, referenced as `${user_config.mcp_auth_token}`
   - **Cursor**: Copy `.mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)

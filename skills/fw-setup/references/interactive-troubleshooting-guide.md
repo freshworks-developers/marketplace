@@ -301,7 +301,7 @@ nvm alias default 24.11
 
 **Context**: `npm permission denied`, `EACCES`, `EPERM`
 
-Load **`references/npm-permissions-sop.md`** (create if doesn't exist)
+Load **`references/npm-permissions-sop.md`**
 
 ### Step D1: Check npm prefix
 
@@ -460,7 +460,8 @@ This helps me suggest an alternative fix.
 ```
 
 **Based on answers, try alternative approaches:**
-- Corporate: Check proxy settings, suggest Homebrew alternative
+- **Windows + multiple Node installs (MSI/winget/choco/scoop):** See **`references/windows.md`** — *Installer-based setups*; fix PATH so **`nvm use 24.11`** yields **`v24.11.*`** before reinstalling FDK from CDN.
+- **Corporate: Check proxy settings, suggest Homebrew alternative (macOS)** or **Chocolatey/winget PATH cleanup (Windows)** per **`references/windows.md`**
 - Modified config: Suggest backing up and creating minimal config
 - WSL: Check WSL-specific nvm installation
 

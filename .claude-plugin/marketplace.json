@@ -1,7 +1,9 @@
 {
   "name": "freshworks-dev-tools",
+  "displayName": "Freshworks Developer Tools",
   "description": "Freshworks Platform 3.0 developer skills: FDK and Node lifecycle, app development, AI Actions integrations, automated app review, and marketplace publishing.",
   "version": "1.1.0",
+  "logo": "assets/fw-logo.svg",
   "owner": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -29,6 +31,8 @@
         "platform-3.0",
         "cli"
       ],
+      "rulesPath": "./skills/fw-setup/rules",
+      "commandsPath": "./skills/fw-setup/commands",
       "interface": {
         "displayName": "Freshworks FDK Setup",
         "shortDescription": "FDK and Node.js toolchain install and lifecycle via nvm.",
@@ -57,6 +61,8 @@
         "crayons",
         "validation"
       ],
+      "rulesPath": "./skills/fw-app-dev/rules",
+      "commandsPath": "./skills/fw-app-dev/commands",
       "interface": {
         "displayName": "Freshworks App Development",
         "shortDescription": "Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI.",
@@ -85,6 +91,7 @@
         "serverless",
         "actions-json"
       ],
+      "rulesPath": "./skills/fw-ai-actions-app/rules",
       "interface": {
         "displayName": "Freshworks AI Actions (fw-ai-actions-app)",
         "shortDescription": "actions.json, SMI handlers, request templates, and API integrations.",
@@ -113,6 +120,7 @@
         "validation",
         "fdk"
       ],
+      "rulesPath": "./skills/fw-review/rules",
       "interface": {
         "displayName": "Freshworks App Review",
         "shortDescription": "Rules + scripts for structured marketplace app audits.",

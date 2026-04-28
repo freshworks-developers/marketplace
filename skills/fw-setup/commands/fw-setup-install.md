@@ -20,7 +20,7 @@ argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 | `/fw-setup-install --version 9.8.2` | `9.8.2` | `https://cdn.freshdev.io/fdk/v9.8.2.tgz` | 18.20 |
 | `/fw-setup-install --both` | `both` | Both latest-v24.tgz + latest 9.x | 24.11 + 18.20 |
 
-**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 30, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 31, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
 **`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10.x as primary).
 
@@ -93,7 +93,7 @@ if [[ "$FDK_VER" == "both" ]]; then
   echo "INSTALLING BOTH FDK STACKS"
   echo "========================================="
   echo "Stack 1: Latest FDK 10.x on Node 24.11 (primary)"
-  echo "Stack 2: Latest FDK 9.x on Node 18.20 (deprecated, expires May 30, 2026)"
+  echo "Stack 2: Latest FDK 9.x on Node 18.20 (deprecated, expires May 31, 2026)"
   echo ""
   
   # Check existing installations
@@ -194,7 +194,7 @@ case "$INSTALL_METHOD" in
   homebrew)
     echo "Installing FDK via Homebrew (system-wide)..."
     if [[ "$FDK_VER" =~ ^9\\. ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
       echo "Homebrew formula for FDK 9.x may not be available"
       exit 1
     fi
@@ -208,7 +208,7 @@ case "$INSTALL_METHOD" in
   chocolatey)
     echo "Installing FDK via Chocolatey (system-wide)..."
     if [[ "$FDK_VER" =~ ^9\\. ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
       choco uninstall fdk -y 2>/dev/null || true
       choco install fdk --version=9.8.2 -y || exit 1
     elif [[ "$FDK_VER" == "latest" ]]; then
@@ -230,7 +230,7 @@ case "$INSTALL_METHOD" in
       echo "========================================="
       echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
       echo "========================================="
-      echo "Support ends: May 30, 2026"
+      echo "Support ends: May 31, 2026"
       echo "Publishing to marketplace requires FDK 10.x + Node 24.x"
       echo ""
       read -p "Continue installing FDK 9.x? (y/N): " confirm

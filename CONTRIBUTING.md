@@ -48,6 +48,12 @@ fw-dev-tools/
 │   └── rules/                # Cursor workspace rules (.mdc files) - plugin root
 ├── .claude-plugin/           # Claude Code plugin config
 ├── .cursor-plugin/           # Cursor plugin config
+├── .codex-plugin/            # OpenAI Codex plugin manifest (skills + MCP pointers)
+├── .agents/
+│   └── plugins/              # Codex repo marketplace catalog (local)
+├── assets/                   # Umbrella marketplace logo (`fw-logo.svg`) for plugin manifests
+├── assets/                   # Umbrella marketplace logo for plugin manifests
+├── docs/                     # Engine matrix, network requirements
 ├── skills/
 │   ├── fw-app-dev/           # Core app development skill
 │   │   ├── SKILL.md          # Main skill definition
@@ -67,7 +73,9 @@ fw-dev-tools/
 
 ## How to Contribute
 
-When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`.cursor-plugin/marketplace.json`** stay aligned with what ships.
+When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`.cursor-plugin/marketplace.json`** and **`.claude-plugin/marketplace.json`** stay aligned with what ships.
+
+**FDK / Node version truth** should match **`docs/engine-matrix.md`** whenever you change toolchain guidance in **`skills/fw-setup/SKILL.md`**.
 
 ### Reporting Bugs
 
@@ -79,7 +87,7 @@ When reporting bugs, include:
 - **Clear title** describing the issue
 - **Steps to reproduce** the problem
 - **Expected behavior** vs actual behavior
-- **Environment details** (Cursor version, FDK version, Node.js version)
+- **Environment details** (Cursor version, Claude Code / Codex if relevant, FDK version, Node.js version)
 - **Error messages** or validation output if applicable
 
 ### Suggesting Features
@@ -103,23 +111,24 @@ We accept contributions for:
 
 ### Skill Structure
 
-Each skill follows the Agent Skills Specification:
+Each skill follows the Agent Skills Specification. In **this repo**, editor rules live under **`skills/<name>/rules/`** (not nested under **`skills/<name>/.cursor/rules`**). The Cursor skill bundle uses **`skills/<name>/.cursor-plugin/plugin.json`** with **`rulesDirectory`** / **`commandsDirectory`** pointing at **`./rules`** and **`./commands`** beside **`SKILL.md`**.
 
 ```
 skill-name/
-├── SKILL.md           # Required: Main skill file with YAML frontmatter
-├── README.md          # Required: User-facing documentation
-├── commands/          # Optional: Slash command definitions
-│   └── command.md     # One file per command
-├── references/        # Optional: On-demand documentation
+├── SKILL.md                 # Required: Main skill file with YAML frontmatter
+├── README.md                # User-facing documentation
+├── .cursor-plugin/
+│   └── plugin.json          # rulesDirectory ./rules, commandsDirectory ./commands
+├── commands/                # Optional: Slash commands (/fdk-fix, /fdk-migrate, …)
+│   └── command.md           # One file per command
+├── rules/                   # Optional: Cursor rules (.mdc) or fw-review audit rules (.md)
+│   └── rule-name.mdc
+├── references/              # Optional: On-demand documentation
 │   ├── api/
 │   ├── errors/
 │   └── ...
-├── assets/            # Optional: Templates, icons
-│   └── templates/
-└── .cursor/
-    └── rules/         # Cursor workspace rules
-        └── rule.mdc
+└── assets/                  # Optional: Templates, icons
+    └── templates/
 ```
 
 ### SKILL.md Format
@@ -198,6 +207,13 @@ references/
 
 ## Testing Your Changes
 
+### 0. Docs hygiene (optional, recommended)
+
+```bash
+python3 scripts/check-internal-links.py
+bash scripts/check-marketplace-versions.sh
+```
+
 ### 1. Validate Skill Structure
 
 Ensure your skill follows the correct structure:
@@ -215,30 +231,23 @@ head -20 skills/your-skill/SKILL.md
 2. Open Cursor and verify the skill loads
 3. Test commands and rules work as expected
 
-### 3. Validate Rules
+### 3. Smoke-test Claude Code or OpenAI Codex (optional)
+
+- **Claude Code:** Install or copy skills per **README.md**, then verify **`~/.claude/skills/`** layouts and MCP per **AGENTS.md** when testing **fw-publish**.
+- **Codex:** From a clone of your branch at repo root, run `codex plugin marketplace add ./` (per **README.md**). Confirm **`skills/*/SKILL.md`** is visible to the assistant and (**fw-publish**) MCP auth matches **`.mcp.json`** / **AGENTS.md** guidance.
+
+### 4. Validate Rules
 
 For rule files, verify:
 - `name` field matches filename
 - `alwaysApply` is set correctly
 - `globs` patterns are valid (if used)
 
-### 4. Run Manifest Generation
-
-After adding or modifying skills:
-```bash
-python3 scripts/generate_manifest.py
-```
-
-Validate the manifest:
-```bash
-python3 scripts/generate_manifest.py validate
-```
-
 ## Pull Request Process
 
 1. **Ensure your changes are complete** and tested locally
-2. **Update documentation** if you're changing behavior
-3. **Run manifest generation** if you modified skills structure
+2. **Update documentation** if you're changing behavior (**AGENTS.md** skill inventory if **rules/** or **commands/** changed; **docs/engine-matrix.md** if toolchain pins changed)
+3. **Run docs hygiene** (`check-internal-links.py`, **`check-marketplace-versions.sh`**) if you touched umbrella plugin JSON (`.cursor-plugin/`, `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`) or docs with many links
 4. **Create a pull request** with:
    - Clear title describing the change
    - Description of what and why

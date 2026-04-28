@@ -1,6 +1,10 @@
 # Agent instructions (Freshworks marketplace skills)
 
-This repository is a **multi-IDE skill marketplace** for AI assistants working on **Freshworks Platform 3.0** marketplace apps. **This file** is the agent entry point and routing layer. For human overview, install URLs, and badges, see **`README.md`**. For contribution layout and conventions, see **`CONTRIBUTING.md`**. For FDK/skill install problems, see **`TROUBLESHOOTING.md`**.
+This repository is a **multi-IDE skill marketplace** for AI assistants working on **Freshworks Platform 3.0** marketplace apps. **This file** is the agent entry point and routing layer. For human overview, install URLs, and badges, see **`README.md`**. For contribution layout and conventions, see **`CONTRIBUTING.md`**. For FDK/skill install problems, see **`TROUBLESHOOTING.md`**. **Engine / Node / FDK authoritative pins:** **`docs/engine-matrix.md`**.
+
+## OpenAI Codex
+
+The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plugin.json`** (see **`.agents/plugins/marketplace.json`**). Slash commands listed in this file are **Cursor / Claude** affordances; Codex loads **`skills/*/SKILL.md`** and optional **MCP** from **`.mcp.json`**.
 
 ## Skills and MCP tools available
 
@@ -8,7 +12,7 @@ This repository is a **multi-IDE skill marketplace** for AI assistants working o
 
 | Skill | Entry point | What it does |
 |-------|-------------|--------------|
-| **fw-setup** | `skills/fw-setup/SKILL.md` | Install, upgrade, downgrade, or uninstall **FDK 10.x** and **Node 24.x** via nvm. Manages toolchain versions and verifies persistence across shells. Slash commands: `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-downgrade`, `/fw-setup-uninstall`, `/fw-setup-status`, `/fw-setup-troubleshoot`, `/fw-setup-use`. |
+| **fw-setup** | `skills/fw-setup/SKILL.md` | Install, upgrade, downgrade, or uninstall **FDK 10.x + Node 24.11.x** (and **deprecated** **FDK 9.x + Node 18**) via nvm / nvm-windows. Verifies persistence across shells (**Unix** and **Windows**). Slash commands: `/fw-setup-install`, … |
 | **fw-app-dev** | `skills/fw-app-dev/SKILL.md` | Build, fix, review, or migrate **Platform 3.0** apps end-to-end: idea collection, implementation planning, code generation, manifest enforcement, `fdk validate` with up to 6 auto-fix iterations, and post-generation guidance. Handles manifest structure, `requests.json`, OAuth, serverless, frontend Crayons, and tracking fields (`tracking_id`, `start_time`). |
 | **fw-ai-actions-app** | `skills/fw-ai-actions-app/SKILL.md` | **AI Actions** and third-party integrations: `actions.json`, SMI handlers, flat request schemas, `$request.invokeTemplate`, test data, validation, debugging endpoints, and integration scoping (no full UI app folder). Pair with **fw-app-dev** when the work is a full marketplace app with locations and Crayons. |
 | **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. Silent pipeline; does not install FDK — use **fw-setup** when `fdk` may be missing. |
@@ -16,7 +20,7 @@ This repository is a **multi-IDE skill marketplace** for AI assistants working o
 
 ### MCP tools (openai-server, publish)
 
-This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **"API key for Freddy AI Copilot VS Code plugin"** → **Copy**.
+This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**.
 
 | Tool | Purpose |
 |------|---------|
@@ -36,7 +40,7 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp
 | **AI Actions** integrations (`actions.json`, SMI, request templates, third-party APIs, test data) | `skills/fw-ai-actions-app/SKILL.md` | **Does not** install FDK or Node; not a substitute for full **fw-app-dev** UI/marketplace app work |
 | Structured **app review** (iparams, frontend, script-backed checks, fixed report format) | `skills/fw-review/SKILL.md` | **Does not** install FDK; verify CLI with **fw-setup** (`/fw-setup-status`) or `fdk --version` before phases that need `fdk` |
 | Install, upgrade, or troubleshoot **FDK** and **Node** (nvm, PATH, versions) | `skills/fw-setup/SKILL.md` | Use before relying on `fdk validate` when the toolchain is missing or wrong |
-| Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (API key from Developer Portal profile) |
+| Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (JWT from Portal: **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**) |
 
 If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-actions-app** (by task), optionally **fw-review** before submission, then **fw-publish** when publishing.
 
@@ -64,7 +68,8 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **`skills/fw-publish/subagents/**`** — optional deep-dive prompts (no `rules/` or `commands/` trees in that skill)
 - **`.mcp.json`** (repository root) — canonical **`fw-dev-mcp`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
 - **`.claude/settings.json`** — Claude Code project permissions (MCP defaults for this repo; server key must match **`.mcp.json`**)
-- **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-dev-tools`**; each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface`, like [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json))
+- **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-dev-tools`**; **`displayName`**: **Freshworks Developer Tools**; optional **`logo`** → **`assets/fw-logo.svg`**); each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface` (same pattern as [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json)).
+- **`assets/fw-logo.svg`** — Umbrella branding for Plugins / marketplace UIs (referenced from **`.cursor-plugin`**, **`.claude-plugin`**, **`.codex-plugin`**, **`.agents/plugins`**).
 
 **Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/` where present; IDE plugin JSON points there—do not duplicate command/rule trees under `.cursor/` inside skills.
 
@@ -119,8 +124,9 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 
 - Prefer **small, focused diffs**; match existing markdown and plugin patterns
 - **`CONTRIBUTING.md`** — contribution and structure expectations
+- **`docs/engine-matrix.md`** — FDK / Node pin source of truth when changing toolchain guidance
 - **Skill evaluation tooling** (optional): `.agents/skills/skill-creator/scripts/` (for example `quick_validate.py`, `package_skill.py`)
 
 ## Human-facing install
 
-See **`README.md`** for `npx skills add` URLs and Cursor copy paths. **`TROUBLESHOOTING.md`** covers IDE and skill load issues.
+See **[README.md](README.md#contents)** (human **Installation**) for Skills CLI (`npx skills add`), **Cursor** / **Claude** / **Codex** umbrella manifests, MCP pointers, and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.

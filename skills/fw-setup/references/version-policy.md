@@ -15,7 +15,7 @@ All fw-setup commands default to **latest** versions unless user specifies exact
 - **CDN URL:** `https://cdn.freshdev.io/fdk/latest.tgz`
 - **Result:** Latest FDK 9.x (e.g., 9.8.2, 9.9.0, etc.)
 - **Node:** 18.20.x
-- **⚠️ DEPRECATED:** Support ends **May 30, 2026**. FDK 9.x will not be supported after this date.
+- **⚠️ DEPRECATED:** **Node 18** + **FDK 9.x** and **platform-version 2.3** share end of support **May 31, 2026** (see **`docs/engine-matrix.md`**). FDK 9.x will not be supported on that toolchain after this date.
 
 ### Both Stacks
 - **Command:** `/fw-setup-install --both`

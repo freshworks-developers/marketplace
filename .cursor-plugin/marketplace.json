@@ -1,7 +1,9 @@
 {
   "name": "freshworks-dev-tools",
+  "displayName": "Freshworks Developer Tools",
   "description": "Freshworks Platform 3.0 Cursor skills: FDK setup, app development, AI Actions, automated app review, and marketplace publishing.",
   "version": "1.1.0",
+  "logo": "assets/fw-logo.svg",
   "owner": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"

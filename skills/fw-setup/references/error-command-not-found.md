@@ -124,6 +124,8 @@ zsh -c 'source ~/.zshrc && fdk version'
 
 > `command not found: fdk` usually means the shell's active Node prefix is not `v24.11.x` (where `@freshworks/fdk@10` was installed); fix `nvm alias fdk` / `nvm use` so `PATH` includes `.../v24.11.x/bin`.
 
+**Windows addendum:** If **`node`** comes from **`C:\Program Files\nodejs`** (MSI/winget) **instead of** nvm-windows **after** **`nvm use`**, this is a **PATH precedence** problem — read **`references/windows.md`** (*Installer-based setups*), then **`where.exe node`** / **`Get-Command node -All`**.
+
 ## Quick Resolution Steps
 
 1. **Check current Node:** `node --version`
