@@ -11,7 +11,6 @@ This repository is a **multi-IDE skill marketplace** for AI assistants working o
 | **fw-setup** | `skills/fw-setup/SKILL.md` | Install, upgrade, downgrade, or uninstall **FDK 10.x** and **Node 24.x** via nvm. Manages toolchain versions and verifies persistence across shells. Slash commands: `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-downgrade`, `/fw-setup-uninstall`, `/fw-setup-status`, `/fw-setup-troubleshoot`, `/fw-setup-use`. |
 | **fw-app-dev** | `skills/fw-app-dev/SKILL.md` | Build, fix, review, or migrate **Platform 3.0** apps end-to-end: idea collection, implementation planning, code generation, manifest enforcement, `fdk validate` with up to 6 auto-fix iterations, and post-generation guidance. Handles manifest structure, `requests.json`, OAuth, serverless, frontend Crayons, and tracking fields (`tracking_id`, `start_time`). |
 | **fw-ai-app-dev** | `skills/fw-ai-app-dev/SKILL.md` | **AI Actions** and third-party integrations: `actions.json`, SMI handlers, flat request schemas, `$request.invokeTemplate`, test data, validation, debugging endpoints, and integration scoping (no full UI app folder). Pair with **fw-app-dev** when the work is a full marketplace app with locations and Crayons. |
-| **fw-ai-actions-app** | `skills/fw-ai-actions-skill/SKILL.md` | Standalone **AI Actions** skill: same problem domain as **fw-ai-app-dev**, packaged for `npx skills add --skill fw-ai-actions-app`, with **agents/** prompts (scoper, implementer, validator). Use **fw-ai-app-dev** for templates/scripts under that skill tree; use this entry when the user installed the standalone skill. |
 | **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. Silent pipeline; does not install FDK — use **fw-setup** when `fdk` may be missing. |
 | **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app to the **Freshworks Marketplace** via MCP tools: `fdk validate`, `fdk pack`, **app-upload**, then `submit_marketplace_app` or `update_marketplace_app_version`. Supports new apps and version updates. Checks auth token before any publish step. Also supports listing apps and checking publish status. |
 
@@ -35,7 +34,6 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp
 |-----------|------------|--------|
 | Build, fix, review, or migrate a **Platform 3.0 app** (manifest, requests, OAuth, serverless, UI) | `skills/fw-app-dev/SKILL.md` | **Does not** install FDK or Node |
 | **AI Actions** integrations (`actions.json`, SMI, request templates, third-party APIs, test data) | `skills/fw-ai-app-dev/SKILL.md` | **Does not** install FDK or Node; not a substitute for full **fw-app-dev** UI/marketplace app work |
-| Same as above, user or project uses **standalone** `fw-ai-actions-app` install | `skills/fw-ai-actions-skill/SKILL.md` | Same constraints; follow this file’s **agents/** when running scoper / implementer / validator flows |
 | Structured **app review** (iparams, frontend, script-backed checks, fixed report format) | `skills/fw-review/SKILL.md` | **Does not** install FDK; verify CLI with **fw-setup** (`/fw-setup-status`) or `fdk --version` before phases that need `fdk` |
 | Install, upgrade, or troubleshoot **FDK** and **Node** (nvm, PATH, versions) | `skills/fw-setup/SKILL.md` | Use before relying on `fdk validate` when the toolchain is missing or wrong |
 | Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (API key from Developer Portal profile) |
@@ -52,11 +50,12 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **External HTTP** only via **`$request.invokeTemplate` / `client.request.invokeTemplate`** and **`config/requests.json`** templates (no `$request.post|get|put|delete`)
 - **OAuth** uses the **`integrations`** wrapper in `oauth_config.json`
 - **`fdk validate`**: **zero** platform errors and **zero** lint errors before calling an app complete; **`README.md`** and **`app/styles/images/icon.svg`** (frontend) where the skill requires them
+- **Before `fdk validate`**: follow **`skills/fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*): **`fw-setup`** if **FDK 10 + Node 24** is missing, then **`/fdk-migrate`** for legacy **2.x** or old **`engines`**, then validate; do not downgrade to **FDK 9 / Node 18** as a shortcut
 - **New app engines**: **`fdk` `10.0.1`** and **`node` `24.11.0`** unless **fw-app-dev** `SKILL.md` **LAST RESORT** rules apply
 
 ## Repository layout (skills)
 
-- **`skills/{fw-app-dev|fw-ai-app-dev|fw-ai-actions-app|fw-review|fw-setup|fw-publish}/SKILL.md`** — skill entry and frontmatter
+- **`skills/{fw-app-dev|fw-ai-app-dev|fw-review|fw-setup|fw-publish}/SKILL.md`** — skill entry and frontmatter
 - **`skills/*/rules/*.{mdc,md}`** — editor rules (`.mdc`) or **fw-review** audit rules (`.md`); loaded via each plugin’s `rulesDirectory` / `rulesPath`
 - **`skills/*/commands/*.md`** — slash-command bodies where the skill defines them (**fw-app-dev**, **fw-setup** only); stem of filename → `/command-name` in the IDE
 - **`skills/fw-review/scripts/*.js`** — deterministic SC-* checks (not slash commands); mapped from `skills/fw-review/rules/script-check-rules.md`
@@ -103,12 +102,6 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 ### fw-ai-app-dev — `skills/fw-ai-app-dev/`
 
 **Commands:** none (orchestration in `SKILL.md`, optional prompts under `agents/`).
-
-**Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
-
-### fw-ai-actions-app — `skills/fw-ai-actions-skill/`
-
-**Commands:** none (orchestration in `SKILL.md`; optional prompts under **`agents/`**).
 
 **Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
 
