@@ -7,6 +7,8 @@ globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/ipar
 
 **CRITICAL:** After creating ALL app files, run `fdk validate` automatically and fix fatal errors.
 
+**Before `fdk validate`:** follow **`../../fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*) in this order: **`fw-setup`** if Node/FDK is missing or wrong -> **`/fdk-migrate`** for legacy 2.x or old engines -> validate. Never downgrade shell or manifest engines to **9.x / 18** as a shortcut.
+
 ## Mandatory Post-Creation Process
 
 ### Step 1: Run fdk validate

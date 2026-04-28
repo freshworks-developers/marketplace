@@ -23,7 +23,7 @@
   "interface": {
     "displayName": "Freshworks Developer Tooling",
     "shortDescription": "FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish.",
-    "longDescription": "Cursor plugin root for Freshworks skills: fw-setup (FDK/nvm), fw-app-dev (Platform 3.0 apps), fw-ai-app-dev (AI Actions), fw-publish (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT."
+    "longDescription": "Cursor plugin root for Freshworks skills: fw-setup (FDK/nvm), fw-app-dev (Platform 3.0 apps), fw-ai-actions-app (AI Actions), fw-publish (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT."
   },
   "skills": "./skills/"
 }

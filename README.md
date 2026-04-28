@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   <img src="https://img.shields.io/badge/FDK-10.x-0052cc?style=flat-square" alt="FDK">
-  <img src="https://img.shields.io/badge/Plugins-6-764abc?style=flat-square" alt="Plugins">
+  <img src="https://img.shields.io/badge/Plugins-5-764abc?style=flat-square" alt="Plugins">
 </p>
 
 <p align="center">Build Freshworks marketplace apps faster with AI assistance.<br>Supports <strong>Platform 3.0</strong> with modern best practices.</p>
@@ -55,8 +55,7 @@ Each tool helps with a specific part of app development. Use them in order for a
 |------|--------------|
 | [**fw-setup**](skills/fw-setup/) | Install and manage FDK (Freshworks Development Kit) and Node.js |
 | [**fw-app-dev**](skills/fw-app-dev/) | Build complete marketplace apps with UI, OAuth, and integrations |
-| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | Add AI Actions and connect to third-party services |
-| [**fw-ai-actions-app**](skills/fw-ai-actions-skill/) | Alternative AI Actions toolkit with extra templates |
+| [**fw-ai-actions-app**](skills/fw-ai-actions-app/) | Add AI Actions and connect to third-party services |
 | [**fw-review**](skills/fw-review/) | Check your app for common issues before submission |
 | [**fw-publish**](skills/fw-publish/) | Upload and publish your app to the Freshworks Marketplace |
 
@@ -84,6 +83,8 @@ Use **fw-app-dev** to create your marketplace app. This includes:
 - Adding serverless functions
 - Fixing validation errors
 
+Validation order matters: run **fw-setup** first when Node/FDK is missing or wrong, run **`/fdk-migrate`** for legacy 2.x apps/engines, then run `fdk validate`.
+
 **Commands you can use:**
 - `/fdk-fix` - Fix validation errors automatically
 - `/fdk-migrate` - Upgrade older apps to Platform 3.0
@@ -93,13 +94,13 @@ Use **fw-app-dev** to create your marketplace app. This includes:
 
 ### 3. Add AI Features (Optional)
 
-If you want to add AI-powered features, use **fw-ai-app-dev** to:
+If you want to add AI-powered features, use **fw-ai-actions-app** to:
 - Connect to external APIs (Slack, Google, etc.)
 - Add AI Actions that automate tasks
 - Create request templates for API calls
 - Add test data for development
 
-👉 [Read the fw-ai-app-dev guide](skills/fw-ai-app-dev/)
+👉 [Read the fw-ai-actions-app guide](skills/fw-ai-actions-app/)
 
 ### 4. Review Your App (Recommended)
 

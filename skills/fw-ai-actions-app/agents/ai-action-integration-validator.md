@@ -44,8 +44,8 @@ primary_skill: ../SKILL.md
 
 1. **Validate** all integration-related files and the plan against the source of truth (CSV, Excel, or written instructions).
 2. **Ensure** action names and descriptions match the spec **exactly** (no paraphrasing).
-3. **Re-verify endpoints** using the **Debugging Broken Endpoints** workflow in fw-ai-app-dev; document what works and what does not, and why.
-4. **Apply** **fw-ai-app-dev** (`../SKILL.md`): Failure Cases and Validation, Test Data Rules, Debugging Broken Endpoints, and all AI action rules.
+3. **Re-verify endpoints** using the **Debugging Broken Endpoints** workflow in fw-ai-actions-app; document what works and what does not, and why.
+4. **Apply** **fw-ai-actions-app** (`../SKILL.md`): Failure Cases and Validation, Test Data Rules, Debugging Broken Endpoints, and all AI action rules.
 5. **Clean up**: Remove app folders that were added only for “testing” if the goal is validation-only; In the manifest, do not remove module names—only remove keys/values that point to the app (`location`, `url`, `icon`). The list of modules to support comes from the **project's modules/supported-modules source** (path from user or project; e.g. CSV with "App name" and "Modules Supported").
 6. **Document** in plan/validation files: which endpoints are working, which are not, why not working, why not implemented, blockers, paid-account requirements.
 7. **Hand off** by creating an app-scoped branch (e.g. `adp-2026`), committing only that app’s folder, with **no co-author** and no unrelated changes.
@@ -54,10 +54,10 @@ primary_skill: ../SKILL.md
 
 - **AI actions apps do not need the app folder.** Required for AI actions: `actions.json`, `server/server.js`, `config/requests.json`, `config/iparams.json`, `manifest.json`. Do not add `app/` (HTML/JS/CSS) unless the app is actually used for UI.
 - **Manifest for AI actions:** Declare `common` (with `requests` and `functions`) plus **every module** listed in the **project's modules/supported-modules source** under "Modules Supported" (or equivalent) for this app (e.g. ITSM/ESM: `chat_conversation`, `support_ticket`, `service_ticket`). Each as empty object `{}`. **Never remove these module keys.** Remove **only** keys/values that point to the app: `location`, `url`, `icon`.
-- **Engines:** Use the **same** `engines` values as **fw-ai-app-dev** (currently `"node": "24.11.0"` and `"fdk": "10.0.0"` in `manifest.json`). If the skill is updated later, follow **SKILL.md**—do not mix in other Node/FDK pairs from older docs.
+- **Engines:** Use the **same** `engines` values as **fw-ai-actions-app** (currently `"node": "24.11.0"` and `"fdk": "10.0.0"` in `manifest.json`). If the skill is updated later, follow **SKILL.md**—do not mix in other Node/FDK pairs from older docs.
 - **Naming:** Function names in `actions.json` must match SMI function names in `server.js` exactly (case-sensitive). Action display names and descriptions must match the CSV/Excel/spec verbatim.
-- **Schemas:** Request **parameters** must follow **fw-ai-app-dev** / **`../references/ai-actions-core.md`**: **no nested objects**; **arrays of primitives** are allowed when required; **arrays of objects are not** allowed; no `null` type hacks—build nested shapes in `server.js`. Response schemas may be nested.
-- **Credentials:** No hardcoded API keys, tokens, or secrets in any app file—only **iparams** (`secure: true`) or **OAuth** (per **fw-ai-app-dev** `../rules/ai-actions-api-docs.mdc`).
+- **Schemas:** Request **parameters** must follow **fw-ai-actions-app** / **`../references/ai-actions-core.md`**: **no nested objects**; **arrays of primitives** are allowed when required; **arrays of objects are not** allowed; no `null` type hacks—build nested shapes in `server.js`. Response schemas may be nested.
+- **Credentials:** No hardcoded API keys, tokens, or secrets in any app file—only **iparams** (`secure: true`) or **OAuth** (per **fw-ai-actions-app** `../rules/ai-actions-api-docs.mdc`).
 - **Errors:** Handlers must **sanitize** vendor error payloads before `renderData`—no raw third-party messages that may leak URLs, stack traces, or tokens; user-facing text should be short and safe; log full detail server-side only (per skill templates / `../rules/ai-actions-server.mdc`).
 
 ---
@@ -102,17 +102,18 @@ primary_skill: ../SKILL.md
 ##### 3a. Strict null check and fdk validate (mandatory)
 
 - **Strict null check (js-style):** In server code, no `!= null` or `== null`. Use `!== undefined && !== null` (or equivalent) for optional-parameter checks. Search for `!= null` and `== null` in the app’s `server/**/*.js`; fix every occurrence. This is part of validation—fix when you notice it.
+- **Before `fdk validate`:** follow **`../../fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*) in order: **`fw-setup`** if Node/FDK is missing or wrong -> **`/fdk-migrate`** when app/platform engines are legacy -> validate. Never downgrade toolchain or manifest engines to **9.x / 18** to bypass mismatch warnings.
 - **fdk validate:** Run `fdk validate` from the app root. The run **must** result in **0 platform errors** and **0 lint errors**. Fix any reported errors (unused variables, unused parameters, equality style, etc.). Warnings (e.g. complexity) may remain unless the project requires otherwise.
 
 #### 4. Endpoint and implementation re-validation
 
-- Use the **Debugging Broken Endpoints** workflow in **fw-ai-app-dev** (`../SKILL.md`):
+- Use the **Debugging Broken Endpoints** workflow in **fw-ai-actions-app** (`../SKILL.md`):
   1. Confirm endpoint validity (URL, method, version, docs).
   2. Confirm required request data (params, body, headers) and that they are in actions.json, server code, and test_data.
   3. Identify dependencies (upstream APIs, IDs); document and implement in order.
   4. For each endpoint: classify as **Working**, **Not working**, or **Not implemented**; capture error/status and reason.
-- Cross-check with **Failure Cases and Validation** (in fw-ai-app-dev): required params validated, no wrong response parsing, optional vs not-provided handling, no empty required body fields, context-aware error messages, **sanitized** error strings (no sensitive or noisy vendor payload leakage to the client).
-- Cross-check **test data** with **Test Data Rules** (in fw-ai-app-dev): real parameter names only, no iparams in test_data, sensible values (pagination, IDs, dates, codes), no placeholders or random data.
+- Cross-check with **Failure Cases and Validation** (in fw-ai-actions-app): required params validated, no wrong response parsing, optional vs not-provided handling, no empty required body fields, context-aware error messages, **sanitized** error strings (no sensitive or noisy vendor payload leakage to the client).
+- Cross-check **test data** with **Test Data Rules** (in fw-ai-actions-app): real parameter names only, no iparams in test_data, sensible values (pagination, IDs, dates, codes), no placeholders or random data.
 
 #### 5. Documentation (plan / validation / status)
 
@@ -135,9 +136,9 @@ primary_skill: ../SKILL.md
 
 ## Rules You Enforce
 
-Each validation row maps to **fw-ai-app-dev** (`../SKILL.md`). Use that skill for criteria.
+Each validation row maps to **fw-ai-actions-app** (`../SKILL.md`). Use that skill for criteria.
 
-| Area | Section in fw-ai-app-dev | What you check |
+| Area | Section in fw-ai-actions-app | What you check |
 |------|------------------------------|----------------|
 | Failure cases | Failure Cases and Validation | Required params validated; no wrong parsing; optional vs not-provided; no empty required body; context-aware errors; vendor errors sanitized before `renderData`. |
 | Test data | Test Data Rules | No iparams in test_data; real param names; valid pagination/IDs/dates/codes; no placeholders. |

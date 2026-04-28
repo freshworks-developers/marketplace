@@ -1,6 +1,10 @@
 # AI Actions skill
 
-Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation).
+Skill id: **`fw-ai-actions-app`** — Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation).
+
+## Overview
+
+**fw-ai-actions-app** complements **fw-app-dev**: it focuses on `actions.json`, serverless handlers, flat request schemas, and integration guardrails without covering full UI app locations. It does **not** install FDK or Node — use **fw-setup** for the toolchain.
 
 ## Features
 
@@ -36,11 +40,25 @@ npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-
 
 Or copy this folder into `.cursor/skills/fw-ai-actions-app/` (or your tool’s skills directory).
 
+### Install as Claude plugin
+
+**Step 1**
+
+```bash
+claude plugin marketplace add freshworks-developers/fw-dev-tools
+```
+
+**Step 2**
+
+```bash
+claude plugin install fw-ai-actions-app@freshworks-developers
+```
+
 ## Contents
 
 - **SKILL.md** — Orchestrator; points to rules and references
 - **agents/** — Integration scoper, scope implementer, AI action integration validator
-- **rules/** — Scoped `.mdc` rules (platform, schemas, server, requests, validation, test data, README, API docs)
+- **rules/** — Scoped `.mdc` rules (platform, schemas, server, requests, validation, test data, README, API docs). Full table in repo [`AGENTS.md`](../../AGENTS.md) (*Rules and slash commands* → **fw-ai-actions-app**).
 - **references/** — `ai-actions-guide.md`, quick reference, core constraints
 - **scripts/ai-actions-skeleton/** — Minimal starter files
 - **assets/templates/ai-actions-skeleton/** — Fuller template (manifest, sample actions)
@@ -52,6 +70,7 @@ Or copy this folder into `.cursor/skills/fw-ai-actions-app/` (or your tool’s s
 ## Support
 
 - [AI Actions — Freshworks Developer Docs](https://developers.freshworks.com/docs/app-sdk/v3.0/common/actions/)
+- [GitHub issues — fw-dev-tools](https://github.com/freshworks-developers/fw-dev-tools/issues)
 - [Issues — marketplace](https://github.com/freshworks-developers/marketplace/issues)
 
 ## License

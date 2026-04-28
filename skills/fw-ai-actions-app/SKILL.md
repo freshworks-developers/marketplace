@@ -1,6 +1,7 @@
 ---
 name: fw-ai-actions-app
 description: Expert-level skill for AI Actions and integrations on Freshworks Platform 3.0. Use when (1) Creating actions.json and SMI functions (flat request, nested response), (2) Request templates and third-party API integration, (3) Pre-build validation (pricing, paywalls, account prerequisites), (4) Failure-case validation and test data guardrails, (5) Debugging broken endpoints, (6) Integration implementation checklist (auth, base URL, request body, trigger-friendly schema), (7) Scoping and planning new integrations (and comparing only when user asks).
+version: "1.0.0"
 compatibility: Freshworks Platform 3.0, FDK 10.x, Node.js 24.x
 ---
 
@@ -18,6 +19,7 @@ You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the
 - **Use request templates** — `$request.invokeTemplate` for external HTTP (`rules/ai-actions-requests.mdc`).
 - **Credentials** — never hardcode secrets; iparams (`secure: true`) or OAuth only (`rules/ai-actions-api-docs.mdc`).
 - **Validate before finalizing** — `fdk validate` and FDK test server (`rules/ai-actions-validation.mdc`).
+- **Toolchain order** — same gate as **`../fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*): run **`fw-setup`** when **Node 24.x + FDK 10.x** is missing; run **`/fdk-migrate`** (or manual **2.x -> 3.0**) before validate on legacy apps; on engines mismatch, align **`manifest.json`** engines upward instead of downgrading to **FDK 9 / Node 18**.
 
 ---
 
@@ -26,7 +28,7 @@ You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the
 **AI actions apps do not need the app folder.** Use only:
 
 ```
-ai-actions-app/
+fw-ai-actions-app/
 ├── actions.json
 ├── server/server.js
 ├── server/test_data/actionName.json

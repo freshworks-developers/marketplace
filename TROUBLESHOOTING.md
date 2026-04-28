@@ -13,13 +13,13 @@ This guide covers **real problems you'll actually encounter** when installing an
 **Cursor:**
 ```bash
 ls ~/.cursor/skills/
-# Should show: fw-app-dev  fw-ai-app-dev  fw-review  fw-setup  fw-publish (subset depends on what you installed)
+# Should show: fw-app-dev  fw-ai-actions-app  fw-review  fw-setup  fw-publish (subset depends on what you installed)
 ```
 
 **Claude Code:**
 ```bash
 ls ~/.claude/skills/
-# Should show: fw-app-dev  fw-ai-app-dev  fw-review  fw-setup  fw-publish (subset depends on what you installed)
+# Should show: fw-app-dev  fw-ai-actions-app  fw-review  fw-setup  fw-publish (subset depends on what you installed)
 ```
 
 **If empty:** You need to install skills first. See [Installation](#installation-from-scratch).
