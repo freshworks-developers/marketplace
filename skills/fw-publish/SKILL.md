@@ -22,9 +22,9 @@ Publish requires a Marketplace API token configured in your MCP settings.
 
 To set this up:
 1. Go to https://developers.freshworks.com/developer/
-2. Find the **"API key for Freddy AI Copilot VS Code plugin"** section and click **Copy**
-3. Configure it for your IDE:
-
+2. **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**
+3. Click **Copy**
+4. Configure it for your IDE:
    Claude Code:
      The freshworks plugin prompts for "MCP server URL" and
      "Marketplace API token (JWT)" at install time. If you skipped the
@@ -51,7 +51,7 @@ To set this up:
      Replace <your-jwt-token> with your Developer Portal JWT, then
      restart Cursor.
 
-4. Re-run the publish command
+5. Re-run the publish command
 ```
 
 The JWT is a **single credential** — it authenticates to `openai-server` and is forwarded verbatim to MAPI. It contains `developer_account_id` and `uuid` claims. There is no separate MAPI token.
@@ -198,5 +198,5 @@ Call `list_marketplace_apps` MCP tool (no parameters). Returns app id, name, typ
 
 ## Links
 
-- Developer Portal (API key): [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
+- Developer Portal — copy API key: [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) (**API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**)
 - Marketplace API overview (public): [api.freshworks.com/marketplace/v2](https://api.freshworks.com/marketplace/v2)

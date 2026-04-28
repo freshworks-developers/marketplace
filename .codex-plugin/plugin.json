@@ -1,0 +1,30 @@
+{
+  "name": "freshworks-dev-tools",
+  "version": "1.1.0",
+  "description": "Freshworks Platform 3.0 Cursor skills bundled for Codex: FDK toolchain (fw-setup), app development (fw-app-dev), AI Actions (fw-ai-actions-app), marketplace review (fw-review), publish via MCP (fw-publish).",
+  "logo": "assets/fw-logo.svg",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools",
+  "license": "MIT",
+  "keywords": [
+    "freshworks",
+    "fdk",
+    "platform-3.0",
+    "marketplace",
+    "crm"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Freshworks Developer Tools",
+    "shortDescription": "FDK, Platform 3.0 apps, AI Actions, review, and marketplace publish.",
+    "longDescription": "Uses each skill’s SKILL.md (authoritative workflows). Slash commands from Cursor/Claude marketplaces (/fw-setup-*, /fdk-*) are conventions for those clients; Codex consumes skills plus optional MCP (.mcp.json) for fw-publish. Pair fw-setup → fw-app-dev → fw-review → fw-publish.",
+    "category": "developer-tools",
+    "websiteURL": "https://developers.freshworks.com/",
+    "developerName": "Freshworks Developers"
+  }
+}

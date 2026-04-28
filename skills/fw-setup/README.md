@@ -21,7 +21,7 @@
 
 > **FDK VERSION SUPPORT**: 
 > - **FDK 10.x + Node 24.x** (Recommended) - Required for publishing, supported until Dec 2027
-> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends May 30, 2026
+> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends May 31, 2026
 
 > **PLATFORM 3.0 ONLY**: Platform 2.3 is deprecated. Both FDK versions support Platform 3.0.
 
@@ -31,6 +31,11 @@
 
 **fw-setup** installs and manages the Freshworks Development Kit (**FDK**) and **Node.js** via **nvm** on macOS, Windows, and Linux. Use it when the CLI is missing, the wrong major version, or broken across shells; marketplace publishing expects **FDK 10.x** on **Node 24.x**.
 
+**Homebrew vs Chocolatey vs CDN (quick analogy)**  
+
+- **Default in this repo:** **`nvm`/`nvm-windows` + CDN tarball** — matches **`docs/engine-matrix.md`**, best for multiple Node/FDK stacks and repeatable installs (**`skills/fw-setup/SKILL.md`** *Why CDN + nvm is default*).
+- **Optional:** **`brew install fdk`** (macOS) or **`choco install fdk`** (Windows) — system-wide installers; simpler for “one laptop, one toolchain,” documented under **`references/macos.md`** (Option B Homebrew), **`references/windows.md`**, and **`references/cross-platform-scenarios.md`**. **`/fw-setup-install`** can detect brew/choco when installed that way.
+- **Windows (MSI / winget / Store / Chocolatey Node):** Multiple **`node.exe`** sources often break **`nvm use 24.11`** visibility—see **`references/windows.md`** *Installer-based setups* (PATH diagnostics, **two `fdk`** shims, cleanup order).
 ## Rules and slash commands (files)
 
 - **Rules:** `rules/fdk-enforcement.mdc`
@@ -87,7 +92,7 @@ Check available commands:
 - **Command:** `/fw-setup-install` (default)
 
 ### FDK 9.x + Node 18.x (Deprecated)
-- **Status:** Deprecated, support ends May 30, 2026
+- **Status:** Deprecated, support ends May 31, 2026
 - **Use for:** Development only (legacy projects)
 - **Publishing:** NOT SUPPORTED
 - **Command:** `/fw-setup-downgrade` (shows deprecation warning)
@@ -146,7 +151,7 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fw-setup-runs/` unless `FDK_RUN_LO
 **Downgrade (`/fw-setup-downgrade`):**
 - Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
 - Optional **pinned 9.x.y** (`v9.x.y.tgz`) or **latest** 9 line (`latest.tgz`) after HTTP check
-- Shows deprecation warning (FDK 9.x ends May 30, 2026)
+- Shows deprecation warning (FDK 9.x ends May 31, 2026)
 - Requires confirmation before proceeding
 - Complete cleanup of FDK 10.x before installing 9.x
 - Warns that publishing requires FDK 10.x

@@ -11,7 +11,7 @@ argument-hint: "[version|latest]"
 1. **FDK 10.x → 10.0.y** (e.g., 10.1.0 → 10.0.1) on Node 24
 2. **FDK 10.x → 9.x** (e.g., 10.x → 9.8.2) on Node 18 with deprecation notice
 
-**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends May 30, 2026. Publishing to marketplace requires FDK 10.x + Node 24.x.
+**DEPRECATION WARNING (FDK 9.x):** FDK 9.x + Node 18.x support ends May 31, 2026. Publishing to marketplace requires FDK 10.x + Node 24.x.
 
 ## Agent pre-step
 
@@ -68,7 +68,7 @@ if [[ "$TARGET_VER" == latest ]] || [[ "$TARGET_VER" =~ ^9\\. ]]; then
   echo "========================================="
   echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
   echo "========================================="
-  echo "Support ends: May 30, 2026"
+  echo "Support ends: May 31, 2026"
   echo "Publishing requires FDK 10.x + Node 24.x"
   echo "Documentation: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/"
   echo ""
@@ -86,7 +86,7 @@ fi
 if [[ "$TARGET_VER" == latest ]]; then
   FDK_URL="https://cdn.freshdev.io/fdk/latest.tgz"
 else
-  FDK_URL="https://cdn.freshdev.io/fdk/v\${TARGET_VER}.tgz"
+  FDK_URL="https://cdn.freshdev.io/fdk/v${TARGET_VER}.tgz"
 fi
 
 HTTP=$(curl -sS -o /dev/null -w "%{http_code}" -L -I "$FDK_URL" || echo "000")
@@ -139,7 +139,7 @@ if [[ "$INSTALL_METHOD" == "chocolatey" ]]; then
   
   if [[ "$TARGET_VER" == latest ]]; then
     if [[ "$IS_NINE" == 1 ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
       # Chocolatey latest may be FDK 10.x; explicitly request 9.x if available
       choco install fdk --version=9.8.2 -y || exit 1
     else
@@ -147,7 +147,7 @@ if [[ "$INSTALL_METHOD" == "chocolatey" ]]; then
     fi
   else
     if [[ "$IS_NINE" == 1 ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
     fi
     choco install fdk --version=$TARGET_VER -y || exit 1
   fi
@@ -237,7 +237,7 @@ SLASH_COMMAND_CLOSEOUT: Return after REPORT (or abort). No fdk run/tunnel in thi
 
 ### Windows PowerShell - Step-by-step execution (NEW)
 
-**Note:** This version addresses Windows PowerShell's verbose output, escape sequences, and hanging issues with npm installs. Execute these 5 steps sequentially. Each step is a separate shell task.
+**Note:** Concurrent runs of these steps **from different terminals** reuse `%TEMP%\fdk_downgrade_*` filenames and may collide—serialize downgrades per machine until state files migrate to isolated directories.
 
 ### Step 1: Pre-flight checks
 
@@ -262,7 +262,7 @@ $IS_NINE = ($TARGET_VER -eq "latest" -or $TARGET_VER -match "^9\\.")
 if ($IS_NINE) {
   $NODE_VER = "18.20"
   Write-Host "⚠  WARNING: FDK 9.x + Node 18.x DEPRECATED" -ForegroundColor Yellow
-  Write-Host "   Support ends: May 30, 2026" -ForegroundColor Yellow
+  Write-Host "   Support ends: May 31, 2026" -ForegroundColor Yellow
   Write-Host "   Publishing requires FDK 10.x + Node 24.x" -ForegroundColor Yellow
   Write-Host ""
   
@@ -585,7 +585,7 @@ if ($fail) {
   Write-Host ""
   if ($IS_NINE) {
     Write-Host "FDK 9.x on Node 18" -ForegroundColor Cyan
-    Write-Host "(DEPRECATED - ends May 30, 2026)" -ForegroundColor Yellow
+    Write-Host "(DEPRECATED - ends May 31, 2026)" -ForegroundColor Yellow
   } else {
     Write-Host "FDK 10.x on Node 24.11" -ForegroundColor Cyan
   }

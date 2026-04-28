@@ -353,13 +353,13 @@ npm install https://cdn.freshdev.io/fdk/latest.tgz -g
 
 ## Version & Migration Issues
 
-### 10. Platform 2.3 Deprecation
-**Source:** Freshworks official announcement (2024-2026)
+### 10. Platform 2.3 and Node 18 deprecation
+
+**Source:** Freshworks product timeline (aligns with **`docs/engine-matrix.md`**)
 
 **Problem:**
-- Platform 2.3 deprecated (EOL: April 30, 2025)
-- New apps on Platform 2.3 disabled (Jan 30, 2026)
-- No support/updates after May 30, 2026
+- **platform-version 2.3** and **Node 18** (**FDK 9.x**) share an end-of-support date: **May 31, 2026**
+- Earlier milestones (e.g. new apps on 2.3 disabled) may be documented separately on the Developer Portal
 
 **Migration Required:**
 - All apps MUST migrate to Platform 3.0
