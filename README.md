@@ -42,7 +42,7 @@ Copy and paste these commands in your terminal to install all tools:
 ```bash
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-app-dev
+npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-app
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-review
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
@@ -55,7 +55,7 @@ Each tool helps with a specific part of app development. Use them in order for a
 |------|--------------|
 | [**fw-setup**](skills/fw-setup/) | Install and manage FDK (Freshworks Development Kit) and Node.js |
 | [**fw-app-dev**](skills/fw-app-dev/) | Build complete marketplace apps with UI, OAuth, and integrations |
-| [**fw-ai-app-dev**](skills/fw-ai-app-dev/) | Add AI Actions and connect to third-party services |
+| [**fw-ai-actions-app**](skills/fw-ai-actions-app/) | Add AI Actions and connect to third-party services |
 | [**fw-review**](skills/fw-review/) | Check your app for common issues before submission |
 | [**fw-publish**](skills/fw-publish/) | Upload and publish your app to the Freshworks Marketplace |
 
@@ -94,13 +94,13 @@ Validation order matters: run **fw-setup** first when Node/FDK is missing or wro
 
 ### 3. Add AI Features (Optional)
 
-If you want to add AI-powered features, use **fw-ai-app-dev** to:
+If you want to add AI-powered features, use **fw-ai-actions-app** to:
 - Connect to external APIs (Slack, Google, etc.)
 - Add AI Actions that automate tasks
 - Create request templates for API calls
 - Add test data for development
 
-👉 [Read the fw-ai-app-dev guide](skills/fw-ai-app-dev/)
+👉 [Read the fw-ai-actions-app guide](skills/fw-ai-actions-app/)
 
 ### 4. Review Your App (Recommended)
 

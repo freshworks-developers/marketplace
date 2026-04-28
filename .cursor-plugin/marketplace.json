@@ -68,7 +68,7 @@
       }
     },
     {
-      "name": "fw-ai-app-dev",
+      "name": "fw-ai-actions-app",
       "description": "AI Actions and third-party integrations on Platform 3.0: actions.json, SMI, request templates, schemas, validation, and integration workflows.",
       "author": {
         "name": "Freshworks Developers",
@@ -77,7 +77,7 @@
       "license": "MIT",
       "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
       "repository": "https://github.com/freshworks-developers/fw-dev-tools",
-      "source": "./skills/fw-ai-app-dev",
+      "source": "./skills/fw-ai-actions-app",
       "category": "developer-tools",
       "strict": false,
       "version": "1.0.0",
@@ -89,9 +89,9 @@
         "serverless",
         "actions-json"
       ],
-      "rulesPath": "./skills/fw-ai-app-dev/rules",
+      "rulesPath": "./skills/fw-ai-actions-app/rules",
       "interface": {
-        "displayName": "Freshworks AI Actions (fw-ai-app-dev)",
+        "displayName": "Freshworks AI Actions (fw-ai-actions-app)",
         "shortDescription": "actions.json, SMI handlers, request templates, and API integrations.",
         "longDescription": "Flat request parameters, nested response mapping in server.js, iparams/OAuth, test data guardrails, debugging broken endpoints, and scoping checklists. Complements fw-app-dev for full marketplace apps."
       }
