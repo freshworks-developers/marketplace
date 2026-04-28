@@ -166,10 +166,13 @@ npm cache clean --force
 if [[ "$IS_NINE" == 1 ]]; then
   # Downgrading to FDK 9.x: remove FDK 10.x from Node 24 (exclusive operation)
   if nvm list | grep -q "v24"; then
-    echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)..."
     nvm use 24 2>/dev/null || nvm use 24.11 2>/dev/null || true
-    npm uninstall -g @freshworks/fdk 2>/dev/null || true
-    npm uninstall -g fdk 2>/dev/null || true
+    # Only remove if FDK is actually installed on Node 24
+    if command -v fdk &> /dev/null && fdk version &> /dev/null; then
+      echo "Removing FDK 10.x from Node 24 (exclusive downgrade to FDK 9.x)..."
+      npm uninstall -g @freshworks/fdk 2>/dev/null || true
+      npm uninstall -g fdk 2>/dev/null || true
+    fi
   fi
   
   nvm list | grep v18 || nvm install 18.20
@@ -178,10 +181,13 @@ if [[ "$IS_NINE" == 1 ]]; then
 else
   # Downgrading within FDK 10.x line: remove FDK 9.x from Node 18 if exists
   if nvm list | grep -q "v18"; then
-    echo "Removing FDK 9.x from Node 18 (staying on FDK 10.x line)..."
     nvm use 18 2>/dev/null || nvm use 18.20 2>/dev/null || true
-    npm uninstall -g @freshworks/fdk 2>/dev/null || true
-    npm uninstall -g fdk 2>/dev/null || true
+    # Only remove if FDK is actually installed on Node 18
+    if command -v fdk &> /dev/null && fdk version &> /dev/null; then
+      echo "Removing FDK 9.x from Node 18 (staying on FDK 10.x line)..."
+      npm uninstall -g @freshworks/fdk 2>/dev/null || true
+      npm uninstall -g fdk 2>/dev/null || true
+    fi
   fi
   
   nvm list | grep "v24\\.11" || nvm install 24.11
