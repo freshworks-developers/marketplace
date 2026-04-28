@@ -132,3 +132,11 @@ zsh -c 'source ~/.zshrc && fdk version'
 4. **If still fails:** Reinstall on Node 24.11.x: `npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz`
 5. **Set default:** `nvm alias default 24.11`
 6. **Update shell config:** Add `nvm use 24.11 > /dev/null 2>&1` to `~/.zshrc`
+
+## Additional Windows PowerShell Issues (from FDK downgrade testing)
+
+7. **Wrong package name after FDK 9.x downgrade** — `npm list -g @freshworks/fdk` returns empty because FDK 9.x uses `fdk`, not `@freshworks/fdk`. Check with: `npm list -g fdk` or `npm list -g --depth=0 | Select-String fdk`
+8. **nvm alias dumps help text** — Running `nvm alias default` without a version shows full help. Must specify version: `nvm alias default 18.20.8`
+9. **fdk version hangs on upgrade prompt** — Auto-decline with: `"n" | fdk version 2>&1`
+10. **npm install shows 50+ deprecation warnings** — FDK 9.x has 1062 packages with many deprecated dependencies. Suppress with: `npm install -g <url> --loglevel=error`
+11. **Script hangs for 2+ minutes during install** — Normal for FDK 9.x; takes ~2 minutes to install 1062 packages. Use step-by-step approach (see `fw-setup-downgrade.md` Windows section) for better progress visibility.

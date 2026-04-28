@@ -7,7 +7,11 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 
 # FDK setup — use (`/fw-setup-use`)
 
-**`/fw-setup use`**: align **this shell** (and optionally **`.nvmrc`**) with the **Node + FDK** stack the workspace needs. **Does not** install or change FDK semver by itself — if **`fdk`** is missing on the chosen Node, route to **`/fw-setup-install`**, **`/fw-setup-upgrade`**, or **`/fw-setup-downgrade`**.
+**`/fw-setup use`**: align **this shell** (and optionally **`.nvmrc`**) with the **Node + FDK** stack the workspace needs.
+
+**DEFAULT BEHAVIOR (without `--global`):** Installs FDK **locally** in `node_modules/` for workspace-scoped use. This ensures each project has its own FDK version without affecting global installs.
+
+**WITH `--global` FLAG:** Uses globally installed FDK (no local install).
 
 > **Windows users:** same slash-command experience — just run **`/fw-setup-use 9`** in your IDE. The agent automatically uses the correct implementation (`fw-setup-use.ps1`) behind the scenes.
 
@@ -36,8 +40,8 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 |-------------|------------|
 | **`/fw-setup-use`** only, **`.nvmrc`** present | **`cd`** app root → load **nvm** → **`nvm use`** → **`node --version`**, **`fdk version`**. |
 | **`/fw-setup-use`** only, **no** **`.nvmrc`** | Tell user: add **`.nvmrc`** (**`24.11`** for FDK 10.x, **`18`** for FDK 9.x) or pass **`10`**, **`9`**, **`24.11`**, or **`18`**. |
-| **`/fw-setup-use 10`** or **`24.11`** | **macOS/Linux:** **`nvm use 24.11`** (current shell only) → verify **`fdk version`** is **10.x**. **Windows:** run **`fw-setup-use.ps1`** (session `PATH`; avoids flipping nvm-windows global symlink unless **`--global`**). |
-| **`/fw-setup-use 9`** or **`18`** | **macOS/Linux:** **`nvm use 18`** (current shell only) → verify **`fdk version`** is **9.x** (deprecated). **Windows:** run **`fw-setup-use.ps1`** (same semantics as the 10/24.11 row). |
+| **`/fw-setup-use 10`** or **`24.11`** | **MUST execute the full bash/PowerShell script in "Execution" section below.** Default: installs FDK locally. If `--global`: uses global FDK. |
+| **`/fw-setup-use 9`** or **`18`** | **MUST execute the full bash/PowerShell script in "Execution" section below.** Default: installs FDK locally. If `--global`: uses global FDK. |
 | **`/fw-setup-use 10 --global`** | **`nvm use 24.11`** + **`nvm alias default 24.11`** (sets for all new shells). |
 | **`/fw-setup-use 9 --global`** | **`nvm use 18`** + **`nvm alias default 18`** (sets for all new shells). |
 | **`--write-nvmrc`** with **`10`** / **`24.11`** | Write **`.nvmrc`** containing **`24.11`**, then **`nvm use`**. |
@@ -55,10 +59,21 @@ argument-hint: "[10|9|24.11|18] [--write-nvmrc] [--global] [directory]"
 5. **`node --version`** and **`fdk version`** — **any FDK 10.y** with **any Node 24.x**, **any FDK 9.y** with **any Node 18.x**.
 6. **TROUBLESHOOT mismatched stacks** (e.g., 2 Nodes but only 1 FDK):
    - If **Node 24.11 + Node 18** both present but **FDK only on one**:
-     - **STOP and ask user:** "You have Node 24.11 and Node 18, but FDK is only installed on Node X. Would you like me to install FDK on the missing Node version? (yes/no)"
-     - **If yes:** Use `/fw-setup-install X.Y.Z` (for FDK 10.x on Node 24) or `/fw-setup-downgrade X.Y.Z` (for FDK 9.x on Node 18)
-     - **After install:** Re-run `nvm use` and verify both `node --version` and `fdk version` match expected stack
-   - If **`fdk`** completely missing: Route to **`/fw-setup-install`** (FDK 10.x) or **`/fw-setup-downgrade`** (FDK 9.x)
+     - **If `--global` flag NOT set:** Install FDK locally in workspace (default behavior):
+       ```bash
+       # macOS/Linux: For FDK 10.x on Node 24
+       npm install @freshworks/fdk@latest
+       export PATH="$PWD/node_modules/.bin:$PATH"
+       fdk version
+       ```
+       ```powershell
+       # Windows: For FDK 10.x on Node 24
+       npm install @freshworks/fdk@latest
+       $env:PATH = "$PWD\node_modules\.bin;$env:PATH"
+       fdk version
+       ```
+     - **If `--global` flag IS set:** Use `/fw-setup-install` (FDK 10.x on Node 24) or `/fw-setup-downgrade` (FDK 9.x on Node 18)
+   - If **`fdk`** completely missing: Same behavior (local unless `--global` set)
 
 ## Execution (inline only — no Task)
 
@@ -211,41 +226,39 @@ echo "=== workspace use ==="
 echo "PWD=$(pwd)"
 NODE_VER=$(node --version 2>&1)
 echo "node: $NODE_VER"
+NODE_MAJOR=$(echo "$NODE_VER" | sed 's/v\([0-9]*\)\..*/\1/')
 
+# Install FDK locally unless --global flag is set
+if [[ "$SET_GLOBAL" != "true" ]]; then
+  echo "Setting up local FDK for workspace (use --global for system-wide)"
+  
+  if [[ "$NODE_MAJOR" == "24" ]]; then
+    npm install @freshworks/fdk@latest
+    export PATH="$PWD/node_modules/.bin:$PATH"
+    echo "✓ FDK 10.x installed/updated locally"
+  elif [[ "$NODE_MAJOR" == "18" ]]; then
+    npm install fdk@9.8.2
+    export PATH="$PWD/node_modules/.bin:$PATH"
+    echo "✓ FDK 9.x installed/updated locally (deprecated)"
+  fi
+fi
+
+# Verify FDK
 if command -v fdk >/dev/null 2>&1; then
-  # Parse FDK version (handles both "Installed: X.Y.Z" and "X.Y.Z" formats)
   FDK_OUT=$(fdk version 2>&1)
   FDK_VER=$(echo "$FDK_OUT" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
   echo "fdk: $FDK_VER"
   
-  # Extract major versions for compatibility check
-  NODE_MAJOR=$(echo "$NODE_VER" | sed 's/v\([0-9]*\)\..*/\1/')
   FDK_MAJOR=$(echo "$FDK_VER" | sed 's/\([0-9]*\)\..*/\1/')
   
-  # Check for version mismatch: Node 24.x works with any FDK 10.y, Node 18.x works with any FDK 9.y
+  # Warn on version mismatch
   if [[ "$NODE_MAJOR" == "24" ]] && [[ "$FDK_MAJOR" == "9" ]]; then
-    echo ""
     echo "WARNING: Node 24.x + FDK 9.x mismatch"
-    echo "Node 24.x requires FDK 10.x (any 10.y version)"
-    echo "Action: /fw-setup-install or /fw-setup-upgrade for FDK 10.x"
   elif [[ "$NODE_MAJOR" == "18" ]] && [[ "$FDK_MAJOR" == "10" ]]; then
-    echo ""
     echo "WARNING: Node 18.x + FDK 10.x mismatch"
-    echo "Node 18.x requires FDK 9.x (deprecated) OR switch to Node 24.x"
-    echo "Action: /fw-setup-use 10 (switch to Node 24) OR /fw-setup-downgrade (FDK 9.x)"
   fi
 else
-  echo "fdk: MISSING on Node $NODE_VER"
-  echo ""
-  NODE_MAJOR=$(echo "$NODE_VER" | sed 's/v\([0-9]*\)\..*/\1/')
-  if [[ "$NODE_MAJOR" == "24" ]]; then
-    echo "Recommended: /fw-setup-install (installs any FDK 10.x on Node 24.x)"
-  elif [[ "$NODE_MAJOR" == "18" ]]; then
-    echo "For Node 18: /fw-setup-downgrade (installs FDK 9.x, deprecated)"
-    echo "Recommended: /fw-setup-use 10 (switch to Node 24.x + FDK 10.x)"
-  else
-    echo "Unknown Node version. Use /fw-setup-install for FDK 10.x on Node 24.x"
-  fi
+  echo "fdk: NOT FOUND (check PATH)"
 fi
 echo "====================="
 ```

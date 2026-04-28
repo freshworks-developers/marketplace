@@ -298,8 +298,9 @@ MANDATORY VERIFICATION (ALL TESTS MUST PASS):
   fi
   zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || echo "FAILED: FDK not persistent"
   nvm current | grep "24" || echo "FAILED: nvm not using Node 24"
-  npm list -g fdk 2>&1 | grep "empty" || npm list -g fdk || echo "INFO: legacy fdk package check"
-  npm list -g @freshworks/fdk --depth=0 | grep "@freshworks/fdk@10" || echo "FAILED: @freshworks/fdk@10 not installed"
+  # Check both FDK 9.x (fdk) and FDK 10.x (@freshworks/fdk) package names
+  npm list -g --depth=0 2>&1 | grep -E "(^├──|^└──).*fdk@" || echo "FAILED: No FDK package found in npm globals"
+  npm list -g @freshworks/fdk --depth=0 2>&1 | grep "@freshworks/fdk@10" && echo "INFO: FDK 10.x found" || npm list -g fdk --depth=0 2>&1 | grep "fdk@" && echo "INFO: FDK 9.x found (legacy)" || echo "WARNING: FDK package not found"
 
 REPORT FORMAT:
   [VALID] FDK installed successfully
