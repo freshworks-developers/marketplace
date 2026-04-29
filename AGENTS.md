@@ -4,7 +4,7 @@ This repository is a **multi-IDE skill marketplace** for AI assistants working o
 
 ## OpenAI Codex
 
-The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plugin.json`** (see **`.agents/plugins/marketplace.json`**). Slash commands listed in this file are **Cursor / Claude** affordances; Codex loads **`skills/*/SKILL.md`** and optional **MCP** from **`.mcp.json`**.
+The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plugin.json`**. Slash commands listed in this file are **Cursor / Claude** affordances; Codex loads **`skills/*/SKILL.md`** and optional **MCP** from **`.mcp.json`**.
 
 ## Skills and MCP tools available
 
@@ -102,7 +102,7 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 | `/fdk-refactor` | `commands/fdk-refactor.md` |
 | `/fdk-review` | `commands/fdk-review.md` |
 
-**Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
+**Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `smart-prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
 
 ### fw-ai-actions-app — `skills/fw-ai-actions-app/`
 

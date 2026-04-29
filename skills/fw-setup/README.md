@@ -78,7 +78,7 @@ Check available commands:
 ```bash
 # In Cursor/Claude chat, type:
 /fw-setup-
-# You should see 6 commands in autocomplete (plus legacy /fdk-* if registered)
+# You should see 7 commands in autocomplete
 ```
 
 ## FDK Version Support Policy
@@ -258,7 +258,6 @@ fw-setup/
 ├── commands/                  # Slash command definitions (/fw-setup *)
 │   ├── fw-setup-install.md   # optional --version
 │   ├── fw-setup-upgrade.md   # optional --to
-│   ├── 
 │   ├── fw-setup-downgrade.md # optional 9.x.y pin
 │   ├── fw-setup-uninstall.md
 │   ├── fw-setup-status.md    # optional --verbose
@@ -267,13 +266,26 @@ fw-setup/
 │
 ├── scripts/
 │   ├── fw-setup-run-background.sh  # nohup fdk run … (returns immediately)
-│   └── fw-setup-stop-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
+│   ├── fw-setup-stop-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
+│   └── (scripts/ also contains detect-install-method.sh under references/)
+│
+├── rules/
+│   └── fdk-enforcement.mdc   # IDE rules for FDK enforcement
 │
 └── references/                # Loaded by SKILL.md on-demand
-    ├── cross-scenarios.md     # Complex installation scenarios
-    ├── macos.md               # macOS-specific details
-    ├── windows.md             # Windows-specific details
-    └── real-world-scenarios.md # Real-world testing scenarios
+    ├── cross-platform-scenarios.md  # Multi-method install detection & migration
+    ├── cross-scenarios.md           # Detailed subagent specifications
+    ├── error-command-not-found.md   # Troubleshooting fdk command not found
+    ├── interactive-troubleshooting-guide.md  # Manual phased troubleshooting
+    ├── macos.md                     # macOS-specific details (nvm, Homebrew)
+    ├── node-version-sop.md          # Manual SOP for Node version switching
+    ├── npm-permissions-sop.md       # EACCES and global prefix issues
+    ├── nvm-install-sop.md           # Manual nvm installation SOP
+    ├── real-world-scenarios.md      # Real-world testing scenarios
+    ├── shell-persistence-sop.md     # Shell persistence and rc file configuration
+    ├── version-policy.md            # FDK version policy and CDN URLs
+    ├── windows.md                   # Windows-specific details (nvm-windows, PATH)
+    └── detect-install-method.sh     # Helper script for install method detection
 ```
 
 ### Command Registration

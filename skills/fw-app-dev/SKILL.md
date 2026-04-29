@@ -581,7 +581,7 @@ Next steps:
 
 Before presenting the app, validate against:
 - `references/tests/refusal.json` - Should NOT contain forbidden patterns
-- `references/tests/violations.json` - Should avoid common mistakes
+- `references/tests/golden.json` - Preferred patterns to follow
 
 ---
 
@@ -760,7 +760,7 @@ Default: mandatory files + short `README.md` only.
 
 ## Installation, tests, product modules
 
-**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/refusal.json`, `references/tests/violations.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
+**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/refusal.json`, `references/tests/golden.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
 
 ---
 

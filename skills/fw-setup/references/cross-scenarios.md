@@ -10,9 +10,9 @@
 2. [Existing Node Installation](#scenario-2-existing-node)
 3. [Downgrade to Legacy FDK](#scenario-3-downgrade-to-legacy)
 4. [Troubleshooting Broken FDK](#scenario-4-troubleshooting)
-6. [Install Specific FDK Version](#scenario-6-install-specific-fdk-version)
-7. [Node PATH Mismatch](#scenario-7-node-path-mismatch)
-8. [Multiple Node Versions (Team Development)](#scenario-8-multiple-node-versions-team-development)
+5. [Install Specific FDK Version](#scenario-5-install-specific-fdk-version)
+6. [Node PATH Mismatch](#scenario-6-node-path-mismatch)
+7. [Multiple Node Versions (Team Development)](#scenario-7-multiple-node-versions-team-development)
 
 ---
 

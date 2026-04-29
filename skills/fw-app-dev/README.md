@@ -84,7 +84,7 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - Progressive disclosure documentation (140+ files)
 
 **Assets:**
-- App skeleton templates (Frontend, Serverless, Hybrid)
+- App skeleton templates (Frontend, Serverless, Hybrid, OAuth)
 
 ## Usage
 

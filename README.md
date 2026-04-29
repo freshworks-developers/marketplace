@@ -82,7 +82,7 @@ Skills are packaged for **Cursor**, **Claude Code**, and **OpenAI Codex**. How y
 |--------|-------------------------|-------------------|
 | **Cursor** | Add skills through the **Skills** flow your build supports; plugin registry is **[`.cursor-plugin/marketplace.json`](.cursor-plugin/marketplace.json)** (`freshworks-dev-tools`). If autocomplete or rules misbehave after install → **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** (**rulesDirectory** / **`commandsDirectory`** checks). | **`npx skills add …`** (below); local dev **`npx skills add file:///path/to/fw-dev-tools`** `--skill …` |
 | **Claude Code** | **`claude plugin marketplace add freshworks-developers/fw-dev-tools`**, then **`claude plugin install <plugin>@freshworks-developers`** per skill you want (examples in **[skills/fw-setup/README.md](skills/fw-setup/README.md)** § *Install as Claude Plugin*). Umbrella **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** lists all plugins. | Same **`npx skills add`** as Cursor; MCP token shape matches **`.mcp.json`** (see **[AGENTS.md](AGENTS.md)**). |
-| **OpenAI Codex** | **[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)** + optional **[`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json)** · from clone: `codex plugin marketplace add ./` per [Codex plugins](https://developers.openai.com/codex/plugins/build/). Restart Codex **after** add. MCP comes from **`mcpServers` → [.mcp.json](.mcp.json)** — configure JWT **before** **`fw-publish`** (see **[AGENTS.md](AGENTS.md)**). | Not the primary Codex path; prefer **Codex marketplace add** above so MCP + **`skills/`** paths resolve reliably. |
+| **OpenAI Codex** | **[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)** · from clone: `codex plugin marketplace add ./` per [Codex plugins](https://developers.openai.com/codex/plugins/build/). Restart Codex **after** add. MCP comes from **`mcpServers` → [.mcp.json](.mcp.json)** — configure JWT **before** **`fw-publish`** (see **[AGENTS.md](AGENTS.md)**). | Not the primary Codex path; prefer **Codex marketplace add** above so MCP + **`skills/`** paths resolve reliably. |
 
 ### Quick start — CLI (all five skills)
 
@@ -273,7 +273,7 @@ Having issues with skills installation or usage?
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
 - 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 - 💡 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Skills installation & usage guide
-- 🤝 Community standards: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- 🤝 Community standards: [CODE_OF_CONDUCT.MD](CODE_OF_CONDUCT.MD)
 
 ## For Contributors
 

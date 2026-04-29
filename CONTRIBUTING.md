@@ -44,15 +44,14 @@ fw-dev-tools/
 ├── .mcp.json                 # Bundled MCP: fw-dev-mcp (URL + Authorization)
 ├── .claude/
 │   └── settings.json         # Claude Code permissions (MCP tool deny list; must match .mcp.json server key)
-├── .cursor/
-│   └── rules/                # Cursor workspace rules (.mdc files) - plugin root
+├── .cursor/                  # (gitignored) Cursor IDE workspace state
+│   └── rules/                # User-specific workspace rules (local, not versioned)
 ├── .claude-plugin/           # Claude Code plugin config
 ├── .cursor-plugin/           # Cursor plugin config
 ├── .codex-plugin/            # OpenAI Codex plugin manifest (skills + MCP pointers)
-├── .agents/
-│   └── plugins/              # Codex repo marketplace catalog (local)
-├── assets/                   # Umbrella marketplace logo (`fw-logo.svg`) for plugin manifests
-├── assets/                   # Umbrella marketplace logo for plugin manifests
+├── .agents/                  # (gitignored) Local IDE workspace state
+│   └── plugins/              # Codex repo marketplace catalog (local, not versioned)
+├── assets/                   # Dew logo (`fw-logo.svg`) for plugin manifests
 ├── docs/                     # Engine matrix, network requirements
 ├── skills/
 │   ├── fw-app-dev/           # Core app development skill
