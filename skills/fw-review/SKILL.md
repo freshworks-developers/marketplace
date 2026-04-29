@@ -11,7 +11,7 @@ This is an automated pipeline. Do not ask questions or interact with the user. E
 
 ## Workflow
 
-Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the set of rules that failed validation with fixing messages as specified in [rules/report.md](rules/report.md).
+Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the set of rules that failed validation using the aligned Issue / Location / Fix format specified in [rules/report.md](rules/report.md).
 
 **Pre-requisite**
 
@@ -28,7 +28,7 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 
 - Do **not** invent rule IDs or Pass/Fail criteria beyond the **Rule ID summary** in this file and the criteria defined in the linked `rules/*.md` files for those IDs.
 - Every rule ID **in the Rule ID summary** below must be evaluated to Pass, Fail, or Not Applicable.
-- Emit the **App Review Result** block exactly as specified in [rules/report.md](rules/report.md) (output layout only; which rules exist is defined here, not in report.md).
+- Emit the **App Review Result** block exactly as specified in [rules/report.md](rules/report.md): aligned numbered failure blocks with Issue, Location, and Fix.
 - Use rule IDs internally for evaluation only. Omit rule IDs, including any script JSON metadata such as `internal.rule_id`, from the final user-visible report.
 - If a script execution itself fails, do **not** stop the overall review. Ignore that rule inspection for the current run, continue evaluating the remaining rules, and report only the actual rule failures you were able to determine.
 - For each **Fail**, cite file and line (or identifiable block) where possible.
