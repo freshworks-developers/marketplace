@@ -267,7 +267,7 @@ fw-setup/
 ├── scripts/
 │   ├── fw-setup-run-background.sh  # nohup fdk run … (returns immediately)
 │   ├── fw-setup-stop-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
-│   └── (scripts/ also contains detect-install-method.sh under references/)
+│   └── detect-install-method.sh     # Helper script for install method detection
 │
 ├── rules/
 │   └── fdk-enforcement.mdc   # IDE rules for FDK enforcement
@@ -284,8 +284,7 @@ fw-setup/
     ├── real-world-scenarios.md      # Real-world testing scenarios
     ├── shell-persistence-sop.md     # Shell persistence and rc file configuration
     ├── version-policy.md            # FDK version policy and CDN URLs
-    ├── windows.md                   # Windows-specific details (nvm-windows, PATH)
-    └── detect-install-method.sh     # Helper script for install method detection
+    └── windows.md                   # Windows-specific details (nvm-windows, PATH)
 ```
 
 ### Command Registration

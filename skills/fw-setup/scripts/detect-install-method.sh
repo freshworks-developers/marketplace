@@ -38,6 +38,6 @@ detect_install_method() {
 }
 
 # Usage in command scripts:
-# source skills/fw-setup/references/detect-install-method.sh
+# source skills/fw-setup/scripts/detect-install-method.sh
 # INSTALL_METHOD=$(detect_install_method)
 # echo "Installation method: $INSTALL_METHOD"
