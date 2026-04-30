@@ -16,19 +16,22 @@ The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plu
 | **fw-app-dev** | `skills/fw-app-dev/SKILL.md` | Build, fix, review, or migrate **Platform 3.0** apps end-to-end: idea collection, implementation planning, code generation, manifest enforcement, `fdk validate` with up to 6 auto-fix iterations, and post-generation guidance. Handles manifest structure, `requests.json`, OAuth, serverless, frontend Crayons, and tracking fields (`tracking_id`, `start_time`). |
 | **fw-ai-actions-app** | `skills/fw-ai-actions-app/SKILL.md` | **AI Actions** and third-party integrations: `actions.json`, SMI handlers, flat request schemas, `$request.invokeTemplate`, test data, validation, debugging endpoints, and integration scoping (no full UI app folder). Pair with **fw-app-dev** when the work is a full marketplace app with locations and Crayons. |
 | **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. Silent pipeline; does not install FDK — use **fw-setup** when `fdk` may be missing. |
-| **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app to the **Freshworks Marketplace** via MCP tools: `fdk validate`, `fdk pack`, **app-upload**, then `submit_marketplace_app` or `update_marketplace_app_version`. Supports new apps and version updates. Checks auth token before any publish step. Also supports listing apps and checking publish status. |
+| **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app via MCP (**openai-server**): `fdk validate`, `fdk pack`, **`create_app_upload_url`**, zip upload, **`submit_custom_app`** / **`add_app_version`**, **`get_app_status`**. Tool names match **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Checks auth before publish. |
 
-### MCP tools (openai-server, publish)
+### MCP tools (openai-server)
+
+Implementation reference: **`mp-openai`** **`openai-server`** (`com.freshworks.marketplace.openai.server.mcp`). Human-readable mapping: **`skills/fw-publish/references/openai-server-mcp-tools.md`**.
 
 This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**.
 
 | Tool | Purpose |
 |------|---------|
-| `list_marketplace_apps` | List all apps on the developer account |
-| `create_app_upload_url` | Get **app-upload** URL for the zip binary |
-| `submit_marketplace_app` | Create a new app + first version |
-| `update_marketplace_app_version` | Upload a new version to an existing app |
-| `get_marketplace_app_status` | Check app state and latest version |
+| **`list_custom_apps`** | Returns **`count`** and **`apps`**. Each entry includes **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, and **`latestVersion`** (**`id`**, **`versionNumber`**, **`state`**). Optional inputs: **`page`**, **`perPage`**. |
+| **`create_app_upload_url`** | Presigned **app-upload** URL + **`uploadId`** |
+| **`submit_custom_app`** | Create a new custom app + first version |
+| **`add_app_version`** | New version on an existing app (**`appId`** from **`list_custom_apps`**) — confirm **`tools/list`** on your server |
+| **`get_app_status`** | App-level status by **`appId`** |
+| **`get_app_details`**, **`get_implementation_plan`**, **`implement_app`** | Guided idea → plan → implement prompts |
 
 **Skills orchestrate tools.** Follow each skill’s playbook rather than inventing parallel flows; each skill documents preconditions, tool use, and error handling.
 
