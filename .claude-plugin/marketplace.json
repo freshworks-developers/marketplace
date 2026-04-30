@@ -41,7 +41,7 @@
     },
     {
       "name": "fw-app-dev",
-      "description": "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications.",
+      "description": "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 custom apps.",
       "author": {
         "name": "Freshworks Developers",
         "email": "skills@dev-assist.freshservice.com"
@@ -95,12 +95,12 @@
       "interface": {
         "displayName": "Freshworks AI Actions (fw-ai-actions-app)",
         "shortDescription": "actions.json, SMI handlers, request templates, and API integrations.",
-        "longDescription": "Flat request parameters, nested response mapping in server.js, iparams/OAuth, test data guardrails, debugging broken endpoints, and scoping checklists. Complements fw-app-dev for full marketplace apps."
+        "longDescription": "Flat request parameters, nested response mapping in server.js, iparams/OAuth, test data guardrails, debugging broken endpoints, and scoping checklists. Complements fw-app-dev for full custom apps."
       }
     },
     {
       "name": "fw-review",
-      "description": "Automated Freshworks marketplace app review: iparams, frontend, deterministic script checks, security, and structured report output.",
+      "description": "Automated Freshworks custom app review: iparams, frontend, deterministic script checks, security, and structured report output.",
       "author": {
         "name": "Freshworks Developers",
         "email": "skills@dev-assist.freshservice.com"
@@ -123,7 +123,7 @@
       "rulesPath": "./skills/fw-review/rules",
       "interface": {
         "displayName": "Freshworks App Review",
-        "shortDescription": "Rules + scripts for structured marketplace app audits.",
+        "shortDescription": "Rules + scripts for structured custom app audits.",
         "longDescription": "Evaluates manifest, iparams, frontend, and SC-* script-backed checks with a fixed report format. Pair with fw-setup for FDK and fw-app-dev to remediate findings."
       }
     },

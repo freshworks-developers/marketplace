@@ -268,11 +268,21 @@ Having issues with skills installation or usage?
 - Commands not working → Verify `rulesDirectory` and `commandsDirectory` in plugin.json
 - Rules not applying → Ensure rules are in `skills/{skill}/rules/` (not `.cursor/rules/`)
 
+## Documentation & Resources
+
+### Official Freshworks Documentation
+- 📘 [Platform 3.0 App Development](https://developers.freshworks.com/docs/app-sdk/v3.0/)
+- 🚀 [Marketplace Publishing Guide](https://developers.freshworks.com/docs/marketplace/)
+- 🔧 [FDK CLI Reference](https://developers.freshworks.com/docs/fdk/)
+
+### Troubleshooting
+- [Validation Errors Guide](skills/fw-app-dev/references/errors/)
+- [Installation Issues](TROUBLESHOOTING.md)
+
 ## Support
 
 - 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
 - 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
-- 💡 [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Skills installation & usage guide
 - 🤝 Community standards: [CODE_OF_CONDUCT.MD](CODE_OF_CONDUCT.MD)
 
 ## For Contributors
