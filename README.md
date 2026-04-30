@@ -100,7 +100,7 @@ npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-
 
 1. **Restart** Cursor / Claude Code (**OpenAI Codex:** restart Codex session after **`codex plugin marketplace add`** so **`skills/`** loads).
 2. In chat (**Cursor / Claude Code**): type **`/fw-setup-`** — autocomplete should list **fw-setup** / **fw-app-dev** slash commands.
-3. **Publish workflows only:** Configure **fw-dev-mcp** JWT using **[AGENTS.md](AGENTS.md)** (Portal: **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**).
+3. **Publish workflows only:** Configure **fw-dev-mcp** JWT using **[AGENTS.md](AGENTS.md)** (Portal: **Developer API Key** → **Connect to Developer MCP server** → **Copy**).
 
 **Helpful routing (don’t memorize — bookmark):**
 
@@ -248,7 +248,7 @@ Finally, use **fw-publish** to upload your app:
 - Check publishing status
 
 **Setup required:**
-1. Get your API key from [Freshworks Developer Portal](https://developers.freshworks.com/developer/): **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**
+1. Get your API key from [Freshworks Developer Portal](https://developers.freshworks.com/developer/): **Developer API Key** → **Connect to Developer MCP server** → **Copy**
 2. Configure the **fw-dev-mcp server** in your IDE (see MCP section below for details)
 
 👉 [Read the fw-publish guide](skills/fw-publish/)

@@ -239,7 +239,7 @@ Next steps:
    ```
 
    **If user says yes:**
-   - Ask for their **API key** from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server** → **Copy**
+   - Ask for their **API key** from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **Developer API Key** → **Connect to Developer MCP server** → **Copy**
    - The MCP server URL is fixed: `https://mcp.freshworks.dev/mcp`
    - Detect IDE and write config:
 

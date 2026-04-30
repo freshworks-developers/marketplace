@@ -29,7 +29,7 @@
     "mcp_auth_token": {
       "type": "string",
       "title": "Marketplace API token (JWT)",
-      "description": "API key from https://developers.freshworks.com/developer/ — API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. → Connect to Developer MCP server → Copy.",
+      "description": "API key from https://developers.freshworks.com/developer/ — Developer API Key → Connect to Developer MCP server → Copy.",
       "sensitive": true,
       "required": true
     }

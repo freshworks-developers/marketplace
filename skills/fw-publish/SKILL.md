@@ -7,6 +7,8 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 
 # Publish (Platform 3.0 custom app)
 
+**MANDATORY PREREQUISITE:** Run **fw-review** skill before publishing to ensure marketplace compliance. The review checks iparams, frontend files, security patterns, and generates a structured audit report. Do not proceed with publishing until review passes.
+
 **Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
 
 ## Agent playbook (MCP tools)
@@ -22,7 +24,7 @@ Publish requires a Marketplace API token configured in your MCP settings.
 
 To set this up:
 1. Go to https://developers.freshworks.com/developer/
-2. **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**
+2. **Developer API Key** → **Connect to Developer MCP server**
 3. Click **Copy**
 4. Configure it for your IDE:
    Claude Code:

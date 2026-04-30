@@ -57,7 +57,7 @@ Step 1: Get your API key
 ────────────────────────────────────────────────────────────
 
 1. Go to: https://developers.freshworks.com/developer/
-2. **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**
+2. **Developer API Key** → **Connect to Developer MCP server**
 3. Click **Copy**
 
 This JWT token authenticates you to the Marketplace API.

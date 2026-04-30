@@ -1,7 +1,7 @@
 {
   "name": "freshworks-dev-tools",
   "displayName": "Freshworks Developer Tools",
-  "description": "Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add fw-dev-mcp in ~/.cursor/mcp.json — API key from Developer Portal → API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. → Connect to Developer MCP server",
+  "description": "Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add fw-dev-mcp in ~/.cursor/mcp.json — API key from Developer Portal → Developer API Key → Connect to Developer MCP server",
   "version": "1.1.0",
   "logo": "assets/fw-logo.svg",
   "author": {
