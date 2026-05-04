@@ -23,6 +23,19 @@ You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the
 
 ---
 
+## App directory (Q1)
+
+Before reading files or running **`fdk validate`**, determine the app directory the same way as **fw-app-dev** **`/fdk-fix` Step 1** — [`../fw-app-dev/commands/fdk-fix.md`](../fw-app-dev/commands/fdk-fix.md) (*Determine app directory*):
+
+1. Search the workspace for `manifest.json` files.
+2. If **multiple folders** contain manifest.json: Ask the user which app to use.
+3. If **one folder**: Use that directory.
+4. If **none**: Inform the user and stop.
+
+All paths below (`actions.json`, `manifest.json`, `server/server.js`, `config/*`, etc.) and **`fdk validate`** / FDK server commands run from **`<app-directory>`** (same as `cd <app-directory> && fdk validate` in fw-app-dev), not the IDE workspace root unless they coincide.
+
+---
+
 ## App Architecture
 
 **AI actions apps do not need the app folder.** Use only:

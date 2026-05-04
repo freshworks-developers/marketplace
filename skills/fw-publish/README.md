@@ -41,7 +41,7 @@ claude plugin install fw-publish@freshworks-developers
 | `SKILL.md` | Orchestration, MCP tool usage, error handling |
 | *(repo root)* `.mcp.json` | Reference `fw-dev-mcp` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
 | `subagents/` | Optional deep dives (validation, packing, metadata, API publishing) |
-| `references/` | Extra orchestration notes |
+| `references/` | Extra orchestration notes; **`openai-server-mcp-tools.md`** maps **`mp-openai`** MCP tool names |
 | `examples/test-app/` | Minimal sample app for dry runs |
 
 This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `subagents/`, `references/`). Repo-wide inventory: [`AGENTS.md`](../../AGENTS.md) → **fw-publish**.
@@ -57,11 +57,15 @@ This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `s
 
 ### MCP Tools Available
 
-- `list_marketplace_apps` - List all apps on developer account
-- `create_app_upload_url` - Get app-upload URL for zip binary
-- `submit_marketplace_app` - Create new app + first version
-- `update_marketplace_app_version` - Upload new version to existing app
-- `get_marketplace_app_status` - Check app state and latest version
+Names match **`openai-server`** — see **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)**.
+
+| Tool | Role |
+|------|--------|
+| **`list_custom_apps`** | Returns **`count`** and **`apps`** (each with **`id`**, **`name`**, **`type`**, **`state`**, **`latestVersion`**, …). Optional **`page`**, **`perPage`**. |
+| **`create_app_upload_url`** | Presigned upload + **`uploadId`** |
+| **`submit_custom_app`** | New app + first version |
+| **`add_app_version`** | New version (confirm **`tools/list`**) |
+| **`get_app_status`** | Status by **`appId`** |
 
 ## Support
 

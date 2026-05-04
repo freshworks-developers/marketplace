@@ -7,7 +7,18 @@ compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-orien
 
 # fw-review
 
-This is an automated pipeline. Do not ask questions or interact with the user. Execute silently.
+This is an automated pipeline. **After the app directory is determined (Q1 pre-flight below),** do not ask further questions or interact with the user for disambiguation — execute the remaining phases silently and produce the report.
+
+## Pre-flight: determine app directory (Q1)
+
+**Before** the workflow, follow the same steps as **fw-app-dev** [`/fdk-fix` Step 1: Determine app directory](../fw-app-dev/commands/fdk-fix.md):
+
+1. Search the workspace for `manifest.json` files.
+2. If **multiple folders** contain manifest.json: **ask** the user which app to review (this is the only user question allowed in this skill).
+3. If **one folder**: Use that directory.
+4. If **none**: Inform the user and stop.
+
+All app files in the workflow below are relative to that directory (the folder containing `manifest.json`). Run deterministic check scripts from this skill’s **`scripts/`** against `<app-directory>` (see [README.md](README.md)).
 
 ## Workflow
 
@@ -19,9 +30,9 @@ Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the
 
 The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and is **not** assumed to exist in generic CI images. Jenkins or Kubernetes **node** images typically include **Node only**, not `fdk`. Verify FDK is installed (for example `/fw-setup-status` from the **fw-setup** skill, or `fdk --version` when the CLI is on `PATH`).
 
-1. **Structure** — Read `manifest.json` first for platform version, modules, requests, events, and install flow.
-2. **Installation parameters** — Review `config/iparams.json` or custom `config/iparams.html` / `config/assets/iparams.js` using [rules/iparam-rules.md](rules/iparam-rules.md). Follow the discovery order in that file.
-3. **Deterministic script checks** — For each script-backed rule ID in [rules/script-check-rules.md](rules/script-check-rules.md), run the mapped JS file from `scripts/`. Treat any returned internal metadata such as `internal.rule_id` as internal only.
+1. **Structure** — Read `manifest.json` in the app directory first for platform version, modules, requests, events, and install flow.
+2. **Installation parameters** — In the app directory, review `config/iparams.json` or custom `config/iparams.html` / `config/assets/iparams.js` using [rules/iparam-rules.md](rules/iparam-rules.md). Follow the discovery order in that file.
+3. **Deterministic script checks** — For each script-backed rule ID in [rules/script-check-rules.md](rules/script-check-rules.md), run the mapped JS file from this skill’s `scripts/` against `<app-directory>`. Treat any returned internal metadata such as `internal.rule_id` as internal only.
 4. **Frontend logical checks** — Review [rules/frontend-files-rules.md](rules/frontend-files-rules.md) for FF-* rules that do not have a one-to-one script.
 
 ## Rules

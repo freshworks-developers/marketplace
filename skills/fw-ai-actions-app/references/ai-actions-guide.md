@@ -667,7 +667,7 @@ exports = {
 }
 ```
 
-**CRITICAL:** Use `get_developer_docs` tool to understand how to implement different authentication methods.
+**CRITICAL:** Confirm authentication patterns against official vendor documentation and Freshworks App SDK / OAuth docs ([developers.freshworks.com](https://developers.freshworks.com/docs/app-sdk/v3.0/common/introduction/)).
 
 ---
 
@@ -906,7 +906,7 @@ renderData({ status: 500, message: 'Error' });
 7. **Test thoroughly** - Use FDK test server before deployment
 
 **When in doubt:**
-- Use `get_developer_docs` tool for specific implementation details
+- Use official Freshworks developer documentation and vendor API docs for specifics
 - Follow the examples in this guide
 - Run `fdk validate` to catch errors early
 
@@ -914,9 +914,9 @@ renderData({ status: 500, message: 'Error' });
 
 ## References
 
-For specific implementation details, use the `get_developer_docs` tool with these queries:
-- "How to create actions.json in Freshworks Platform 3.0"
-- "How to implement SMI functions in server.js"
-- "How to use request templates for external APIs"
-- "How to implement OAuth authentication in Freshworks apps"
-- "How to test actions using FDK test server"
+Use [Freshworks developer documentation](https://developers.freshworks.com/docs/app-sdk/v3.0/common/introduction/) and this guide for:
+- Creating **`actions.json`** on Platform 3.0
+- Implementing SMI functions in **`server.js`**
+- Request templates for external APIs
+- OAuth and secure configuration
+- Testing with the FDK test server

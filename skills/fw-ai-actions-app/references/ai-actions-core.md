@@ -120,4 +120,4 @@ app-root/
 
 For detailed implementation guidance, refer to the comprehensive AI Actions guide which loads automatically when you open `actions.json` or `server.js` files.
 
-Use `get_developer_docs` tool for specific Freshworks platform implementation details and or lookup freshworks developer docs https://developers.freshworks.com/docs/app-sdk/v3.0/common/introduction/
+Use the official Freshworks developer docs for platform details (e.g. [App SDK introduction](https://developers.freshworks.com/docs/app-sdk/v3.0/common/introduction/)).

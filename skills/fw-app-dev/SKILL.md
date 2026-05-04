@@ -705,7 +705,7 @@ After showing the completion message, check if MCP is already configured and opt
 ```javascript
 // Check if MCP tools are available
 try {
-  CallMcpTool("fw-dev-mcp", "list_marketplace_apps", {});
+  CallMcpTool("fw-dev-mcp", "list_custom_apps", {});
   // Success: MCP already configured, skip prompt
 } catch {
   // MCP not configured: offer setup

@@ -6,7 +6,7 @@
 
 **Precondition check:** Before showing this prompt, verify MCP is NOT already configured:
 ```javascript
-// Try to call list_marketplace_apps
+// Try to call list_custom_apps
 // If successful → skip this prompt (already configured)
 // If fails → show this prompt
 ```
@@ -19,7 +19,7 @@
 
 ```bash
 # Attempt to call MCP tool
-CallMcpTool("fw-dev-mcp", "list_marketplace_apps", {})
+CallMcpTool("fw-dev-mcp", "list_custom_apps", {})
 
 # If successful:
 #   Skip this entire prompt (MCP already configured)
@@ -213,7 +213,7 @@ if (app_validation_passed && zero_errors) {
 ```javascript
 // Step 1 of publish workflow:
 try {
-  list_marketplace_apps();
+  list_custom_apps();
 } catch (auth_error) {
   // MCP not configured
   Read and follow: skills/fw-publish/subagents/mcp-config-prompt.md
@@ -268,7 +268,7 @@ Check:
 After configuration, verify with:
 ```bash
 # Test MCP connection
-CallMcpTool("fw-dev-mcp", "list_marketplace_apps", {})
+CallMcpTool("fw-dev-mcp", "list_custom_apps", {})
 
 # Expected: List of apps (or empty array if no apps)
 # If auth error: Configuration failed, retry
