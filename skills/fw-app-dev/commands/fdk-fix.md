@@ -18,7 +18,16 @@ You are fixing all platform validation errors and lint errors in a Freshworks ap
 3. If **one folder**: Use that directory.
 4. If **none**: Inform the user and stop.
 
-## Step 2: Run fdk validate
+## Step 2: Manifest + toolchain gate (before `fdk validate`)
+
+**Mandatory:** Follow **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`*.
+
+- Shell not **Node 24.x + FDK 10.x** → **`fw-setup`** first; **do not** lower **`engines`** or switch to **FDK 9 / Node 18** to match the app.
+- **`platform-version`** not **`3.0`** → run **`/fdk-migrate`** first, **then** continue this command at validation.
+- **`3.0`** but **`engines`** still **18** / **9.x** → raise **`engines`** per **`/fdk-migrate`** Step 3, **then** validate.
+- **`[WARN] App engines major version mismatch`** with **FDK 10 + Node 24** active → align **`manifest.json` → `engines`** upward to the CLI (or accept FDK’s sync prompt **Y**); **never** downgrade the toolchain.
+
+## Step 3: Run fdk validate
 
 **Toolchain:** **fw-app-dev** does not install **`fdk`** or **Node**. If the shell has no `fdk`, wrong Node major for FDK 10, or only **FDK 9.x** while fixing a **Platform 3.0** tree, follow **SKILL.md** (*FDK / Node.js toolchain — not provided by fw-app-dev*): use **`fw-setup`** when available, or prompt the user to add it (`npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup`, or copy `skills/fw-setup/` from this repo). Do not invent one-off global npm installs here.
 
@@ -26,7 +35,7 @@ Run: `cd <app-directory> && fdk validate`
 
 Capture all output (fatal errors, lint errors, warnings).
 
-## Step 3: Fix iteratively (up to 2 iterations for fatal, then lint)
+## Step 4: Fix iteratively (up to 2 iterations for fatal, then lint)
 
 ### Priority 1: Fatal errors (Platform/validation)
 
@@ -50,12 +59,12 @@ After fatal errors are resolved, fix lint errors:
 
 Address non-critical warnings if time permits.
 
-## Step 4: Validate after each fix
+## Step 5: Validate after each fix
 
 After each fix iteration, run `fdk validate` again. Continue until:
 - No fatal errors remain, and
 - No lint errors remain (or user accepts remaining lint).
 
-## Step 5: Report
+## Step 6: Report
 
 Report what was fixed and the final validation status.

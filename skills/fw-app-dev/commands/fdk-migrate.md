@@ -9,6 +9,8 @@ always: false
 
 **Usage:** `/fdk-migrate`
 
+**Orchestration (matches fw-app-dev SKILL):** (1) If **FDK 10 + Node 24** is **not** installed → **`fw-setup`** first, **then** this migrate flow, **then** **`fdk validate`**. (2) If **FDK 10 + Node 24** **is** installed and the app is legacy → this migrate flow **then** **`fdk validate`**. (3) If the app is already **3.0** with **24.x / 10.x** engines → you do **not** need this command for migration; use **`/fdk-fix`** / **`/fdk-review`** only. **Never** “fix” migration by installing **FDK 9** or switching to **Node 18** — that is the opposite of this command.
+
 You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical source state:
 
 - **`platform-version`**: `"2.3"` (or `"2.2"` / `"2.1"` / missing)
@@ -99,5 +101,7 @@ Use the Freshworks App Development Skill and references. Apply these transformat
 ## Step 4: Validate
 
 **Toolchain:** Before `fdk validate`, re-check **Step 0** if the shell may have changed. **fw-app-dev** does not install the CLI — use **fw-setup** or prompt the user to add it (**SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*). Same rule as **`rules/validation-workflow.mdc`** (always-on when fw-app-dev is loaded).
+
+If FDK shows **`App engines major version mismatch`** and offers to sync **`engines`**: with **Node 24.x + FDK 10.x** active, **accept** (**Y**) or set **`manifest.json` → `engines`** to match **`node --version`** / **`fdk version`** — **never** downgrade the shell to **9.x / 18**.
 
 Run `fdk validate` in the app directory. Fix any fatal errors (and lint per fw-app-dev zero-tolerance). Present the migrated app when validation passes.
