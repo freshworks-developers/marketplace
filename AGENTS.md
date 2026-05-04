@@ -18,20 +18,21 @@ The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plu
 | **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. Silent pipeline; does not install FDK — use **fw-setup** when `fdk` may be missing. |
 | **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app via MCP (**openai-server**): `fdk validate`, `fdk pack`, **`create_app_upload_url`**, zip upload, **`submit_custom_app`** / **`add_app_version`**, **`get_app_status`**. Tool names match **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Checks auth before publish. |
 
-### MCP tools (openai-server)
-
-Implementation reference: **`mp-openai`** **`openai-server`** (`com.freshworks.marketplace.openai.server.mcp`). Human-readable mapping: **`skills/fw-publish/references/openai-server-mcp-tools.md`**.
+### MCP tools (fw-dev-mcp server)
 
 This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **Developer API Key** → **Connect to Developer MCP server** → **Copy**.
 
-| Tool | Purpose |
-|------|---------|
-| **`list_custom_apps`** | Returns **`count`** and **`apps`**. Each entry includes **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, and **`latestVersion`** (**`id`**, **`versionNumber`**, **`state`**). Optional inputs: **`page`**, **`perPage`**. |
-| **`create_app_upload_url`** | Presigned **app-upload** URL + **`uploadId`** |
-| **`submit_custom_app`** | Create a new custom app + first version |
-| **`add_app_version`** | New version on an existing app (**`appId`** from **`list_custom_apps`**) — confirm **`tools/list`** on your server |
-| **`get_app_status`** | App-level status by **`appId`** |
-| **`get_app_details`**, **`get_implementation_plan`**, **`implement_app`** | Guided idea → plan → implement prompts |
+| Tool | Purpose | Skill Handover Point |
+|------|---------|---------------------|
+| **`list_custom_apps`** | List all custom apps. Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. | **fw-publish** Step 1 (auth check), Step 6 (app selection for updates) |
+| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **fw-publish** Step 6 (**CRITICAL** - check for stuck **`development`** versions before **`add_app_version`**) |
+| **`create_app_upload_url`** | Generate presigned S3 upload URL. Returns **`uploadId`**, **`uploadUrl`**, **`httpMethod`** (`"PUT"`), **`expiresInSeconds`**. | **fw-publish** Step 7 (after `fdk pack`, before zip upload) |
+| **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. | **fw-publish** Step 10 (new app path) |
+| **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. **Cannot proceed** if any version is in **`development`** state. | **fw-publish** Step 10 (existing app path, after version check) |
+| **`get_app_status`** | Get aggregate app-level status. Returns **`state`** reflecting all versions. On failures, **`state`** often rolls back to **`development`**. | **fw-publish** Step 12 (post-publish verification) |
+| **`get_developer_docs`** | Fetch developer documentation. **FALLBACK ONLY** - use only if **fw-app-dev** skill fails or when skill explicitly delegates. | FALLBACK (use fw-app-dev skill first) |
+
+**DEPRECATED MCP tools** (do NOT use - always use **fw-app-dev** skill instead): **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**. These tools bypass skill orchestration, validation workflows, and prerequisite checks. Always route app development work through **`skills/fw-app-dev/SKILL.md`**.
 
 **Skills orchestrate tools.** Follow each skill’s playbook rather than inventing parallel flows; each skill documents preconditions, tool use, and error handling.
 

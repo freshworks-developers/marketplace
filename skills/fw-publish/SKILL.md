@@ -126,8 +126,33 @@ Do this **at publish time** — **after** you have a valid zip (steps 4–5) and
 **Do not** read **`appId`** from **`.fdk/app-info.json`** for routing or MCP calls.
 
 1. **Ask explicitly:** Is this publish a **new** Marketplace listing, or an **update** to an **existing** app? (Skip only if the user already stated the same in this session.)
+
 2. **New listing:** No **`appId`** yet. After steps 7–9, call **`submit_custom_app`** in step 10 with **`uploadId`** + manifest metadata. **MCP handover:** new-app payload + presigned **`uploadId`** only.
-3. **Existing app (update):** Call **`list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**. After steps 7–9, call **`add_app_version`** in step 10 with that **`appId`**, **`uploadId`**, and manifest fields. **MCP handover:** developer-selected **`appId`** + **`uploadId`** (and tool schema parameters). Confirm **`add_app_version`** exists via **`tools/list`**; if absent, stop and tell the developer updates need that tool or the developer portal.
+
+3. **Existing app (update):**
+   
+   a. **Call `list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**.
+   
+   b. **CRITICAL - Check for stuck versions:** Call **`list_app_versions`** with the selected **`appId`**. Returns array of versions with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`**.
+      - **If ANY version has `state: "development"`**, **STOP immediately** and inform the user:
+        ```
+        Cannot publish new version - app has a version stuck in "development" state.
+        
+        Version details: [show the stuck version(s) - id, version, state]
+        
+        This usually means a previous deployment failed. You must:
+        1. Log into the Developer Portal: https://developers.freshworks.com/developer/
+        2. Navigate to your app
+        3. Find the version in "development" state
+        4. Delete or resolve that version
+        5. Return here and retry the publish
+        
+        The MCP publish flow cannot proceed until all versions are out of "development" state.
+        ```
+      - **If all versions are in `test`, `published`, or other non-development states**, proceed to step 7.
+   
+   c. **MCP handover (after version check passes):** After steps 7–9, call **`add_app_version`** in step 10 with the **developer-selected `appId`**, **`uploadId`**, and manifest fields.
+
 4. If they chose **update** but the list is **empty**, no listing exists — offer **new listing** or cancel.
 
 Optional: if only **one** app exists and they already chose **update**, show that row and ask for a one-line confirm before using its **`appId`** — still **never** take **`appId`** from `.fdk/app-info.json`.
@@ -208,23 +233,26 @@ You **may** write or update `.fdk/app-info.json` in the app directory with `id` 
 
 Call **`get_app_status`** with the **`appId`** returned from submit/update (or the selected listing id) to confirm app-level state.
 
+Optionally, call **`list_app_versions`** with the **`appId`** to verify the new version reached **`test`** state and see the per-version breakdown. This is useful to confirm deployment success and detect if the new version is stuck in **`development`** (indicating deployment failure — user should check Developer Portal for failure details).
+
 ### 13. Report to user
 
 Tell the user: **app id**, **version state**, and where to install custom apps in their product (**Admin -> Apps** or equivalent).
 
-## MCP tools reference (`openai-server`)
+## MCP tools reference (fw-dev-mcp)
 
-See **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)** for full names, parameters, and optional app-generation tools on the same server.
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| **`list_custom_apps`** | List all custom apps on developer account. Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. Results sorted by most recently updated first. | Step 1 (auth preflight), Step 6.3a (existing app selection) |
+| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **Step 6.3b (CRITICAL - check for `development` state before `add_app_version`)**, Step 12 (optional verification) |
+| **`create_app_upload_url`** | Generate presigned S3 upload URL. Returns **`uploadId`**, **`uploadUrl`**, **`httpMethod`** (`"PUT"`), **`expiresInSeconds`**. | Step 7 (before zip upload) |
+| **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`alternateEmail`**, **`zipFileName`**, **`worksWith`** (e.g., `["ai_actions"]`). App moves to **`test`** state after successful submit. | Step 10 (new app path) |
+| **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`zipFileName`**, **`worksWith`**. **CANNOT proceed if ANY version is in `development` state** (must be checked via **`list_app_versions`** first; user must delete stuck version via Developer Portal). | Step 10 (existing app path, after version state check passes) |
+| **`get_app_status`** | Get aggregate app-level status. Returns **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`** (reflects all versions), **`products`**. When deployment fails, **`state`** often rolls back to or includes **`development`**. | Step 12 (post-publish verification) |
 
-| Tool | Purpose |
-|------|---------|
-| **`list_custom_apps`** | Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. |
-| **`create_app_upload_url`** | Presigned upload; returns **`uploadId`**, **`uploadUrl`**, **`expiresInSeconds`** |
-| **`submit_custom_app`** | New app + first version after zip **PUT** |
-| **`add_app_version`** | New version on existing app (**`appId`** from **`list_custom_apps`**) — confirm **`tools/list`**; phase 2 registration in some **`openai-server`** builds |
-| **`get_app_status`** | App-level status by **`appId`** |
-
-Also available on the same MCP server (optional idea → plan → implement guides): **`get_app_details`**, **`get_implementation_plan`**, **`implement_app`** — see the reference doc.
+**Other tools on `fw-dev-mcp` server:**
+- **`get_developer_docs`**: Fetch developer documentation. **FALLBACK ONLY** - use only if **fw-app-dev** skill fails or when skill explicitly delegates.
+- **DEPRECATED** (do NOT use): **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**. Always use **fw-app-dev** skill for app development work.
 
 ## Error handling
 

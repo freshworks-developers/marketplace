@@ -57,15 +57,14 @@ This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `s
 
 ### MCP Tools Available
 
-Names match **`openai-server`** — see **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)**.
-
 | Tool | Role |
 |------|--------|
-| **`list_custom_apps`** | Returns **`count`** and **`apps`** (each with **`id`**, **`name`**, **`type`**, **`state`**, **`latestVersion`**, …). Optional **`page`**, **`perPage`**. |
-| **`create_app_upload_url`** | Presigned upload + **`uploadId`** |
-| **`submit_custom_app`** | New app + first version |
-| **`add_app_version`** | New version (confirm **`tools/list`**) |
-| **`get_app_status`** | Status by **`appId`** |
+| **`list_custom_apps`** | List all custom apps. Returns **`count`** and **`apps`** (each with **`id`**, **`name`**, **`type`**, **`state`**, **`latestVersion`**, …). Optional **`page`**, **`perPage`**. |
+| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`**. **CRITICAL** for checking stuck **`development`** versions before **`add_app_version`**. |
+| **`create_app_upload_url`** | Generate presigned S3 upload URL + **`uploadId`** |
+| **`submit_custom_app`** | Create new app + first version |
+| **`add_app_version`** | Add new version to existing app. **Cannot proceed** if any version is in **`development`** state (check with **`list_app_versions`** first). |
+| **`get_app_status`** | Get aggregate app-level status by **`appId`** |
 
 ## Support
 
