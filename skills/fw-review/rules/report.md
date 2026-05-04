@@ -4,6 +4,8 @@ Human-readable **summary** the pipeline prints after evaluating the rule IDs lis
 
 The output is **rendered Markdown**, not a fenced text block. Do not wrap the final report in triple backticks. Emit headings, bold text, lists, and links directly so the chat client renders them.
 
+**Scope:** User-visible output from the review **is only** the content described in sections *No failures* / *One or more failures* below. Do **not** print a preamble or footnote explaining passes, omissions, scripts, missing FDK, or how N/A was chosen.
+
 ---
 
 ## User-visible output
@@ -81,7 +83,8 @@ Rules:
 - The header is always the Markdown level-2 heading `## App Review Result` (no em dash suffix, no count). Do not use plain text or wrap the report in a code fence.
 - Each failure is a single numbered list entry. The first paragraph is the issue line ending with the bracketed location link. The second paragraph (indented 3 spaces) starts with `**Fix:**`.
 - Separate the issue paragraph and the Fix paragraph with one blank line. Separate consecutive numbered entries with one blank line.
-- Do **not** include internal rule IDs, area names, severity labels, or internal JSON metadata such as `internal.rule_id` in the user-visible output.
+- Do **not** include internal **rule IDs** (e.g. `GN-02L`, `IP-04A`, `FFS-04L`, `FF-07L`, `CR-05L`), **area labels** shown to the user (`Iparams`, `Miscellaneous`), severity labels, or internal JSON metadata such as `internal.rule_id` anywhere in emitted output—including any line intended for the developer reading the chat.
+- Do **not** cite this skill’s **markdown or script paths** in emitted output (`script-check-rules.md`, `iparam-rules.md`, other `rules/*.md`, `scripts/*.js`).
 - Do **not** wrap the final report in triple backticks.
 
 ## Writing style
@@ -162,6 +165,20 @@ successful
 ```
 
 ## Anti-patterns — do NOT do this
+
+### Preamble or footnote exposing rule IDs or skill files
+
+Invalid (anything before `## App Review Result` that names a rule ID, cites `rules/*.md` / `scripts/*.js`, or explains Pass/N/A omissions):
+
+```markdown
+GN-02L is Not applicable when FDK is missing on PATH (per `script-check-rules.md`); …
+
+## App Review Result
+
+…
+```
+
+Correct: start **only** with `## App Review Result`; omit pipeline narrative entirely.
 
 ### Wrapping the entire report in a code fence
 

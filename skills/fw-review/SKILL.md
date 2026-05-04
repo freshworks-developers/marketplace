@@ -7,7 +7,7 @@ compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-orien
 
 # fw-review
 
-This is an automated pipeline. **After the app directory is determined (Q1 pre-flight below),** do not ask further questions or interact with the user for disambiguation — execute the remaining phases silently and produce the report.
+This is an automated pipeline. **After the app directory is determined (Q1 pre-flight below),** do not ask further questions or interact with the user for disambiguation — execute the remaining phases silently and produce **only** the formatted **App Review Result** block in [rules/report.md](rules/report.md). Do not prefix or suffix that block with commentary (no Pass/N/A rationales, script notes, or pipeline status).
 
 ## Pre-flight: determine app directory (Q1)
 
@@ -22,7 +22,7 @@ All app files in the workflow below are relative to that directory (the folder c
 
 ## Workflow
 
-Run these phases in order. Detailed inspection criteria: [rules/**.md]. Give the set of rules that failed validation using the aligned Issue / Location / Fix format specified in [rules/report.md](rules/report.md).
+Run these phases in order. Detailed inspection criteria: [rules/**.md]. Emit failures only via the Issue / Location / Fix format in [rules/report.md](rules/report.md)—no separate prose summary of passes, N/A, or omitted checks.
 
 **Pre-requisite**
 
@@ -40,6 +40,7 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - Do **not** invent rule IDs or Pass/Fail criteria beyond the **Rule ID summary** in this file and the criteria defined in the linked `rules/*.md` files for those IDs.
 - Every rule ID **in the Rule ID summary** below must be evaluated to Pass, Fail, or Not Applicable.
 - Emit the **App Review Result** block exactly as specified in [rules/report.md](rules/report.md):
+  - **Exclusive deliverable:** The user-facing reply for the review **must contain only** that block—begin with `## App Review Result`; do **not** add lines above it or below it (aside from what `report.md` defines inside the block: heading, then `successful` or the numbered list). No rule IDs (`GN-*`, `IP-*`, `FF-*`, `FFS-*`, `CR-*`), no internal filenames (`script-check-rules.md`, other `rules/*.md`, `scripts/*.js`), and no citations to skill paths.
   - The output is **rendered Markdown**. Do **not** wrap the final report in a code fence (no `\`\`\`text` around the whole block); emit the Markdown directly so headings, lists, and links render in the chat client.
   - Heading is always the level-2 Markdown heading `## App Review Result` with no suffix. Below it: the word `successful` alone on its own line when there are zero failures; when there are failures, omit `successful` and emit the numbered list per [rules/report.md](rules/report.md).
   - Each failure is one numbered list entry with two paragraphs:
