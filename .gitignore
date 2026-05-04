@@ -85,8 +85,7 @@ TODO.md
 /.windsurf/
 /.agents/
 /.cursor/
-/.claude/*
-!/.claude/settings.json
+/.claude/
 
 # BUT: Allow skill-level plugin configs (versioned for distribution)
 !skills/**/.claude-plugin/
@@ -100,12 +99,6 @@ TODO.md
 
 # Local skills CLI lock (machine-specific)
 skills-lock.json
-
-# Publish skill local examples (not versioned)
-skills/fw-publish/examples/
-
-# Root-level examples directory (local testing)
-/examples/
 
 # Test artifacts
 .tmp/
@@ -125,3 +118,9 @@ coverage/
 *.swp
 *.swo
 *~.nib
+
+# Legacy files
+*.github/
+.tmp-skillguard/
+docs/
+

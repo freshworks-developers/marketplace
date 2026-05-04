@@ -48,7 +48,7 @@ Default: `undefined`
 >content:
 
 # Form Control (fw-form-control)
-`Form Control` component used with `fw-form` component. Please refer [fw-form](../form/#demo-static-form) for usage
+`Form Control` component used with `fw-form` component. Please refer [fw-form](./form.md#demo-static-form) for usage
 <!-- Auto Generated Below -->
 ## Methods
 ### `setFocus() => Promise<void>`

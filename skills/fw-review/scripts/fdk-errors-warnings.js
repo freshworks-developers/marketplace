@@ -1,63 +1,151 @@
 'use strict';
 
-const fs = require('fs/promises');
-const path = require('path');
+const { spawn } = require('child_process');
+const { createRuleResult, runCli } = require('./common');
 
-async function readManifest(rootDir) {
-  const manifestPath = path.join(rootDir, 'manifest.json');
-  try {
-    const content = await fs.readFile(manifestPath, 'utf8');
-    return JSON.parse(content);
-  } catch {
-    return null;
-  }
-}
+const RULE_ID = 'GN-02L';
+const MAX_REPORTED_ISSUES = 10;
+const FDK_VALIDATE_TIMEOUT_MS = 120000;
 
 function createDetail(file, message) {
   return { file, message };
 }
 
 function createResult(passed, summary, details = []) {
-  return { passed, summary, details };
+  return createRuleResult(RULE_ID, passed, summary, details);
 }
 
-async function runCli(run) {
-  const targetDir = path.resolve(process.argv[2] || process.cwd());
-  const result = await run(targetDir);
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-  process.exitCode = result.passed ? 0 : 1;
+function stripAnsi(value) {
+  return value.replace(/\u001b\[[0-9;]*m/g, '');
+}
+
+function runFdkValidate(targetDir) {
+  return new Promise((resolve) => {
+    const child = spawn('fdk', ['validate'], {
+      cwd: targetDir,
+      shell: false
+    });
+
+    let stdout = '';
+    let stderr = '';
+    let completed = false;
+
+    const timeout = setTimeout(() => {
+      if (!completed) {
+        completed = true;
+        child.kill('SIGTERM');
+        resolve({
+          exitCode: null,
+          stdout,
+          stderr,
+          timedOut: true,
+          error: null
+        });
+      }
+    }, FDK_VALIDATE_TIMEOUT_MS);
+
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk.toString();
+    });
+
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk.toString();
+    });
+
+    child.on('error', (error) => {
+      if (!completed) {
+        completed = true;
+        clearTimeout(timeout);
+        resolve({
+          exitCode: null,
+          stdout,
+          stderr,
+          timedOut: false,
+          error
+        });
+      }
+    });
+
+    child.on('close', (exitCode) => {
+      if (!completed) {
+        completed = true;
+        clearTimeout(timeout);
+        resolve({
+          exitCode,
+          stdout,
+          stderr,
+          timedOut: false,
+          error: null
+        });
+      }
+    });
+  });
+}
+
+function parseValidateIssues(output) {
+  return stripAnsi(output)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => /\b(?:error|warning|warn)\b/i.test(line))
+    .filter((line) => !/\b0\s+errors?\b/i.test(line) && !/\b0\s+warnings?\b/i.test(line));
+}
+
+function createOutputDetails(issues, output) {
+  const details = issues.slice(0, MAX_REPORTED_ISSUES).map((issue) => createDetail('fdk validate', issue));
+
+  if (details.length === 0) {
+    const fallbackLines = stripAnsi(output)
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, MAX_REPORTED_ISSUES);
+
+    for (const line of fallbackLines) {
+      details.push(createDetail('fdk validate', line));
+    }
+  }
+
+  return details;
 }
 
 async function run(targetDir) {
-  // This checker inspects only manifest.json, so it applies to app structure rather than frontend/server files.
-  const manifest = await readManifest(targetDir);
-  const details = [];
+  const result = await runFdkValidate(targetDir);
+  const output = `${result.stdout}\n${result.stderr}`;
 
-  if (!manifest) {
-    details.push(createDetail('manifest.json', 'The app is missing a readable manifest.json file.'));
-    return createResult(false, 'The app is missing a readable manifest.json file.', details);
+  if (result.error) {
+    const message =
+      result.error.code === 'ENOENT'
+        ? 'FDK CLI is not available on PATH, so fdk validate could not be run.'
+        : `fdk validate could not be started: ${result.error.message}`;
+
+    return createResult(false, message, [createDetail('fdk validate', message)]);
   }
 
-  const data = manifest;
-  if (!data['platform-version']) {
-    details.push(createDetail('manifest.json', 'The manifest is missing "platform-version".'));
+  if (result.timedOut) {
+    const message = `fdk validate did not finish within ${FDK_VALIDATE_TIMEOUT_MS / 1000} seconds.`;
+    return createResult(false, message, [createDetail('fdk validate', message)]);
   }
 
-  if (!data.modules || typeof data.modules !== 'object' || Object.keys(data.modules).length === 0) {
-    details.push(createDetail('manifest.json', 'The manifest must define at least one module.'));
+  const issues = parseValidateIssues(output);
+  const passed = result.exitCode === 0 && issues.length === 0;
+
+  if (passed) {
+    return createResult(true, 'fdk validate completed without reported errors or warnings.');
   }
 
-  if (data.product && Number.parseFloat(String(data['platform-version'] || '0')) >= 3) {
-    details.push(createDetail('manifest.json', 'Platform 3 apps should use "modules" instead of the deprecated "product" field.'));
-  }
+  const details = createOutputDetails(issues, output);
+  const issueCountText = issues.length > 0 ? `${issues.length} warning/error line(s)` : 'an unsuccessful exit code';
+  const limitText =
+    issues.length > MAX_REPORTED_ISSUES
+      ? ` Showing the first ${MAX_REPORTED_ISSUES}; fix these and rerun fdk validate to see remaining issues.`
+      : '';
 
-  if (!data.engines) {
-    details.push(createDetail('manifest.json', 'The manifest should declare engine versions for Node and FDK.'));
-  }
-
-  return details.length === 0
-    ? createResult(true, 'The manifest passes the baseline FDK structure checks.')
-    : createResult(false, 'The manifest has baseline FDK structure issues that would likely surface as warnings or errors.', details);
+  return createResult(
+    false,
+    `fdk validate reported ${issueCountText}. Showing at most ${MAX_REPORTED_ISSUES} output line(s).${limitText}`,
+    details
+  );
 }
 
 module.exports = { run };

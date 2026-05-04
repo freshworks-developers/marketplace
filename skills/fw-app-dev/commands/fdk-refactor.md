@@ -25,7 +25,7 @@ Scan `server/server.js` and `app/scripts/*.js` for functions with:
 - Many conditional branches
 - Long functions (> 50 lines)
 
-Reference: `references/tests/violations.json` - violation_003 (complexity > 7).
+Reference: Code complexity threshold is 7 (max cyclomatic complexity per function).
 
 ## Step 3: Refactoring techniques
 

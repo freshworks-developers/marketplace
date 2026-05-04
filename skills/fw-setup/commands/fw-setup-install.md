@@ -20,7 +20,7 @@ argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 | `/fw-setup-install --version 9.8.2` | `9.8.2` | `https://cdn.freshdev.io/fdk/v9.8.2.tgz` | 18.20 |
 | `/fw-setup-install --both` | `both` | Both latest-v24.tgz + latest 9.x | 24.11 + 18.20 |
 
-**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 30, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
+**FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 31, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
 **`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10.x as primary).
 
@@ -93,7 +93,7 @@ if [[ "$FDK_VER" == "both" ]]; then
   echo "INSTALLING BOTH FDK STACKS"
   echo "========================================="
   echo "Stack 1: Latest FDK 10.x on Node 24.11 (primary)"
-  echo "Stack 2: Latest FDK 9.x on Node 18.20 (deprecated, expires May 30, 2026)"
+  echo "Stack 2: Latest FDK 9.x on Node 18.20 (deprecated, expires May 31, 2026)"
   echo ""
   
   # Check existing installations
@@ -194,7 +194,7 @@ case "$INSTALL_METHOD" in
   homebrew)
     echo "Installing FDK via Homebrew (system-wide)..."
     if [[ "$FDK_VER" =~ ^9\\. ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
       echo "Homebrew formula for FDK 9.x may not be available"
       exit 1
     fi
@@ -208,7 +208,7 @@ case "$INSTALL_METHOD" in
   chocolatey)
     echo "Installing FDK via Chocolatey (system-wide)..."
     if [[ "$FDK_VER" =~ ^9\\. ]]; then
-      echo "WARNING: FDK 9.x deprecated (ends May 30, 2026)"
+      echo "WARNING: FDK 9.x deprecated (ends May 31, 2026)"
       choco uninstall fdk -y 2>/dev/null || true
       choco install fdk --version=9.8.2 -y || exit 1
     elif [[ "$FDK_VER" == "latest" ]]; then
@@ -230,7 +230,7 @@ case "$INSTALL_METHOD" in
       echo "========================================="
       echo "WARNING: FDK 9.x + Node 18.x DEPRECATED"
       echo "========================================="
-      echo "Support ends: May 30, 2026"
+      echo "Support ends: May 31, 2026"
       echo "Publishing to marketplace requires FDK 10.x + Node 24.x"
       echo ""
       read -p "Continue installing FDK 9.x? (y/N): " confirm
@@ -298,8 +298,9 @@ MANDATORY VERIFICATION (ALL TESTS MUST PASS):
   fi
   zsh -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || bash -c 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"; nvm use $NODE_VER >/dev/null; fdk version' || echo "FAILED: FDK not persistent"
   nvm current | grep "24" || echo "FAILED: nvm not using Node 24"
-  npm list -g fdk 2>&1 | grep "empty" || npm list -g fdk || echo "INFO: legacy fdk package check"
-  npm list -g @freshworks/fdk --depth=0 | grep "@freshworks/fdk@10" || echo "FAILED: @freshworks/fdk@10 not installed"
+  # Check both FDK 9.x (fdk) and FDK 10.x (@freshworks/fdk) package names
+  npm list -g --depth=0 2>&1 | grep -E "(^├──|^└──).*fdk@" || echo "FAILED: No FDK package found in npm globals"
+  npm list -g @freshworks/fdk --depth=0 2>&1 | grep "@freshworks/fdk@10" && echo "INFO: FDK 10.x found" || npm list -g fdk --depth=0 2>&1 | grep "fdk@" && echo "INFO: FDK 9.x found (legacy)" || echo "WARNING: FDK package not found"
 
 REPORT FORMAT:
   [VALID] FDK installed successfully
@@ -310,20 +311,34 @@ REPORT FORMAT:
 CRITICAL: If ANY mandatory test fails, do not say "installation complete".
 
 POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
+  # Offer MCP configuration via dedicated subagent
+  # Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+  
   echo ""
-  echo "=== Marketplace MCP server (optional) ==="
-  echo "Would you like to configure the MCP server for publish tools?"
-  echo "This connects your IDE to the Freshworks openai-server."
-  echo "(y/N)"
-  # If user says yes:
-  #   1. Ask for API key from https://developers.freshworks.com/developer/ → "API key for Freddy AI Copilot VS Code plugin" section → Copy
-  #   2. MCP server URL is fixed: https://mcp.freshworks.dev/mcp
-  #   3. Detect IDE:
-  #      - Claude Code: direct user to /config → set mcp_auth_token (URL already in repo root .mcp.json)
-  #      - Cursor: write ~/.cursor/mcp.json with fw-dev-mcp server entry (url: https://mcp.freshworks.dev/mcp)
-  #   4. Confirm: "MCP server configured. Publish tools are now available."
-  # If user says no: "Skipped. Configure MCP later via IDE settings (see AGENTS.md)."
-  # NEVER let the user paste JWT into chat — write to config file or direct to IDE settings UI.
+  echo "═══════════════════════════════════════════════════════════"
+  echo "Optional: Configure Marketplace Publishing"
+  echo ""
+  echo "Would you like to set up publishing tools now?"
+  echo "This connects your IDE to the Freshworks Marketplace API."
+  echo ""
+  echo "You can skip this and configure later."
+  read -p "Configure MCP now? (y/N): " mcp_response
+  
+  if [[ "$mcp_response" =~ ^[yY]$ ]]; then
+    # Execute MCP configuration subagent
+    # Implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+    # This handles: API key prompt, IDE detection, config file creation, verification
+    echo ""
+    echo "Launching MCP configuration..."
+    echo "See: skills/fw-publish/subagents/mcp-config-prompt.md for full flow"
+    echo ""
+    # Agent should read and follow mcp-config-prompt.md from Step 3A.1 onwards
+  else
+    echo "Skipped. Configure MCP later:"
+    echo "- Run: /fw-setup-install (choose MCP option)"
+    echo "- Or see: README.md or AGENTS.md for manual setup"
+  fi
+  echo "═══════════════════════════════════════════════════════════"
 
 SLASH_COMMAND_CLOSEOUT: After verification, optional MCP config, and final REPORT (or abort), return from this shell Task immediately. Do not start fdk run, fdk tunnel, tail -f, watchers, or dev servers from this Task.
   `

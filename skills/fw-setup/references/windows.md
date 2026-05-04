@@ -6,6 +6,95 @@
 - **Node.js v24.11.x** — Recommended line for **FDK 10.x** + `latest-v24.tgz` (same single source of truth as `SKILL.md`; avoid bare `24` if it drifts to non-24.11 builds)
 - **PowerShell** — Run as Administrator for installation
 
+---
+
+## Installer-based setups: Node, `fdk`, and PATH conflicts (read before mixing stacks)
+
+Freshworks tooling assumes **`nvm use 24.11`** then **`npm install -g`** the CDN tarball (`latest-v24.tgz` for FDK 10.x). Anything that installs **standalone Node**, an **alternate global `fdk`**, or **reorders PATH** breaks that assumption until **you know which binaries win**.
+
+### The core issue: PATH precedence
+
+Windows runs the **first** `node.exe` / **`fdk`** on **`PATH`** (machine vs user ordering matters). Symptoms:
+
+| Symptom | Likely cause |
+|---------|----------------|
+| **`node`** is **not** **`v24.11.*`** after `nvm use 24.11` | **`Program Files\nodejs`**, Chocolatey / winget / Scoop **Node** still **ahead** of nvm-windows’ symlink target |
+| **`where.exe node`** lists **`C:\Program Files\nodejs\node.exe` first | Standalone **MSI** or **winget** (`OpenJS.NodeJS`) Node; nvm may not reorder ahead of it for this shell |
+| **Different `npm` / prefix** in Administrator vs normal PowerShell | **Split PATH**: install/run **consistently** (avoid mixing **elevated** global npm with daily **user** terminals) |
+| **`where.exe fdk`** shows **two paths** | **`choco install fdk`** (Chocolatey-managed) **plus** CDN global via npm under active nvm; or stale **`fdk.cmd`** |
+
+**Mandatory diagnostics** (paste outputs when debugging):
+
+```powershell
+where.exe node
+Get-Command node -All | Format-Table Name, Source -AutoSize
+"NVM_HOME=$env:NVM_HOME; NVM_SYMLINK=$env:NVM_SYMLINK"
+nvm version
+nvm current
+nvm list
+node --version
+npm config get prefix
+where.exe npm
+where.exe fdk 2>$null
+Get-Command fdk -ErrorAction SilentlyContinue | Format-Table Name, Source -AutoSize
+npm list -g --depth=0 2>$null | Select-String -Pattern "fdk|freshworks"
+```
+
+**Strong signal:** `Get-Command node` resolves **`…\Program Files\nodejs\…`** while you expect **`nvm`** → **PATH conflict** until uninstall/reorder (**sections below**).
+
+### A. Official Node MSI / winget `OpenJS.*` ("installer from nodejs.org")
+
+Usually **`C:\Program Files\nodejs\`**. **Coexists poorly** with nvm-windows unless **only one wins PATH**.
+
+- **For Matrix-aligned FDK 10 (`latest-v24.tgz`):** Prefer **nvm `24.11.x`** as the **only** **`node`** for FDK work. Typical fix: **uninstall “Node.js”** from **Apps** / **`winget uninstall OpenJS.NodeJS.LTS`** (exact id varies), **or** edit **Machine/User PATH** so **nvm symlink root** precedes **`Program Files\nodejs`** — **log out / reboot** stubborn shells.
+- Re-check with **`where.exe node`** after every change.
+
+### B. Microsoft Store Node.js
+
+Sandboxed quirks and versioning delays — **avoid** for reproducible **`fdk`**; use **nodejs.org MSI** aligned with **`nvm-windows`** per this guide.
+
+### C. Chocolatey (`nodejs`, `nodejs-lts`, optional `nvm`)
+
+- **`choco install nodejs`** adds another **`node`** on PATH — **uninstall** or accept **PATH surgery** if you standardize on **nvm install 24.11**.
+- **`choco install nvm`** (nvm-windows) per **Step 1** below is fine; still run **`nvm install 24.11`** **after**.
+
+### D. Winget / Scoop
+
+- **Winget** may install **MSI Node** (same as **A**). **Scoop** shims often sit early in **User PATH** — **`scoop which node`** vs **`where.exe node`** to see order.
+- **Remediation:** Pick **one** Node source for **FDK**; remove the others or fix **PATH** so **`nvm use 24.11`** + **`node -v`** shows **`v24.11.*`**.
+
+### E. `choco install fdk` vs CDN `npm install -g` (two different `fdk` stories)
+
+| Source | Notes |
+|--------|--------|
+| **CDN tarball on active Node** (skill default) | **`fdk`** lives under **that** Node’s global npm bin (via **`nvm use`**) |
+| **`choco install fdk`** | **System-wide** Chocolatey package — **not** the same upgrade/pin path as **tarball + engine matrix** |
+
+If both exist, **`where.exe fdk`** may show **two** entries. For **`docs/engine-matrix.md`**: install **`fdk`** **via npm + CDN** under **`nvm use 24.11`**; **`choco uninstall fdk`** if it shadows (then re-verify).
+
+### F. Typical repair order (non-destructive → clean)
+
+1. Close **all** terminals / IDEs (PATH cache).
+2. **`nvm use 24.11`** → **`node --version`** must be **`v24.11.*`**. If not → **A–D** until fixed.
+3. **`npm uninstall -g @freshworks/fdk`**; **`npm uninstall -g fdk`**; **`npm cache clean --force`**; remove **`%USERPROFILE%\.fdk`** when switching lines.
+4. **`npm install -g "https://cdn.freshdev.io/fdk/latest-v24.tgz"`** on **that** **`node`**.
+5. **New PowerShell** → **`where.exe fdk`**, **`fdk version`**.
+
+### G. Other edge cases
+
+| Case | Action |
+|------|--------|
+| **nvm root path with spaces** (“Program Files”) | May hit symlink edge cases ([`real-world-scenarios.md`](real-world-scenarios.md)); prefer default install location **without** spaces |
+| **npm `EACCES` / can't write globals** | **`references/npm-permissions-sop.md`** — avoid **`Program Files`** npm prefix; use **user-writable** prefix + **nvm** profile |
+| **Antivirus** blocks npm extract | Allow **npm cache** dir; retry; IT exception if needed |
+| **WSL vs Windows** | **Separate** `PATH` — install **`fdk`** in the **same** environment you run **`fdk validate`** (document both if you use both) |
+
+### H. IT policy: cannot uninstall MSI Node
+
+If corporate image pins **Node ≠ 24.11.x**, **`latest-v24.tgz`** may **fail engine checks** at runtime. Request **allowlisted Node 24.11** or **dedicated nvm profile** with **user-writable** global prefix.
+
+---
+
 ## PowerShell: `&&`, PATH, and finding `fdk`
 
 ### `&&` is not valid in Windows PowerShell 5.1
@@ -108,15 +197,22 @@ The uninstall script automatically detects and removes FDK from:
 2. Node 24.x (if present)
 3. Node 18.x (if present)
 
-### fw-setup-use --global Flag (Windows-Specific Behavior)
+### fw-setup-use: session vs global (Windows)
 
-⚠️ **Important**: On Windows with nvm-windows, running `nvm use <version>` automatically sets the global default for all new terminals. This is different from macOS/Linux behavior where `nvm use` only affects the current shell.
+**Authoritative UX:** Slash command **`/fw-setup-use`** (see **`commands/fw-setup-use.md`**) prefers **`skills/fw-setup/scripts/fw-setup-use.ps1`** for **workspace-only / non-`--global`** switches. That prepends the selected Node binaries to **this PowerShell session’s PATH** **without flipping** nvm-windows’ **single system-wide symlink**—so teammates’ default stays unchanged unless they opt in.
 
-**Behavior:**
-- **Without `--global`**: On Windows, `nvm use 24.11` automatically sets Node 24.11 as the default for all new shells
-- **With `--global`**: Explicitly sets the default (same result on Windows, but recommended for clarity and cross-platform consistency)
+**nvm-windows behavior:** **`nvm use <version>`** alone updates which Node version symlinks point at and persists as the effective default machine-wide for many shells—so it can resemble a “global” switch compared to POSIX nvm sessions.
 
-**Recommendation**: Always use `--global` flag when you want to set a permanent default, even though Windows makes it redundant. This ensures consistent behavior if scripts are shared with macOS/Linux users.
+**`--global` on `/fw-setup-use`:** Pass **`-GlobalDefault`** to **`fw-setup-use.ps1`** (see command file)—runs **`nvm use`** / alias behavior so switching **persists intentionally** via nvm-windows. Use when the repo must stay on Node **24.11** vs **18** for everyone opening new terminals **and** everyone agrees.
+
+**Summary**
+
+| Scenario | Prefer |
+|---------|--------|
+| Don’t disturb org-wide default symlink; need FDK in **this IDE shell** only | **`fw-setup-use.ps1`** without `-GlobalDefault` |
+| Persist Node + FDK for **all future shells** (team aligned) | **`-GlobalDefault`** **or** explicit **`nvm use …`** **+** **`nvm alias default …`** |
+
+Do **not** claim “without `--global`” and **`nvm use`** mean the same as **`fw-setup-use.ps1` session PATH** behavior—they are **different mechanics** documented in **`commands/fw-setup-use.md`**.
 
 ## Step 1: Install nvm-windows
 

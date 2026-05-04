@@ -21,7 +21,7 @@
 
 > **FDK VERSION SUPPORT**: 
 > - **FDK 10.x + Node 24.x** (Recommended) - Required for publishing, supported until Dec 2027
-> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends May 30, 2026
+> - **FDK 9.x + Node 18.x** (Deprecated) - Allowed for development only, ends May 31, 2026
 
 > **PLATFORM 3.0 ONLY**: Platform 2.3 is deprecated. Both FDK versions support Platform 3.0.
 
@@ -29,8 +29,13 @@
 
 ## Overview
 
-**fw-setup** installs and manages the Freshworks Development Kit (**FDK**) and **Node.js** via **nvm** on macOS, Windows, and Linux. Use it when the CLI is missing, the wrong major version, or broken across shells; marketplace publishing expects **FDK 10.x** on **Node 24.x**.
+**fw-setup** installs and manages the Freshworks Development Kit (**FDK**) and **Node.js** via **nvm** on macOS, Windows, and Linux. Use it when the CLI is missing, the wrong major version, or broken across shells; marketplace publishing expects **FDK 10.x** on **Node 24.x**. Other skills in this repo: **fw-app-dev**, **fw-ai-actions-app**, **fw-review**, **fw-publish** — inventory **[AGENTS.md](../../AGENTS.md)**.
 
+**Homebrew vs Chocolatey vs CDN (quick analogy)**  
+
+- **Default in this repo:** **`nvm`/`nvm-windows` + CDN tarball** — matches **`docs/engine-matrix.md`**, best for multiple Node/FDK stacks and repeatable installs (**`skills/fw-setup/SKILL.md`** *Why CDN + nvm is default*).
+- **Optional:** **`brew install fdk`** (macOS) or **`choco install fdk`** (Windows) — system-wide installers; simpler for “one laptop, one toolchain,” documented under **`references/macos.md`** (Option B Homebrew), **`references/windows.md`**, and **`references/cross-platform-scenarios.md`**. **`/fw-setup-install`** can detect brew/choco when installed that way.
+- **Windows (MSI / winget / Store / Chocolatey Node):** Multiple **`node.exe`** sources often break **`nvm use 24.11`** visibility—see **`references/windows.md`** *Installer-based setups* (PATH diagnostics, **two `fdk`** shims, cleanup order).
 ## Rules and slash commands (files)
 
 - **Rules:** `rules/fdk-enforcement.mdc`
@@ -73,7 +78,7 @@ Check available commands:
 ```bash
 # In Cursor/Claude chat, type:
 /fw-setup-
-# You should see 6 commands in autocomplete (plus legacy /fdk-* if registered)
+# You should see 7 commands in autocomplete
 ```
 
 ## FDK Version Support Policy
@@ -87,7 +92,7 @@ Check available commands:
 - **Command:** `/fw-setup-install` (default)
 
 ### FDK 9.x + Node 18.x (Deprecated)
-- **Status:** Deprecated, support ends May 30, 2026
+- **Status:** Deprecated, support ends May 31, 2026
 - **Use for:** Development only (legacy projects)
 - **Publishing:** NOT SUPPORTED
 - **Command:** `/fw-setup-downgrade` (shows deprecation warning)
@@ -146,7 +151,7 @@ Logs and a PID file go under `${TMPDIR:-/tmp}/fw-setup-runs/` unless `FDK_RUN_LO
 **Downgrade (`/fw-setup-downgrade`):**
 - Downgrades from FDK 10.x to FDK 9.x (Node 24 → Node 18)
 - Optional **pinned 9.x.y** (`v9.x.y.tgz`) or **latest** 9 line (`latest.tgz`) after HTTP check
-- Shows deprecation warning (FDK 9.x ends May 30, 2026)
+- Shows deprecation warning (FDK 9.x ends May 31, 2026)
 - Requires confirmation before proceeding
 - Complete cleanup of FDK 10.x before installing 9.x
 - Warns that publishing requires FDK 10.x
@@ -253,7 +258,6 @@ fw-setup/
 ├── commands/                  # Slash command definitions (/fw-setup *)
 │   ├── fw-setup-install.md   # optional --version
 │   ├── fw-setup-upgrade.md   # optional --to
-│   ├── 
 │   ├── fw-setup-downgrade.md # optional 9.x.y pin
 │   ├── fw-setup-uninstall.md
 │   ├── fw-setup-status.md    # optional --verbose
@@ -262,13 +266,25 @@ fw-setup/
 │
 ├── scripts/
 │   ├── fw-setup-run-background.sh  # nohup fdk run … (returns immediately)
-│   └── fw-setup-stop-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
+│   ├── fw-setup-stop-shell-tasks.sh # SIGTERM matching fdk run / fdk tunnel (optional --force)
+│   └── detect-install-method.sh     # Helper script for install method detection
+│
+├── rules/
+│   └── fdk-enforcement.mdc   # IDE rules for FDK enforcement
 │
 └── references/                # Loaded by SKILL.md on-demand
-    ├── cross-scenarios.md     # Complex installation scenarios
-    ├── macos.md               # macOS-specific details
-    ├── windows.md             # Windows-specific details
-    └── real-world-scenarios.md # Real-world testing scenarios
+    ├── cross-platform-scenarios.md  # Multi-method install detection & migration
+    ├── cross-scenarios.md           # Detailed subagent specifications
+    ├── error-command-not-found.md   # Troubleshooting fdk command not found
+    ├── interactive-troubleshooting-guide.md  # Manual phased troubleshooting
+    ├── macos.md                     # macOS-specific details (nvm, Homebrew)
+    ├── node-version-sop.md          # Manual SOP for Node version switching
+    ├── npm-permissions-sop.md       # EACCES and global prefix issues
+    ├── nvm-install-sop.md           # Manual nvm installation SOP
+    ├── real-world-scenarios.md      # Real-world testing scenarios
+    ├── shell-persistence-sop.md     # Shell persistence and rc file configuration
+    ├── version-policy.md            # FDK version policy and CDN URLs
+    └── windows.md                   # Windows-specific details (nvm-windows, PATH)
 ```
 
 ### Command Registration

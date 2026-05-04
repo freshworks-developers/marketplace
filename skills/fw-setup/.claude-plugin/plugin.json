@@ -20,6 +20,8 @@
     "platform-3.0",
     "cli"
   ],
+  "rulesDirectory": "./rules",
+  "commandsDirectory": "./commands",
   "interface": {
     "displayName": "Freshworks FDK Setup",
     "shortDescription": "Install and manage FDK with Node.js via nvm.",
@@ -28,12 +30,12 @@
   "commands": [
     {
       "name": "fw-setup-install",
-      "description": "Install FDK 10 + Node 24; optional --version pin",
+      "description": "Install FDK 10 + Node 24.11 via CDN tarball; optional --version semver (vX.Y.Z.tgz)",
       "file": "commands/fw-setup-install.md"
     },
     {
       "name": "fw-setup-upgrade",
-      "description": "Upgrade FDK; use --to X.Y.Z for pinned semver",
+      "description": "Upgrade FDK via CDN latest-v24.tgz or --to X.Y.Z semver (vX.Y.Z.tgz)",
       "file": "commands/fw-setup-upgrade.md"
     },
     {

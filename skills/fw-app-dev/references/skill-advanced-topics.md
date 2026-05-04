@@ -80,16 +80,17 @@ Load this file **on demand** when the task needs: full Platform 2.x rejection ta
 - Request templates with **Object Store file refs**, limits, and **ProxyMS / EKS** context → `references/api/request-template-file-uploads-proxyms-infrastructure-kb.md`
 - OAuth flows → `references/api/oauth-docs.md`
 - Interface / instance → `references/api/interface-method-docs.md`, `instance-method-docs.md`
-- Iparams → `references/runtime/iparams-comparison.md`, `installation-parameters-docs.md`, `custom-iparams-docs.md`
-- Storage → `references/runtime/keyvalue-store-docs.md`, `object-store-docs.md`
+- Iparams → `references/runtime/iparams-comparison.md`, `custom-iparams-docs.md`
+- Storage → `references/runtime/keyvalue-store-docs.md`
 - Jobs / schedules → `references/runtime/jobs-docs.md`
+- Actions → `references/runtime/actions-docs.md`
 
 ### UI
 - Crayons per component → `references/ui/crayons-docs/{component}.md`
 - CDN (ESM + nomodule) as in `SKILL.md`
 
 ### Errors
-- `references/errors/manifest-errors.md`, `request-method-errors.md`, `oauth-errors.md`, `frontend-errors.md`, `server-method-invocation-errors.md`, `installation-parameters-errors.md`, `keyvalue-store-errors.md`, `error-catalog.md`
+- `references/errors/error-catalog.md`, `request-method-errors.md`, `oauth-errors.md`, `frontend-errors.md`, `server-method-invocation-errors.md`, `installation-parameters-errors.md`, `custom-iparams-errors.md`, `keyvalue-store-errors.md`
 
 ### Manifest & CLI
 - `references/manifest/manifest-docs.md`, `references/cli/cli-docs.md`, `references/cli/fdk_create.md`
@@ -173,5 +174,5 @@ Cursor / Claude Code variants – see marketplace README for current install URL
 ## Test-driven validation
 
 - **Refusal:** `references/tests/refusal.json` – never emit these
-- **Violations:** `references/tests/violations.json` – common mistakes to avoid
+- **Golden patterns:** `references/tests/golden.json` – preferred patterns to follow
 - **Security refusal/violation details:** `rules/security.mdc`

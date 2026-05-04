@@ -1,0 +1,319 @@
+---
+name: smart-prerequisites-check
+description: Smart prerequisite check that detects migration scenarios and routes appropriately (replaces basic prerequisites-check.mdc)
+---
+
+# Smart Prerequisites Check — Migration-Aware
+
+**CRITICAL: Run this check BEFORE generating apps, fixing errors, migrating, refactoring, or reviewing.**
+
+## Check Order
+
+1. **Check current toolchain** (Node + FDK versions)
+2. **Check manifest.json** (platform-version + engines) if present
+3. **Apply smart routing logic** based on the combination
+
+## Step 1: Check Toolchain
+
+```bash
+node --version 2>&1
+fdk version 2>&1
+```
+
+Parse output:
+- `NODE_MAJOR` = extract major version (24, 18, etc.)
+- `FDK_MAJOR` = extract major version (10, 9, etc.)
+- `NODE_FOUND` = true if `node --version` succeeds
+- `FDK_FOUND` = true if `fdk version` succeeds
+
+## Step 2: Check Manifest (if present)
+
+If working directory or user-specified directory contains `manifest.json`:
+
+```bash
+# Read manifest.json
+cat manifest.json | grep -E '"platform-version"|"engines"' -A 2
+```
+
+Parse:
+- `MANIFEST_PLATFORM` = value of `platform-version` field ("2.3", "3.0", etc.)
+- `MANIFEST_FDK` = value of `engines.fdk` field
+- `MANIFEST_NODE` = value of `engines.node` field
+
+## Step 3: Smart Routing Logic
+
+**AUTOMATIC ROUTING - NO USER PROMPT:**
+The skill automatically detects the state and takes the appropriate action. Three main scenarios:
+
+| Scenario | Installed Toolchain | Manifest State | Automatic Action |
+|----------|---------------------|----------------|------------------|
+| **A** | FDK 9.x or not found | Platform 2.x | Upgrade toolchain → Migrate → Validate |
+| **B** | FDK 10.x + Node 24.x | Platform 2.x | Migrate → Validate |
+| **C** | FDK 10.x + Node 24.x | Platform 3.0 (engines match) | Validate directly |
+| **D** | FDK 10.x + Node 24.x | Platform 3.0 (engines mismatch) | Update engines → Clean deps → Validate |
+| **E** | FDK 9.x or not found | Platform 3.0 | Upgrade toolchain → Validate |
+
+**Detailed scenario logic:**
+
+### Scenario A: Latest FDK NOT installed + Platform 2.x manifest
+
+**Conditions:**
+- `FDK_MAJOR` != 10 (either 9 or not found)
+- `MANIFEST_PLATFORM` in ["2.3", "2.2", "2.1", missing, or < "3.0"]
+- `MANIFEST_FDK` starts with "9." or `MANIFEST_NODE` starts with "18."
+
+**Diagnosis:** Legacy app needs toolchain upgrade BEFORE migration
+
+**ACTION:** Automatically upgrade toolchain, then migrate. Output exactly this:
+
+```
+⚠️ PLATFORM 2.x APP - UPGRADING TO 3.0
+
+Current state:
+- Manifest platform-version: [value or "missing"]
+- Manifest engines: FDK [value], Node [value]
+- Installed toolchain: FDK [version], Node [version]
+
+This is a Platform 2.x app. Automatically upgrading to Platform 3.0...
+
+Step 1/3: Upgrading toolchain to FDK 10.x + Node 24.x
+```
+
+**Then execute in sequence:**
+
+1. **Call fw-setup to upgrade:**
+   ```
+   If fw-setup skill available:
+     Run: /fw-setup-install
+   Else:
+     Print: "Install fw-setup skill: npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup"
+     STOP and wait for user to install fw-setup
+   ```
+
+2. **After toolchain is FDK 10.x + Node 24.x, migrate:**
+   ```
+   Step 2/3: Migrating app to Platform 3.0
+   Run: /fdk-migrate
+   (this updates manifest, engines, and code patterns)
+   ```
+
+3. **After migration completes:**
+   ```
+   Step 3/3: Validating migrated app
+   (fdk-migrate automatically runs fdk validate)
+   ```
+
+### Scenario B: Latest FDK installed + Platform 2.x manifest
+
+**Conditions:**
+- `FDK_MAJOR` == 10
+- `NODE_MAJOR` == 24
+- `MANIFEST_PLATFORM` in ["2.3", "2.2", "2.1", missing, or < "3.0"]
+- `MANIFEST_FDK` starts with "9." or `MANIFEST_NODE` starts with "18."
+
+**Diagnosis:** Toolchain is ready, migrate directly then validate
+
+**ACTION:** Automatically migrate. Output exactly this:
+
+```
+⚠️ PLATFORM 2.x APP - MIGRATING TO 3.0
+
+Current state:
+- Manifest platform-version: [value or "missing"]
+- Manifest engines: FDK [value], Node [value]
+- Installed toolchain: FDK [version], Node [version] ✅
+
+Toolchain is already FDK 10.x + Node 24.x. Migrating app to Platform 3.0...
+
+Step 1/2: Migrating app to Platform 3.0
+```
+
+**Then execute in sequence:**
+
+1. **Migrate the app:**
+   ```
+   Run: /fdk-migrate
+   (this updates manifest to platform-version 3.0, engines to FDK 10.0.1 + Node 24.11.0, and converts code patterns)
+   ```
+
+2. **After migration completes:**
+   ```
+   Step 2/2: Validating migrated app
+   (fdk-migrate automatically runs fdk validate)
+   ```
+
+### Scenario C: Latest FDK installed + Platform 3.0 manifest + engines match
+
+**Conditions:**
+- `FDK_MAJOR` == 10
+- `NODE_MAJOR` == 24
+- `MANIFEST_PLATFORM` == "3.0"
+- `MANIFEST_FDK` starts with "10."
+- `MANIFEST_NODE` starts with "24."
+
+**Diagnosis:** Everything is aligned, proceed directly to validation
+
+**ACTION:** Output this brief confirmation then proceed:
+
+```
+✅ READY FOR VALIDATION
+
+Current state:
+- Manifest platform-version: 3.0 ✅
+- Manifest engines: FDK [value], Node [value] ✅
+- Installed toolchain: FDK [version], Node [version] ✅
+
+Everything is aligned. Running fdk validate...
+```
+
+**Then execute:**
+
+```
+Run: fdk validate
+(then apply auto-fix loop per validation-workflow.mdc)
+```
+
+### Scenario D: Latest FDK installed + Platform 3.0 manifest + engines mismatch
+
+**Conditions:**
+- `FDK_MAJOR` == 10
+- `NODE_MAJOR` == 24
+- `MANIFEST_PLATFORM` == "3.0"
+- BUT `MANIFEST_FDK` does NOT start with "10." OR `MANIFEST_NODE` does NOT start with "24."
+
+**Diagnosis:** Manifest engines are stale but platform is correct
+
+**This is the case where FDK shows the warning:**
+```
+[WARN] App engines major version mismatch, current versions are Node.js 24.11.1 and FDK 10.1.1
+? To proceed with the current command we have to do the following:
+
+    1. Delete your coverage folder
+    2. Delete node_modules folder
+    3. Change the engines version in manifest
+
+You will have to test your code again. Do you want to continue?
+```
+
+**ACTION:** Output exactly this:
+
+```
+⚠️ MANIFEST ENGINES UPDATE REQUIRED
+
+Current state:
+- Manifest platform-version: 3.0 ✅
+- Manifest engines: FDK [value], Node [value] ⚠️
+- Installed toolchain: FDK [version], Node [version] ✅
+
+Your app is already Platform 3.0, but manifest engines are outdated.
+
+REQUIRED STEPS:
+
+1. Update manifest.json engines to match installed toolchain:
+   "engines": {
+     "node": "24.11.0",
+     "fdk": "10.0.1"
+   }
+
+2. Clean dependencies:
+   rm -rf node_modules coverage .fdk
+   npm install
+
+3. Then validate:
+   fdk validate
+
+Updating now...
+```
+
+**Then immediately:**
+- Update `manifest.json` → `engines` to `"node": "24.11.0"`, `"fdk": "10.0.1"`
+- Run cleanup commands
+- Proceed with user's task
+
+### Scenario E: Old FDK + Platform 3.0 manifest
+
+**Conditions:**
+- `FDK_MAJOR` != 10 (either 9 or not found)
+- `MANIFEST_PLATFORM` == "3.0"
+
+**Diagnosis:** App was already migrated but toolchain is stale
+
+**ACTION:** Output exactly this:
+
+```
+⚠️ TOOLCHAIN UPGRADE REQUIRED
+
+Current state:
+- Manifest platform-version: 3.0 ✅
+- Manifest engines: FDK [value], Node [value]
+- Installed toolchain: FDK [version], Node [version] ⚠️
+
+This app is already Platform 3.0, but your toolchain is outdated.
+
+REQUIRED STEPS:
+
+1. Upgrade toolchain:
+   Run: /fw-setup-install
+
+2. Then retry your command
+
+DO NOT downgrade the manifest. Your toolchain needs upgrade, not the app.
+```
+
+### Scenario F: No manifest.json (new app)
+
+**Conditions:**
+- No `manifest.json` found in working directory
+- User wants to create NEW app
+
+**ACTION:**
+- If `FDK_MAJOR` == 10 and `NODE_MAJOR` == 24: ✅ PROCEED
+- Otherwise: Show basic prerequisites error (use `/fw-setup-install`)
+
+## Special Handling: FDK Warning Prompt
+
+If `fdk validate` outputs the warning:
+```
+[WARN] App engines major version mismatch, current versions are Node.js X and FDK Y
+? To proceed with the current command we have to do the following:
+```
+
+**DO NOT:**
+- ❌ Answer "Y" to this prompt
+- ❌ Try to downgrade FDK/Node to match old engines
+- ❌ Try to fix errors on the old engines
+
+**DO:**
+- ✅ Recognize this as **Scenario D** (engines mismatch)
+- ✅ Update manifest engines to match installed toolchain
+- ✅ Clean dependencies (rm -rf node_modules coverage .fdk)
+- ✅ Then proceed with validation
+
+## Implementation Notes
+
+- This check runs **inline** before ANY fw-app-dev task
+- Takes <2 seconds (reads manifest + runs 2 version commands)
+- **NEVER** try to downgrade FDK/Node to match old manifest engines
+- **ALWAYS** upgrade manifest engines to match installed toolchain (when Platform 3.0)
+- **ALWAYS** upgrade toolchain first before migrating (when Platform 2.x)
+- Migration (`/fdk-migrate`) automatically handles engines update as part of Step 3
+
+## Edge Cases
+
+**Q: User has FDK 10.x but manifest shows FDK 9.x AND platform-version 2.3?**
+A: Scenario B - toolchain ready. Automatically migrate to Platform 3.0, then validate. No prompt.
+
+**Q: User has FDK 9.x but manifest shows FDK 10.x AND platform-version 3.0?**
+A: Scenario E - app migrated, toolchain stale. Automatically upgrade to FDK 10.x + Node 24.x, then validate. No prompt.
+
+**Q: FDK shows version mismatch warning?**
+A: Scenario D - automatically update engines in manifest, clean deps, proceed. DO NOT downgrade toolchain. No prompt.
+
+**Q: User says "just fix the errors, skip migration"?**
+A: Still enforce automatic migration. Platform 2.x apps cannot be validated with modern toolchain. The check runs BEFORE the user's task starts.
+
+**Q: User wants to stay on Platform 2.x with FDK 9.x?**
+A: They should explicitly use `/fw-setup-downgrade` or `/fw-setup-use 9` BEFORE calling fw-app-dev. If fw-app-dev detects Platform 2.x, it assumes migration intent.
+
+**Q: No manifest found but user wants to fix errors?**
+A: Fail with error: "No manifest.json found. Are you in the app root directory?"

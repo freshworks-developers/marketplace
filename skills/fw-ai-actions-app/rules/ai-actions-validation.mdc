@@ -1,0 +1,58 @@
+---
+description: "Run fdk validate after changes; fix blocking errors with limited iterations; ignore style-only noise for AI Actions apps."
+globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/iparams.json,**/manifest.json,**/README.md"
+---
+
+# AI Actions Validation & Autofix
+
+**CRITICAL:** After creating ALL app files, run `fdk validate` automatically and fix fatal errors.
+
+**Before `fdk validate`:** follow **`../../fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*) in this order: **`fw-setup`** if Node/FDK is missing or wrong → **`/fdk-migrate`** for legacy 2.x or old engines → validate. Never downgrade shell or manifest **`engines`** to **9.x / 18** as a shortcut (except **LAST RESORT** in **fw-app-dev** `SKILL.md` when only the toolchain blocks validation).
+
+## Mandatory Post-Creation Process
+
+### Step 1: Run fdk validate
+```bash
+cd <app-directory>
+fdk validate
+```
+
+### Step 2: Fix Fatal Errors Only (2 iterations)
+**FIX:** JSON errors, missing files, manifest structure, request template errors, function name mismatch
+**IGNORE:** Lint warnings, code style suggestions
+
+### Step 3: Present Results
+- If passes: "✅ AI Actions app generated and validated successfully!"
+- If fails: List only FATAL errors with fix directions
+
+## Validation Checklist
+
+### manifest.json
+- [ ] platform-version: "3.0"
+- [ ] modules.common.requests declares all request templates
+- [ ] modules.common.functions declares all action functions with timeout
+- [ ] At least one product module (support_ticket, chat_conversation, etc.)
+- [ ] engines block with node and fdk
+
+### actions.json
+- [ ] Function names match server.js exactly
+- [ ] $schema in parameters and response
+- [ ] All properties have descriptions
+- [ ] required array for mandatory params
+
+### config/requests.json
+- [ ] Host is FQDN only (no path)
+- [ ] Path starts with /
+- [ ] Uses <%= %> not {{}}
+- [ ] Single top-level JSON object
+
+### server.js
+- [ ] Uses $request.invokeTemplate() not .post/.get
+- [ ] Uses renderData(null, data) for success
+- [ ] Uses renderData(error, null) for errors
+- [ ] Function names match actions.json
+
+### test_data
+- [ ] One JSON file per action: server/test_data/actionName.json
+- [ ] Keys match parameter names
+- [ ] Valid sample values

@@ -10,3 +10,5 @@ End-to-end **Platform 3.0** recipes: manifest + `config/requests.json` + `server
 **Out of scope here:** Google Sheets append and other Google-specific operational steps — use **web search** on official Google documentation for scopes, ranges, and URLs, then implement with account OAuth + `access_token` per `references/architecture/oauth-configuration-latest.md`.
 
 **Also read:** `references/events/onTicketUpdate-payload-contract.md` for ticket event payloads; `rules/async-patterns.mdc` for `renderData` on async server methods.
+
+**AI Actions–first integrations** (`actions.json`, SMI, flat request schemas): use sibling skill **[fw-ai-actions-app](../../../fw-ai-actions-app/)** — routing **[AGENTS.md](../../../../AGENTS.md)** (**fw-ai-actions-app**).

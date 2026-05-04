@@ -1,4 +1,4 @@
-## FF-01A — Request templates vs Ajax / fetch / third-party HTTP clients
+## FF-01L — Request templates vs Ajax / fetch / third-party HTTP clients
 
 **Goal:** 
 - Client-side code that talks to product or custom APIs must use the **platform Request API** (request templates in `config/requests.json` and `client.request.invoke`), not raw Ajax, `axios`, `fetch()`, or `XMLHttpRequest`, unless there is a documented platform exception.
@@ -9,7 +9,10 @@
 **Fail:** 
 - `$.ajax`, `axios` (in client UI), `new XMLHttpRequest`, or `fetch()` used for APIs that should go through request templates—unless clearly justified (e.g. static asset, non-platform URL explicitly allowed).
 
-## FF-07A — OAuth client ID and secrets only in OAuth / secure config
+**Fix Message**
+- Use request templates instead for making api requests
+
+## FF-07L — OAuth client ID and secrets only in OAuth / secure config
 
 **Goal:** 
 - OAuth **client ID**, **client secret**, and long-lived OAuth tokens must appear **only** in intended secure configuration (e.g. `config/oauth_config.json`, `iparams`, encrypted fields, or request template iparam bindings)—**not** in general app JS/HTML.
@@ -19,6 +22,9 @@
 
 **Fail:** 
 - Client ID/secret/token patterns in `app/**/*.js`, sidebar scripts, etc., outside approved config files.
+
+**Fix Message**
+- Move clientid/secret & tokens to oauth config files
 
 ## FF-02M — SMI must not be used when request templates will suffice
 

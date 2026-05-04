@@ -2,7 +2,7 @@
   "name": "fw-app-dev",
   "displayName": "Freshworks App Development",
   "version": "1.0.0",
-  "description": "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. Provides /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review commands.",
+  "description": "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 custom apps. Provides /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review commands.",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"

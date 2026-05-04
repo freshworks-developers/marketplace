@@ -1,8 +1,9 @@
 {
   "name": "freshworks-dev-tools",
-  "displayName": "Freshworks",
-  "description": "Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add the fw-dev-mcp server to ~/.cursor/mcp.json or .cursor/mcp.json with your API key from the Developer Portal profile.",
-  "version": "1.1.0",
+  "displayName": "Freshworks Developer Tools",
+  "description": "Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add fw-dev-mcp in ~/.cursor/mcp.json — API key from Developer Portal → Developer API Key → Connect to Developer MCP server",
+  "version": "1.0.0",
+  "logo": "assets/fw-logo.svg",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -21,9 +22,9 @@
     "mcp"
   ],
   "interface": {
-    "displayName": "Freshworks Developer Tooling",
+    "displayName": "Freshworks Developer Tools",
     "shortDescription": "FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish.",
-    "longDescription": "Cursor plugin root for Freshworks skills: fw-setup (FDK/nvm), fw-app-dev (Platform 3.0 apps), fw-ai-app-dev (AI Actions), fw-publish (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT."
+    "longDescription": "Cursor plugin root for Freshworks skills: fw-setup (FDK/nvm), fw-app-dev (Platform 3.0 apps), fw-ai-actions-app (AI Actions), fw-publish (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT."
   },
   "skills": "./skills/"
 }

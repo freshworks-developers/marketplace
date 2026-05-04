@@ -1,6 +1,7 @@
 ---
 name: fw-app-dev
-description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use the fw-setup skill (or prompt the user to add it). Before fdk validate, runs the manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 instead). New apps MUST start with FDK 10.0.1 and Node.js 24.x in manifest engines; FDK 9.x / Node 18 engines are forbidden except the single last-resort downgrade in SKILL.md after six validate iterations when toolchain blocks validation. Use when working with Freshworks apps for (1) Creating new Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging or fixing Platform 3.0 validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, or oauth_config.json files, (5) Implementing Crayons UI components, (6) Integrating external APIs or OAuth providers, (7) Any task involving Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission."
+version: "1.0.0"
+description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup skill. Before fdk validate, follow this SKILL.md Manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 as a shortcut except LAST RESORT after six validate iterations). New apps default to FDK 10.0.1 and Node.js 24.x; FDK 9.x/Node 18.x allowed when explicitly requested with deprecation notice. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission task."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
 allowed-tools: "shell read write strreplace glob grep"
@@ -12,41 +13,49 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **This skill does not install, upgrade, or repair** the Freshworks CLI (**`fdk`**) or **Node.js** (nvm aliases, PATH, global npm prefix). Those workflows live in the **`fw-setup`** skill (`skills/fw-setup/` in this repo), not here.
 
-**MANDATORY PREREQUISITE CHECK — RUN INLINE BEFORE ANY TASK:**
+**MANDATORY SMART PREREQUISITE CHECK — RUN INLINE BEFORE ANY TASK:**
 
-**FIRST ACTION: Check prerequisites (no files, no planning, just check):**
+**FIRST ACTION: Smart prerequisites check (detects migration scenarios):**
 
-Run inline:
-```bash
-node --version 2>&1
-fdk version 2>&1
-```
+This skill now uses **SMART PREREQUISITE CHECKING** that detects whether you're working with:
+- A **Platform 2.x app** that needs migration to 3.0
+- A **Platform 3.0 app** with stale manifest engines
+- A **new app** ready to be generated
+- A **toolchain mismatch** that needs upgrade/downgrade
 
-**Parse output and enforce:**
+**Full logic in:** `rules/smart-prerequisites-check.mdc`
 
-| Condition | Action |
-|-----------|--------|
-| `fdk` command not found | STOP → tell user to run `/fw-setup-install` |
-| Node version NOT v24.x | STOP → tell user to run `/fw-setup-use 10` or `/fw-setup-install` |
-| FDK version NOT 10.x | STOP → tell user to run `/fw-setup-upgrade` |
-| Node v24.x AND FDK 10.x | ✅ PROCEED with task |
+**Quick decision tree:**
 
-**If prerequisites fail, output ONLY this:**
-```
-⚠️ PREREQUISITES NOT MET
+1. **Check toolchain versions:**
+   ```bash
+   node --version 2>&1
+   fdk version 2>&1
+   ```
 
-fw-app-dev requires Node.js 24.x + FDK 10.x
+2. **Check manifest.json** (if present in working directory):
+   - Read `platform-version` field
+   - Read `engines.fdk` and `engines.node` fields
 
-Current:
-- Node: [version or "not found"]
-- FDK: [version or "not found"]
+3. **Route based on combination:**
 
-Fix: [specific command - /fw-setup-install, /fw-setup-upgrade, or /fw-setup-use 10]
+| Installed Toolchain | Manifest State | Action |
+|---------------------|---------------|---------|
+| FDK 9.x / Node 18 | Platform 2.x manifest | STOP → `/fw-setup-install` THEN `/fdk-migrate` |
+| FDK 10.x / Node 24 | Platform 2.x manifest | STOP → `/fdk-migrate` (toolchain ready) |
+| FDK 10.x / Node 24 | Platform 3.0 + engines match | ✅ PROCEED with task |
+| FDK 10.x / Node 24 | Platform 3.0 + engines mismatch | Auto-update engines, clean deps, PROCEED |
+| FDK 9.x / Node 18 | Platform 3.0 manifest | STOP → `/fw-setup-install` (don't downgrade) |
+| Any | No manifest.json | Check toolchain only (new app) |
 
-Then retry your command.
-```
+**CRITICAL: When `fdk validate` shows "App engines major version mismatch" warning:**
+- **DO NOT** answer "Y" to downgrade
+- **DO NOT** try to downgrade FDK/Node to match old engines
+- **DO** update manifest engines to match installed toolchain (FDK 10.x + Node 24.x)
+- **DO** clean dependencies: `rm -rf node_modules coverage .fdk && npm install`
+- **Then** proceed with validation
 
-**STOP. Do not generate files, do not continue. Wait for user to fix.**
+**If any routing logic says STOP, output the specific message from `smart-prerequisites-check.mdc` and WAIT for user to fix.**
 
 **When the user’s shell is missing FDK, on the wrong Node major, or stuck on FDK 9.x for a Platform 3.0 app:**
 
@@ -600,7 +609,7 @@ Next steps:
 
 Before presenting the app, validate against:
 - `references/tests/refusal.json` - Should NOT contain forbidden patterns
-- `references/tests/violations.json` - Should avoid common mistakes
+- `references/tests/golden.json` - Preferred patterns to follow
 
 ---
 
@@ -717,6 +726,39 @@ Next steps:
 4. When ready to publish: use the publish skill
 ```
 
+**THEN, offer MCP configuration (one time only, if not already configured):**
+
+After showing the completion message, check if MCP is already configured and optionally offer setup:
+
+```javascript
+// Check if MCP tools are available
+try {
+  CallMcpTool("fw-dev-mcp", "list_custom_apps", {});
+  // Success: MCP already configured, skip prompt
+} catch {
+  // MCP not configured: offer setup
+  // Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+  Read and follow: skills/fw-publish/subagents/mcp-config-prompt.md
+}
+```
+
+**Brief inline version (if subagent not available):**
+```
+═══════════════════════════════════════════════════════════
+Optional: Configure Marketplace Publishing
+
+Would you like to set up publishing tools now?
+This connects your IDE to the Freshworks Marketplace API.
+
+You can skip this and configure later.
+
+Configure MCP now? (y/N)
+═══════════════════════════════════════════════════════════
+```
+
+If YES → Follow `skills/fw-publish/subagents/mcp-config-prompt.md` (Step 3A.1 onwards)
+If NO → Skip, user can configure later via `/fw-setup-install` or manually
+
 **DO NOT automatically generate:**
 - [INVALID] Detailed validation reports (.validation-report.md)
 - [INVALID] Apps summary documents (APPS-SUMMARY.md)
@@ -746,7 +788,7 @@ Default: mandatory files + short `README.md` only.
 
 ## Installation, tests, product modules
 
-**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/refusal.json`, `references/tests/violations.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
+**Skill install commands:** [`README.md`](README.md). **Structural tests:** `references/tests/refusal.json`, `references/tests/golden.json` (summarized in `references/skill-advanced-topics.md`). **Modules and locations (authoritative):** `rules/platform3-modules-locations.mdc`; short mapping in `references/skill-advanced-topics.md`.
 
 ---
 

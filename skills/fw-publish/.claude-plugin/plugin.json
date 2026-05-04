@@ -1,7 +1,7 @@
 {
   "name": "fw-publish",
   "displayName": "Freshworks Marketplace Publish",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "Publish Platform 3.0 apps to Freshworks Marketplace via MCP tools (app-upload, submit/update). MCP server config is bundled at the repository root .mcp.json.",
   "author": {
     "name": "Freshworks Developers",
