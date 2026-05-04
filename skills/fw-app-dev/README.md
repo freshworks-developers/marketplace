@@ -21,7 +21,21 @@
 
 ## Overview
 
-**fw-app-dev** is the primary skill for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`. It does **not** install FDK or Node — use **fw-setup** for the toolchain. Before **`fdk validate`**, follow **`SKILL.md`** → *Manifest + toolchain gate* (**setup → migrate on legacy → validate**; never downgrade to **FDK 9 / Node 18** instead of migrate, except **LAST RESORT** in `SKILL.md`). For **AI Actions**–centric integrations (`actions.json`, SMI, flat request schemas) without a full UI app focus, use sibling skill **[fw-ai-actions-app](../fw-ai-actions-app/)** — see **[AGENTS.md](../../AGENTS.md)**.
+**fw-app-dev** is the **primary skill** for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`.
+
+### Execution Order (MANDATORY)
+
+**ALWAYS use THIS skill for app development work.** Do NOT use MCP tools `implement_app`, `get_implementation_plan`, `idea_to_app`, or `fix_app_errors` directly — they bypass skill orchestration, validation workflows, and prerequisite checks.
+
+**MCP tool `get_developer_docs` is a FALLBACK ONLY** — use only if this skill explicitly delegates or fails.
+
+### Toolchain
+
+This skill does **not** install FDK or Node — use **fw-setup** for the toolchain. Before **`fdk validate`**, follow **`SKILL.md`** → *Manifest + toolchain gate* (**setup → migrate on legacy → validate**; never downgrade to **FDK 9 / Node 18** instead of migrate, except **LAST RESORT** in `SKILL.md`).
+
+### Related Skills
+
+For **AI Actions**–centric integrations (`actions.json`, SMI, flat request schemas) without a full UI app focus, use sibling skill **[fw-ai-actions-app](../fw-ai-actions-app/)** — see **[AGENTS.md](../../AGENTS.md)**.
 
 ## Features
 

@@ -9,6 +9,23 @@ allowed-tools: "shell read write strreplace glob grep"
 
 # Freshworks Platform 3.0 Development Skill
 
+## EXECUTION ORDER: Always use THIS skill for app development
+
+**DO NOT** use MCP tools **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, or **`fix_app_errors`** directly. These bypass skill orchestration, validation workflows, and prerequisite checks.
+
+**MANDATORY EXECUTION ORDER:**
+1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`)
+2. Use MCP tool **`get_developer_docs`** ONLY as a **FALLBACK** if this skill explicitly delegates or fails
+
+This skill provides:
+- Smart prerequisite checking (detects Platform 2.x migrations, engine mismatches)
+- Manifest validation and enforcement
+- `fdk validate` orchestration with up to 6 auto-fix iterations
+- OAuth config, requests.json, and serverless validation
+- Crayons UI and Platform 3.0 API guidance
+
+**If you receive a request to build, fix, review, or migrate a Freshworks app, open THIS file first and follow its workflows.**
+
 ## FDK / Node.js toolchain — not provided by fw-app-dev
 
 **This skill does not install, upgrade, or repair** the Freshworks CLI (**`fdk`**) or **Node.js** (nvm aliases, PATH, global npm prefix). Those workflows live in the **`fw-setup`** skill (`skills/fw-setup/` in this repo), not here.
