@@ -41,14 +41,14 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - Every rule ID **in the Rule ID summary** below must be evaluated to Pass, Fail, or Not Applicable.
 - Emit the **App Review Result** block exactly as specified in [rules/report.md](rules/report.md):
   - The output is **rendered Markdown**. Do **not** wrap the final report in a code fence (no `\`\`\`text` around the whole block); emit the Markdown directly so headings, lists, and links render in the chat client.
-  - Heading is a level-2 Markdown heading (`## App Review Result — <N> issues found`, singular `1 issue found`). Use `## App Review Result` followed by `successful` only when there are zero failures.
+  - Heading is always the level-2 Markdown heading `## App Review Result` with no suffix. Below it: the word `successful` alone on its own line when there are zero failures; when there are failures, omit `successful` and emit the numbered list per [rules/report.md](rules/report.md).
   - Each failure is one numbered list entry with two paragraphs:
     1. The issue sentence ending with the bracketed clickable location: `<issue>. [ [<filename>(<qualifier>)](<filename>#L<start>-L<end>) ]`.
     2. A 3-space-indented `**Fix:** <imperative remediation>` paragraph attached to the same list item, separated from the issue paragraph by one blank line.
   - The `<qualifier>` is `(N)` for a single line, `(A-B)` for a range, `(<scope label>)` for a named scope without a precise line, or omitted entirely for a whole-file reference. Link target is `<filename>#L<N>` / `<filename>#L<A>-L<B>` / `<filename>` accordingly. Multiple co-located occurrences are placed inside a single pair of outer brackets, comma-separated.
   - The outer `[ ` and ` ]` around the location link are **literal characters** with one space inside each bracket.
   - Do **not** show area names, severity labels, or rule IDs in the output. Sort failures internally by area in the order Iparams (`IP-*`), Structure (`FFS-*`), Frontend (`FF-*`), Readability (`CR-*`), Miscellaneous (`GN-*`).
-  - Apply the **Grouping** rules in [rules/report.md](rules/report.md) before counting `<N>`.
+  - Apply the **Grouping** rules in [rules/report.md](rules/report.md) before emitting the numbered list.
   - Follow the **Writing style** rules: Issue ≤ 120 chars (excluding the bracketed location), one sentence, present tense; Fix ≤ 2 imperative sentences. Do not use the words "approximately", "around line", or "roughly" in the location qualifier.
 - Use rule IDs internally for evaluation only. Omit rule IDs, including any script JSON metadata such as `internal.rule_id`, from the final user-visible report.
 - If a script execution itself fails, do **not** stop the overall review. Ignore that rule inspection for the current run, continue evaluating the remaining rules, and report only the actual rule failures you were able to determine.

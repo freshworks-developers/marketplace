@@ -22,12 +22,12 @@ The word **successful** is alone on its own line, lowercase.
 
 ### One or more failures
 
-Print a level-2 heading with the failure count, then a numbered list with one entry per failure. Each entry is two lines: the **Issue** (with the file location appended at the end) and a **Fix** paragraph indented under the same list item.
+Print the **same** level-2 heading as the no-failures case (`## App Review Result`), with **no** suffix (do not append a failure count or “issues found”). Then print a numbered list with one entry per failure. Each entry is two lines: the **Issue** (with the file location appended at the end) and a **Fix** paragraph indented under the same list item.
 
 Use this exact shape:
 
 ```markdown
-## App Review Result — <N> issues found
+## App Review Result
 
 1. <issue text> [ <location link> ]
 
@@ -40,7 +40,6 @@ Use this exact shape:
 
 Where:
 
-- `<N>` is the total count of numbered entries (after grouping; see "Grouping" below). Use the singular form `1 issue found` when `N == 1`.
 - `<issue text>` is one short, present-tense sentence describing what is wrong.
 - `<location link>` is a clickable Markdown link rendered at the end of the issue line, **wrapped in literal `[ ` and ` ]` brackets with a single space inside each bracket**.
 - The `**Fix:**` paragraph is indented with 3 spaces so it remains attached to the numbered list item.
@@ -79,7 +78,7 @@ Rules:
 ## Layout requirements
 
 - **Only** rules with result **Fail** appear; do not list passing or N/A rules.
-- The header is a Markdown level-2 heading (`## App Review Result …`). Do not use plain text or wrap the report in a code fence.
+- The header is always the Markdown level-2 heading `## App Review Result` (no em dash suffix, no count). Do not use plain text or wrap the report in a code fence.
 - Each failure is a single numbered list entry. The first paragraph is the issue line ending with the bracketed location link. The second paragraph (indented 3 spaces) starts with `**Fix:**`.
 - Separate the issue paragraph and the Fix paragraph with one blank line. Separate consecutive numbered entries with one blank line.
 - Do **not** include internal rule IDs, area names, severity labels, or internal JSON metadata such as `internal.rule_id` in the user-visible output.
@@ -125,7 +124,7 @@ If two rules flag the **same field with overlapping fixes** (for example IP-04A 
 The agent emits the following Markdown directly (not inside a code fence):
 
 ```markdown
-## App Review Result — 4 issues found
+## App Review Result
 
 1. Domain iparam accepts URLs containing http(s):// and lacks hostname-format validation. [ [config/iparams.json(9-13)](config/iparams.json#L9-L13) ]
 
@@ -147,7 +146,7 @@ The agent emits the following Markdown directly (not inside a code fence):
 ### Example — single failure with named scope
 
 ```markdown
-## App Review Result — 1 issue found
+## App Review Result
 
 1. Required iparam has no client-side validation before save. [ [config/assets/iparams.js(validate)](config/assets/iparams.js) ]
 
@@ -170,7 +169,7 @@ Invalid (the report is shown as raw text, no rendering, links are not clickable)
 
 ````markdown
 ```text
-App Review Result — 4 issues found
+App Review Result
 
 1. ...
 ```
