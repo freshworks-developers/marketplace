@@ -42,8 +42,7 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ```
 fw-dev-tools/
 ├── .mcp.json                 # Bundled MCP: fw-dev-mcp (URL + Authorization)
-├── .claude/
-│   └── settings.json         # Claude Code permissions (MCP tool deny list; must match .mcp.json server key)
+├── .claude/                  # (gitignored) Local Claude Code project settings if you use them
 ├── .cursor/                  # (gitignored) Cursor IDE workspace state
 │   └── rules/                # User-specific workspace rules (local, not versioned)
 ├── .claude-plugin/           # Claude Code plugin config

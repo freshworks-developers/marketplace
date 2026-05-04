@@ -85,8 +85,7 @@ TODO.md
 /.windsurf/
 /.agents/
 /.cursor/
-/.claude/*
-!/.claude/settings.json
+/.claude/
 
 # BUT: Allow skill-level plugin configs (versioned for distribution)
 !skills/**/.claude-plugin/

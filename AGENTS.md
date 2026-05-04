@@ -70,7 +70,7 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **`skills/*/assets/templates/**`** — app skeletons
 - **`skills/fw-publish/subagents/**`** — optional deep-dive prompts (no `rules/` or `commands/` trees in that skill)
 - **`.mcp.json`** (repository root) — canonical **`fw-dev-mcp`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
-- **`.claude/settings.json`** — Claude Code project permissions (MCP defaults for this repo; server key must match **`.mcp.json`**)
+- **`.claude/`** (repository root) — **not versioned**; create local Claude Code project settings if needed (MCP server id should match **`.mcp.json`** when configuring publish)
 - **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-dev-tools`**; **`displayName`**: **Freshworks Developer Tools**; optional **`logo`** → **`assets/fw-logo.svg`**); each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface` (same pattern as [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json)).
 - **`assets/fw-logo.svg`** — Umbrella branding for Plugins / marketplace UIs (referenced from **`.cursor-plugin`**, **`.claude-plugin`**, **`.codex-plugin`**, **`.agents/plugins`**).
 
