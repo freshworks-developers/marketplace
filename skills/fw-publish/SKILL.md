@@ -119,9 +119,32 @@ Produces `dist/*.zip`. Reuse an existing zip only if `--force-pack` is not neede
 
 **Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–13. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
 
+**Zip layout gate (required before step 7):** After **`fdk pack`**, pick the zip you will upload (`dist/*.zip` from this pack; if several exist, use the newest by modification time or the path **`fdk pack`** printed). Run:
+
+```bash
+unzip -l 'dist/<app>.zip'
+```
+
+Inspect the **Name** column (last column of each file row):
+
+- **Pass — continue:** At least one archive member is named exactly **`manifest.json`** at the **root** of the zip (not only under a subfolder).
+- **Fail — STOP; do not call `create_app_upload_url`:** **`manifest.json` is missing**, or only **`./manifest.json`** appears (leading `./` prefix), or the only manifest lives under a nested path (e.g. `some-folder/manifest.json`) without a root **`manifest.json`**. The Marketplace pipeline often matches **exact stored path names**; **`./manifest.json` is not treated the same** as **`manifest.json`** for those checks.
+
+**If the gate fails — remediation:**
+
+1. Run **`fdk pack`** again from **`<app-directory>`** (same as above).
+2. If the listing still fails the gate: unpack to a clean directory and re-zip with **explicit** top-level members (avoid **`zip -r … .`**, which commonly records **`./`** prefixes). Example (adjust folder names to match the unpacked tree):
+
+```bash
+rm -rf /tmp/fw-repack && mkdir -p /tmp/fw-repack && unzip -q -o 'dist/<app>.zip' -d /tmp/fw-repack
+cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.json app config server README.md
+```
+
+List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
+
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
 
-Do this **at publish time** — **after** you have a valid zip (steps 4–5) and **before** **`create_app_upload_url`** (step 7). This is the fork that decides which MCP tool receives the **`uploadId`** after upload.
+Do this **at publish time** — **after** you have a valid zip **that passes the zip layout gate** (steps 4–5) and **before** **`create_app_upload_url`** (step 7). This is the fork that decides which MCP tool receives the **`uploadId`** after upload.
 
 **Do not** read **`appId`** from **`.fdk/app-info.json`** for routing or MCP calls.
 
@@ -167,6 +190,7 @@ Use a **single plain `curl`** — no shell variables, **`node -e`**, or **`jq`**
 
 From the app directory (where `fdk pack` wrote `dist/`):
 
+0. Use the **same** `dist/*.zip` file that **passed the zip layout gate** (step 5), including **`…-resubmit.zip`** if you rebuilt it there.
 1. Copy the **`uploadUrl`** value from step 7 **exactly** as returned by MCP (full string).
 2. Run **one** command: paste that URL **inside single quotes** so the shell does not interpret query characters. Use a literal path for the zip.
 
@@ -261,6 +285,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 - **Validation errors (400):** Suggest manifest fixes or use fw-app-dev skill. Common: products vs modules mismatch.
 - **Upload failures:** Retry `create_app_upload_url` + re-upload.
 - **fdk validate / fdk pack failures:** Use fw-app-dev skill to fix; check Node/FDK version alignment. **Do not** upload if validate did not pass (step 4) — draft listings can still be created from bad zips.
+- **Manifest / package layout errors after upload or submit:** Re-run the **Zip layout gate** (end of step 5). If **`./manifest.json`** appears without root **`manifest.json`**, repack per step 5 remediation before **`create_app_upload_url`**.
 
 ## Preconditions
 
@@ -268,6 +293,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 |-------------|--------|
 | Non-sandbox execution | MCP + **`curl`** upload need outbound HTTPS; sandboxed agents/shells typically break publish — use full network / disable sandbox for this flow. |
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
+| Zip member names | After **`fdk pack`**, the upload zip must list **`manifest.json`** at archive root (not only **`./manifest.json`**). See **Zip layout gate** at end of step 5. |
 | `fdk` on PATH | `fdk validate` + `fdk pack`. |
 | MCP tools configured | Claude Code: from root **`.mcp.json`** when the marketplace plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
 | Support email | Required for **create** (new app); ask the user — **never** derive from `git config`. Updates reuse publisher metadata from the existing marketplace app. |
