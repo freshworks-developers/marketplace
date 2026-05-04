@@ -1,7 +1,7 @@
 ---
 name: fw-publish
-description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
-version: "1.3.0"
+description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. At publish time, ask new vs existing listing; list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
+version: "1.0.0"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
@@ -11,6 +11,8 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 
 **Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
 
+**Sandbox:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On network or MCP failures that look like blocking, stop and ask them to rerun publish outside sandbox.
+
 ## Agent playbook (MCP tools)
 
 **Tool names and parameters** match Freshworks **`openai-server`** ([`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)). Hosted MCP: **`https://mcp.freshworks.dev/mcp`**.
@@ -18,7 +20,7 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ### 1. Auth token preflight (MUST be step 1)
 
 Before any MCP tool call, verify that the MCP publish tools are available and authenticated:
-- Attempt to call **`list_custom_apps`** (optionally `{}` or `{ "page": 1, "perPage": 10 }` — follow **`tools/list`** / server schema)
+- Attempt to call **`list_custom_apps`** (optionally `{}` or `{ "page": 1, "perPage": 10 }` — follow **`tools/list`** / server schema). Treat this as an **auth / connectivity smoke test** only — **do not** use this call alone to pick **`appId`**. At **publish time** (step 6), you will ask **new vs existing** again and, for **existing**, call **`list_custom_apps`** for **developer selection** and **MCP handover**.
 - If tools are not available or the call returns an auth error, **STOP and notify the user:**
 
 ```
@@ -96,13 +98,18 @@ The JWT is a **single credential** — it authenticates to `openai-server` and i
   ```
 - **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
 
-### 4. fdk validate
+### 4. fdk validate (pre-publish)
 
-Run `cd <app-directory> && fdk validate` — zero platform errors and zero lint errors required. On failure, suggest using the **fw-app-dev** skill to fix issues.
+Run `cd <app-directory> && fdk validate` and treat the result as the **validity gate** for upload:
+
+- **Required for any upload/submit:** **zero platform errors** and **zero lint errors** (same bar as **fw-app-dev**). If either fails, **STOP** — use the **fw-app-dev** skill to fix; **do not** call **`create_app_upload_url`** or upload a zip.
+- **`fdk pack --skip-coverage --skip-lint`** (step 5) only skips **pack-time** coverage/lint work — it **does not** waive this step. Never infer “app is valid” from pack alone.
+
+**Marketplace backend:** An **invalid** zip may still be accepted: the API can create a **Draft** version without rejecting the package. **Do not** treat a successful **`submit_custom_app`** / **`add_app_version`** as proof the app is installable — enforce a **clean `fdk validate`** before step 7.
 
 ### 5. fdk pack
 
-From the app directory:
+From the app directory (non-interactive; skips pack-time coverage/lint so automation does not block on coverage):
 
 ```bash
 cd <app-directory> && printf 'Y\n' | fdk pack --skip-coverage --skip-lint
@@ -110,16 +117,20 @@ cd <app-directory> && printf 'Y\n' | fdk pack --skip-coverage --skip-lint
 
 Produces `dist/*.zip`. Reuse an existing zip only if `--force-pack` is not needed (agent judgment).
 
-### 6. New listing vs update + select app
+**Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–13. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
 
-**Do not** read **`appId`** from **`.fdk/app-info.json`** for routing or MCP calls. Always resolve the target Marketplace app through **`list_custom_apps`** and **developer selection**.
+### 6. Publish-time routing: new listing vs existing app (MCP handover)
 
-1. Ask whether this publish is a **new Marketplace listing** or an **update** to an existing listing (skip if the user already said which).
-2. **New listing:** use **`submit_custom_app`** after upload (steps 7–10). No `appId` required beforehand.
-3. **Update:** call **`list_custom_apps`**. Present **`apps`** from the response (or the paginated list) to the developer (**`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`**, etc.). **They select** which listing receives this build; use that **`appId`** with **`add_app_version`** in step 10 **when that tool is registered on your MCP server** — confirm with **`tools/list`**; if **`add_app_version`** is absent, stop and tell the developer updates require the tool (openai-server exposes it in phase 2 per **`AppPublishFeature.java`**) or use the developer portal.
-4. If they chose **update** but the list is **empty**, explain that no apps exist on the account and offer **new listing** or cancel.
+Do this **at publish time** — **after** you have a valid zip (steps 4–5) and **before** **`create_app_upload_url`** (step 7). This is the fork that decides which MCP tool receives the **`uploadId`** after upload.
 
-Optional: if only **one** app exists and the developer already confirmed **update**, you may select it **after** showing it and asking for a quick confirm — still **do not** use `.fdk/app-info.json` for `appId`.
+**Do not** read **`appId`** from **`.fdk/app-info.json`** for routing or MCP calls.
+
+1. **Ask explicitly:** Is this publish a **new** Marketplace listing, or an **update** to an **existing** app? (Skip only if the user already stated the same in this session.)
+2. **New listing:** No **`appId`** yet. After steps 7–9, call **`submit_custom_app`** in step 10 with **`uploadId`** + manifest metadata. **MCP handover:** new-app payload + presigned **`uploadId`** only.
+3. **Existing app (update):** Call **`list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**. After steps 7–9, call **`add_app_version`** in step 10 with that **`appId`**, **`uploadId`**, and manifest fields. **MCP handover:** developer-selected **`appId`** + **`uploadId`** (and tool schema parameters). Confirm **`add_app_version`** exists via **`tools/list`**; if absent, stop and tell the developer updates need that tool or the developer portal.
+4. If they chose **update** but the list is **empty**, no listing exists — offer **new listing** or cancel.
+
+Optional: if only **one** app exists and they already chose **update**, show that row and ask for a one-line confirm before using its **`appId`** — still **never** take **`appId`** from `.fdk/app-info.json`.
 
 ### 7. Create app-upload URL
 
@@ -127,11 +138,26 @@ Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSe
 
 ### 8. App-upload (PUT zip binary)
 
+Use a **single plain `curl`** — no shell variables, **`node -e`**, or **`jq`** to parse or splice the upload URL into the command. Those patterns often **mangle** presigned URLs (`?`, `&`, `%`) and cause **`403`** on PUT.
+
 From the app directory (where `fdk pack` wrote `dist/`):
 
+1. Copy the **`uploadUrl`** value from step 7 **exactly** as returned by MCP (full string).
+2. Run **one** command: paste that URL **inside single quotes** so the shell does not interpret query characters. Use a literal path for the zip.
+
 ```bash
-curl -X PUT --data-binary @dist/<app>.zip "<uploadUrl>"
+curl -X PUT -H "Content-Type: application/zip" --data-binary @dist/<app>.zip 'https://…full-presigned-upload-url…'
 ```
+
+Optional — print only the HTTP status (useful when debugging):
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}" -X PUT -H "Content-Type: application/zip" --data-binary @dist/<app>.zip 'https://…full-presigned-upload-url…'
+```
+
+If the presigned URL was generated with different **signed headers**, match the **`Content-Type`** (and any other signed headers) the API used when creating the URL; if you get **`403`**, try the header value from that step. A successful S3 PUT typically returns **200**.
+
+**Auto-run / sandbox:** Restricted sandboxes often cause upload **`403`** or network failures — use **non-sandbox** / full network for this step (see **Sandbox** at top).
 
 Do **not** base64-encode the zip. Do **not** paste the **app-upload** URL into chat or tickets.
 
@@ -142,7 +168,9 @@ Read `manifest.json` in the app directory. Extract:
 - `modules` keys (e.g. `["common", "support_ticket"]`)
 - `name` (if present) for `appName`
 
-### 10. Call the appropriate MCP tool
+### 10. Call the appropriate MCP tool (deploy / version handover)
+
+Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**; **existing** → **`add_app_version`** with the **developer-selected `appId`**.
 
 **New app** — **`submit_custom_app`**:
 
@@ -151,7 +179,7 @@ Read `manifest.json` in the app directory. Extract:
 | `appName` | manifest `name` or directory name |
 | `appDescription` | ask user or default |
 | `appOverview` | ask user or derive from description (max 150 chars) |
-| `supportEmail` | ask user (required for new app; no separate on-disk token file) |
+| `supportEmail` | **Ask the user** (required for new app). **Never** use `git config user.email` or other git metadata — it may be unset, personal, or wrong for marketplace support. |
 | `alternateEmail` | optional |
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys (see **`openai-server`** tool schema — at least one non-`common` module may be required) |
@@ -201,23 +229,25 @@ Also available on the same MCP server (optional idea → plan → implement guid
 ## Error handling
 
 - **401/403 from any MCP tool:** STOP immediately and show the auth setup instructions from step 1. The token may be expired, misconfigured, or missing. Do not retry — prompt the user to fix their token and re-run.
+- **403 on PUT to `uploadUrl` (app-upload):** Usually **presigned URL corruption** (shell mangled `?` / `&` / `%`) or **wrong `Content-Type`** vs what was signed. Fix: plain **`curl`** with the URL in **single quotes** (step 8), correct **`Content-Type`**, no `node`/`jq` URL assembly. Also try **non-sandbox** if auto-run blocks the request.
 - **Validation errors (400):** Suggest manifest fixes or use fw-app-dev skill. Common: products vs modules mismatch.
 - **Upload failures:** Retry `create_app_upload_url` + re-upload.
-- **fdk validate / fdk pack failures:** Use fw-app-dev skill to fix; check Node/FDK version alignment.
+- **fdk validate / fdk pack failures:** Use fw-app-dev skill to fix; check Node/FDK version alignment. **Do not** upload if validate did not pass (step 4) — draft listings can still be created from bad zips.
 
 ## Preconditions
 
 | Requirement | Notes |
 |-------------|--------|
+| Non-sandbox execution | MCP + **`curl`** upload need outbound HTTPS; sandboxed agents/shells typically break publish — use full network / disable sandbox for this flow. |
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
 | `fdk` on PATH | `fdk validate` + `fdk pack`. |
 | MCP tools configured | Claude Code: from root **`.mcp.json`** when the marketplace plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
-| Support email | Required for **create** (new app); updates reuse publisher metadata from the existing marketplace app. |
-| App identity for updates | Developer picks **`appId`** from **`list_custom_apps`** (step 6). Do not use `.fdk/app-info.json` for routing. |
+| Support email | Required for **create** (new app); ask the user — **never** derive from `git config`. Updates reuse publisher metadata from the existing marketplace app. |
+| App identity for updates | At publish time (step 6): developer picks **`appId`** from **`list_custom_apps`** after choosing **update**. Do not use `.fdk/app-info.json` for routing. |
 
 ## Optional: list apps
 
-For **updates**, **`list_custom_apps`** is part of **step 6** (developer selects `appId`). You may also call it anytime to inspect apps on the account without publishing.
+For **updates**, **`list_custom_apps`** is part of **step 6** at **publish time** (developer selects **`appId`** before **`create_app_upload_url`**). You may also call it anytime to inspect apps on the account without publishing — that browse call is separate from the **publish-time** selection and **`appId`** handover to **`add_app_version`**.
 
 ## Links
 

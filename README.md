@@ -137,7 +137,7 @@ Canonical strings come from **`.cursor-plugin/plugin.json`**, **`.claude-plugin/
 |-------|--------|
 | **Plugin id** | `freshworks-dev-tools` |
 | **Display name** | Freshworks Developer Tools |
-| **Version** | `1.1.0` |
+| **Version** | `1.0.0` |
 | **Short tagline** | FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish. |
 | **Description (umbrella)** | Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add **fw-dev-mcp** per **[AGENTS.md](AGENTS.md)** (Developer Portal JWT). |
 | **Long blurb (Cursor `interface`)** | Cursor plugin root for Freshworks skills: **fw-setup** (FDK/nvm), **fw-app-dev** (Platform 3.0 apps), **fw-ai-actions-app** (AI Actions), **fw-publish** (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT. |
