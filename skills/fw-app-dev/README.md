@@ -21,7 +21,7 @@
 
 ## Overview
 
-**fw-app-dev** is the primary skill for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`. It does **not** install FDK or Node — use **fw-setup** for the toolchain.
+**fw-app-dev** is the primary skill for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`. It does **not** install FDK or Node — use **fw-setup** for the toolchain. For **AI Actions**–centric integrations (`actions.json`, SMI, flat request schemas) without a full UI app focus, use sibling skill **[fw-ai-actions-app](../fw-ai-actions-app/)** — see **[AGENTS.md](../../AGENTS.md)**.
 
 ## Features
 

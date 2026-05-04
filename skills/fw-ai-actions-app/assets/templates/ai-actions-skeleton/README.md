@@ -1,4 +1,6 @@
-# AI Actions App
+# AI Actions App (template)
+
+Generated layout for **Platform 3.0** AI Actions. Skill id for authoring and validation rules: **`fw-ai-actions-app`** — see **[AGENTS.md](../../../../../AGENTS.md)** and the skill **[README.md](../../../README.md)**.
 
 A Freshworks marketplace app that provides AI actions for external API integration.
 

@@ -1,6 +1,6 @@
-# AI Actions skill
+# fw-ai-actions-app
 
-Skill id: **`fw-ai-actions-app`** — Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation).
+Skill id: **`fw-ai-actions-app`** (same as plugin / `npx skills add --skill` name) — Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation). Canonical routing: **[AGENTS.md](../../AGENTS.md)** → **fw-ai-actions-app**.
 
 ## Overview
 
