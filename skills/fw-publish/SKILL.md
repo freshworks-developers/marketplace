@@ -102,7 +102,8 @@ The JWT is a **single credential** — it authenticates to `openai-server` and i
 
 - Read `engines.node` and `engines.fdk` from `manifest.json` in the app directory
 - Check active versions: `node --version` and `fdk --version`
-- **If mismatch, STOP and inform user:**
+- **If `fdk` is missing** (`fdk --version` fails / command not found): **STOP**. Do **not** auto-install or assume “latest FDK” without asking. Tell the user the Freshworks CLI is required for **`fdk validate`** / **`fdk pack`**. Offer **`fw-setup`**: **`/fw-setup-install`** (default FDK **10.x** on Node **24.11**). **Optional one-shot:** **“Run `/fw-setup-install` now? (y/n)”** — only on **yes**, follow **`skills/fw-setup/SKILL.md`**; on **no**, end until the user installs manually. **Do not** continue to step 4 until **`fdk`** is available (unless the user explicitly overrides with understanding of the risk).
+- **If versions mismatch** (but `fdk` is present), **STOP and inform user:**
   ```
   Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
 

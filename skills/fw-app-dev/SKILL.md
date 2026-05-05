@@ -84,6 +84,15 @@ This skill now uses **SMART PREREQUISITE CHECKING** that detects whether you're 
 
 Do not treat fw-app-dev as a substitute for a missing **`fdk`** binary or for Node/FDK version management.
 
+### Missing `fdk` (not installed / not on PATH)
+
+If **`fdk version`** fails (**command not found**, exit non-zero, or no usable CLI):
+
+1. **STOP** — do **not** run **`fdk validate`**, **`fdk pack`**, **`fdk run`**, or generate apps that depend on the CLI.
+2. **Tell the user** the Freshworks **`fdk`** CLI is missing or unavailable.
+3. **Offer** the **`fw-setup`** skill — canonical slash commands **`/fw-setup-install`** (latest FDK **10.x** line on Node **24.11**) or **`/fw-setup-status`** to diagnose. **Do not** silently install FDK in the background or assume the user wants “latest” without asking.
+4. **Optional one-shot:** ask **“Run `/fw-setup-install` now? (y/n)”** — only if the user answers **yes**, invoke **`fw-setup`** per its **`SKILL.md`** / **`commands/`**; if **no**, wait until they install manually and re-invoke **fw-app-dev**.
+
 ## Manifest + toolchain gate **before** any `fdk validate`
 
 Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection.
@@ -95,7 +104,7 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 
 | Condition | Action |
 |-----------|--------|
-| **`fdk` missing**, Node major ≠ **24**, or FDK major ≠ **10** | **STOP** → **`fw-setup`** (`/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, …) per the prerequisite table. **Do not** lower **`manifest.json` → `engines`** to **18** / **9.x** to match a bad shell. **Do not** install **FDK 9** or switch to **Node 18** to satisfy a legacy manifest. |
+| **`fdk` missing**, Node major ≠ **24**, or FDK major ≠ **10** | **STOP** → offer **`fw-setup`** (`/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, …). If **`fdk`** is **missing**, follow **Missing `fdk`** above (explain → offer `/fw-setup-install` → optional **“Run `/fw-setup-install` now? (y/n)”** — **no** silent install). **Do not** lower **`manifest.json` → `engines`** to **18** / **9.x** to match a bad shell. **Do not** install **FDK 9** or switch to **Node 18** to satisfy a legacy manifest. |
 | Toolchain **OK** (Node **24.x** + FDK **10.x**) but **`platform-version`** is missing or not **`"3.0"`** | **Do not** use **`fdk validate`** as the first remediation. Run **`/fdk-migrate`** through Platform **3.0** + **`engines`** **`24.11.0` / `10.0.1`** (or newer **patch** lines that match the installed CLI), **then** **`fdk validate`**. |
 | Toolchain **OK**, **`platform-version`** is **`3.0`**, but **`engines`** still **`node` 18.x** and/or **`fdk` 9.x** | Treat as **incomplete migration**: **raise** **`engines`** to skill defaults (or installed patch versions) — same as **`/fdk-migrate`** Step 3 — **then** **`fdk validate`**. **Never** downgrade the shell to match the file. |
 | Toolchain **OK**, **`3.0`**, **`engines`** already **Node 24.x** + **FDK 10.x** | Run **`fdk validate`**. |

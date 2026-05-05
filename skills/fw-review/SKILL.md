@@ -9,6 +9,8 @@ compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-orien
 
 This is an automated pipeline. **After the app directory is determined (Q1 pre-flight below),** do not ask further questions or interact with the user for disambiguation — execute the remaining phases silently and produce **only** the formatted **App Review Result** block in [rules/report.md](rules/report.md). Do not prefix or suffix that block with commentary (no Pass/N/A rationales, script notes, or pipeline status).
 
+**Exception:** If **`fdk`** is **missing**, follow **FDK CLI availability** below (STOP → offer **`/fw-setup-install`** → optional **y/n**) — that interaction overrides “silent only” until the CLI exists or the user declines install.
+
 ## Pre-flight: determine app directory (Q1)
 
 **Before** the workflow, follow the same steps as **fw-app-dev** [`/fdk-fix` Step 1: Determine app directory](../fw-app-dev/commands/fdk-fix.md):
@@ -29,6 +31,14 @@ Run these phases in order. Detailed inspection criteria: [rules/**.md]. Emit fai
 ### FDK CLI availability (Docker / CI / local)
 
 The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and is **not** assumed to exist in generic CI images. Jenkins or Kubernetes **node** images typically include **Node only**, not `fdk`. Verify FDK is installed (for example `/fw-setup-status` from the **fw-setup** skill, or `fdk --version` when the CLI is on `PATH`).
+
+**If `fdk` is missing** (`fdk --version` fails / command not found):
+
+- **STOP** — do **not** silently install the CLI or continue as if **`fdk validate`** were available.
+- **Tell the user** the **`fdk`** CLI is required for a complete review where validation applies, and that **fw-review** does **not** install it.
+- **Offer** **`fw-setup`**: **`/fw-setup-install`** (FDK **10.x** + Node **24.11** defaults) or **`/fw-setup-status`**. **Do not** auto-install without consent.
+- **Optional one-shot:** ask **“Run `/fw-setup-install` now? (y/n)”** — only on **yes**, route to **`skills/fw-setup/`**; on **no**, instruct the user to install and re-run **`fw-review`**.
+- **Output exception:** For this toolchain-only stop, the reply **may** be the short message above instead of the **`## App Review Result`** block — do **not** emit a full **App Review Result** pretending all phases ran until **`fdk`** is available and the pipeline can execute.
 
 1. **Structure** — Read `manifest.json` in the app directory first for platform version, modules, requests, events, and install flow.
 2. **Installation parameters** — In the app directory, review `config/iparams.json` or custom `config/iparams.html` / `config/assets/iparams.js` using [rules/iparam-rules.md](rules/iparam-rules.md). Follow the discovery order in that file.
