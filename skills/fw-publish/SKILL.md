@@ -11,7 +11,7 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 
 **Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
 
-**Sandbox:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On network or MCP failures that look like blocking, stop and ask them to rerun publish outside sandbox.
+**Sandbox / agent egress:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). Some **cloud or CI agent** runtimes send HTTPS through a **proxy, gateway, or assumed IAM role** that is **not allowed** to `PUT` to the Marketplace app-upload bucket (`fa-*-app-uploads`…): S3 returns **`403` / `AccessDenied`** even when the presigned URL is valid. That is **not** fixed by switching to Python or `requests` — the block is **environment policy**, not curl vs urllib. **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On **403 PUT** after following step 8 exactly, **hand over** the one-line **`curl`** for the user to run **on their local machine** (see step 8).
 
 ## Agent playbook (MCP tools)
 
@@ -186,13 +186,16 @@ Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSe
 
 ### 8. App-upload (PUT zip binary)
 
-Use a **single plain `curl`** — no shell variables, **`node -e`**, or **`jq`** to parse or splice the upload URL into the command. Those patterns often **mangle** presigned URLs (`?`, `&`, `%`) and cause **`403`** on PUT.
+Use a **single plain `curl`** only — **do not** substitute **Python** (`urllib.request`, `requests`, …), **Node** (`fetch` / `node -e`), **`jq`**-assembled URLs, or other HTTP clients for this step unless you are **certain** traffic reaches **S3 directly** with the **exact** presigned URL bytes. Agents often pick Python anyway; in **managed / cloud** environments that path still hits **403** when egress or IAM blocks bucket `PUT`. **`curl` from the developer’s local terminal** is the supported, reproducible path.
+
+Also **no** shell variables or **`node -e`** / **`jq`** to parse or splice the upload URL into the command — those patterns often **mangle** presigned URLs (`?`, `&`, `%`) and cause **`403`** on PUT.
 
 From the app directory (where `fdk pack` wrote `dist/`):
 
 0. Use the **same** `dist/*.zip` file that **passed the zip layout gate** (step 5), including **`…-resubmit.zip`** if you rebuilt it there.
 1. Copy the **`uploadUrl`** value from step 7 **exactly** as returned by MCP (full string).
-2. Run **one** command: paste that URL **inside single quotes** so the shell does not interpret query characters. Use a literal path for the zip.
+2. Run **one** command: paste that URL **inside single quotes** so the shell does not interpret query characters. Use a literal path for the zip. Prefer running this **`curl`** on the **user’s machine** (local Terminal / IDE terminal with **full network**, not a locked-down remote worker).
+3. If **`curl` from the agent returns `403`** but the URL is pasted correctly: **stop retrying with Python or other clients**; give the user the **same** command block to run **locally**, then continue MCP steps (**`submit_custom_app`** / **`add_app_version`**) from the IDE after they confirm **HTTP 200**. Mint a **fresh** **`uploadId`** via **`create_app_upload_url`** if the presigned URL may have expired.
 
 ```bash
 curl -X PUT -H "Content-Type: application/zip" --data-binary @dist/<app>.zip 'https://…full-presigned-upload-url…'
@@ -281,7 +284,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 ## Error handling
 
 - **401/403 from any MCP tool:** STOP immediately and show the auth setup instructions from step 1. The token may be expired, misconfigured, or missing. Do not retry — prompt the user to fix their token and re-run.
-- **403 on PUT to `uploadUrl` (app-upload):** Usually **presigned URL corruption** (shell mangled `?` / `&` / `%`) or **wrong `Content-Type`** vs what was signed. Fix: plain **`curl`** with the URL in **single quotes** (step 8), correct **`Content-Type`**, no `node`/`jq` URL assembly. Also try **non-sandbox** if auto-run blocks the request.
+- **403 on PUT to `uploadUrl` (app-upload):** (1) **Presigned URL corruption** — shell mangled `?` / `&` / `%`, or **wrong `Content-Type`** vs what was signed. Fix: plain **`curl`**, URL in **single quotes** (step 8), **`Content-Type: application/zip`**, no variable splicing. (2) **Agent / cloud egress** — urllib, `requests`, or even `curl` from a **restricted worker** can get **S3 `AccessDenied`** because the request never reaches S3 with the presigned signature as intended (proxy, IAM, or network policy). Fix: **do not** switch to Python; have the **developer run step 8 `curl` locally**; refresh **`create_app_upload_url`** if needed. (3) **Sandbox** — allow full network or run upload outside sandbox.
 - **Validation errors (400):** Suggest manifest fixes or use fw-app-dev skill. Common: products vs modules mismatch.
 - **Upload failures:** Retry `create_app_upload_url` + re-upload.
 - **fdk validate / fdk pack failures:** Use fw-app-dev skill to fix; check Node/FDK version alignment. **Do not** upload if validate did not pass (step 4) — draft listings can still be created from bad zips.
@@ -291,6 +294,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 
 | Requirement | Notes |
 |-------------|--------|
+| Upload host | **`curl` PUT** must reach S3 for the presigned bucket; cloud agent egress may always **403** — use **local** terminal or unconstrained network (step 8). |
 | Non-sandbox execution | MCP + **`curl`** upload need outbound HTTPS; sandboxed agents/shells typically break publish — use full network / disable sandbox for this flow. |
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
 | Zip member names | After **`fdk pack`**, the upload zip must list **`manifest.json`** at archive root (not only **`./manifest.json`**). See **Zip layout gate** at end of step 5. |
