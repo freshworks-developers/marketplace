@@ -1,6 +1,6 @@
 ---
 name: fw-publish
-description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. At publish time, ask new vs existing listing; list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
+description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Pre-publish: confirm Developer JWT matches manifest product modules (Freshdesk support_* vs Freshservice service_*; multiproduct sequential). At publish time, ask new vs existing listing; for new listings, prompt for supportEmail before create_app_upload_url (required for submit_custom_app). list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace for QA (test) or review, check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
 version: "1.0.0"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
@@ -74,6 +74,29 @@ The JWT is a **single credential** — it authenticates to `openai-server` and i
 4. If **none**: Inform the user and stop.
 
 **Maintenance:** When **fw-app-dev** command playbooks change their “determine app directory” steps (e.g. `fdk-fix`, `fdk-migrate`, `fdk-review`, `fdk-refactor`), update this step to stay in lockstep with [`fdk-fix.md`](../fw-app-dev/commands/fdk-fix.md) Step 1 unless intentionally diverging.
+
+### 2.5 Pre-publish: Developer JWT ↔ product (manifest modules)
+
+**Why:** The MCP **Developer API key (JWT)** is tied to a **Freshworks developer account**. Multiproduct apps (or apps whose manifest mixes product families) must match the **account and product** you intend to publish or installs/API association can fail in confusing ways. Run this **after** step 1 (auth works) and **after** the app directory is known — **before** step 3 (`fdk` / Node checks).
+
+1. **Read** `manifest.json` in the app directory → **`modules`** object keys. Ignore **`common`**. Treat remaining keys as **product module declarations**.
+
+2. **Classify modules** (see [`../fw-app-dev/rules/platform3-modules-locations.mdc`](../fw-app-dev/rules/platform3-modules-locations.mdc)):
+   - **Freshdesk family:** keys whose names start with **`support_`** (e.g. `support_ticket`, `support_contact`, `support_company`, `support_agent`, `support_email`, `support_portal`).
+   - **Freshservice family:** keys whose names start with **`service_`** (e.g. `service_ticket`, `service_asset`, `service_change`, `service_user`, `service_problem`, `service_release`).
+
+3. **Prompt rules** (always require explicit **yes** / choice before continuing):
+
+   | Detected in `modules` | Action |
+   |------------------------|--------|
+   | **Freshdesk only** (≥1 `support_*`, no `service_*`) | Ask the user to **confirm** the configured MCP JWT is for the **Freshdesk** context they intend (same Freshworks developer account / product line they will publish or install against). Example: *“This manifest includes Freshdesk modules (`support_*`). Confirm your Developer MCP token is for the **Freshdesk-linked** account you want to publish under. (yes/no)”* — **STOP** on **no** until they fix **`~/.cursor/mcp.json`** / Claude plugin token or clarify. |
+   | **Freshservice only** (≥1 `service_*`, no `support_*`) | Same pattern for **Freshservice**: confirm JWT matches **Freshservice** intent. **STOP** on **no**. |
+   | **Both** Freshdesk **and** Freshservice modules | Multiproduct / mixed manifest. Ask: **(A)** publish only for **Freshdesk**, **(B)** only for **Freshservice**, or **(C)** both. For **(C)**: **do not** run a single publish blindly — instruct the user to complete **one product at a time**: finish steps **3 → 13** for the **first** product with the JWT that matches **that** product’s developer/account context; then **switch** the MCP JWT to the correct developer account for the **second** product (if different) and **run the full publish flow again** from step **1** for the second pass. If their org uses one JWT for both, still confirm **sequential** publishes and listing/update expectations with the user. |
+   | **Neither** support\_\* nor service\_\* modules (e.g. only CRM `deal` / `contact`) | Briefly note which non-common modules appear and ask the user to **confirm** the JWT matches the **product(s)** those modules belong to (same **STOP** if unsure). |
+
+4. **Optional cross-check:** After **`list_custom_apps`** (step 1 smoke test or step 6), you may compare **`products`** on listings with manifest modules when helping the user pick **`appId`** — mismatches are a sign of wrong account or wrong listing.
+
+**Gate:** Do not continue to **step 3** until Freshdesk/Freshservice (or other product) **confirmation** above is satisfied for the chosen publish scope.
 
 ### 3. Check Node.js and FDK versions (before pack)
 
@@ -180,7 +203,20 @@ Do this **at publish time** — **after** you have a valid zip **that passes the
 
 Optional: if only **one** app exists and they already chose **update**, show that row and ask for a one-line confirm before using its **`appId`** — still **never** take **`appId`** from `.fdk/app-info.json`.
 
+### 6.5 Support email — mandatory before MCP upload chain (step 7)
+
+**Gate:** Do **not** call **`create_app_upload_url`** (step 7), **`submit_custom_app`**, or start the presigned zip upload until this step passes for the relevant publish path.
+
+Missing **`supportEmail`** does **not** always fail at PUT upload — it fails later when calling **`submit_custom_app`** (step 10), after **`uploadId`** is consumed and the zip is already on storage. Users often describe that as an **“app-upload” / publish failure**. Collect **`supportEmail` early** so the MCP submit payload is complete **before** minting **`uploadId`**.
+
+| Publish path (from step 6) | Requirement |
+|----------------------------|---------------|
+| **New listing** | **`submit_custom_app`** **requires** **`supportEmail`**. **Prompt the user explicitly** for a valid, monitored Marketplace support address **before step 7**. Do **not** infer from **`git config user.email`** (may be missing, personal, or wrong). If manifest or docs mention a contact, **confirm** it with the user. Store the confirmed value for step 10. If the user cannot provide **`supportEmail`**, **STOP** — do not proceed to **`create_app_upload_url`**. |
+| **Existing app (update)** | **`add_app_version`** uses **`appId`**, **`platformVersion`**, **`modules`**, **`uploadId`** — **`supportEmail`** is **not** part of the usual **`add_app_version`** payload. No mandatory email prompt for this path unless product/API rules change. |
+
 ### 7. Create app-upload URL
+
+**Prerequisite:** Step **6.5** satisfied for **new listing** ( **`supportEmail`** confirmed **before** this call).
 
 Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSeconds`.
 
@@ -231,7 +267,7 @@ Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**
 | `appName` | manifest `name` or directory name |
 | `appDescription` | ask user or default |
 | `appOverview` | ask user or derive from description (max 150 chars) |
-| `supportEmail` | **Ask the user** (required for new app). **Never** use `git config user.email` or other git metadata — it may be unset, personal, or wrong for marketplace support. |
+| `supportEmail` | **Required for new app** — must already be collected in **step 6.5** before **`create_app_upload_url`**. **Never** use `git config user.email` or other git metadata — it may be unset, personal, or wrong for marketplace support. |
 | `alternateEmail` | optional |
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys (see **`openai-server`** tool schema — at least one non-`common` module may be required) |
@@ -273,7 +309,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 | **`list_custom_apps`** | List all custom apps on developer account. Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. Results sorted by most recently updated first. | Step 1 (auth preflight), Step 6.3a (existing app selection) |
 | **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **Step 6.3b (CRITICAL - check for `development` state before `add_app_version`)**, Step 12 (optional verification) |
 | **`create_app_upload_url`** | Generate presigned S3 upload URL. Returns **`uploadId`**, **`uploadUrl`**, **`httpMethod`** (`"PUT"`), **`expiresInSeconds`**. | Step 7 (before zip upload) |
-| **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`alternateEmail`**, **`zipFileName`**, **`worksWith`** (e.g., `["ai_actions"]`). App moves to **`test`** state after successful submit. | Step 10 (new app path) |
+| **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. Collect **`supportEmail`** before **`create_app_upload_url`** (step **6.5**). Optional: **`alternateEmail`**, **`zipFileName`**, **`worksWith`** (e.g., `["ai_actions"]`). App moves to **`test`** state after successful submit. | Step 10 (new app path) |
 | **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`zipFileName`**, **`worksWith`**. **CANNOT proceed if ANY version is in `development` state** (must be checked via **`list_app_versions`** first; user must delete stuck version via Developer Portal). | Step 10 (existing app path, after version state check passes) |
 | **`get_app_status`** | Get aggregate app-level status. Returns **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`** (reflects all versions), **`products`**. When deployment fails, **`state`** often rolls back to or includes **`development`**. | Step 12 (post-publish verification) |
 
