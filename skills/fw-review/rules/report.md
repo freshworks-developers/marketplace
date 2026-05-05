@@ -4,6 +4,8 @@ Human-readable **summary** the pipeline prints after evaluating the rule IDs lis
 
 The output is **rendered Markdown**, not a fenced text block. Do not wrap the final report in triple backticks. Emit headings, bold text, lists, and links directly so the chat client renders them.
 
+**Scope:** User-visible output from the review **is only** the content described in sections *No failures* / *One or more failures* below. Do **not** print a preamble or footnote explaining passes, omissions, scripts, missing FDK, or how N/A was chosen.
+
 ---
 
 ## User-visible output
@@ -22,12 +24,12 @@ The word **successful** is alone on its own line, lowercase.
 
 ### One or more failures
 
-Print a level-2 heading with the failure count, then a numbered list with one entry per failure. Each entry is two lines: the **Issue** (with the file location appended at the end) and a **Fix** paragraph indented under the same list item.
+Print the **same** level-2 heading as the no-failures case (`## App Review Result`), with **no** suffix (do not append a failure count or “issues found”). Then print a numbered list with one entry per failure. Each entry is two lines: the **Issue** (with the file location appended at the end) and a **Fix** paragraph indented under the same list item.
 
 Use this exact shape:
 
 ```markdown
-## App Review Result — <N> issues found
+## App Review Result
 
 1. <issue text> [ <location link> ]
 
@@ -40,7 +42,6 @@ Use this exact shape:
 
 Where:
 
-- `<N>` is the total count of numbered entries (after grouping; see "Grouping" below). Use the singular form `1 issue found` when `N == 1`.
 - `<issue text>` is one short, present-tense sentence describing what is wrong.
 - `<location link>` is a clickable Markdown link rendered at the end of the issue line, **wrapped in literal `[ ` and ` ]` brackets with a single space inside each bracket**.
 - The `**Fix:**` paragraph is indented with 3 spaces so it remains attached to the numbered list item.
@@ -79,10 +80,11 @@ Rules:
 ## Layout requirements
 
 - **Only** rules with result **Fail** appear; do not list passing or N/A rules.
-- The header is a Markdown level-2 heading (`## App Review Result …`). Do not use plain text or wrap the report in a code fence.
+- The header is always the Markdown level-2 heading `## App Review Result` (no em dash suffix, no count). Do not use plain text or wrap the report in a code fence.
 - Each failure is a single numbered list entry. The first paragraph is the issue line ending with the bracketed location link. The second paragraph (indented 3 spaces) starts with `**Fix:**`.
 - Separate the issue paragraph and the Fix paragraph with one blank line. Separate consecutive numbered entries with one blank line.
-- Do **not** include internal rule IDs, area names, severity labels, or internal JSON metadata such as `internal.rule_id` in the user-visible output.
+- Do **not** include internal **rule IDs** (e.g. `GN-02L`, `IP-04A`, `FFS-04L`, `FF-07L`, `CR-05L`), **area labels** shown to the user (`Iparams`, `Miscellaneous`), severity labels, or internal JSON metadata such as `internal.rule_id` anywhere in emitted output—including any line intended for the developer reading the chat.
+- Do **not** cite this skill’s **markdown or script paths** in emitted output (`script-check-rules.md`, `iparam-rules.md`, other `rules/*.md`, `scripts/*.js`).
 - Do **not** wrap the final report in triple backticks.
 
 ## Writing style
@@ -125,7 +127,7 @@ If two rules flag the **same field with overlapping fixes** (for example IP-04A 
 The agent emits the following Markdown directly (not inside a code fence):
 
 ```markdown
-## App Review Result — 4 issues found
+## App Review Result
 
 1. Domain iparam accepts URLs containing http(s):// and lacks hostname-format validation. [ [config/iparams.json(9-13)](config/iparams.json#L9-L13) ]
 
@@ -147,7 +149,7 @@ The agent emits the following Markdown directly (not inside a code fence):
 ### Example — single failure with named scope
 
 ```markdown
-## App Review Result — 1 issue found
+## App Review Result
 
 1. Required iparam has no client-side validation before save. [ [config/assets/iparams.js(validate)](config/assets/iparams.js) ]
 
@@ -164,13 +166,27 @@ successful
 
 ## Anti-patterns — do NOT do this
 
+### Preamble or footnote exposing rule IDs or skill files
+
+Invalid (anything before `## App Review Result` that names a rule ID, cites `rules/*.md` / `scripts/*.js`, or explains Pass/N/A omissions):
+
+```markdown
+GN-02L is Not applicable when FDK is missing on PATH (per `script-check-rules.md`); …
+
+## App Review Result
+
+…
+```
+
+Correct: start **only** with `## App Review Result`; omit pipeline narrative entirely.
+
 ### Wrapping the entire report in a code fence
 
 Invalid (the report is shown as raw text, no rendering, links are not clickable):
 
 ````markdown
 ```text
-App Review Result — 4 issues found
+App Review Result
 
 1. ...
 ```
