@@ -9,9 +9,9 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 
 **MANDATORY PREREQUISITE:** Run **fw-review** skill before publishing to ensure marketplace compliance. The review checks iparams, frontend files, security patterns, and generates a structured audit report. Do not proceed with publishing until review passes.
 
-**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
+**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. **Currently, only `test` state is supported.**
 
-**Sandbox / agent egress:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). Some **cloud or CI agent** runtimes send HTTPS through a **proxy, gateway, or assumed IAM role** that is **not allowed** to `PUT` to the Marketplace app-upload bucket (`fa-*-app-uploads`…): S3 returns **`403` / `AccessDenied`** even when the presigned URL is valid. That is **not** fixed by switching to Python or `requests` — the block is **environment policy**, not curl vs urllib. **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On **403 PUT** after following step 8 exactly, **hand over** the one-line **`curl`** for the user to run **on their local machine** (see step 8).
+**Sandbox / agent egress:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). Some **cloud or CI agent** runtimes send HTTPS through a **proxy, gateway, or assumed IAM role** that is **not allowed** to `PUT` to the Marketplace app-upload bucket (`fa-*-app-uploads`…): S3 returns **`403` / `AccessDenied`** even when the presigned URL is valid. **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On **403 PUT** after following step 8 exactly, ask the user to run the same script command **on their local machine** (see step 8).
 
 ## Agent playbook (MCP tools)
 
@@ -20,47 +20,56 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ### 1. Auth token preflight (MUST be step 1)
 
 Before any MCP tool call, verify that the MCP publish tools are available and authenticated:
-- Attempt to call **`list_custom_apps`** (optionally `{}` or `{ "page": 1, "perPage": 10 }` — follow **`tools/list`** / server schema). Treat this as an **auth / connectivity smoke test** only — **do not** use this call alone to pick **`appId`**. At **publish time** (step 6), you will ask **new vs existing** again and, for **existing**, call **`list_custom_apps`** for **developer selection** and **MCP handover**.
-- If tools are not available or the call returns an auth error, **STOP and notify the user:**
+- Attempt to call **`list_custom_apps`** (optionally `{}` or `{ "page": 1, "perPage": 10 }`). Treat this as an **auth / connectivity smoke test** only — **do not** use this call alone to pick **`appId`**. At **publish time** (step 6), you will ask **new vs existing** again and, for **existing**, call **`list_custom_apps`** for developer selection.
+- If the call succeeds, auth is confirmed — proceed to step 2.
+- If tools are not available or the call returns an auth error, determine which case applies:
 
-```
-Publish requires a Marketplace API token configured in your MCP settings.
+**Case A — MCP server already configured, token missing or expired:**
 
-To set this up:
-1. Go to https://developers.freshworks.com/developer/
-2. **Developer API Key** → **Connect to Developer MCP server**
-3. Click **Copy**
-4. Configure it for your IDE:
-   Claude Code:
-     The freshworks plugin prompts for "MCP server URL" and
-     "Marketplace API token (JWT)" at install time. If you skipped the
-     prompts, run /config and update the plugin settings. The token is
-     stored securely in the system keychain.
+The MCP server is set up but the API key needs to be refreshed or was never set.
 
-   Cursor:
-     Add the server to ~/.cursor/mcp.json (global) or
-     .cursor/mcp.json (project-level). The canonical template is
-     **`.mcp.json`** at this repository’s root (same `mcpServers` shape);
-     use **`Bearer <your-jwt-token>`** in place of Claude’s
-     **`${user_config.mcp_auth_token}`** — Cursor does not expand
-     **`user_config`**.
-     {
-       "mcpServers": {
-         "fw-dev-mcp": {
-           "url": "https://mcp.freshworks.dev/mcp",
-           "headers": {
-             "Authorization": "Bearer <your-jwt-token>"
-           }
+1. Go to [https://developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
+2. Under **"API key for Freddy AI Copilot VS Code plugin & AI Developer Tools"** → click **"View API Key"**
+3. Under **"Connect to Freddy AI Copilot MCP server"** → select your IDE tab → click **Copy**
+4. Update the token in your IDE’s MCP settings and restart/reload the MCP connection
+5. Re-run the publish command
+
+**Case B — MCP server not configured yet:**
+
+1. Go to [https://developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
+2. Under **"Connect to Freddy AI Copilot MCP server"** → select your IDE tab (**Cursor** or **VS Code**)
+3. **Cursor:** Click **"Install in Cursor"** directly, or manually add to `~/.cursor/mcp.json`:
+   ```json
+   {
+     "mcpServers": {
+       "fw-dev-mcp": {
+         "url": "https://mcp.freshworks.dev/mcp",
+         "headers": {
+           "Authorization": "Bearer <your-api-key>"
          }
        }
      }
-     Replace <your-jwt-token> with your Developer Portal JWT, then
-     restart Cursor.
+   }
+   ```
+   Replace `<your-api-key>` with the key copied in step 2, then restart Cursor.
 
-5. Re-run the publish command
-```
+   **Claude Code (via plugin):** The freshworks plugin prompts for the API key at install time. If you skipped it, run `/config` and update the plugin settings. The key is stored securely in the system keychain.
 
-The JWT is a **single credential** — it authenticates to `openai-server` and is forwarded verbatim to MAPI. It contains `developer_account_id` and `uuid` claims. There is no separate MAPI token.
+   **Claude Code (standalone skill, no plugin):** Add the server to `.mcp.json` at your project root (or add via `claude mcp add` with `--scope user` to store it globally in `~/.claude.json`):
+   ```json
+   {
+     "mcpServers": {
+       "fw-dev-mcp": {
+         "url": "https://mcp.freshworks.dev/mcp",
+         "headers": {
+           "Authorization": "Bearer <your-api-key>"
+         }
+       }
+     }
+   }
+   ```
+   Replace `<your-api-key>` with the key copied in step 2, then restart Claude Code.
+4. Re-run the publish command
 
 **DO NOT proceed with any publish step until auth is confirmed.**
 
@@ -73,30 +82,10 @@ The JWT is a **single credential** — it authenticates to `openai-server` and i
 3. If **one folder**: Use that directory.
 4. If **none**: Inform the user and stop.
 
-**Maintenance:** When **fw-app-dev** command playbooks change their “determine app directory” steps (e.g. `fdk-fix`, `fdk-migrate`, `fdk-review`, `fdk-refactor`), update this step to stay in lockstep with [`fdk-fix.md`](../fw-app-dev/commands/fdk-fix.md) Step 1 unless intentionally diverging.
 
-### 2.5 Pre-publish: Developer JWT ↔ product (manifest modules)
+### 2.5 Pre-publish: confirm API key is for the right product
 
-**Why:** The MCP **Developer API key (JWT)** is tied to a **Freshworks developer account**. Multiproduct apps (or apps whose manifest mixes product families) must match the **account and product** you intend to publish or installs/API association can fail in confusing ways. Run this **after** step 1 (auth works) and **after** the app directory is known — **before** step 3 (`fdk` / Node checks).
-
-1. **Read** `manifest.json` in the app directory → **`modules`** object keys. Ignore **`common`**. Treat remaining keys as **product module declarations**.
-
-2. **Classify modules** (see [`../fw-app-dev/rules/platform3-modules-locations.mdc`](../fw-app-dev/rules/platform3-modules-locations.mdc)):
-   - **Freshdesk family:** keys whose names start with **`support_`** (e.g. `support_ticket`, `support_contact`, `support_company`, `support_agent`, `support_email`, `support_portal`).
-   - **Freshservice family:** keys whose names start with **`service_`** (e.g. `service_ticket`, `service_asset`, `service_change`, `service_user`, `service_problem`, `service_release`).
-
-3. **Prompt rules** (always require explicit **yes** / choice before continuing):
-
-   | Detected in `modules` | Action |
-   |------------------------|--------|
-   | **Freshdesk only** (≥1 `support_*`, no `service_*`) | Ask the user to **confirm** the configured MCP JWT is for the **Freshdesk** context they intend (same Freshworks developer account / product line they will publish or install against). Example: *“This manifest includes Freshdesk modules (`support_*`). Confirm your Developer MCP token is for the **Freshdesk-linked** account you want to publish under. (yes/no)”* — **STOP** on **no** until they fix **`~/.cursor/mcp.json`** / Claude plugin token or clarify. |
-   | **Freshservice only** (≥1 `service_*`, no `support_*`) | Same pattern for **Freshservice**: confirm JWT matches **Freshservice** intent. **STOP** on **no**. |
-   | **Both** Freshdesk **and** Freshservice modules | Multiproduct / mixed manifest. Ask: **(A)** publish only for **Freshdesk**, **(B)** only for **Freshservice**, or **(C)** both. For **(C)**: **do not** run a single publish blindly — instruct the user to complete **one product at a time**: finish steps **3 → 13** for the **first** product with the JWT that matches **that** product’s developer/account context; then **switch** the MCP JWT to the correct developer account for the **second** product (if different) and **run the full publish flow again** from step **1** for the second pass. If their org uses one JWT for both, still confirm **sequential** publishes and listing/update expectations with the user. |
-   | **Neither** support\_\* nor service\_\* modules (e.g. only CRM `deal` / `contact`) | Briefly note which non-common modules appear and ask the user to **confirm** the JWT matches the **product(s)** those modules belong to (same **STOP** if unsure). |
-
-4. **Optional cross-check:** After **`list_custom_apps`** (step 1 smoke test or step 6), you may compare **`products`** on listings with manifest modules when helping the user pick **`appId`** — mismatches are a sign of wrong account or wrong listing.
-
-**Gate:** Do not continue to **step 3** until Freshdesk/Freshservice (or other product) **confirmation** above is satisfied for the chosen publish scope.
+The Developer API key is **product-specific**. Ask the user to confirm their configured API key matches the product they are publishing this app to. **STOP** if they are unsure — they need to verify or update the key before continuing.
 
 ### 3. Check Node.js and FDK versions (before pack)
 
@@ -180,29 +169,24 @@ Do this **at publish time** — **after** you have a valid zip **that passes the
    
    a. **Call `list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**.
    
-   b. **CRITICAL - Check for stuck versions:** Call **`list_app_versions`** with the selected **`appId`**. Returns array of versions with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`**.
-      - **If ANY version has `state: "development"`**, **STOP immediately** and inform the user:
+   b. **Check for stuck latest version:** Call **`list_app_versions`** with the selected **`appId`**. Check only the **latest version** (most recent by `updatedAt`).
+      - **If the latest version has `state: "development"`**, **STOP** and inform the user:
         ```
-        Cannot publish new version - app has a version stuck in "development" state.
+        Cannot publish — the latest version is stuck in "development" state.
+        Version: [id, version, state]
         
-        Version details: [show the stuck version(s) - id, version, state]
-        
-        This usually means a previous deployment failed. You must:
-        1. Log into the Developer Portal: https://developers.freshworks.com/developer/
-        2. Navigate to your app
-        3. Find the version in "development" state
-        4. Delete or resolve that version
-        5. Return here and retry the publish
-        
-        The MCP publish flow cannot proceed until all versions are out of "development" state.
+        This usually means a previous deployment failed. Please:
+        1. Go to https://developers.freshworks.com/developer/
+        2. Navigate to your app and delete or resolve the stuck version
+        3. Return here and retry
         ```
-      - **If all versions are in `test`, `published`, or other non-development states**, proceed to step 7.
+      - **If the latest version is in any other state**, proceed to step 7.
    
    c. **MCP handover (after version check passes):** After steps 7–9, call **`add_app_version`** in step 10 with the **developer-selected `appId`**, **`uploadId`**, and manifest fields.
 
 4. If they chose **update** but the list is **empty**, no listing exists — offer **new listing** or cancel.
 
-Optional: if only **one** app exists and they already chose **update**, show that row and ask for a one-line confirm before using its **`appId`** — still **never** take **`appId`** from `.fdk/app-info.json`.
+Optional: if only **one** app exists and they already chose **update**, show that row and ask for a one-line confirm before using its **`appId`** — still **never** assume **`appId`** from `.fdk/app-info.json`.
 
 ### 6.5 Support email — mandatory before MCP upload chain (step 7)
 
@@ -221,34 +205,33 @@ Missing **`supportEmail`** does **not** always fail at PUT upload — it fails l
 
 Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSeconds`.
 
+- Retain `uploadId` for step 10 (`submit_custom_app` / `add_app_version`)
+- **Immediately** write the **entire JSON response** to a temp file — do **not** extract or re-emit individual fields:
+  ```bash
+  echo ‘<full-json-response>’ > /tmp/fw-upload-response.json
+  ```
+  Treat the response as an opaque blob. The script will parse `uploadUrl` from it — the LLM never handles the URL directly.
+
 ### 8. App-upload (PUT zip binary)
 
-Use a **single plain `curl`** only — **do not** substitute **Python** (`urllib.request`, `requests`, …), **Node** (`fetch` / `node -e`), **`jq`**-assembled URLs, or other HTTP clients for this step unless you are **certain** traffic reaches **S3 directly** with the **exact** presigned URL bytes. Agents often pick Python anyway; in **managed / cloud** environments that path still hits **403** when egress or IAM blocks bucket `PUT`. **`curl` from the developer’s local terminal** is the supported, reproducible path.
-
-Also **no** shell variables or **`node -e`** / **`jq`** to parse or splice the upload URL into the command — those patterns often **mangle** presigned URLs (`?`, `&`, `%`) and cause **`403`** on PUT.
-
-From the app directory (where `fdk pack` wrote `dist/`):
+Use the bundled upload script with the **response file** from step 7. The script extracts `uploadUrl` via `jq` internally — the LLM never touches the URL. **Do not** substitute Python (`urllib.request`, `requests`, …), Node (`fetch` / `node -e`), or any other HTTP client — those environments often hit `403` in managed/cloud runtimes even with a valid URL.
 
 0. Use the **same** `dist/*.zip` file that **passed the zip layout gate** (step 5), including **`…-resubmit.zip`** if you rebuilt it there.
-1. Copy the **`uploadUrl`** value from step 7 **exactly** as returned by MCP (full string).
-2. Run **one** command: paste that URL **inside single quotes** so the shell does not interpret query characters. Use a literal path for the zip. Prefer running this **`curl`** on the **user’s machine** (local Terminal / IDE terminal with **full network**, not a locked-down remote worker).
-3. If **`curl` from the agent returns `403`** but the URL is pasted correctly: **stop retrying with Python or other clients**; give the user the **same** command block to run **locally**, then continue MCP steps (**`submit_custom_app`** / **`add_app_version`**) from the IDE after they confirm **HTTP 200**. Mint a **fresh** **`uploadId`** via **`create_app_upload_url`** if the presigned URL may have expired.
+1. Pass the response file from step 7 — do **not** read, parse, or echo its contents.
+2. Prefer running this on the **user’s machine** (local Terminal / IDE terminal with **full network**, not a locked-down remote worker).
+3. The script retries automatically up to **3 times**. On final failure, call `create_app_upload_url` again for a fresh response and re-run the script.
 
 ```bash
-curl -X PUT -H "Content-Type: application/zip" --data-binary @dist/<app>.zip 'https://…full-presigned-upload-url…'
+bash <skill-root>/scripts/upload-app.sh dist/<app>.zip /tmp/fw-upload-response.json
 ```
 
-Optional — print only the HTTP status (useful when debugging):
-
-```bash
-curl -sS -o /dev/null -w "%{http_code}" -X PUT -H "Content-Type: application/zip" --data-binary @dist/<app>.zip 'https://…full-presigned-upload-url…'
-```
-
-If the presigned URL was generated with different **signed headers**, match the **`Content-Type`** (and any other signed headers) the API used when creating the URL; if you get **`403`**, try the header value from that step. A successful S3 PUT typically returns **200**.
+- `<skill-root>` — directory where `fw-publish` skill is installed (e.g. `skills/fw-publish` in the repo)
+- `/tmp/fw-upload-response.json` — the response file written in step 7; script extracts `uploadUrl` via `jq`
+- The script sends `Content-Type: application/zip` and prints `Upload successful (HTTP 200)` on success
 
 **Auto-run / sandbox:** Restricted sandboxes often cause upload **`403`** or network failures — use **non-sandbox** / full network for this step (see **Sandbox** at top).
 
-Do **not** base64-encode the zip. Do **not** paste the **app-upload** URL into chat or tickets.
+Do **not** base64-encode the zip.
 
 ### 9. Read manifest.json
 
@@ -273,7 +256,7 @@ Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys (see **`openai-server`** tool schema — at least one non-`common` module may be required) |
 | `uploadId` | from step 7 |
-| `targetState` | `"test"` (default) or `"review"` (ask user) |
+| `targetState` | `"test"` (default) |
 | `zipFileName` | optional (e.g. `my-app.zip`) |
 | `worksWith` | optional; include `"ai_actions"` if AI Actions app |
 
@@ -285,7 +268,7 @@ Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys |
 | `uploadId` | from step 7 |
-| `targetState` | `"test"` (default) or `"review"` |
+| `targetState` | `"test"` (default) |
 | `zipFileName` | optional |
 | `worksWith` | optional |
 
@@ -305,13 +288,15 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 
 ## MCP tools reference (fw-dev-mcp)
 
+**Supported app states:** Currently only `test` state is supported for publishing.
+
 | Tool | Purpose | When to Use |
 |------|---------|-------------|
 | **`list_custom_apps`** | List all custom apps on developer account. Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. Results sorted by most recently updated first. | Step 1 (auth preflight), Step 6.3a (existing app selection) |
-| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **Step 6.3b (CRITICAL - check for `development` state before `add_app_version`)**, Step 12 (optional verification) |
+| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **Step 6.3b (check latest version for `development` state before `add_app_version`)**, Step 12 (optional verification) |
 | **`create_app_upload_url`** | Generate presigned S3 upload URL. Returns **`uploadId`**, **`uploadUrl`**, **`httpMethod`** (`"PUT"`), **`expiresInSeconds`**. | Step 7 (before zip upload) |
 | **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. Collect **`supportEmail`** before **`create_app_upload_url`** (step **6.5**). Optional: **`alternateEmail`**, **`zipFileName`**, **`worksWith`** (e.g., `["ai_actions"]`). App moves to **`test`** state after successful submit. | Step 10 (new app path) |
-| **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`zipFileName`**, **`worksWith`**. **CANNOT proceed if ANY version is in `development` state** (must be checked via **`list_app_versions`** first; user must delete stuck version via Developer Portal). | Step 10 (existing app path, after version state check passes) |
+| **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. Optional: **`zipFileName`**, **`worksWith`**. **CANNOT proceed if the latest version is in `development` state** (check via **`list_app_versions`** first; user must delete the stuck version via Developer Portal). | Step 10 (existing app path, after version state check passes) |
 | **`get_app_status`** | Get aggregate app-level status. Returns **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`** (reflects all versions), **`products`**. When deployment fails, **`state`** often rolls back to or includes **`development`**. | Step 12 (post-publish verification) |
 
 **Other tools on `fw-dev-mcp` server:**
@@ -321,9 +306,8 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 ## Error handling
 
 - **401/403 from any MCP tool:** STOP immediately and show the auth setup instructions from step 1. The token may be expired, misconfigured, or missing. Do not retry — prompt the user to fix their token and re-run.
-- **403 on PUT to `uploadUrl` (app-upload):** (1) **Presigned URL corruption** — shell mangled `?` / `&` / `%`, or **wrong `Content-Type`** vs what was signed. Fix: plain **`curl`**, URL in **single quotes** (step 8), **`Content-Type: application/zip`**, no variable splicing. (2) **Agent / cloud egress** — urllib, `requests`, or even `curl` from a **restricted worker** can get **S3 `AccessDenied`** because the request never reaches S3 with the presigned signature as intended (proxy, IAM, or network policy). Fix: **do not** switch to Python; have the **developer run step 8 `curl` locally**; refresh **`create_app_upload_url`** if needed. (3) **Sandbox** — allow full network or run upload outside sandbox.
 - **Validation errors (400):** Suggest manifest fixes or use fw-app-dev skill. Common: products vs modules mismatch.
-- **Upload failures:** Retry `create_app_upload_url` + re-upload.
+- **Upload fails after 3 retries (script in step 8):** Do **not** retry the upload script again. Ask the user to verify: (1) running on their **local machine** (not sandboxed/restricted environment), (2) network access to S3 is not blocked (no proxy or IAM policies). If both confirmed, **restart from step 7** — call `create_app_upload_url` for a fresh response file and re-run the upload script. If it fails again, stop — persistent failures indicate environment or infrastructure issues.
 - **fdk validate / fdk pack failures:** Use fw-app-dev skill to fix; check Node/FDK version alignment. **Do not** upload if validate did not pass (step 4) — draft listings can still be created from bad zips.
 - **Manifest / package layout errors after upload or submit:** Re-run the **Zip layout gate** (end of step 5). If **`./manifest.json`** appears without root **`manifest.json`**, repack per step 5 remediation before **`create_app_upload_url`**.
 
@@ -331,8 +315,8 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 
 | Requirement | Notes |
 |-------------|--------|
-| Upload host | **`curl` PUT** must reach S3 for the presigned bucket; cloud agent egress may always **403** — use **local** terminal or unconstrained network (step 8). |
-| Non-sandbox execution | MCP + **`curl`** upload need outbound HTTPS; sandboxed agents/shells typically break publish — use full network / disable sandbox for this flow. |
+| Upload host | Script must reach S3 for the presigned bucket; cloud/restricted environments may always return **403** — use **local** terminal or unconstrained network (step 8). |
+| Non-sandbox execution | MCP + script upload need outbound HTTPS; sandboxed agents/shells typically break publish — use full network / disable sandbox for this flow. |
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
 | Zip member names | After **`fdk pack`**, the upload zip must list **`manifest.json`** at archive root (not only **`./manifest.json`**). See **Zip layout gate** at end of step 5. |
 | `fdk` on PATH | `fdk validate` + `fdk pack`. |
