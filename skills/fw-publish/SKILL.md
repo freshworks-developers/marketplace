@@ -9,7 +9,7 @@ compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 
 **MANDATORY PREREQUISITE:** Run **fw-review** skill before publishing to ensure marketplace compliance. The review checks iparams, frontend files, security patterns, and generates a structured audit report. Do not proceed with publishing until review passes.
 
-**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. Target state is **test** (default, installable for QA) or **review** (submit for marketplace listing).
+**Goal:** Take **any** Platform **3.0** app folder (with `manifest.json`), produce `dist/*.zip`, and publish it to the **Freshworks Marketplace** via MCP tools. **Currently, only `test` state is supported.**
 
 **Sandbox / agent egress:** Publish **does not work** in **sandbox** (or equivalent) modes that block MCP traffic to `https://mcp.freshworks.dev/mcp` or outbound HTTPS (including **`curl`** PUT to the app-upload URL). Some **cloud or CI agent** runtimes send HTTPS through a **proxy, gateway, or assumed IAM role** that is **not allowed** to `PUT` to the Marketplace app-upload bucket (`fa-*-app-uploads`…): S3 returns **`403` / `AccessDenied`** even when the presigned URL is valid. **Do not** run this playbook in a sandboxed agent or restricted shell. If the user’s client offers sandbox vs full network access, choose **non-sandbox** / allow network for publish. On **403 PUT** after following step 8 exactly, ask the user to run the same script command **on their local machine** (see step 8).
 
@@ -256,7 +256,7 @@ Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys (see **`openai-server`** tool schema — at least one non-`common` module may be required) |
 | `uploadId` | from step 7 |
-| `targetState` | `"test"` (default) or `"review"` (ask user) |
+| `targetState` | `"test"` (default) |
 | `zipFileName` | optional (e.g. `my-app.zip`) |
 | `worksWith` | optional; include `"ai_actions"` if AI Actions app |
 
@@ -268,7 +268,7 @@ Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**
 | `platformVersion` | manifest `platform-version` |
 | `modules` | manifest `modules` keys |
 | `uploadId` | from step 7 |
-| `targetState` | `"test"` (default) or `"review"` |
+| `targetState` | `"test"` (default) |
 | `zipFileName` | optional |
 | `worksWith` | optional |
 
@@ -287,6 +287,8 @@ Optionally, call **`list_app_versions`** with the **`appId`** to verify the new 
 Tell the user: **app id**, **version state**, and where to install custom apps in their product (**Admin -> Apps** or equivalent).
 
 ## MCP tools reference (fw-dev-mcp)
+
+**Supported app states:** Currently only `test` state is supported for publishing.
 
 | Tool | Purpose | When to Use |
 |------|---------|-------------|
