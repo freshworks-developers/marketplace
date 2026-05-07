@@ -124,3 +124,30 @@
 
 - Use developer app settings feature for hardcoded secrets
 
+## FF-08A — App settings contract must be valid when enabled
+
+**Goal:**
+- If app settings are enabled via `config/app_settings.json`, the app must implement a valid settings-update contract in `server/server.js`.
+
+**Pass:**
+- `config/app_settings.json` is absent (feature not enabled), **or**
+- `config/app_settings.json` exists and:
+  - file content is valid JSON object,
+  - each top-level key maps to an empty object `{}`,
+  - no nested objects are used,
+  - `server/server.js` defines `onSettingsUpdate`.
+
+**Fail:**
+- `config/app_settings.json` exists but:
+  - JSON is malformed, or not an object,
+  - one or more keys map to non-empty/non-object values, or nested objects,
+  - `server/server.js` is missing, or lacks `onSettingsUpdate`.
+
+**Not applicable**
+
+- App does not use developer app settings (`config/app_settings.json` not present).
+
+**Fix message**
+
+- Define valid top-level app setting keys in `config/app_settings.json` (empty-object values only) and implement `onSettingsUpdate` in `server/server.js`.
+

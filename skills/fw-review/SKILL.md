@@ -78,6 +78,6 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 |------|-----|
 | iparams | IP-04A, IP-05A, IP-06A |
 | File and folder structure | FFS-02L, FFS-04L, FFS-05L |
-| Frontend | FF-01L, FF-07L, FF-02M, FF-03A, FF-04A, FF-05A, FF-06A |
+| Frontend | FF-01L, FF-07L, FF-02M, FF-03A, FF-04A, FF-05A, FF-06A, FF-08A |
 | Code readability | CR-05L |
 | Miscellaneous | GN-02L, GN-08L, GN-12L |
