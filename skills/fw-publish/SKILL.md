@@ -161,7 +161,13 @@ Do this **at publish time** — **after** you have a valid zip **that passes the
 
 **Do not** read **`appId`** from **`.fdk/app-info.json`** for routing or MCP calls.
 
-1. **Ask explicitly:** Is this publish a **new** Marketplace listing, or an **update** to an **existing** app? (Skip only if the user already stated the same in this session.)
+1. **STOP and ask the user — do not assume:**
+   ```
+   Is this a new Marketplace listing or an update to an existing app?
+   1. New listing
+   2. Update existing app
+   ```
+   **Do not proceed to step 7 until the user answers.** Skip only if the user already stated this explicitly in the current session.
 
 2. **New listing:** No **`appId`** yet. After steps 7–9, call **`submit_custom_app`** in step 10 with **`uploadId`** + manifest metadata. **MCP handover:** new-app payload + presigned **`uploadId`** only.
 
@@ -206,11 +212,11 @@ Missing **`supportEmail`** does **not** always fail at PUT upload — it fails l
 Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSeconds`.
 
 - Retain `uploadId` for step 10 (`submit_custom_app` / `add_app_version`)
-- **Immediately** write the **entire JSON response** to a temp file — do **not** extract or re-emit individual fields:
+- **Immediately** write the **entire JSON response** to a temp file using **only `echo … > file` or `cat > file`** — do **not** use `jq`, Python, Node, or any other tool to process or re-emit it:
   ```bash
   echo ‘<full-json-response>’ > /tmp/fw-upload-response.json
   ```
-  Treat the response as an opaque blob. The script will parse `uploadUrl` from it — the LLM never handles the URL directly.
+  **Do not** extract `uploadUrl` yourself — the upload script reads it via `jq` internally. Treat the response as an opaque blob and pass the file path to the script as-is.
 
 ### 8. App-upload (PUT zip binary)
 
@@ -241,11 +247,12 @@ Read `manifest.json` in the app directory. Extract:
 - `name` (if present) for `appName`
 
 **AI Actions detection:** Check if `actions.json` exists in the app directory.
-- If **found**, confirm with the user:
+- If **found**, **STOP and ask the user — do not assume:**
   ```
   Detected actions.json — this looks like an AI Actions app.
   Should I include worksWith: ["ai_actions"] when publishing? (yes/no)
   ```
+  **Do not proceed to step 10 until the user answers.**
 - If the user confirms **yes**, set `worksWith: ["ai_actions"]` for step 10.
 - If **no** or `actions.json` is absent, omit `worksWith`.
 
