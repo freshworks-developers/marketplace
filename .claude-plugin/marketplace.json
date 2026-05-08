@@ -8,6 +8,15 @@
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
   },
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "fdk",
+    "app-development",
+    "mcp",
+    "crm"
+  ],
   "plugins": [
     {
       "name": "fw-setup",
@@ -29,14 +38,17 @@
         "node",
         "nvm",
         "platform-3.0",
-        "cli"
+        "cli",
+        "setup",
+        "install",
+        "upgrade"
       ],
       "rulesPath": "./skills/fw-setup/rules",
       "commandsPath": "./skills/fw-setup/commands",
       "interface": {
         "displayName": "Freshworks FDK Setup",
         "shortDescription": "FDK and Node.js toolchain install and lifecycle via nvm.",
-        "longDescription": "Automates FDK 10.x on Node 24 (recommended for publishing), optional FDK 9.x on Node 18 for legacy work, shell troubleshooting, and workspace nvm/.nvmrc alignment. Slash commands: /fw-setup-install, /fw-setup-upgrade, /fw-setup-downgrade, /fw-setup-uninstall, /fw-setup-status, /fw-setup-troubleshoot, /fw-setup-use; legacy /fdk-* aliases where registered."
+        "longDescription": "Automates FDK 10.x on Node 24 (recommended for publishing), optional FDK 9.x on Node 18 for legacy work, shell troubleshooting, and workspace nvm/.nvmrc alignment. Slash commands: /fw-setup-install, /fw-setup-upgrade, /fw-setup-downgrade, /fw-setup-uninstall, /fw-setup-status, /fw-setup-troubleshoot, /fw-setup-use."
       }
     },
     {
@@ -59,7 +71,8 @@
         "marketplace",
         "fdk",
         "crayons",
-        "validation"
+        "validation",
+        "app-development"
       ],
       "rulesPath": "./skills/fw-app-dev/rules",
       "commandsPath": "./skills/fw-app-dev/commands",
@@ -89,7 +102,8 @@
         "ai-actions",
         "fdk",
         "serverless",
-        "actions-json"
+        "actions-json",
+        "app-development"
       ],
       "rulesPath": "./skills/fw-ai-actions-app/rules",
       "interface": {
@@ -151,7 +165,7 @@
       "interface": {
         "displayName": "Freshworks Marketplace Publish",
         "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
-        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: **.mcp.json** at repository root. Pair with fw-app-dev for manifest and validation fixes."
+        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: .mcp.json at repository root. Pair with fw-app-dev for manifest and validation fixes."
       }
     }
   ]

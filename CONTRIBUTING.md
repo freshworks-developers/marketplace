@@ -307,6 +307,58 @@ When contributing examples or documentation:
 - Use generic domains like `your-domain.freshdesk.com`
 - Mark sensitive iparams with `"secure": true` in examples
 
+## Submission and discovery surfaces
+
+> **Note:** Marketplace listings for Cursor and Claude Code are currently under review.
+
+| Surface | Purpose |
+|---------|---------|
+| [**Cursor — Publish to Cursor Marketplace**](https://cursor.com/marketplace/publish) | Vendor submission docs and review expectations. |
+| [**cursor.directory**](https://cursor.directory/) | Community directory of Cursor tools (optional third-party listing). |
+| [**Claude Code — Plugin marketplaces**](https://docs.anthropic.com/en/plugin-marketplaces) | `claude plugin marketplace add …` and team registries. |
+| [**OpenAI Codex — Build plugins**](https://developers.openai.com/codex/plugins/build/) | `codex plugin marketplace add …` and plugin layout. |
+| [**claudemarketplaces.com**](https://claudemarketplaces.com/) | Independent community catalog — **not** operated by Anthropic; list only if you accept their terms. |
+
+**GitHub topics** for discoverability: `freshworks`, `fdk`, `platform-3.0`, `marketplace`, `cursor-plugin`, `claude-plugin`, `codex-plugin`, `mcp`.
+
+**MCP (publish only):** server id `fw-dev-mcp`, config template `.mcp.json` — do not paste tokens into listings; see **[AGENTS.md](AGENTS.md)**.
+
+---
+
+## Listing kit (maintainers)
+
+Canonical strings for marketplace submission forms. Source of truth is **`.cursor-plugin/plugin.json`**, **`.claude-plugin/plugin.json`**, and **`.codex-plugin/plugin.json`** — bump the table when you change `version` or copy (see **[`scripts/check-marketplace-versions.sh`](scripts/check-marketplace-versions.sh)**).
+
+| Field | Value |
+|-------|--------|
+| **Plugin id** | `freshworks-dev-tools` |
+| **Display name** | Freshworks Developer Tools |
+| **Version** | `1.0.0` |
+| **Short tagline** | FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish. |
+| **Description (umbrella)** | Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add **fw-dev-mcp** per **[AGENTS.md](AGENTS.md)** (Developer Portal JWT). |
+| **Long blurb (Cursor)** | Cursor plugin root for Freshworks skills: **fw-setup** (FDK/nvm), **fw-app-dev** (Platform 3.0 apps), **fw-ai-actions-app** (AI Actions), **fw-publish** (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT. |
+| **Long blurb (Claude Code)** | Aggregate plugin for Freshworks marketplace development: install and manage FDK with **fw-setup**, build full apps with **fw-app-dev**, AI Actions integrations with **fw-ai-actions-app**, and publish with **fw-publish** via MCP. MCP template: **`.mcp.json`** at repository root; configure Marketplace API token when prompted. |
+| **Long blurb (Codex)** | Uses each skill's **`SKILL.md`** (authoritative workflows). Slash commands from Cursor/Claude marketplaces (`/fw-setup-*`, `/fdk-*`) are conventions for those clients; Codex consumes skills plus optional MCP (`.mcp.json`) for **fw-publish**. Typical chain: **fw-setup** → **fw-app-dev** and/or **fw-ai-actions-app** → **fw-review** → **fw-publish** — see **[AGENTS.md](AGENTS.md)**. |
+| **Homepage** | `https://github.com/freshworks-developers/fw-dev-tools` |
+| **License** | MIT |
+| **Category** | developer-tools |
+| **Keywords** | `freshworks`, `platform-3.0`, `marketplace`, `fdk`, `app-development`, `mcp`, `crm` |
+| **Logo (repo-relative)** | `assets/fw-logo.svg` |
+| **Logo (raw URL for forms)** | `https://raw.githubusercontent.com/freshworks-developers/fw-dev-tools/main/assets/fw-logo.svg` |
+| **Author** | Freshworks Developers · `skills@dev-assist.freshservice.com` |
+
+**Per-skill Claude plugin names** (install with `claude plugin install <name>@freshworks-developers`):
+
+| Plugin `name` | Display name | Short description |
+|---------------|--------------|-------------------|
+| `fw-setup` | Freshworks FDK Setup | FDK and Node.js toolchain install and lifecycle via nvm. |
+| `fw-app-dev` | Freshworks App Development | Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI. |
+| `fw-ai-actions-app` | Freshworks AI Actions | actions.json, SMI handlers, request templates, and API integrations. |
+| `fw-review` | Freshworks App Review | Rules + scripts for structured marketplace app audits. |
+| `fw-publish` | Freshworks Marketplace Publish | MCP: validate, pack, app-upload, submit/update. |
+
+---
+
 ## Questions?
 
 - Check existing [issues](https://github.com/freshworks-developers/fw-dev-tools/issues) and discussions

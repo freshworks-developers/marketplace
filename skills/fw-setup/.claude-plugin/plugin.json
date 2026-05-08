@@ -1,8 +1,7 @@
 {
   "name": "fw-setup",
-  "displayName": "Freshworks FDK Setup",
   "version": "1.0.0",
-  "description": "Freshworks FDK + nvm. Commands: install (--version), upgrade (--to), downgrade, uninstall, status (--verbose), troubleshoot (--fix), use (workspace .nvmrc). Legacy /fdk-install, etc.",
+  "description": "Install, upgrade, downgrade, and uninstall the Freshworks Development Kit (FDK) with Node.js via nvm (macOS, Windows, Linux).",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -19,49 +18,5 @@
     "nvm",
     "platform-3.0",
     "cli"
-  ],
-  "rulesDirectory": "./rules",
-  "commandsDirectory": "./commands",
-  "interface": {
-    "displayName": "Freshworks FDK Setup",
-    "shortDescription": "Install and manage FDK with Node.js via nvm.",
-    "longDescription": "Shell Tasks and inline commands for FDK 10 on Node 24 (publishing), optional FDK 9 on Node 18, uninstall, status, troubleshoot --fix, and workspace nvm/.nvmrc. Legacy /fdk-* slash aliases where registered."
-  },
-  "commands": [
-    {
-      "name": "fw-setup-install",
-      "description": "Install FDK 10 + Node 24.11 via CDN tarball; optional --version semver (vX.Y.Z.tgz)",
-      "file": "commands/fw-setup-install.md"
-    },
-    {
-      "name": "fw-setup-upgrade",
-      "description": "Upgrade FDK via CDN latest-v24.tgz or --to X.Y.Z semver (vX.Y.Z.tgz)",
-      "file": "commands/fw-setup-upgrade.md"
-    },
-    {
-      "name": "fw-setup-downgrade",
-      "description": "Downgrade to FDK 9 + Node 18; optional 9.x.y pin",
-      "file": "commands/fw-setup-downgrade.md"
-    },
-    {
-      "name": "fw-setup-uninstall",
-      "description": "Uninstall FDK (keeps Node/nvm)",
-      "file": "commands/fw-setup-uninstall.md"
-    },
-    {
-      "name": "fw-setup-status",
-      "description": "FDK / Node / nvm status; optional --verbose",
-      "file": "commands/fw-setup-status.md"
-    },
-    {
-      "name": "fw-setup-troubleshoot",
-      "description": "Diagnose FDK/nvm; optional --fix (careful rc edits)",
-      "file": "commands/fw-setup-troubleshoot.md"
-    },
-    {
-      "name": "fw-setup-use",
-      "description": "Workspace: nvm use / .nvmrc for FDK 10 vs 9 stack; inline",
-      "file": "commands/fw-setup-use.md"
-    }
   ]
 }
