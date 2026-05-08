@@ -155,14 +155,15 @@ cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.j
 
 List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
 
-### 5.5 Custom app limit warning
+### 5.5 Custom app limit warning (MANDATORY — do not skip)
 
-Before routing to new vs existing, inform the user:
+Show this message to the user verbatim before proceeding:
 ```
 ⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
     If you are creating a new listing, ensure you have not reached this limit.
     Check your current count at https://developers.freshworks.com/developer/
 ```
+**Self-check: did you output the above warning in your response? If not, output it now before continuing to step 6.**
 
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
 
