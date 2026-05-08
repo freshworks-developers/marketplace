@@ -155,6 +155,15 @@ cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.j
 
 List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
 
+### 5.5 Custom app limit warning
+
+Before routing to new vs existing, inform the user:
+```
+⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
+    If you are creating a new listing, ensure you have not reached this limit.
+    Check your current count at https://developers.freshworks.com/developer/
+```
+
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
 
 Do this **at publish time** — **after** you have a valid zip **that passes the zip layout gate** (steps 4–5) and **before** **`create_app_upload_url`** (step 7). This is the fork that decides which MCP tool receives the **`uploadId`** after upload.
