@@ -256,6 +256,15 @@ Read `manifest.json` in the app directory. Extract:
 - If the user confirms **yes**, set `worksWith: ["ai_actions"]` for step 10.
 - If **no** or `actions.json` is absent, omit `worksWith`.
 
+**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show this warning before proceeding:
+```
+⚠️  If the previous version of this app included worksWith: ["ai_actions"],
+    removing it in this version is not supported and may cause issues.
+    Only continue if you are sure the previous version was NOT an AI Actions app.
+    Proceed? (yes/no)
+```
+**Do not proceed to step 10 until the user confirms.**
+
 ### 10. Call the appropriate MCP tool (deploy / version handover)
 
 Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**; **existing** → **`add_app_version`** with the **developer-selected `appId`**.
