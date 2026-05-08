@@ -265,7 +265,7 @@ Read `manifest.json` in the app directory. Extract:
 **Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show this warning before proceeding:
 ```
 ⚠️  If the previous version of this app included worksWith: ["ai_actions"],
-    removing it in this version is not supported and may cause issues.
+    removing it in this version is not supported and may cause failures.
     Only continue if you are sure the previous version was NOT an AI Actions app.
     Proceed? (yes/no)
 ```
