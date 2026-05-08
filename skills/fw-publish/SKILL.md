@@ -218,6 +218,12 @@ Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSe
   ```
   **Do not** extract `uploadUrl` yourself — the upload script reads it via `jq` internally. Treat the response as an opaque blob and pass the file path to the script as-is.
 
+**✅ Gate — before proceeding to step 8, confirm:**
+```
+Response file written using only echo or cat (not jq / Python / Node)? [yes/no]
+```
+**Do not proceed to step 8 unless the answer is yes.**
+
 ### 8. App-upload (PUT zip binary)
 
 Use the bundled upload script with the **response file** from step 7. The script extracts `uploadUrl` via `jq` internally — the LLM never touches the URL. **Do not** substitute Python (`urllib.request`, `requests`, …), Node (`fetch` / `node -e`), or any other HTTP client — those environments often hit `403` in managed/cloud runtimes even with a valid URL.
