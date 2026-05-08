@@ -281,6 +281,7 @@ Read `manifest.json` in the app directory. Extract:
 ```
 **Do not proceed to step 10 until the user confirms.**
 
+
 ### 10. Call the appropriate MCP tool (deploy / version handover)
 
 Use the **publish-time choice from step 6**: **new** → **`submit_custom_app`**; **existing** → **`add_app_version`** with the **developer-selected `appId`**.
