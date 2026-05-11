@@ -43,7 +43,7 @@
 
 ## What You Can Do
 
-- **Set up in minutes** — `/fw-setup-install` installs FDK 10.x + Node 24 via nvm, handles PATH and shell config automatically
+- **Set up your development environment** -  `fw-setup` Install and manage the Freshworks Development Kit (FDK) and Node.js.
 - **Scaffold a Platform 3.0 app** — `/fdk-fix` and `/fdk-migrate` get you from a blank folder or a legacy 2.x app to a passing `fdk validate` output
 - **Connect third-party APIs** — `fw-ai-actions-app` generates `actions.json`, SMI handlers, and OAuth request templates for services like Slack or Google
 - **Catch issues before review** — `fw-review` runs the same checks marketplace reviewers use and outputs a structured report you can act on
@@ -160,7 +160,7 @@ Runs the same checks marketplace reviewers use: manifest, iparams, frontend, and
 Guides you through `fdk validate → pack → upload → submit` via MCP without leaving your IDE.
 
 **One-time setup:**
-1. Get your API key from [Freshworks Developer Portal](https://developers.freshworks.com/developer/): **Developer API Key → Connect to Developer MCP server → Copy**
+1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
 2. Configure the **fw-dev-mcp** server in your IDE — see [MCP section below](#mcp-marketplace-publish)
 
 ## MCP (marketplace publish)
