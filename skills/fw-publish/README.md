@@ -1,37 +1,30 @@
 # fw-publish
 
-Guide for publishing **Freshworks Platform 3.0** custom apps to the **Freshworks Marketplace** using MCP tools: validate, pack, **app-upload**, then submit or update an app version.
+Skill for publishing **Freshworks Platform 3.0** custom apps to the **Freshworks Marketplace** using MCP tools: validate, pack, **app-upload**, then submit or update an app version.
 
 ## Overview
 
-**fw-publish** documents auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps. MCP server reference config is **`.mcp.json`** at the **repository root** (same monorepo as this skill). Pair with **fw-app-dev** (full UI apps) or **fw-ai-actions-app** (AI Actions / `actions.json` integrations) for manifest and validation fixes before packing. Skill routing: **[AGENTS.md](../../AGENTS.md)**.
+**fw-publish** guides you through auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps without leaving your IDE. MCP server config is **`.mcp.json`** at the **repository root**. Pair with **fw-app-dev** (full UI apps) or **fw-ai-actions-app** (AI Actions / `actions.json` integrations) for manifest and validation fixes before packing. Skill routing: **[AGENTS.md](../../AGENTS.md)**.
 
 ## Install
 
-### Install via CLI
+**Claude Code:**
+
+```bash
+claude plugin marketplace add freshworks-developers/fw-dev-tools
+claude plugin install fw-publish@freshworks-dev-tools
+```
+
+**Cursor** — Skills CLI:
 
 ```bash
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
 
-**Local clone:**
+**OpenAI Codex:**
 
 ```bash
-npx skills add file:///path/to/fw-dev-tools-main --skill fw-publish
-```
-
-### Install as Claude plugin
-
-**Step 1**
-
-```bash
-claude plugin marketplace add freshworks-developers/fw-dev-tools
-```
-
-**Step 2**
-
-```bash
-claude plugin install fw-publish@freshworks-developers
+codex plugin marketplace add freshworks-developers/fw-dev-tools
 ```
 
 ## What's included
@@ -40,15 +33,10 @@ claude plugin install fw-publish@freshworks-developers
 |------|---------|
 | `SKILL.md` | Orchestration, MCP tool usage, error handling |
 | *(repo root)* `.mcp.json` | Reference `fw-dev-mcp` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
-| `subagents/` | Optional deep dives (validation, packing, metadata, API publishing) |
-| `references/` | Extra orchestration notes; **`openai-server-mcp-tools.md`** maps **`mp-openai`** MCP tool names |
-| `examples/test-app/` | Minimal sample app for dry runs |
-
-This skill has **no** `rules/` or `commands/` trees (playbooks in `SKILL.md`, `subagents/`, `references/`). Repo-wide inventory: [`AGENTS.md`](../../AGENTS.md) → **fw-publish**.
 
 ## Requirements
 
-- **Developer Portal API key** for MCP authentication — [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) → **Developer API Key** → **Connect to Developer MCP server** → **Copy**
+- **Developer Portal API key** for MCP authentication: API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
 - **MCP server configuration**: `fw-dev-mcp` at `https://mcp.freshworks.dev/mcp` with `Authorization` header
   - **Claude Code**: API key stored in keychain via `userConfig.mcp_auth_token`, referenced as `${user_config.mcp_auth_token}`
   - **Cursor**: Copy `.mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)

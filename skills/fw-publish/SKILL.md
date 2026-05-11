@@ -155,6 +155,16 @@ cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.j
 
 List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
 
+### 5.5 Custom app limit warning (MANDATORY — do not skip)
+
+Show this message to the user verbatim before proceeding:
+```
+⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
+    If you are creating a new listing, ensure you have not reached this limit.
+    Check your current count at https://developers.freshworks.com/developer/
+```
+**Self-check: did you output the above warning in your response? If not, output it now before continuing to step 6.**
+
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
 
 Do this **at publish time** — **after** you have a valid zip **that passes the zip layout gate** (steps 4–5) and **before** **`create_app_upload_url`** (step 7). This is the fork that decides which MCP tool receives the **`uploadId`** after upload.
@@ -218,6 +228,12 @@ Call `create_app_upload_url` — returns `uploadId` + `uploadUrl` + `expiresInSe
   ```
   **Do not** extract `uploadUrl` yourself — the upload script reads it via `jq` internally. Treat the response as an opaque blob and pass the file path to the script as-is.
 
+**✅ Gate — before proceeding to step 8, confirm:**
+```
+Response file written using only echo or cat (not jq / Python / Node)? [yes/no]
+```
+**Do not proceed to step 8 unless the answer is yes.**
+
 ### 8. App-upload (PUT zip binary)
 
 Use the bundled upload script with the **response file** from step 7. The script extracts `uploadUrl` via `jq` internally — the LLM never touches the URL. **Do not** substitute Python (`urllib.request`, `requests`, …), Node (`fetch` / `node -e`), or any other HTTP client — those environments often hit `403` in managed/cloud runtimes even with a valid URL.
@@ -255,6 +271,16 @@ Read `manifest.json` in the app directory. Extract:
   **Do not proceed to step 10 until the user answers.**
 - If the user confirms **yes**, set `worksWith: ["ai_actions"]` for step 10.
 - If **no** or `actions.json` is absent, omit `worksWith`.
+
+**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show this warning before proceeding:
+```
+⚠️  If the previous version of this app included worksWith: ["ai_actions"],
+    removing it in this version is not supported and may cause failures.
+    Only continue if you are sure the previous version was NOT an AI Actions app.
+    Proceed? (yes/no)
+```
+**Do not proceed to step 10 until the user confirms.**
+
 
 ### 10. Call the appropriate MCP tool (deploy / version handover)
 
@@ -348,5 +374,4 @@ For **updates**, **`list_custom_apps`** is part of **step 6** at **publish time*
 
 - **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)** — MCP tools implemented in **`mp-openai`** **`openai-server`**
 
-- Developer Portal — copy API key: [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) (**API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**)
-- Marketplace API overview (public): [api.freshworks.com/marketplace/v2](https://api.freshworks.com/marketplace/v2)
+- Developer Portal / MCP — API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)

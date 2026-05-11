@@ -34,23 +34,20 @@
 | [What You Can Do](#what-you-can-do) | Capability overview |
 | [Prerequisites](#prerequisites) | Before you run **`fdk`** or publish |
 | [Installation](#installation) | Cursor, Claude Code, Codex — marketplace vs **`npx skills`** |
-| [Publishing & discovery](#publishing--discovery) | Where to publish, discover, and **[listing-kit](#listing-kit-maintainers)** fields |
 | [Available Tools](#available-tools) | Five skills at a glance |
 | [Workflow](#step-by-step-workflow) | Idea → validated app → publish |
 | [MCP (publish)](#mcp-marketplace-publish) | MCP / JWT — steps in **[AGENTS.md](AGENTS.md)** |
 | [Troubleshooting](#troubleshooting) | Skills, rules, PATH, Codex |
 | [Support](#support) | Docs, issues, conduct |
-| [Contributors](#for-contributors) | Plugin layout, PR hygiene |
+| [Contributing](#contributing) | Plugin layout, PR hygiene |
 
 ## What You Can Do
 
-This toolkit helps you:
-
-- ✅ **Set up your development environment** - Install and manage the Freshworks Development Kit (FDK) and Node.js
-- ✅ **Build apps faster** - Create marketplace apps with AI guidance for Platform 3.0
-- ✅ **Add AI features** - Integrate AI Actions and third-party APIs into your apps
-- ✅ **Review your code** - Run automated checks before submitting to the marketplace
-- ✅ **Publish to marketplace** - Upload and submit your app versions directly
+- **Set up your development environment** -  `fw-setup` Install and manage the Freshworks Development Kit (FDK) and Node.js.
+- **Scaffold a Platform 3.0 app** — `/fdk-fix` and `/fdk-migrate` get you from a blank folder or a legacy 2.x app to a passing `fdk validate` output
+- **Connect third-party APIs** — `fw-ai-actions-app` generates `actions.json`, SMI handlers, and OAuth request templates for services like Slack or Google
+- **Catch issues before review** — `fw-review` runs the same checks marketplace reviewers use and outputs a structured report you can act on
+- **Publish without leaving your IDE** — `fw-publish` guides you through `fdk validate → pack → upload → submit` via MCP, no browser required
 
 ## Prerequisites
 
@@ -67,26 +64,20 @@ This toolkit helps you:
 
 Skills are packaged for **Cursor**, **Claude Code**, and **OpenAI Codex**. How you attach them differs slightly by client.
 
-### Choose an install shape
+### Quick install
 
-| Install shape | What you get | When to use |
-|---------------|----------------|-------------|
-| **Skills CLI (`npx skills add …`)** | One skill per command (`--skill fw-setup`, etc.). Repeat for each skill you need. | Works from any terminal—**Cursor**, **Claude Code** environments that support Skills CLI ([TROUBLESHOOTING.md](TROUBLESHOOTING.md) if load fails). |
-| **Marketplace-style / umbrella** | Registers the repo’s **`freshworks-dev-tools`** plugin descriptors so clients load **rules**, **commands**, and optional **MCP** together. Use each client’s **marketplace**, **plugin**, or **registry** flow—not a second parallel copy of **`skills/`**. | Prefer when you want the full toolkit with one onboarding path per IDE. Details: **[`.cursor-plugin/marketplace.json`](.cursor-plugin/marketplace.json)**, **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)**, **[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)**. |
+**Claude Code:**
 
-**Naming:** Slash commands (**`/fw-setup-install`**, **`/fdk-fix`**, …) are **Cursor / Claude Code** affordances. **OpenAI Codex** uses the same instructions in each skill’s **`SKILL.md`** (full UI apps → **[fw-app-dev](skills/fw-app-dev/)**; **AI Actions** / `actions.json` integrations → **[fw-ai-actions-app](skills/fw-ai-actions-app/)** — routing table **[AGENTS.md](AGENTS.md)**); there is no **`/` command bar** in Codex—invoke workflows in natural language from **`SKILL.md`**.
+```bash
+claude plugin marketplace add freshworks-developers/fw-dev-tools
+claude plugin install fw-setup@freshworks-dev-tools
+claude plugin install fw-app-dev@freshworks-dev-tools
+claude plugin install fw-ai-actions-app@freshworks-dev-tools
+claude plugin install fw-review@freshworks-dev-tools
+claude plugin install fw-publish@freshworks-dev-tools
+```
 
-### Install matrix (Cursor · Claude Code · Codex)
-
-| Client | Marketplace / umbrella | CLI / local fork |
-|--------|-------------------------|-------------------|
-| **Cursor** | Add skills through the **Skills** flow your build supports; plugin registry is **[`.cursor-plugin/marketplace.json`](.cursor-plugin/marketplace.json)** (`freshworks-dev-tools`). If autocomplete or rules misbehave after install → **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** (**rulesDirectory** / **`commandsDirectory`** checks). | **`npx skills add …`** (below); local dev **`npx skills add file:///path/to/fw-dev-tools`** `--skill …` |
-| **Claude Code** | **`claude plugin marketplace add freshworks-developers/fw-dev-tools`**, then **`claude plugin install <plugin>@freshworks-developers`** per skill you want (examples in **[skills/fw-setup/README.md](skills/fw-setup/README.md)** § *Install as Claude Plugin*). Umbrella **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** lists all plugins. | Same **`npx skills add`** as Cursor; MCP token shape matches **`.mcp.json`** (see **[AGENTS.md](AGENTS.md)**). |
-| **OpenAI Codex** | **[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)** · from clone: `codex plugin marketplace add ./` per [Codex plugins](https://developers.openai.com/codex/plugins/build/). Restart Codex **after** add. MCP comes from **`mcpServers` → [.mcp.json](.mcp.json)** — configure JWT **before** **`fw-publish`** (see **[AGENTS.md](AGENTS.md)**). | Not the primary Codex path; prefer **Codex marketplace add** above so MCP + **`skills/`** paths resolve reliably. |
-
-### Quick start — CLI (all five skills)
-
-Copy and paste in a terminal (**Cursor**/**Claude-friendly** Skills CLI):
+**Cursor** — Skills CLI:
 
 ```bash
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
@@ -96,83 +87,29 @@ npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-
 npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
 ```
 
-**After install:**
+**OpenAI Codex:**
 
-1. **Restart** Cursor / Claude Code (**OpenAI Codex:** restart Codex session after **`codex plugin marketplace add`** so **`skills/`** loads).
-2. In chat (**Cursor / Claude Code**): type **`/fw-setup-`** — autocomplete should list **fw-setup** / **fw-app-dev** slash commands.
-3. **Publish workflows only:** Configure **fw-dev-mcp** JWT using **[AGENTS.md](AGENTS.md)** (Portal: **Developer API Key** → **Connect to Developer MCP server** → **Copy**).
+```bash
+codex plugin marketplace add freshworks-developers/fw-dev-tools
+```
 
-**Helpful routing (don’t memorize — bookmark):**
+> After install: restart your IDE, then type `/fw-setup-` in chat — autocomplete should list available commands.
+> For publish workflows: configure the **fw-dev-mcp** JWT first — see **[AGENTS.md](AGENTS.md)**.
+
+---
+
+
+**Helpful links:**
 
 | Need | Doc |
 |------|-----|
-| MCP bearer vs **`user_config`**, tool names | **[AGENTS.md](AGENTS.md)** |
-| Rules/commands not appearing, nested **`marketplace/`** clones | **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** |
-| FDK ↔ Node semver truth | **[docs/engine-matrix.md](docs/engine-matrix.md)** |
+| MCP bearer token, tool names | **[AGENTS.md](AGENTS.md)** |
+| Rules/commands not appearing | **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** |
+| FDK ↔ Node version matrix | **[docs/engine-matrix.md](docs/engine-matrix.md)** |
 | Contributing / plugin inventories | **[CONTRIBUTING.md](CONTRIBUTING.md)** |
 
 ---
 
-## Publishing & discovery
-
-Use this when you distribute the umbrella plugin or want users to discover it outside **`README.md`**.
-
-### Submission and discovery surfaces
-
-| Surface | Purpose |
-|---------|---------|
-| [**Cursor — Publish to Cursor Marketplace**](https://cursor.com/marketplace/publish) | Vendor submission docs and review expectations (OS, etc.). |
-| [**cursor.directory**](https://cursor.directory/) | Community directory of Cursor tools (optional third-party listing). |
-| [**Claude Code — Plugin marketplaces**](https://docs.anthropic.com/en/plugin-marketplaces) | **`claude plugin marketplace add …`** and team registries; pair with GitHub Topics on the repo. |
-| [**OpenAI Codex — Build plugins**](https://developers.openai.com/codex/plugins/build/) | **`codex plugin marketplace add …`** and plugin layout (this repo includes **[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)**). |
-| [**claudemarketplaces.com**](https://claudemarketplaces.com/) | Independent community catalog—**not** operated by Anthropic; list only if you accept their terms. |
-
-**GitHub:** good defaults for search are Topics such as **`freshworks`**, **`fdk`**, **`platform-3.0`**, **`marketplace`**, **`cursor-plugin`**, **`claude-plugin`**, **`codex-plugin`**, and **`mcp`** (match **[`.cursor-plugin/plugin.json`](.cursor-plugin/plugin.json)** `keywords` where possible).
-
-### Listing kit (maintainers)
-
-Canonical strings come from **`.cursor-plugin/plugin.json`**, **`.claude-plugin/plugin.json`**, and **`.codex-plugin/plugin.json`**—**bump the table when you change `version` or copy** (see **[`scripts/check-marketplace-versions.sh`](scripts/check-marketplace-versions.sh)**).
-
-| Field | Value |
-|-------|--------|
-| **Plugin id** | `freshworks-dev-tools` |
-| **Display name** | Freshworks Developer Tools |
-| **Version** | `1.0.0` |
-| **Short tagline** | FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish. |
-| **Description (umbrella)** | Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add **fw-dev-mcp** per **[AGENTS.md](AGENTS.md)** (Developer Portal JWT). |
-| **Long blurb (Cursor `interface`)** | Cursor plugin root for Freshworks skills: **fw-setup** (FDK/nvm), **fw-app-dev** (Platform 3.0 apps), **fw-ai-actions-app** (AI Actions), **fw-publish** (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT. |
-| **Long blurb (Claude `interface`)** | Aggregate plugin for Freshworks marketplace development: install and manage FDK with **fw-setup**, build full apps with **fw-app-dev**, AI Actions integrations with **fw-ai-actions-app**, and publish with **fw-publish** via MCP. MCP template: **`.mcp.json`** at repository root; configure Marketplace API token when prompted. |
-| **Long blurb (Codex `interface`)** | Uses each skill’s **`SKILL.md`** (authoritative workflows). Slash commands from Cursor/Claude marketplaces (`/fw-setup-*`, `/fdk-*`) are conventions for those clients; Codex consumes skills plus optional MCP (`.mcp.json`) for **fw-publish**. Typical chain: **fw-setup** → **fw-app-dev** and/or **fw-ai-actions-app** (by task) → **fw-review** → **fw-publish** — see **[AGENTS.md](AGENTS.md)**. |
-| **Homepage** | [https://github.com/freshworks-developers/fw-dev-tools](https://github.com/freshworks-developers/fw-dev-tools) |
-| **Product docs** | [https://developers.freshworks.com/](https://developers.freshworks.com/) (Codex **`interface.websiteURL`**) |
-| **License** | MIT |
-| **Category** | developer-tools |
-| **Keywords (merge from manifests)** | `freshworks`, `platform-3.0`, `marketplace`, `fdk`, `app-development`, `mcp`, `crm` |
-| **Logo (repo-relative)** | [`assets/fw-logo.svg`](assets/fw-logo.svg) |
-| **Logo (raw URL for forms)** | `https://raw.githubusercontent.com/freshworks-developers/fw-dev-tools/main/assets/fw-logo.svg` |
-| **Author** | Freshworks Developers · `skills@dev-assist.freshservice.com` |
-
-**Per-skill Claude plugins** (from **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** `plugins[]` — after `claude plugin marketplace add freshworks-developers/fw-dev-tools`, install with `claude plugin install <name>@freshworks-developers`):
-
-| Plugin `name` | `interface.displayName` | `interface.shortDescription` |
-|---------------|-------------------------|----------------------------|
-| `fw-setup` | Freshworks FDK Setup | FDK and Node.js toolchain install and lifecycle via nvm. |
-| `fw-app-dev` | Freshworks App Development | Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI. |
-| `fw-ai-actions-app` | Freshworks AI Actions (fw-ai-actions-app) | actions.json, SMI handlers, request templates, and API integrations. |
-| `fw-review` | Freshworks App Review | Rules + scripts for structured marketplace app audits. |
-| `fw-publish` | Freshworks Marketplace Publish | MCP: validate, pack, app-upload, submit/update. |
-
-**Install strings (umbrella):**
-
-| Client | Command / note |
-|--------|----------------|
-| **Skills CLI** | `npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup` (repeat with `fw-app-dev`, `fw-ai-actions-app`, `fw-review`, `fw-publish`) — see [Installation](#installation). |
-| **Claude Code registry** | `claude plugin marketplace add freshworks-developers/fw-dev-tools` then `claude plugin install <plugin-id>@freshworks-developers` for each skill: `fw-setup`, `fw-app-dev`, `fw-ai-actions-app`, `fw-review`, `fw-publish`. |
-| **Codex (from clone)** | `codex plugin marketplace add ./` (see [Codex plugins](https://developers.openai.com/codex/plugins/build/)). |
-
-**MCP (publish only):** server id **`fw-dev-mcp`**, config template **`.mcp.json`** — do not paste tokens into listings; point to **[AGENTS.md](AGENTS.md)**.
-
----
 
 ## Available Tools
 
@@ -188,70 +125,43 @@ Each tool helps with a specific part of app development. Use them in order for a
 
 ## Step-by-Step Workflow
 
-Here's how to go from idea to published app:
+### 1. Set up your environment — [fw-setup](skills/fw-setup/)
 
-### 1. Setup Your Environment
+Installs FDK 10.x + Node.js 24.x via nvm. Run this first — other skills require it.
 
-Start with **fw-setup** to install the development tools you need (FDK 10.x and Node.js 24.x). This is required before building any apps.
+| Command | What it does |
+|---------|-------------|
+| `/fw-setup-install` | Install FDK and Node.js |
+| `/fw-setup-status` | Check what's currently installed |
+| `/fw-setup-troubleshoot` | Fix PATH and shell config issues |
 
-**Commands you can use:**
-- `/fw-setup-install` - Install FDK and Node.js
-- `/fw-setup-status` - Check what's currently installed
-- `/fw-setup-troubleshoot` - Fix common setup problems
+### 2. Build your app — [fw-app-dev](skills/fw-app-dev/)
 
-👉 [Read the fw-setup guide](skills/fw-setup/)
+Scaffold and develop a Platform 3.0 app with Crayons UI, OAuth, and serverless functions.
 
-### 2. Build Your App
+| Command | What it does |
+|---------|-------------|
+| `/fdk-fix` | Fix `fdk validate` errors automatically |
+| `/fdk-migrate` | Upgrade a legacy 2.x app to Platform 3.0 |
+| `/fdk-review` | Full app audit before submission |
 
-Use **fw-app-dev** to create your marketplace app. This includes:
-- Creating the app structure
-- Adding UI components with Crayons
-- Setting up OAuth for third-party integrations
-- Adding serverless functions
-- Fixing validation errors
+> **Validation order:** fw-setup first (when Node/FDK is wrong) → `/fdk-migrate` (legacy apps) → `fdk validate`
 
-Validation order matters: run **fw-setup** first when Node/FDK is missing or wrong, run **`/fdk-migrate`** for legacy 2.x apps/engines, then run `fdk validate`.
+### 3. Add AI features — [fw-ai-actions-app](skills/fw-ai-actions-app/) _(optional)_
 
-**Commands you can use:**
-- `/fdk-fix` - Fix validation errors automatically
-- `/fdk-migrate` - Upgrade older apps to Platform 3.0
-- `/fdk-review` - Check your app for issues
+Connect to external APIs (Slack, Google, etc.) and add AI Actions using `actions.json`, SMI handlers, and request templates.
 
-👉 [Read the fw-app-dev guide](skills/fw-app-dev/)
+### 4. Review before submitting — [fw-review](skills/fw-review/)
 
-### 3. Add AI Features (Optional)
+Runs the same checks marketplace reviewers use: manifest, iparams, frontend, and security. Outputs a structured report with blocking vs non-blocking findings.
 
-If you want to add AI-powered features, use **fw-ai-actions-app** to:
-- Connect to external APIs (Slack, Google, etc.)
-- Add AI Actions that automate tasks
-- Create request templates for API calls
-- Add test data for development
+### 5. Publish — [fw-publish](skills/fw-publish/)
 
-👉 [Read the fw-ai-actions-app guide](skills/fw-ai-actions-app/)
+Guides you through `fdk validate → pack → upload → submit` via MCP without leaving your IDE.
 
-### 4. Review Your App (Recommended)
-
-Before publishing, run **fw-review** to catch common issues:
-- Check configuration files
-- Validate frontend code
-- Run security checks
-- Generate a review report
-
-👉 [Read the fw-review guide](skills/fw-review/)
-
-### 5. Publish to Marketplace
-
-Finally, use **fw-publish** to upload your app:
-- Validate and package your app
-- Upload to Freshworks servers via the **fw-dev-mcp server**
-- Submit for review or update existing versions
-- Check publishing status
-
-**Setup required:**
-1. Get your API key from [Freshworks Developer Portal](https://developers.freshworks.com/developer/): **Developer API Key** → **Connect to Developer MCP server** → **Copy**
-2. Configure the **fw-dev-mcp server** in your IDE (see MCP section below for details)
-
-👉 [Read the fw-publish guide](skills/fw-publish/)
+**One-time setup:**
+1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
+2. Configure the **fw-dev-mcp** server in your IDE — see [MCP section below](#mcp-marketplace-publish)
 
 ## MCP (marketplace publish)
 
@@ -268,27 +178,31 @@ Having issues with skills installation or usage?
 - Commands not working → Verify `rulesDirectory` and `commandsDirectory` in plugin.json
 - Rules not applying → Ensure rules are in `skills/{skill}/rules/` (not `.cursor/rules/`)
 
-## Documentation & Resources
+## Resources
 
-### Official Freshworks Documentation
-- 📘 [Platform 3.0 App Development](https://developers.freshworks.com/docs/app-sdk/v3.0/)
-- 🚀 [Marketplace Publishing Guide](https://developers.freshworks.com/docs/marketplace/)
-- 🔧 [FDK CLI Reference](https://developers.freshworks.com/docs/fdk/)
-
-### Troubleshooting
-- [Validation Errors Guide](skills/fw-app-dev/references/errors/)
-- [Installation Issues](TROUBLESHOOTING.md)
+| Doc | Purpose |
+|-----|---------|
+| [Platform 3.0 App Development](https://developers.freshworks.com/docs/app-sdk/v3.0/) | Official SDK docs |
+| [Marketplace Publishing Guide](https://developers.freshworks.com/docs/marketplace/) | Submission requirements |
+| [FDK CLI Reference](https://developers.freshworks.com/docs/fdk/) | CLI commands |
+| [Validation Errors Guide](skills/fw-app-dev/references/errors/) | Fix `fdk validate` failures |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Install and runtime issues |
+| [AGENTS.md](AGENTS.md) | MCP config and AI agent routing |
 
 ## Support
 
-- 📖 [Freshworks Developer Docs](https://developers.freshworks.com/)
-- 🐛 [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
-- 🤝 Community standards: [CODE_OF_CONDUCT.MD](CODE_OF_CONDUCT.MD)
+- [Report Issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
+- [Freshworks Developer Docs](https://developers.freshworks.com/)
+- Community standards: [CODE_OF_CONDUCT.MD](CODE_OF_CONDUCT.MD)
 
-## For Contributors
+## Contributing
 
-See **[CONTRIBUTING.md](CONTRIBUTING.md)** (structure, plugin manifests, docs hygiene). Technical routing for AI agents: **[AGENTS.md](AGENTS.md)**. Each skill has **`SKILL.md`** (authoritative) and usually **`README.md`**; changing **`rules/`** or **`commands/`** requires updating the skill inventory in **AGENTS.md** and keeping **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** aligned.
+Contributions welcome — new commands, rule fixes, reference docs, and new skills. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for:
+- Skill and rule file structure
+- How to keep `AGENTS.md` and plugin manifests in sync
+- PR process and docs hygiene scripts
+- Marketplace listing kit (canonical strings, logos, blurbs)
 
 ## License
 
-MIT - free to use and modify
+MIT

@@ -20,7 +20,7 @@ The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plu
 
 ### MCP tools (fw-dev-mcp server)
 
-This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). Get the key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/): **Developer API Key** → **Connect to Developer MCP server** → **Copy**.
+This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
 
 | Tool | Purpose | Skill Handover Point |
 |------|---------|---------------------|
@@ -44,7 +44,7 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp
 | **AI Actions** integrations (`actions.json`, SMI, request templates, third-party APIs, test data) | `skills/fw-ai-actions-app/SKILL.md` | **Does not** install FDK or Node; not a substitute for full **fw-app-dev** UI/marketplace app work |
 | Structured **app review** (iparams, frontend, script-backed checks, fixed report format) | `skills/fw-review/SKILL.md` | **Does not** install FDK; verify CLI with **fw-setup** (`/fw-setup-status`) or `fdk --version` before phases that need `fdk` |
 | Install, upgrade, or troubleshoot **FDK** and **Node** (nvm, PATH, versions) | `skills/fw-setup/SKILL.md` | Use before relying on `fdk validate` when the toolchain is missing or wrong |
-| Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (JWT from Portal: **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**) |
+| Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)) |
 
 If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-actions-app** (by task), **MANDATORY fw-review** before submission, then **fw-publish** when publishing.
 
