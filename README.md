@@ -1,4 +1,4 @@
-<h1 align="center">Freshworks Developer Tools</h1>
+<h1 align="center">Freshworks Agentic Developer Toolkit</h1>
 
 <p align="center"><strong>AI-powered toolkit for building Freshworks apps in Claude Code, Cursor, and OpenAI Codex</strong></p>
 
@@ -160,7 +160,7 @@ Runs the same checks marketplace reviewers use: manifest, iparams, frontend, and
 Guides you through `fdk validate → pack → upload → submit` via MCP without leaving your IDE.
 
 **One-time setup:**
-1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
+1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
 2. Configure the **fw-dev-mcp** server in your IDE — see [MCP section below](#mcp-marketplace-publish)
 
 ## MCP (marketplace publish)

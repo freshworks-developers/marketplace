@@ -1,6 +1,6 @@
 {
   "name": "freshworks-dev-tools",
-  "displayName": "Freshworks Developer Tools",
+  "displayName": "Freshworks Agentic Developer Toolkit",
   "description": "Freshworks Platform 3.0 developer skills: FDK and Node lifecycle, app development, AI Actions integrations, automated app review, and marketplace publishing.",
   "version": "1.0.0",
   "logo": "assets/fw-logo.svg",
@@ -165,7 +165,7 @@
       "interface": {
         "displayName": "Freshworks Marketplace Publish",
         "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
-        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: .mcp.json at repository root. API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration). Pair with fw-app-dev for manifest and validation fixes."
+        "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: .mcp.json at repository root. API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration). Pair with fw-app-dev for manifest and validation fixes."
       }
     }
   ]
