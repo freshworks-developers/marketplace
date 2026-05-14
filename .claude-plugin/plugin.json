@@ -1,7 +1,7 @@
 {
   "name": "freshworks-dev-tools",
   "version": "1.0.0",
-  "description": "Freshworks Platform 3.0 developer toolkit: FDK setup, app development, AI Actions, app review, and marketplace publish via MCP. API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)",
+  "description": "Freshworks Platform 3.0 developer toolkit: FDK setup, app development, AI Actions, app review, and marketplace publish via MCP. API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -23,7 +23,7 @@
     "mcp_auth_token": {
       "type": "string",
       "title": "Marketplace API token (JWT)",
-      "description": "API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)",
+      "description": "API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)",
       "sensitive": true,
       "required": true
     }

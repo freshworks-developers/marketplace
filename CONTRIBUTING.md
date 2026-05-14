@@ -332,7 +332,7 @@ Canonical strings for marketplace submission forms. Source of truth is **`.curso
 | Field | Value |
 |-------|--------|
 | **Plugin id** | `freshworks-dev-tools` |
-| **Display name** | Freshworks Developer Tools |
+| **Display name** | Freshworks Agentic Developer Toolkit |
 | **Version** | `1.0.0` |
 | **Short tagline** | FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish. |
 | **Description (umbrella)** | Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add **fw-dev-mcp** per **[AGENTS.md](AGENTS.md)** (Developer Portal JWT). |

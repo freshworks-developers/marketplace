@@ -29,7 +29,7 @@ Before any MCP tool call, verify that the MCP publish tools are available and au
 The MCP server is set up but the API key needs to be refreshed or was never set.
 
 1. Go to [https://developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
-2. Under **"API key for Freddy AI Copilot VS Code plugin & AI Developer Tools"** → click **"View API Key"**
+2. Under **"API key for Freddy AI Copilot VS Code plugin & Freshworks Agentic Developer Toolkit"** → click **"View API Key"**
 3. Under **"Connect to Freddy AI Copilot MCP server"** → select your IDE tab → click **Copy**
 4. Update the token in your IDE’s MCP settings and restart/reload the MCP connection
 5. Re-run the publish command
@@ -374,4 +374,4 @@ For **updates**, **`list_custom_apps`** is part of **step 6** at **publish time*
 
 - **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)** — MCP tools implemented in **`mp-openai`** **`openai-server`**
 
-- Developer Portal / MCP — API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration)
+- Developer Portal / MCP — API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)

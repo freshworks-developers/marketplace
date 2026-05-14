@@ -20,9 +20,9 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "Freshworks Developer Tools",
+    "displayName": "Freshworks Agentic Developer Toolkit",
     "shortDescription": "FDK, Platform 3.0 apps, AI Actions, review, and marketplace publish.",
-    "longDescription": "Uses each skill’s SKILL.md (authoritative workflows). Slash commands from Cursor/Claude marketplaces (/fw-setup-*, /fdk-*) are conventions for those clients; Codex consumes skills plus optional MCP (.mcp.json) for fw-publish. Pair fw-setup → fw-app-dev → fw-review → fw-publish. MCP auth: API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools. or Connect to Developer MCP server (For MCP configuration).",
+    "longDescription": "Uses each skill’s SKILL.md (authoritative workflows). Slash commands from Cursor/Claude marketplaces (/fw-setup-*, /fdk-*) are conventions for those clients; Codex consumes skills plus optional MCP (.mcp.json) for fw-publish. Pair fw-setup → fw-app-dev → fw-review → fw-publish. MCP auth: API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration).",
     "category": "developer-tools",
     "websiteURL": "https://developers.freshworks.com/",
     "developerName": "Freshworks Developers"
