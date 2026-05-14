@@ -36,7 +36,7 @@ codex plugin marketplace add freshworks-developers/fw-dev-tools
 
 ## Requirements
 
-- **Developer Portal API key** for MCP authentication: API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
+- **Developer Portal API key** for MCP authentication: API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
 - **MCP server configuration**: `fw-dev-mcp` at `https://mcp.freshworks.dev/mcp` with `Authorization` header
   - **Claude Code**: API key stored in keychain via `userConfig.mcp_auth_token`, referenced as `${user_config.mcp_auth_token}`
   - **Cursor**: Copy `.mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)

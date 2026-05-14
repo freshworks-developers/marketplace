@@ -374,4 +374,4 @@ For **updates**, **`list_custom_apps`** is part of **step 6** at **publish time*
 
 - **[`references/openai-server-mcp-tools.md`](references/openai-server-mcp-tools.md)** — MCP tools implemented in **`mp-openai`** **`openai-server`**
 
-- Developer Portal / MCP — API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
+- Developer Portal / MCP — API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)

@@ -160,7 +160,7 @@ Runs the same checks marketplace reviewers use: manifest, iparams, frontend, and
 Guides you through `fdk validate → pack → upload → submit` via MCP without leaving your IDE.
 
 **One-time setup:**
-1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Freshworks Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
+1. API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
 2. Configure the **fw-dev-mcp** server in your IDE — see [MCP section below](#mcp-marketplace-publish)
 
 ## MCP (marketplace publish)
