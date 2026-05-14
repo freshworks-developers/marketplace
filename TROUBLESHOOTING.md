@@ -4,7 +4,7 @@
 
 This guide covers **real problems you'll actually encounter** when installing and using these skills, not generic advice. **Codex** uses **`.codex-plugin/plugin.json`** and **`skills/*/SKILL.md`**; many slash-command and Cursor-rule checks below do not apply there—see [OpenAI Codex](#openai-codex).
 
-**Before GitHub Issues:** use **[ISSUES.md](ISSUES.md)** (full checklist and template).
+**Before GitHub Issues:** use **[ISSUES.md](ISSUES.md)** — **mandatory** issue-body template + checklists (issues without the template may be closed).
 
 **Corporate networks / TLS / proxy:** **[docs/network-requirements.md](docs/network-requirements.md)**.
 
@@ -917,8 +917,8 @@ Check settings for custom path option (may vary by version)
 Use **[ISSUES.md](ISSUES.md)** at the repository root for:
 
 - What **not** to paste (secrets)
-- A **copy-paste block** and **checkboxes** for attachments (validate, pack, zip layout, publish HTTP codes, MCP errors)
-- An optional **GitHub issue template** and **skill-install** diagnostic commands
+- The **mandatory** **issue body template** (filled in) plus **checkboxes** for attachments (validate, pack, zip layout, publish HTTP codes, MCP errors)
+- **Skill-install** diagnostic commands when skills fail to load
 
 **Quick reminders:** avoid generic lines like “my skill doesn’t work” without context; include **IDE + version**, **exact errors**, **minimal repro**, and what you already tried from this guide.
 

@@ -3,7 +3,13 @@
 **Why:** faster triage and fixes.  
 **Where:** [Open an issue](https://github.com/freshworks-developers/fw-dev-tools/issues).
 
-For install and IDE problems, see **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** first. Use this page when you open a GitHub issue so maintainers get enough signal without secrets.
+For install and IDE problems, see **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** first.
+
+---
+
+## Mandatory — no exceptions
+
+Your issue **must** include the filled-in **issue body template** below: copy the markdown from **`### Goal`** through the **proxy** section into the GitHub issue description and **fill every section** with real values or **`N/A`**. **Issues without this template may be closed or left unanswered** until you add it.
 
 ---
 
@@ -20,11 +26,8 @@ JWT / API keys · OAuth secrets · domain install tokens · `iparams` values →
 - “My skill doesn’t work”
 - “Commands not showing”
 
-**Include:**
+**Include (in addition to the mandatory template):**
 
-- IDE **and version** (Cursor **Help → About**, Claude Code / Codex version if applicable)
-- **OS** and shell (macOS / Linux / Windows + bash / zsh / PowerShell)
-- **Exact** error text (IDE devtools, terminal, MCP) — redact secrets
 - **Minimal repro** steps (what you clicked / ran, from empty state if possible)
 - What you **already tried** from [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
@@ -38,18 +41,56 @@ head -20 ~/.cursor/skills/fw-app-dev/SKILL.md
 
 ---
 
-## One block — paste this filled in
+## Issue body template (copy into GitHub)
 
-```
-Goal: (new app | update | validate only | skills install | publish)
-OS + shell:
-IDE + version: (Cursor | Claude | Codex + version)
-Skill(s) involved: (e.g. fw-publish, fw-app-dev, fw-setup)
-node -v / fdk --version: (same terminal you used)
-fdk validate: (0+0 errors OR paste first errors)
-If publish: step that died + HTTP status from upload (e.g. curl last line); note if upload was curl vs agent/Python
-Proxy/VPN/sandbox or cloud agent: Y/N
-```
+Copy from **`### Goal`** down through **`### Proxy, VPN, sandbox, or cloud agent`** into your issue body. Fill blank lines with answers or **`N/A`**. You can delete the `<!-- ... -->` hint comments once filled. **Do not** wrap the pasted template in an extra outer code fence on GitHub.
+
+````markdown
+### Goal
+
+<!-- one of: new app | update | validate only | skills install | publish -->
+
+
+
+### OS + shell
+
+
+
+### IDE + version
+
+<!-- Cursor | Claude | Codex — use Help → About (or product equivalent) -->
+
+
+
+### Skill(s) involved
+
+<!-- e.g. fw-publish, fw-app-dev, fw-setup — or N/A -->
+
+
+
+### Toolchain
+
+<!-- Same terminal: paste full output of `node -v` and `fdk version` -->
+
+
+
+### `fdk validate`
+
+<!-- 0 platform errors + 0 lint errors — OR paste first errors verbatim -->
+
+
+
+### Publish / MCP
+
+<!-- If not applicable: N/A. Otherwise: step that failed; HTTP codes from upload terminal; curl vs bundled upload script vs other -->
+
+
+
+### Proxy, VPN, sandbox, or cloud agent
+
+<!-- Y or N -->
+
+````
 
 ---
 
@@ -59,7 +100,7 @@ Proxy/VPN/sandbox or cloud agent: Y/N
 - [ ] **`fdk pack`** output + **exact zip path**
 - [ ] **`unzip -l`** on that zip → **`manifest.json`** at archive root (not only `./manifest.json`) — first lines are enough
 - [ ] Snippet of **`manifest.json`**: `platform-version`, `engines`, `modules` only (no secrets)
-- [ ] Publish: **new vs update** · **`appId`** if update · which MCP or CLI step failed · **HTTP codes** from upload (403 on S3 PUT often means **local `curl`** needed — see [fw-publish/SKILL.md](skills/fw-publish/SKILL.md) step 8)
+- [ ] Publish: **new vs update** · **`appId`** if update · which MCP or CLI step failed · **HTTP codes** from upload (403 on S3 PUT often means **local `curl`** / bundled script — see [fw-publish/SKILL.md](skills/fw-publish/SKILL.md) step 8)
 - [ ] MCP / IDE **error text** (redacted) — if **list apps** works but publish fails, include **network-ish** lines (timeout, 5xx, TLS, **403 on PUT**)
 - [ ] **`ls ~/.cursor/skills/`** or **`ls ~/.claude/skills/`** + install error if skills broke
 - [ ] **Chat transcript** for that session — **trim** to the broken flow · **scrub** secrets
@@ -69,37 +110,9 @@ Proxy/VPN/sandbox or cloud agent: Y/N
 
 ---
 
-## Optional — full issue template
+## Optional — more detail below the template
 
-Copy below into the GitHub issue body and fill in.
-
-````markdown
-**Environment:**
-- IDE: (Cursor / Claude Code / OpenAI Codex) + version
-- OS: (macOS / Linux / Windows — version)
-- Skill: (e.g. fw-app-dev, fw-publish, fw-setup)
-
-**Problem:**
-[Specific issue — one paragraph]
-
-**Expected:**
-[What should happen]
-
-**Actual:**
-[What actually happens — include HTTP codes for publish/upload if relevant]
-
-**Diagnostics:**
-```bash
-# Paste output from debugging commands (redact secrets)
-```
-
-**Already tried:**
-- [ ] Steps from TROUBLESHOOTING.md relevant to this problem
-- [ ] Verified plugin.json has rulesDirectory (Cursor)
-- [ ] Checked rule names match filenames
-- [ ] Removed duplicate .cursor/ subdirectories under the skill
-- [ ] Restarted IDE
-````
+After the mandatory template, you may add short **Problem / Expected / Actual** paragraphs and **bash** output in fenced blocks (still redact secrets).
 
 ---
 
@@ -107,4 +120,4 @@ Copy below into the GitHub issue body and fill in.
 
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — install, rules, commands, IDE-specific fixes  
 - [AGENTS.md](AGENTS.md) — skill routing and MCP for agents  
-- [fw-publish skill](skills/fw-publish/SKILL.md) — publish and upload (`curl`) flow
+- [fw-publish skill](skills/fw-publish/SKILL.md) — publish and upload flow

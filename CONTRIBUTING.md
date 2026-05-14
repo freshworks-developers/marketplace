@@ -77,7 +77,9 @@ When you add, remove, or rename files under any skill’s **`rules/`** or **`com
 
 ### Reporting Bugs
 
-Before submitting a bug report:
+Use **[ISSUES.md](ISSUES.md)** at the repo root: the **mandatory issue body template** and checklists there are required for GitHub issues (see that file for details).
+
+Before submitting:
 1. Check existing [issues](https://github.com/freshworks-developers/fw-dev-tools/issues) to avoid duplicates
 2. Use the latest version of the skills
 
@@ -87,6 +89,7 @@ When reporting bugs, include:
 - **Expected behavior** vs actual behavior
 - **Environment details** (Cursor version, Claude Code / Codex if relevant, FDK version, Node.js version)
 - **Error messages** or validation output if applicable
+Beyond the mandatory template, a good report still has a **clear title**, **steps to reproduce**, and **expected vs actual** behavior.
 
 ### Suggesting Features
 
