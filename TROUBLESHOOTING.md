@@ -4,6 +4,8 @@
 
 This guide covers **real problems you'll actually encounter** when installing and using these skills, not generic advice. **Codex** uses **`.codex-plugin/plugin.json`** and **`skills/*/SKILL.md`**; many slash-command and Cursor-rule checks below do not apply there—see [OpenAI Codex](#openai-codex).
 
+**Before GitHub Issues:** use **[ISSUES.md](ISSUES.md)** (full checklist and template).
+
 **Corporate networks / TLS / proxy:** **[docs/network-requirements.md](docs/network-requirements.md)**.
 
 ---
@@ -912,53 +914,16 @@ Check settings for custom path option (may vary by version)
 
 ## Getting Help
 
-**NOT Generic Support Requests:**
-- ❌ "My skill doesn't work"
-- ❌ "Commands not showing"
+Use **[ISSUES.md](ISSUES.md)** at the repository root for:
 
-**DO Include Specifics:**
-- ✅ Cursor version / Claude Code version / Codex CLI or app version (if applicable)
-- ✅ Exact error message from dev tools console
-- ✅ Output of:
-  ```bash
-  ls -la ~/.cursor/skills/fw-app-dev/
-  cat ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json
-  head -20 ~/.cursor/skills/fw-app-dev/SKILL.md
-  ```
-- ✅ What you've already tried from this guide
-- ✅ Minimal reproduction steps
+- What **not** to paste (secrets)
+- A **copy-paste block** and **checkboxes** for attachments (validate, pack, zip layout, publish HTTP codes, MCP errors)
+- An optional **GitHub issue template** and **skill-install** diagnostic commands
 
-**Report Issues:**
-https://github.com/freshworks-developers/fw-dev-tools/issues
+**Quick reminders:** avoid generic lines like “my skill doesn’t work” without context; include **IDE + version**, **exact errors**, **minimal repro**, and what you already tried from this guide.
 
-**Template:**
-```markdown
-**Environment:**
-- IDE: Cursor (version from Help → About) / Claude Code (version) / OpenAI Codex (CLI or desktop app version)
-- OS: macOS 14.x (or Linux / Windows — specify)
-- Skill: fw-app-dev
-
-**Problem:**
-[Specific issue]
-
-**Expected:**
-[What should happen]
-
-**Actual:**
-[What actually happens]
-
-**Diagnostics:**
-```bash
-# Output from debugging commands
-```
-
-**Already Tried:**
-- [ ] Verified plugin.json has rulesDirectory
-- [ ] Checked rule names match filenames
-- [ ] Removed duplicate .cursor/ subdirectories
-- [ ] Restarted IDE
-```
+**Report issues:** [https://github.com/freshworks-developers/fw-dev-tools/issues](https://github.com/freshworks-developers/fw-dev-tools/issues)
 
 ---
 
-**Last Updated:** 2026-04-29
+**Last Updated:** 2026-05-14
