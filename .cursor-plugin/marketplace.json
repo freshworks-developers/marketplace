@@ -66,7 +66,7 @@
       "interface": {
         "displayName": "Freshworks App Development",
         "shortDescription": "Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI.",
-        "longDescription": "Enforces Platform 3.0 patterns (modules, request templates, engines), Crayons UI, validation workflows, and slash commands /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review. Does not install FDK or Node — pair with fw-setup."
+        "longDescription": "Enforces Platform 3.0 patterns (modules, request templates, engines), Crayons UI, validation workflows, and slash commands /fdk-fix, /fdk-migrate, /fdk-refactor. For structured pre-submission review, use fw-review skill. Does not install FDK or Node — pair with fw-setup."
       }
     },
     {

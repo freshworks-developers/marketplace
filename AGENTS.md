@@ -48,7 +48,7 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp
 
 If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-actions-app** (by task), **MANDATORY fw-review** before submission, then **fw-publish** when publishing.
 
-**End-to-end reference (cold machine → ship):** **fw-setup** (FDK/Node) → **fw-app-dev** (full UI app) and/or **fw-ai-actions-app** (`actions.json` / SMI) → **MANDATORY fw-review** (structured audit; not the same as **fw-app-dev** `/fdk-review`) → **fw-publish** (MCP upload/submit). Humans: expanded narrative under **`README.md`** *From toolchain to marketplace (lifecycle)*; agents: tables above plus per-skill `SKILL.md`.
+**End-to-end reference (cold machine → ship):** **fw-setup** (FDK/Node) → **fw-app-dev** (full UI app) and/or **fw-ai-actions-app** (`actions.json` / SMI) → **MANDATORY fw-review** (structured audit) → **fw-publish** (MCP upload/submit). Humans: expanded narrative under **`README.md`** *From toolchain to marketplace (lifecycle)*; agents: tables above plus per-skill `SKILL.md`.
 
 ## Non-negotiables (app work)
 
@@ -69,7 +69,6 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 - **`skills/fw-review/scripts/*.js`** — deterministic SC-* checks (not slash commands); mapped from `skills/fw-review/rules/script-check-rules.md`
 - **`skills/*/references/**`** — load **on demand** (API, errors, events, playbooks); index: `skills/fw-app-dev/references/skill-advanced-topics.md`
 - **`skills/*/assets/templates/**`** — app skeletons
-- **`skills/fw-publish/subagents/**`** — optional deep-dive prompts (no `rules/` or `commands/` trees in that skill)
 - **`.mcp.json`** (repository root) — canonical **`fw-dev-mcp`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
 - **`.claude/`** (repository root) — **not versioned**; create local Claude Code project settings if needed (MCP server id should match **`.mcp.json`** when configuring publish)
 - **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-dev-tools`**; **`displayName`**: **Freshworks Agentic Developer Toolkit**; optional **`logo`** → **`assets/fw-logo.svg`**); each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface` (same pattern as [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json)).
@@ -104,7 +103,6 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 | `/fdk-fix` | `commands/fdk-fix.md` |
 | `/fdk-migrate` | `commands/fdk-migrate.md` |
 | `/fdk-refactor` | `commands/fdk-refactor.md` |
-| `/fdk-review` | `commands/fdk-review.md` |
 
 **Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `smart-prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
 

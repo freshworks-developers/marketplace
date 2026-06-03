@@ -341,7 +341,6 @@ ls ~/.cursor/skills/fw-app-dev/commands/*.md
 fdk-fix.md
 fdk-migrate.md
 fdk-refactor.md
-fdk-review.md
 ```
 
 **If you see NO .md files or they're in wrong location:**

@@ -9,7 +9,7 @@ always: false
 
 **Usage:** `/fdk-migrate`
 
-**Orchestration (matches fw-app-dev SKILL):** (1) If **FDK 10 + Node 24** is **not** installed → **`fw-setup`** first, **then** this migrate flow, **then** **`fdk validate`**. (2) If **FDK 10 + Node 24** **is** installed and the app is legacy → this migrate flow **then** **`fdk validate`**. (3) If the app is already **3.0** with **24.x / 10.x** engines → you do **not** need this command for migration; use **`/fdk-fix`** / **`/fdk-review`** only. **Never** “fix” migration by installing **FDK 9** or switching to **Node 18** — that is the opposite of this command.
+**Orchestration (matches fw-app-dev SKILL):** (1) If **FDK 10 + Node 24** is **not** installed → **`fw-setup`** first, **then** this migrate flow, **then** **`fdk validate`**. (2) If **FDK 10 + Node 24** **is** installed and the app is legacy → this migrate flow **then** **`fdk validate`**. (3) If the app is already **3.0** with **24.x / 10.x** engines → you do **not** need this command for migration; use **`/fdk-fix`** only (for structured pre-submission review, use **fw-review** skill). **Never** “fix” migration by installing **FDK 9** or switching to **Node 18** — that is the opposite of this command.
 
 You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical source state:
 
@@ -23,7 +23,7 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
 
 **CRITICAL:** Do **not** use **FDK 9.x on Node 18** to validate a finished **Platform 3.0** app. Upgrade the **machine** (shell) to **Node 24.x** + **FDK 10.x** before you rely on `fdk validate` for the migrated tree. Platform 3.0 migration aligns with **fw-app-dev**: **FDK 10.0.1** and **Node.js 24.x** (templates use Node **24.11.0**, FDK **10.0.1**).
 
-**Toolchain** (same split as `/fdk-fix`, `/fdk-review`, `/fdk-refactor`, and always-on **`rules/validation-workflow.mdc`**):
+**Toolchain** (same split as `/fdk-fix`, `/fdk-refactor`, and always-on **`rules/validation-workflow.mdc`**):
 
 - **fw-app-dev** does not install **`fdk`**, **Node**, **nvm**, or **PATH**.
 - Use **`fw-setup`** when present: `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`.

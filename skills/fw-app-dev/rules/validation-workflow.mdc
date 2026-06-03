@@ -18,7 +18,7 @@ alwaysApply: true
 
 ### Step 0: Gate (before any `fdk validate`)
 
-Read **`manifest.json`** and compare to **`node --version`** / **`fdk version`**. Follow **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`*. Do not skip for **`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, or generation workflows.
+Read **`manifest.json`** and compare to **`node --version`** / **`fdk version`**. Follow **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`*. Do not skip for **`/fdk-fix`**, **`/fdk-refactor`**, or generation workflows. (For structured pre-submission review, use **fw-review** skill.)
 
 ### Step 1: Automatic Validation After File Creation
 
