@@ -3,7 +3,7 @@ name: fw-app-dev
 version: "1.0.0"
 description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup skill. Before fdk validate, follow this SKILL.md Manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 as a shortcut except LAST RESORT after six validate iterations). New apps default to FDK 10.0.1 and Node.js 24.x; FDK 9.x/Node 18.x allowed when explicitly requested with deprecation notice. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission task."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
-argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
+argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor]"
 allowed-tools: "shell read write strreplace glob grep"
 ---
 
@@ -95,7 +95,7 @@ If **`fdk version`** fails (**command not found**, exit non-zero, or no usable C
 
 ## Manifest + toolchain gate **before** any `fdk validate`
 
-Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection.
+Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection. (For structured pre-submission review, use **fw-review** skill.)
 
 1. Run **`node --version`** and **`fdk version`** (installed toolchain).
 2. Read **`manifest.json`**: **`platform-version`**, **`engines.node`**, **`engines.fdk`**.
@@ -763,12 +763,11 @@ try {
   // Success: MCP already configured, skip prompt
 } catch {
   // MCP not configured: offer setup
-  // Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
-  Read and follow: skills/fw-publish/subagents/mcp-config-prompt.md
+  // See AGENTS.md and skills/fw-publish/SKILL.md for full setup instructions
 }
 ```
 
-**Brief inline version (if subagent not available):**
+**Brief inline version:**
 ```
 ═══════════════════════════════════════════════════════════
 Optional: Configure Marketplace Publishing
@@ -782,7 +781,7 @@ Configure MCP now? (y/N)
 ═══════════════════════════════════════════════════════════
 ```
 
-If YES → Follow `skills/fw-publish/subagents/mcp-config-prompt.md` (Step 3A.1 onwards)
+If YES → Follow `AGENTS.md` (MCP section) and `skills/fw-publish/SKILL.md` for setup
 If NO → Skip, user can configure later via `/fw-setup-install` or manually
 
 **DO NOT automatically generate:**

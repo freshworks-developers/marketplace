@@ -92,7 +92,6 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - `/fdk-fix` — `commands/fdk-fix.md` — Fix platform and lint errors
 - `/fdk-migrate` — `commands/fdk-migrate.md` — Migrate **Platform 2.3** (2.x), **FDK 9.x**, **Node 18** → **Platform 3.0**, **FDK 10.0.1**, **Node 24**
 - `/fdk-refactor` — `commands/fdk-refactor.md` — Reduce function complexity (≤ 7)
-- `/fdk-review` — `commands/fdk-review.md` — Run 3 rounds of `fdk validate`
 
 **References:**
 - Progressive disclosure documentation (140+ files)

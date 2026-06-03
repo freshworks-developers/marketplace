@@ -2,7 +2,7 @@
   "name": "fw-app-dev",
   "displayName": "Freshworks App Development",
   "version": "1.0.0",
-  "description": "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 custom apps. Provides /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review commands.",
+  "description": "Expert-level development skill for building, debugging, and migrating Freshworks Platform 3.0 custom apps. Provides /fdk-fix, /fdk-migrate, /fdk-refactor commands.",
   "author": {
     "name": "Freshworks Developers",
     "email": "skills@dev-assist.freshservice.com"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Freshworks App Development",
     "shortDescription": "Platform 3.0 apps: manifest, requests, OAuth, serverless, and Crayons UI.",
-    "longDescription": "Enforces Platform 3.0 patterns with slash commands /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review. Does not install FDK or Node — use the fw-setup skill for the toolchain."
+    "longDescription": "Enforces Platform 3.0 patterns with slash commands /fdk-fix, /fdk-migrate, /fdk-refactor. For structured pre-submission review, use the fw-review skill. Does not install FDK or Node — use the fw-setup skill for the toolchain."
   },
   "category": "developer-tools",
   "tags": [
@@ -47,11 +47,6 @@
       "name": "fdk-refactor",
       "description": "Reduce function complexity to meet cyclomatic complexity ≤ 7",
       "file": "commands/fdk-refactor.md"
-    },
-    {
-      "name": "fdk-review",
-      "description": "Review app using multiple rounds of fdk validate",
-      "file": "commands/fdk-review.md"
     }
   ]
 }

@@ -143,7 +143,6 @@ Scaffold and develop a Platform 3.0 app with Crayons UI, OAuth, and serverless f
 |---------|-------------|
 | `/fdk-fix` | Fix `fdk validate` errors automatically |
 | `/fdk-migrate` | Upgrade a legacy 2.x app to Platform 3.0 |
-| `/fdk-review` | Full app audit before submission |
 
 > **Validation order:** fw-setup first (when Node/FDK is wrong) → `/fdk-migrate` (legacy apps) → `fdk validate`
 
