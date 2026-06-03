@@ -1,0 +1,1327 @@
+{
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.claude-plugin/marketplace.json": {
+    "mtime": 1780383699.3606136,
+    "ast_hash": "c596607f940cada139e4fad7d51f27c2",
+    "semantic_hash": "c596607f940cada139e4fad7d51f27c2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.9291475,
+    "ast_hash": "3bdbeb8f26e5292b62d999654e057d1d",
+    "semantic_hash": "3bdbeb8f26e5292b62d999654e057d1d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.codex-plugin/plugin.json": {
+    "mtime": 1780031840.9293306,
+    "ast_hash": "4a3f7c53c3ce9571cf0b017af06ea531",
+    "semantic_hash": "4a3f7c53c3ce9571cf0b017af06ea531"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.cursor-plugin/marketplace.json": {
+    "mtime": 1780383699.3610373,
+    "ast_hash": "3bc6b82d23338d63369ec6bae05b0c46",
+    "semantic_hash": "3bc6b82d23338d63369ec6bae05b0c46"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.cursor-plugin/plugin.json": {
+    "mtime": 1780031840.9296248,
+    "ast_hash": "1c984cc613a8e6d43434c9688fdf4d08",
+    "semantic_hash": "1c984cc613a8e6d43434c9688fdf4d08"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/.mcp.json": {
+    "mtime": 1780031840.9299996,
+    "ast_hash": "0a0cc9c450dd8ab9b84005cd6113102e",
+    "semantic_hash": "0a0cc9c450dd8ab9b84005cd6113102e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/scripts/check-internal-links.py": {
+    "mtime": 1780031840.931932,
+    "ast_hash": "296a056a3f76726050267646713642d3",
+    "semantic_hash": "296a056a3f76726050267646713642d3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/scripts/check-marketplace-versions.sh": {
+    "mtime": 1780031840.9320362,
+    "ast_hash": "cd34c04ec0c480b7cba307c1a68c9c59",
+    "semantic_hash": "cd34c04ec0c480b7cba307c1a68c9c59"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.9323688,
+    "ast_hash": "7f35e3780b3d08877f0bc8dc9ae12ec6",
+    "semantic_hash": "7f35e3780b3d08877f0bc8dc9ae12ec6"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/.cursor-plugin/plugin.json": {
+    "mtime": 1780031840.9325414,
+    "ast_hash": "91eb2f3304ca4b126a6837867f4909b3",
+    "semantic_hash": "91eb2f3304ca4b126a6837867f4909b3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/actions.json": {
+    "mtime": 1780031840.9338045,
+    "ast_hash": "9857a60433f8fbe1c3f3180d4615d831",
+    "semantic_hash": "9857a60433f8fbe1c3f3180d4615d831"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/config/iparams.json": {
+    "mtime": 1780156592.4845078,
+    "ast_hash": "a68d9d307a33f5af09f7d3ad33060c5e",
+    "semantic_hash": "a68d9d307a33f5af09f7d3ad33060c5e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/config/requests.json": {
+    "mtime": 1780031840.9340725,
+    "ast_hash": "a3b28f059f8671adecc92bae018dda0f",
+    "semantic_hash": "a3b28f059f8671adecc92bae018dda0f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/manifest.json": {
+    "mtime": 1780031840.9341705,
+    "ast_hash": "fef49bcf399cd5de1adf7cb589a0b38b",
+    "semantic_hash": "fef49bcf399cd5de1adf7cb589a0b38b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/server/server.js": {
+    "mtime": 1780156592.484923,
+    "ast_hash": "24729fdde796274aaa832e2483b893a3",
+    "semantic_hash": "24729fdde796274aaa832e2483b893a3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/server/test_data/createResource.json": {
+    "mtime": 1780031840.9344912,
+    "ast_hash": "c3dbcf25b379ccc9f473559a4938fcff",
+    "semantic_hash": "c3dbcf25b379ccc9f473559a4938fcff"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/server/test_data/getResource.json": {
+    "mtime": 1780031840.934584,
+    "ast_hash": "c6f5bb7b002779a923096b95217de23e",
+    "semantic_hash": "c6f5bb7b002779a923096b95217de23e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/scripts/ai-actions-skeleton/actions.json": {
+    "mtime": 1780156592.4850972,
+    "ast_hash": "71e223cb95414e95caf6a9a3b79985cf",
+    "semantic_hash": "71e223cb95414e95caf6a9a3b79985cf"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/scripts/ai-actions-skeleton/config/iparams.json": {
+    "mtime": 1780156592.4852378,
+    "ast_hash": "9ceb39add86b8db83d7a3227af117c4f",
+    "semantic_hash": "9ceb39add86b8db83d7a3227af117c4f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/scripts/ai-actions-skeleton/config/requests.json": {
+    "mtime": 1780156592.485367,
+    "ast_hash": "2cb06414c66f26ec343727ec9ed84df3",
+    "semantic_hash": "2cb06414c66f26ec343727ec9ed84df3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/scripts/ai-actions-skeleton/server/server.js": {
+    "mtime": 1780156592.485497,
+    "ast_hash": "aff3f81f7c1679692d0aab14d733d403",
+    "semantic_hash": "aff3f81f7c1679692d0aab14d733d403"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/scripts/ai-actions-skeleton/server/test_data/actionName.json": {
+    "mtime": 1780156592.4856138,
+    "ast_hash": "a50227d6f880b3d6a351520e732ab3ea",
+    "semantic_hash": "a50227d6f880b3d6a351520e732ab3ea"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.937351,
+    "ast_hash": "0fbc53666c0235621fa947ca459480f3",
+    "semantic_hash": "0fbc53666c0235621fa947ca459480f3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/.cursor-plugin/plugin.json": {
+    "mtime": 1780383699.3631225,
+    "ast_hash": "c80a57cce05e842fd58301ef4dc2444f",
+    "semantic_hash": "c80a57cce05e842fd58301ef4dc2444f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/frontend-skeleton/app/scripts/app.js": {
+    "mtime": 1780031840.9390848,
+    "ast_hash": "391bbc3a476cc7ea320806a933201413",
+    "semantic_hash": "391bbc3a476cc7ea320806a933201413"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/frontend-skeleton/manifest.json": {
+    "mtime": 1780031840.9395068,
+    "ast_hash": "0fb901ef85d9039ba8426c0cf8c1e4e5",
+    "semantic_hash": "0fb901ef85d9039ba8426c0cf8c1e4e5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/app/scripts/app.js": {
+    "mtime": 1780031840.939988,
+    "ast_hash": "f193e50a4f7019b5a306cdffcaed4505",
+    "semantic_hash": "f193e50a4f7019b5a306cdffcaed4505"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/config/iparams.json": {
+    "mtime": 1780031840.9403892,
+    "ast_hash": "8a80554c91d9fca8acb82f023de02f11",
+    "semantic_hash": "8a80554c91d9fca8acb82f023de02f11"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/config/requests.json": {
+    "mtime": 1780031840.9404957,
+    "ast_hash": "011b4f24e0ca231edff5f43689dd9701",
+    "semantic_hash": "011b4f24e0ca231edff5f43689dd9701"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/manifest.json": {
+    "mtime": 1780031840.940591,
+    "ast_hash": "5107e4c9be4b4bfd363064ebbe70570f",
+    "semantic_hash": "5107e4c9be4b4bfd363064ebbe70570f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/server/server.js": {
+    "mtime": 1780031840.9407682,
+    "ast_hash": "1c8ef90edb83da35701a9a693355ff86",
+    "semantic_hash": "1c8ef90edb83da35701a9a693355ff86"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/app/scripts/app.js": {
+    "mtime": 1780031840.9412925,
+    "ast_hash": "2f6286cdff9dc34084679645724d410b",
+    "semantic_hash": "2f6286cdff9dc34084679645724d410b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/config/iparams.json": {
+    "mtime": 1780031840.9417377,
+    "ast_hash": "ad472dc4fb7ddcc5565ea966f4539e3b",
+    "semantic_hash": "ad472dc4fb7ddcc5565ea966f4539e3b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/config/oauth_config.json": {
+    "mtime": 1780031840.9418526,
+    "ast_hash": "d9b826b19d9d01f018e4fa7e2fb83f4f",
+    "semantic_hash": "d9b826b19d9d01f018e4fa7e2fb83f4f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/config/requests.json": {
+    "mtime": 1780031840.9420989,
+    "ast_hash": "6a4989ee0624afdabb9d6245bfa70815",
+    "semantic_hash": "6a4989ee0624afdabb9d6245bfa70815"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/server/server.js": {
+    "mtime": 1780031840.9423978,
+    "ast_hash": "36cc768c61cd5ed685026c6ae5482230",
+    "semantic_hash": "36cc768c61cd5ed685026c6ae5482230"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/serverless-skeleton/manifest.json": {
+    "mtime": 1780031840.9427426,
+    "ast_hash": "65c83dd38839f8fc9b108785c14c1993",
+    "semantic_hash": "65c83dd38839f8fc9b108785c14c1993"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/serverless-skeleton/server/server.js": {
+    "mtime": 1780031840.9429286,
+    "ast_hash": "c72ab9aaa227119927fd2efa7e24fd54",
+    "semantic_hash": "c72ab9aaa227119927fd2efa7e24fd54"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/serverless-skeleton/server/test_data/common/afterAppUpdate.json": {
+    "mtime": 1780031840.9432054,
+    "ast_hash": "d8976b0ceedebf4c53c829dede370043",
+    "semantic_hash": "d8976b0ceedebf4c53c829dede370043"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/test-payloads/server/test_data/service_ticket/onTicketUpdate.json": {
+    "mtime": 1780031840.9740193,
+    "ast_hash": "ed42f3cc83db496c59ed9374c9459dbd",
+    "semantic_hash": "ed42f3cc83db496c59ed9374c9459dbd"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/test-payloads/server/test_data/support_ticket/onTicketUpdate.json": {
+    "mtime": 1780031840.9741476,
+    "ast_hash": "2c08767b41b35ba0871afaad8c6c0138",
+    "semantic_hash": "2c08767b41b35ba0871afaad8c6c0138"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/tests/golden.json": {
+    "mtime": 1780031840.9743006,
+    "ast_hash": "774b4ebc72401c6c56ef4c27c7686b21",
+    "semantic_hash": "774b4ebc72401c6c56ef4c27c7686b21"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/tests/refusal.json": {
+    "mtime": 1780031840.9743845,
+    "ast_hash": "5e6869f025d42a54334d09d84a4ce1b8",
+    "semantic_hash": "5e6869f025d42a54334d09d84a4ce1b8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-publish/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.9833224,
+    "ast_hash": "7275457d5461a8173c2ff2bf7e9c4a7b",
+    "semantic_hash": "7275457d5461a8173c2ff2bf7e9c4a7b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-publish/.cursor-plugin/plugin.json": {
+    "mtime": 1780031840.9834673,
+    "ast_hash": "404f5a7680accdb926d02f1ba8a519e3",
+    "semantic_hash": "404f5a7680accdb926d02f1ba8a519e3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-publish/scripts/upload-app.sh": {
+    "mtime": 1780031840.984198,
+    "ast_hash": "583294bd9b884e271a0f534ac568c647",
+    "semantic_hash": "583294bd9b884e271a0f534ac568c647"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.9844308,
+    "ast_hash": "23f8c3dea1950616d27b3b0d26710507",
+    "semantic_hash": "23f8c3dea1950616d27b3b0d26710507"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/.cursor-plugin/plugin.json": {
+    "mtime": 1780031840.9845457,
+    "ast_hash": "266e8918dc16140201bad960199cc72c",
+    "semantic_hash": "266e8918dc16140201bad960199cc72c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/common.js": {
+    "mtime": 1780031840.985462,
+    "ast_hash": "db8e64c256cf7e9b25ec6f50f3f974af",
+    "semantic_hash": "db8e64c256cf7e9b25ec6f50f3f974af"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/external-import-sources.js": {
+    "mtime": 1780031840.985575,
+    "ast_hash": "564b4d0e710af3c1cc29a6334f1ca6a0",
+    "semantic_hash": "564b4d0e710af3c1cc29a6334f1ca6a0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/fdk-errors-warnings.js": {
+    "mtime": 1780031840.9856677,
+    "ast_hash": "bb9639d02d3b1ecea2a909c24921af03",
+    "semantic_hash": "bb9639d02d3b1ecea2a909c24921af03"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/freshworks-css-only.js": {
+    "mtime": 1780031840.9857473,
+    "ast_hash": "0525f6d390f1d2507e60bf3f8d5ad369",
+    "semantic_hash": "0525f6d390f1d2507e60bf3f8d5ad369"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/https-imports.js": {
+    "mtime": 1780031840.9858263,
+    "ast_hash": "d8ed29e7224e67788e46c1b858da0199",
+    "semantic_hash": "d8ed29e7224e67788e46c1b858da0199"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/image-resolution.js": {
+    "mtime": 1780031840.9859319,
+    "ast_hash": "c34acc6f6504dc297ebee8d6cc0e172b",
+    "semantic_hash": "c34acc6f6504dc297ebee8d6cc0e172b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/oauth-config-usage.js": {
+    "mtime": 1780031840.9860168,
+    "ast_hash": "ee1766692b31252a2a524640f2e62631",
+    "semantic_hash": "ee1766692b31252a2a524640f2e62631"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/platform-version-upgrade.js": {
+    "mtime": 1780031840.9861012,
+    "ast_hash": "8c20d4423cd942d9790e7abbded51212",
+    "semantic_hash": "8c20d4423cd942d9790e7abbded51212"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/scripts/unused-library-imports.js": {
+    "mtime": 1780031840.9861841,
+    "ast_hash": "afdcbeab4cd6b0db24166bcd5f136e91",
+    "semantic_hash": "afdcbeab4cd6b0db24166bcd5f136e91"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/.claude-plugin/plugin.json": {
+    "mtime": 1780031840.9863434,
+    "ast_hash": "59a30ad9e342dbff354bb1f80c2e6bc1",
+    "semantic_hash": "59a30ad9e342dbff354bb1f80c2e6bc1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/.cursor-plugin/plugin.json": {
+    "mtime": 1780031840.9864645,
+    "ast_hash": "c3b525fad435698f8d71a7e71d557e4e",
+    "semantic_hash": "c3b525fad435698f8d71a7e71d557e4e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/scripts/detect-install-method.sh": {
+    "mtime": 1780031840.98935,
+    "ast_hash": "ad87f52926737465f67873326275adc6",
+    "semantic_hash": "ad87f52926737465f67873326275adc6"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/scripts/fw-setup-run-background.sh": {
+    "mtime": 1780031840.9894288,
+    "ast_hash": "94d377cd2e4c3545d7ac77244deb74c0",
+    "semantic_hash": "94d377cd2e4c3545d7ac77244deb74c0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/scripts/fw-setup-stop-shell-tasks.sh": {
+    "mtime": 1780031840.989506,
+    "ast_hash": "a2548745d9630c84ca62681d014ea71c",
+    "semantic_hash": "a2548745d9630c84ca62681d014ea71c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/scripts/fw-setup-use.ps1": {
+    "mtime": 1780031840.989628,
+    "ast_hash": "5fb4e1c688ea84f0e91fd79f855515df",
+    "semantic_hash": "5fb4e1c688ea84f0e91fd79f855515df"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/AGENTS.md": {
+    "mtime": 1780383699.361789,
+    "ast_hash": "1aaa1406c9aa7a77503a9106dd4a92a2",
+    "semantic_hash": "1aaa1406c9aa7a77503a9106dd4a92a2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/CODE_OF_CONDUCT.MD": {
+    "mtime": 1780031840.9302957,
+    "ast_hash": "3a96041bfd4fc8e827e10a0f0ea48179",
+    "semantic_hash": "3a96041bfd4fc8e827e10a0f0ea48179"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/CONTRIBUTING.md": {
+    "mtime": 1780031840.930453,
+    "ast_hash": "fbc82a70c99c82abb111887a1dd64f85",
+    "semantic_hash": "fbc82a70c99c82abb111887a1dd64f85"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/ISSUES.md": {
+    "mtime": 1780031840.9306107,
+    "ast_hash": "5675ebf9584fdea99cd47f1d3285bfd5",
+    "semantic_hash": "5675ebf9584fdea99cd47f1d3285bfd5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/LICENSE.md": {
+    "mtime": 1780031840.9307237,
+    "ast_hash": "a73ecef69f0e8de20a60cd0409a516d3",
+    "semantic_hash": "a73ecef69f0e8de20a60cd0409a516d3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/README.md": {
+    "mtime": 1780383699.362258,
+    "ast_hash": "a6503acd090b8a335c5060b236e69a94",
+    "semantic_hash": "a6503acd090b8a335c5060b236e69a94"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/TROUBLESHOOTING.md": {
+    "mtime": 1780383699.3624814,
+    "ast_hash": "3a87fa65dd02621cff6d7478ebb2a5e9",
+    "semantic_hash": "3a87fa65dd02621cff6d7478ebb2a5e9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/README.md": {
+    "mtime": 1780156592.4829242,
+    "ast_hash": "aed9cc9ae4db6e31f161ddf79e8e9d99",
+    "semantic_hash": "aed9cc9ae4db6e31f161ddf79e8e9d99"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/SKILL.md": {
+    "mtime": 1780156592.4840734,
+    "ast_hash": "f6a4d5ddb3757f71fc180090152d7801",
+    "semantic_hash": "f6a4d5ddb3757f71fc180090152d7801"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/agents/ai-action-integration-validator.md": {
+    "mtime": 1780031840.9330475,
+    "ast_hash": "4f90b51c2ed0afcdc6851e6b706f88dc",
+    "semantic_hash": "4f90b51c2ed0afcdc6851e6b706f88dc"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/agents/integration-scope-implementer.md": {
+    "mtime": 1780031840.9332674,
+    "ast_hash": "f4a59c07a0f7b0c12e1fc9e12ae41765",
+    "semantic_hash": "f4a59c07a0f7b0c12e1fc9e12ae41765"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/agents/integration-scoper.md": {
+    "mtime": 1780031840.9334154,
+    "ast_hash": "fa98632be85a9382e321b32fa83533ae",
+    "semantic_hash": "fa98632be85a9382e321b32fa83533ae"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/README.md": {
+    "mtime": 1780031840.9336908,
+    "ast_hash": "1bb8e32f39009f8c5679651e4b3cc505",
+    "semantic_hash": "1bb8e32f39009f8c5679651e4b3cc505"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/references/ai-actions-core.md": {
+    "mtime": 1780031840.9347596,
+    "ast_hash": "d46c2fbb6139ae765941b7bd9699645a",
+    "semantic_hash": "d46c2fbb6139ae765941b7bd9699645a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/references/ai-actions-guide.md": {
+    "mtime": 1780031840.9348996,
+    "ast_hash": "5328fdc677ededad02c395bed909652b",
+    "semantic_hash": "5328fdc677ededad02c395bed909652b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-ai-actions-app/references/ai-actions-quick-reference.md": {
+    "mtime": 1780031840.9350853,
+    "ast_hash": "560116cec197236e3d21bd334f2bea33",
+    "semantic_hash": "560116cec197236e3d21bd334f2bea33"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/README.md": {
+    "mtime": 1780383699.3636363,
+    "ast_hash": "72c5620dd7a79d040c9c8d8b0653fa3b",
+    "semantic_hash": "72c5620dd7a79d040c9c8d8b0653fa3b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/SKILL.md": {
+    "mtime": 1780383699.3642142,
+    "ast_hash": "9dbc0be22af1f51baacb85247371cd16",
+    "semantic_hash": "9dbc0be22af1f51baacb85247371cd16"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/agents/app-security-scanner.md": {
+    "mtime": 1780031840.938169,
+    "ast_hash": "8176186af5cc8fdc1a715f2bd8c34fd1",
+    "semantic_hash": "8176186af5cc8fdc1a715f2bd8c34fd1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/agents/freshworks-app-decision-logger.md": {
+    "mtime": 1780031840.938304,
+    "ast_hash": "14f21c062aeaccb2dfe8f22ad650cbd1",
+    "semantic_hash": "14f21c062aeaccb2dfe8f22ad650cbd1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/agents/logger.md": {
+    "mtime": 1780031840.9384115,
+    "ast_hash": "394a62b02a838c8e47a04b72a223bd1d",
+    "semantic_hash": "394a62b02a838c8e47a04b72a223bd1d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/frontend-skeleton/README.md": {
+    "mtime": 1780031840.9387054,
+    "ast_hash": "266006930a0ecd6554595a1ff7337617",
+    "semantic_hash": "266006930a0ecd6554595a1ff7337617"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/frontend-skeleton/app/index.html": {
+    "mtime": 1780031840.9388995,
+    "ast_hash": "1799978c7f0dbc47e432a2b33c2d54ab",
+    "semantic_hash": "1799978c7f0dbc47e432a2b33c2d54ab"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/README.md": {
+    "mtime": 1780031840.9396555,
+    "ast_hash": "e1d7cebc912e98d80b10edb9616e7f98",
+    "semantic_hash": "e1d7cebc912e98d80b10edb9616e7f98"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/app/index.html": {
+    "mtime": 1780031840.9398146,
+    "ast_hash": "71801c0c37d614be34e818a682dbf1f4",
+    "semantic_hash": "71801c0c37d614be34e818a682dbf1f4"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/README.md": {
+    "mtime": 1780031840.9409487,
+    "ast_hash": "3115929136d8f38447e9a8cd807df319",
+    "semantic_hash": "3115929136d8f38447e9a8cd807df319"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/app/index.html": {
+    "mtime": 1780031840.9411297,
+    "ast_hash": "a18bc10ff17cfb48b63a5a0d32721877",
+    "semantic_hash": "a18bc10ff17cfb48b63a5a0d32721877"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/serverless-skeleton/README.md": {
+    "mtime": 1780031840.9426162,
+    "ast_hash": "7876d4844acfb1bf0c1a99655ae70604",
+    "semantic_hash": "7876d4844acfb1bf0c1a99655ae70604"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/commands/fdk-fix.md": {
+    "mtime": 1780031840.943415,
+    "ast_hash": "15f0b9794d23b112acc0e6502ba68852",
+    "semantic_hash": "15f0b9794d23b112acc0e6502ba68852"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/commands/fdk-migrate.md": {
+    "mtime": 1780383699.364595,
+    "ast_hash": "fe8000f500ab9c29f78f0f3083c6f026",
+    "semantic_hash": "fe8000f500ab9c29f78f0f3083c6f026"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/commands/fdk-refactor.md": {
+    "mtime": 1780031840.943696,
+    "ast_hash": "7ae8901a04fc68543d7674d7bffff19e",
+    "semantic_hash": "7ae8901a04fc68543d7674d7bffff19e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/commands/fdk-review.md": {
+    "mtime": 1780383699.3647194,
+    "ast_hash": "40a9a5d1322f773d904549488a88488d",
+    "semantic_hash": "40a9a5d1322f773d904549488a88488d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api-integration-examples.md": {
+    "mtime": 1780031840.9441006,
+    "ast_hash": "7b342dc2897aedf3f4359ea6ec7ea163",
+    "semantic_hash": "7b342dc2897aedf3f4359ea6ec7ea163"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/instance-method-docs.md": {
+    "mtime": 1780031840.944334,
+    "ast_hash": "8cd26ed98986b2c68ea90316f33c8e08",
+    "semantic_hash": "8cd26ed98986b2c68ea90316f33c8e08"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/interface-method-docs.md": {
+    "mtime": 1780031840.9445245,
+    "ast_hash": "ce770f991f8e0c5eef0da309a8a021d9",
+    "semantic_hash": "ce770f991f8e0c5eef0da309a8a021d9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/oauth-docs.md": {
+    "mtime": 1780031840.9446454,
+    "ast_hash": "981ca4ffc8ddc7194ee500bc1235a834",
+    "semantic_hash": "981ca4ffc8ddc7194ee500bc1235a834"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/request-method-docs.md": {
+    "mtime": 1780031840.944789,
+    "ast_hash": "0432141d599cbe2e3bdcf24aaf7e1ee2",
+    "semantic_hash": "0432141d599cbe2e3bdcf24aaf7e1ee2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/request-template-file-uploads-proxyms-infrastructure-kb.md": {
+    "mtime": 1780031840.9449477,
+    "ast_hash": "b81185dc91a6e0c4af315f6cf46cd0e0",
+    "semantic_hash": "b81185dc91a6e0c4af315f6cf46cd0e0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/api/server-method-invocation-docs.md": {
+    "mtime": 1780031840.9450822,
+    "ast_hash": "fa1ecc0469d2eebffd0128dc6eddbb4a",
+    "semantic_hash": "fa1ecc0469d2eebffd0128dc6eddbb4a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/app_publish_process.md": {
+    "mtime": 1780031840.9452884,
+    "ast_hash": "945096d832025f3f0557de6e5d4f48bf",
+    "semantic_hash": "945096d832025f3f0557de6e5d4f48bf"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/app_setup_events_doc.md": {
+    "mtime": 1780031840.9454324,
+    "ast_hash": "b265b3df526533300e310f3cb4ccaa49",
+    "semantic_hash": "b265b3df526533300e310f3cb4ccaa49"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/cli.md": {
+    "mtime": 1780031840.9455972,
+    "ast_hash": "017fdcdf02ea81014fcaf44a6b2e4d9a",
+    "semantic_hash": "017fdcdf02ea81014fcaf44a6b2e4d9a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/cli_generate_options.md": {
+    "mtime": 1780031840.9457378,
+    "ast_hash": "38945df60934fcda7df62bb3317bd649",
+    "semantic_hash": "38945df60934fcda7df62bb3317bd649"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/developer_app_settings_doc.md": {
+    "mtime": 1780031840.9458714,
+    "ast_hash": "6f5cb5e8e41339bbf9c5567f5d149322",
+    "semantic_hash": "6f5cb5e8e41339bbf9c5567f5d149322"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/entity_storage_doc.md": {
+    "mtime": 1780031840.946041,
+    "ast_hash": "9369a3ba34785eca3d9640cea04a7906",
+    "semantic_hash": "9369a3ba34785eca3d9640cea04a7906"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/external_events_doc.md": {
+    "mtime": 1780031840.9461827,
+    "ast_hash": "44c1063d9ed249e3875a3f9a7fe3c516",
+    "semantic_hash": "44c1063d9ed249e3875a3f9a7fe3c516"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/fdk_test.md": {
+    "mtime": 1780031840.9463468,
+    "ast_hash": "e4d2e58bba373471963fe129da8ecdd2",
+    "semantic_hash": "e4d2e58bba373471963fe129da8ecdd2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshcaller_call.md": {
+    "mtime": 1780031840.9465046,
+    "ast_hash": "bb8a9548d173b7ba19c917fcf8db09d5",
+    "semantic_hash": "bb8a9548d173b7ba19c917fcf8db09d5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshcaller_caller_agent.md": {
+    "mtime": 1780031840.9466276,
+    "ast_hash": "dcb09a2851f75d2acd936470e69e98b6",
+    "semantic_hash": "dcb09a2851f75d2acd936470e69e98b6"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshcaller_caller_conversation.md": {
+    "mtime": 1780031840.9467363,
+    "ast_hash": "1bb915b95a7a090bb1b7f871a8940a28",
+    "semantic_hash": "1bb915b95a7a090bb1b7f871a8940a28"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshcaller_caller_metrics.md": {
+    "mtime": 1780031840.946908,
+    "ast_hash": "95fa717e6f8eb1ca7383cd8934c286b1",
+    "semantic_hash": "95fa717e6f8eb1ca7383cd8934c286b1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshcaller_notification.md": {
+    "mtime": 1780031840.9470546,
+    "ast_hash": "8200fefea015f93a785c9dfc68bad34d",
+    "semantic_hash": "8200fefea015f93a785c9dfc68bad34d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshchat_chat_conversation.md": {
+    "mtime": 1780031840.9472082,
+    "ast_hash": "8e3eda062cfdf3f7a15c829c38572ada",
+    "semantic_hash": "8e3eda062cfdf3f7a15c829c38572ada"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshchat_chat_user.md": {
+    "mtime": 1780031840.9473536,
+    "ast_hash": "68010ed3b8afb184290bb902846629e8",
+    "semantic_hash": "68010ed3b8afb184290bb902846629e8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_agent.md": {
+    "mtime": 1780031840.947476,
+    "ast_hash": "98873d1c41e3574231bf19a0442a0df2",
+    "semantic_hash": "98873d1c41e3574231bf19a0442a0df2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_company.md": {
+    "mtime": 1780031840.9475968,
+    "ast_hash": "2c52cfd91e1d4c518bb932908732efd1",
+    "semantic_hash": "2c52cfd91e1d4c518bb932908732efd1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_contact.md": {
+    "mtime": 1780031840.9477684,
+    "ast_hash": "76e4d7e02db93134312b92120403fc4e",
+    "semantic_hash": "76e4d7e02db93134312b92120403fc4e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_email.md": {
+    "mtime": 1780031840.9479063,
+    "ast_hash": "815d3e24171ac8f5f51671dc18d2cf42",
+    "semantic_hash": "815d3e24171ac8f5f51671dc18d2cf42"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_portal.md": {
+    "mtime": 1780031840.948031,
+    "ast_hash": "7cfaba2c33ca688520924c9ba1f5834e",
+    "semantic_hash": "7cfaba2c33ca688520924c9ba1f5834e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshdesk_support_ticket.md": {
+    "mtime": 1780031840.948139,
+    "ast_hash": "d982ef2bd24e53a770560e8344d53918",
+    "semantic_hash": "d982ef2bd24e53a770560e8344d53918"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshservice_service_asset.md": {
+    "mtime": 1780031840.9483044,
+    "ast_hash": "8feb48ea8a11ecbc20825f8661503776",
+    "semantic_hash": "8feb48ea8a11ecbc20825f8661503776"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshservice_service_change.md": {
+    "mtime": 1780031840.9484468,
+    "ast_hash": "4703b91239d5048e63f65581b0856a42",
+    "semantic_hash": "4703b91239d5048e63f65581b0856a42"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshservice_service_tickets.md": {
+    "mtime": 1780031840.948565,
+    "ast_hash": "b6c5061ae0b54d1688639be66f22c9c3",
+    "semantic_hash": "b6c5061ae0b54d1688639be66f22c9c3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshservice_service_user.md": {
+    "mtime": 1780031840.948866,
+    "ast_hash": "03b1843a352353c9258e550b8ddceddf",
+    "semantic_hash": "03b1843a352353c9258e550b8ddceddf"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_appointment.md": {
+    "mtime": 1780031840.949113,
+    "ast_hash": "dd83f23d1ee69ecaafcac5f8d36d8e6d",
+    "semantic_hash": "dd83f23d1ee69ecaafcac5f8d36d8e6d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_contact.md": {
+    "mtime": 1780031840.9492526,
+    "ast_hash": "78eba6bdfda37a3405aeefc28e7fb2b5",
+    "semantic_hash": "78eba6bdfda37a3405aeefc28e7fb2b5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_cpq_document.md": {
+    "mtime": 1780031840.949434,
+    "ast_hash": "406d1279003a79bb919ec37b39dcbf13",
+    "semantic_hash": "406d1279003a79bb919ec37b39dcbf13"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_deal.md": {
+    "mtime": 1780031840.9496233,
+    "ast_hash": "aa15afdc63e03afdb22360a5b0d6f1af",
+    "semantic_hash": "aa15afdc63e03afdb22360a5b0d6f1af"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_lead.md": {
+    "mtime": 1780031840.9660895,
+    "ast_hash": "e7e1bbc9e1ffd55581c3a4caa7c407fb",
+    "semantic_hash": "e7e1bbc9e1ffd55581c3a4caa7c407fb"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_phone.md": {
+    "mtime": 1780031840.9663122,
+    "ast_hash": "ef28a133ab747e8e1d126263462a5567",
+    "semantic_hash": "ef28a133ab747e8e1d126263462a5567"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_product.md": {
+    "mtime": 1780031840.9665306,
+    "ast_hash": "5e1b274b73fe36d8155e8f9800ce0def",
+    "semantic_hash": "5e1b274b73fe36d8155e8f9800ce0def"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_sales_account.md": {
+    "mtime": 1780031840.966684,
+    "ast_hash": "1758487d83796c35c17ff52a720f5a9c",
+    "semantic_hash": "1758487d83796c35c17ff52a720f5a9c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_sales_activities.md": {
+    "mtime": 1780031840.9668565,
+    "ast_hash": "14a17edb97aa4a1db4dacd3ec3edf40d",
+    "semantic_hash": "14a17edb97aa4a1db4dacd3ec3edf40d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_task.md": {
+    "mtime": 1780031840.967007,
+    "ast_hash": "dd1ab591d06ea9f9eeaadf938b3604c2",
+    "semantic_hash": "dd1ab591d06ea9f9eeaadf938b3604c2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/freshworks_crm_user_agent_availability.md": {
+    "mtime": 1780031840.9671676,
+    "ast_hash": "f438690526e08e49468cbe3e785f9216",
+    "semantic_hash": "f438690526e08e49468cbe3e785f9216"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/frontend_event_methods.md": {
+    "mtime": 1780031840.9673157,
+    "ast_hash": "e5f8d2a7ec8eba7d38d85c1f7b416b2f",
+    "semantic_hash": "e5f8d2a7ec8eba7d38d85c1f7b416b2f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/intercept-validation-patterns.md": {
+    "mtime": 1780031840.9674392,
+    "ast_hash": "fddcb69f6fcbe85794e76ad539222058",
+    "semantic_hash": "fddcb69f6fcbe85794e76ad539222058"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/modular_app_concepts.md": {
+    "mtime": 1780031840.9675713,
+    "ast_hash": "140f60bf6bf6110a3419291bca0b33ec",
+    "semantic_hash": "140f60bf6bf6110a3419291bca0b33ec"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/oauth-configuration-latest.md": {
+    "mtime": 1780031840.9677143,
+    "ast_hash": "f89cb79ce38823c299ea163e7f5551d8",
+    "semantic_hash": "f89cb79ce38823c299ea163e7f5551d8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/platform3-manifest-structure.md": {
+    "mtime": 1780031840.9678295,
+    "ast_hash": "98db0f029d72e2af7359ce2895542cc7",
+    "semantic_hash": "98db0f029d72e2af7359ce2895542cc7"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/product_events_kb.md": {
+    "mtime": 1780031840.9679286,
+    "ast_hash": "8d8dbb0ae363b468f677031e01be32bb",
+    "semantic_hash": "8d8dbb0ae363b468f677031e01be32bb"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/product_module_association.md": {
+    "mtime": 1780031840.968059,
+    "ast_hash": "2c18e47709ba99671855b6ea63a742b2",
+    "semantic_hash": "2c18e47709ba99671855b6ea63a742b2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/request-templates-latest.md": {
+    "mtime": 1780031840.9682035,
+    "ast_hash": "6a10f12bdeffe9db74107212e0f4d74a",
+    "semantic_hash": "6a10f12bdeffe9db74107212e0f4d74a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/scheduled_events_doc.md": {
+    "mtime": 1780031840.9683213,
+    "ast_hash": "1033f15c2014f7addbedd7d6efe62618",
+    "semantic_hash": "1033f15c2014f7addbedd7d6efe62618"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/architecture/serverless_offerings_doc.md": {
+    "mtime": 1780031840.9684618,
+    "ast_hash": "6dd743fa0da7bf7c8e2482675e03ffed",
+    "semantic_hash": "6dd743fa0da7bf7c8e2482675e03ffed"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/cli/cli-docs.md": {
+    "mtime": 1780031840.9686654,
+    "ast_hash": "9200264428438070dbbef7d88554bbde",
+    "semantic_hash": "9200264428438070dbbef7d88554bbde"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/cli/fdk_create.md": {
+    "mtime": 1780031840.9688177,
+    "ast_hash": "4e3b3b97b30b0a5677f1a18a98101f0e",
+    "semantic_hash": "4e3b3b97b30b0a5677f1a18a98101f0e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/custom-iparams-errors.md": {
+    "mtime": 1780031840.9690235,
+    "ast_hash": "6148988b1108710ca75c009ba301f22e",
+    "semantic_hash": "6148988b1108710ca75c009ba301f22e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/error-catalog.md": {
+    "mtime": 1780031840.9692006,
+    "ast_hash": "8aa7995d403b460a3b20e005e1aca218",
+    "semantic_hash": "8aa7995d403b460a3b20e005e1aca218"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/frontend-errors.md": {
+    "mtime": 1780031840.9693472,
+    "ast_hash": "5588fd718d0c1c931e990607d1e567d7",
+    "semantic_hash": "5588fd718d0c1c931e990607d1e567d7"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/installation-parameters-errors.md": {
+    "mtime": 1780031840.969904,
+    "ast_hash": "6d702a95a709eff5035035e5d8aefc96",
+    "semantic_hash": "6d702a95a709eff5035035e5d8aefc96"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/keyvalue-store-errors.md": {
+    "mtime": 1780031840.9701176,
+    "ast_hash": "b59fb059b1f7274e3bab5dfc6e6e18ab",
+    "semantic_hash": "b59fb059b1f7274e3bab5dfc6e6e18ab"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/oauth-errors.md": {
+    "mtime": 1780031840.9702697,
+    "ast_hash": "e128ae0e0bf73c9854e811e1fb3c19cc",
+    "semantic_hash": "e128ae0e0bf73c9854e811e1fb3c19cc"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/request-method-errors.md": {
+    "mtime": 1780031840.9704056,
+    "ast_hash": "d1c6e723d53c99f1a2241285e8787291",
+    "semantic_hash": "d1c6e723d53c99f1a2241285e8787291"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/errors/server-method-invocation-errors.md": {
+    "mtime": 1780031840.9705071,
+    "ast_hash": "7311f7d3d889ac288ebbab76ce827d54",
+    "semantic_hash": "7311f7d3d889ac288ebbab76ce827d54"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/events/event-reference.md": {
+    "mtime": 1780031840.971858,
+    "ast_hash": "da16d5894eeb033f6d45a5553bcb6b28",
+    "semantic_hash": "da16d5894eeb033f6d45a5553bcb6b28"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/events/onTicketUpdate-payload-contract.md": {
+    "mtime": 1780031840.9720087,
+    "ast_hash": "c4283dcf383cbfdd298b7bcbee7d1ca1",
+    "semantic_hash": "c4283dcf383cbfdd298b7bcbee7d1ca1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/manifest/manifest-docs.md": {
+    "mtime": 1780031840.9722183,
+    "ast_hash": "39555a6558ad1b79c83e41d6140e6aa8",
+    "semantic_hash": "39555a6558ad1b79c83e41d6140e6aa8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/modules-reference.md": {
+    "mtime": 1780031840.972318,
+    "ast_hash": "9d5d27f83df91ed0f8fd594c82f604f7",
+    "semantic_hash": "9d5d27f83df91ed0f8fd594c82f604f7"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/playbooks/README.md": {
+    "mtime": 1780031840.9724617,
+    "ast_hash": "5e1baaa16deb171d7447cde9885768df",
+    "semantic_hash": "5e1baaa16deb171d7447cde9885768df"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/playbooks/microsoft-graph-account-oauth.md": {
+    "mtime": 1780031840.9725509,
+    "ast_hash": "10457ffa05941c511f0435ccc332d2eb",
+    "semantic_hash": "10457ffa05941c511f0435ccc332d2eb"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/playbooks/slack-incoming-webhook-hybrid.md": {
+    "mtime": 1780031840.9726334,
+    "ast_hash": "2222d5aed8bc9d21fd834af3baa5267b",
+    "semantic_hash": "2222d5aed8bc9d21fd834af3baa5267b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/runtime/actions-docs.md": {
+    "mtime": 1780031840.9728625,
+    "ast_hash": "5174d859f7ec8276166a7a26a98ecbf2",
+    "semantic_hash": "5174d859f7ec8276166a7a26a98ecbf2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/runtime/custom-iparams-docs.md": {
+    "mtime": 1780031840.9730084,
+    "ast_hash": "3265fb8bd201c8999d2fed61feb005a4",
+    "semantic_hash": "3265fb8bd201c8999d2fed61feb005a4"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/runtime/iparams-comparison.md": {
+    "mtime": 1780031840.9731493,
+    "ast_hash": "277d516d442d4c27e8890e9af26133e7",
+    "semantic_hash": "277d516d442d4c27e8890e9af26133e7"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/runtime/jobs-docs.md": {
+    "mtime": 1780031840.9732997,
+    "ast_hash": "07af3ec60fedc6080111f55253338c58",
+    "semantic_hash": "07af3ec60fedc6080111f55253338c58"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/runtime/keyvalue-store-docs.md": {
+    "mtime": 1780031840.9734375,
+    "ast_hash": "e6c844a4e38e3d073a64c06b9e724903",
+    "semantic_hash": "e6c844a4e38e3d073a64c06b9e724903"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/skill-advanced-topics.md": {
+    "mtime": 1780031840.9735997,
+    "ast_hash": "8f00ecbcd2a27fa3484a7dc7937dc539",
+    "semantic_hash": "8f00ecbcd2a27fa3484a7dc7937dc539"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/test-payloads/README.md": {
+    "mtime": 1780031840.9737537,
+    "ast_hash": "8211a4dcf173c0b21c396015a48a07c5",
+    "semantic_hash": "8211a4dcf173c0b21c396015a48a07c5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/accordion-body.md": {
+    "mtime": 1780031840.9745533,
+    "ast_hash": "8e6e307f363c33991c1b9da1d1e1bac9",
+    "semantic_hash": "8e6e307f363c33991c1b9da1d1e1bac9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/accordion-title.md": {
+    "mtime": 1780031840.9746342,
+    "ast_hash": "69ddb057ca77c1f3d60539bbd1d4fec2",
+    "semantic_hash": "69ddb057ca77c1f3d60539bbd1d4fec2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/accordion.md": {
+    "mtime": 1780031840.9747484,
+    "ast_hash": "dd548ceb4acf0185d970203f9403441f",
+    "semantic_hash": "dd548ceb4acf0185d970203f9403441f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/anchor.md": {
+    "mtime": 1780031840.974823,
+    "ast_hash": "c7bfb21a9d206eef6605fbffc0ff10db",
+    "semantic_hash": "c7bfb21a9d206eef6605fbffc0ff10db"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/avatar.md": {
+    "mtime": 1780031840.9748993,
+    "ast_hash": "931680657595233f6cf15786dbf1edd9",
+    "semantic_hash": "931680657595233f6cf15786dbf1edd9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/button-group.md": {
+    "mtime": 1780031840.9749823,
+    "ast_hash": "f3a561d80021d930e83772db90fbbca8",
+    "semantic_hash": "f3a561d80021d930e83772db90fbbca8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/button.md": {
+    "mtime": 1780031840.9751127,
+    "ast_hash": "578ceadca15337e04a9c8df46c2ac3c8",
+    "semantic_hash": "578ceadca15337e04a9c8df46c2ac3c8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/checkbox.md": {
+    "mtime": 1780031840.9752433,
+    "ast_hash": "4374ec7fdfb78991d681823fe7ddb5e4",
+    "semantic_hash": "4374ec7fdfb78991d681823fe7ddb5e4"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/country-phone.md": {
+    "mtime": 1780031840.9753802,
+    "ast_hash": "73b2326538561e7991738280e71879fe",
+    "semantic_hash": "73b2326538561e7991738280e71879fe"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/data-table.md": {
+    "mtime": 1780031840.9758155,
+    "ast_hash": "392fbbdef621117b08749e9dbb35a9d0",
+    "semantic_hash": "392fbbdef621117b08749e9dbb35a9d0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/datepicker.md": {
+    "mtime": 1780031840.9759576,
+    "ast_hash": "b94d8a9f771256cba8c3b6a22194aca8",
+    "semantic_hash": "b94d8a9f771256cba8c3b6a22194aca8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/drag-container.md": {
+    "mtime": 1780031840.976069,
+    "ast_hash": "0544b5112c23d90628691db09c7ae53f",
+    "semantic_hash": "0544b5112c23d90628691db09c7ae53f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/drag-item.md": {
+    "mtime": 1780031840.9761465,
+    "ast_hash": "925a9d45ca50467a217ec8e2d753c9fb",
+    "semantic_hash": "925a9d45ca50467a217ec8e2d753c9fb"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/file-2.md": {
+    "mtime": 1780031840.976225,
+    "ast_hash": "f4493e4f2833bbb1c71c1cb39cfc90f4",
+    "semantic_hash": "f4493e4f2833bbb1c71c1cb39cfc90f4"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/file-uploader-2.md": {
+    "mtime": 1780031840.9763606,
+    "ast_hash": "eaf3925d9631f720a2af14ac5f8e3227",
+    "semantic_hash": "eaf3925d9631f720a2af14ac5f8e3227"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/file-uploader.md": {
+    "mtime": 1780031840.976472,
+    "ast_hash": "e79eae09238e0a81cfc65df5d6412353",
+    "semantic_hash": "e79eae09238e0a81cfc65df5d6412353"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/file.md": {
+    "mtime": 1780031840.9765508,
+    "ast_hash": "92bbd8cd1aed2b59c3b1adf9e3fec155",
+    "semantic_hash": "92bbd8cd1aed2b59c3b1adf9e3fec155"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/form-control.md": {
+    "mtime": 1780031840.97665,
+    "ast_hash": "6ae8cac79ad5c9cf142f2855d20311b8",
+    "semantic_hash": "6ae8cac79ad5c9cf142f2855d20311b8"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/form.md": {
+    "mtime": 1780031840.9768376,
+    "ast_hash": "7b72de5eef5b983669d18b5ad66c3fef",
+    "semantic_hash": "7b72de5eef5b983669d18b5ad66c3fef"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/format-date.md": {
+    "mtime": 1780031840.9769561,
+    "ast_hash": "1a5279d4401a209ff7cf63b136c00491",
+    "semantic_hash": "1a5279d4401a209ff7cf63b136c00491"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/format-number.md": {
+    "mtime": 1780031840.9770703,
+    "ast_hash": "6fe6acef799cdecb43c59ffff5e01a73",
+    "semantic_hash": "6fe6acef799cdecb43c59ffff5e01a73"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/icon.md": {
+    "mtime": 1780031840.9771466,
+    "ast_hash": "58474453413cbe904be478b627076193",
+    "semantic_hash": "58474453413cbe904be478b627076193"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/inline-message.md": {
+    "mtime": 1780031840.977246,
+    "ast_hash": "027c4d214fc7295d9b1eb2e3a44da02c",
+    "semantic_hash": "027c4d214fc7295d9b1eb2e3a44da02c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/input.md": {
+    "mtime": 1780031840.9773684,
+    "ast_hash": "27ae01ed0610f274cd4dc062eef1b781",
+    "semantic_hash": "27ae01ed0610f274cd4dc062eef1b781"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/kebab-menu.md": {
+    "mtime": 1780031840.977462,
+    "ast_hash": "3e61d8ef316dd836c30a2be7de5dd80a",
+    "semantic_hash": "3e61d8ef316dd836c30a2be7de5dd80a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/label.md": {
+    "mtime": 1780031840.97754,
+    "ast_hash": "ec24a18aaa59ffe7687e1f346bd171e5",
+    "semantic_hash": "ec24a18aaa59ffe7687e1f346bd171e5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/menu-item.md": {
+    "mtime": 1780031840.9776258,
+    "ast_hash": "c6239a8f12b58543a4375ea0004ae20b",
+    "semantic_hash": "c6239a8f12b58543a4375ea0004ae20b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/menu.md": {
+    "mtime": 1780031840.9777033,
+    "ast_hash": "782969119d21bee79ee485c5db15663f",
+    "semantic_hash": "782969119d21bee79ee485c5db15663f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/modal-content.md": {
+    "mtime": 1780031840.9777815,
+    "ast_hash": "3cece9ea0a860912303b952834a12206",
+    "semantic_hash": "3cece9ea0a860912303b952834a12206"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/modal-footer.md": {
+    "mtime": 1780031840.9778526,
+    "ast_hash": "53d7aecb7acb8db40c743ade4633f132",
+    "semantic_hash": "53d7aecb7acb8db40c743ade4633f132"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/modal-title.md": {
+    "mtime": 1780031840.9779308,
+    "ast_hash": "fa119f9f1a6ed4b36d42bcfc0b771468",
+    "semantic_hash": "fa119f9f1a6ed4b36d42bcfc0b771468"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/modal.md": {
+    "mtime": 1780031840.9780395,
+    "ast_hash": "74d9827cee1e3ebb8b61dc8d5d04b396",
+    "semantic_hash": "74d9827cee1e3ebb8b61dc8d5d04b396"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/nested-select.md": {
+    "mtime": 1780031840.9781568,
+    "ast_hash": "5eeed9ec4814cb4d98b6e3bb62c1ed9b",
+    "semantic_hash": "5eeed9ec4814cb4d98b6e3bb62c1ed9b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/options-list.md": {
+    "mtime": 1780031840.9782622,
+    "ast_hash": "12ec59dee1550c30423ed38f29ce0284",
+    "semantic_hash": "12ec59dee1550c30423ed38f29ce0284"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/pagination.md": {
+    "mtime": 1780031840.9783604,
+    "ast_hash": "cf8e137d990fd00cbad1425bee6ffbf1",
+    "semantic_hash": "cf8e137d990fd00cbad1425bee6ffbf1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/paragraph.md": {
+    "mtime": 1780031840.97847,
+    "ast_hash": "1afce3adb2823e685207d7464b353165",
+    "semantic_hash": "1afce3adb2823e685207d7464b353165"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/pill.md": {
+    "mtime": 1780031840.9785664,
+    "ast_hash": "cff4e841cb99a02d97cb9320b6af4936",
+    "semantic_hash": "cff4e841cb99a02d97cb9320b6af4936"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/popover.md": {
+    "mtime": 1780031840.9786737,
+    "ast_hash": "3da25e0662d0c2485acbdfbce6eb8ff5",
+    "semantic_hash": "3da25e0662d0c2485acbdfbce6eb8ff5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/progress-loader.md": {
+    "mtime": 1780031840.9787838,
+    "ast_hash": "de897a93d63e06d410eb52766568a44d",
+    "semantic_hash": "de897a93d63e06d410eb52766568a44d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/progress.md": {
+    "mtime": 1780031840.9788828,
+    "ast_hash": "d7996e62a0537a8fc4a1ff04999c1e07",
+    "semantic_hash": "d7996e62a0537a8fc4a1ff04999c1e07"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/radio-group.md": {
+    "mtime": 1780031840.9789734,
+    "ast_hash": "844a93166a87d22c327a140d9647d13e",
+    "semantic_hash": "844a93166a87d22c327a140d9647d13e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/radio.md": {
+    "mtime": 1780031840.9790516,
+    "ast_hash": "f7e076c0356117f987834589cba6584d",
+    "semantic_hash": "f7e076c0356117f987834589cba6584d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/select-option.md": {
+    "mtime": 1780031840.9791749,
+    "ast_hash": "cd76016e30e37a8f53ec1bf87f5ce78e",
+    "semantic_hash": "cd76016e30e37a8f53ec1bf87f5ce78e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/select.md": {
+    "mtime": 1780031840.9794142,
+    "ast_hash": "8892f9b784cd8426d2ffbedfc106a945",
+    "semantic_hash": "8892f9b784cd8426d2ffbedfc106a945"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/skeleton.md": {
+    "mtime": 1780031840.9795375,
+    "ast_hash": "3684150edc2d85715c31e7716666337e",
+    "semantic_hash": "3684150edc2d85715c31e7716666337e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/spinner.md": {
+    "mtime": 1780031840.979629,
+    "ast_hash": "8ae797fa261604220491b1b9ff907f38",
+    "semantic_hash": "8ae797fa261604220491b1b9ff907f38"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/tab-panel.md": {
+    "mtime": 1780031840.9797566,
+    "ast_hash": "af5659b27d3b74e3535fa7db3d7722a3",
+    "semantic_hash": "af5659b27d3b74e3535fa7db3d7722a3"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/tab.md": {
+    "mtime": 1780031840.9798844,
+    "ast_hash": "fc43159698fa33911de8008c9f4ac266",
+    "semantic_hash": "fc43159698fa33911de8008c9f4ac266"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/tabs.md": {
+    "mtime": 1780031840.9800172,
+    "ast_hash": "679d71c51dfee4c9034adff6555d1a45",
+    "semantic_hash": "679d71c51dfee4c9034adff6555d1a45"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/tag.md": {
+    "mtime": 1780031840.980134,
+    "ast_hash": "2a1f0a5d14d800d3f6e4180a74d7cd17",
+    "semantic_hash": "2a1f0a5d14d800d3f6e4180a74d7cd17"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/textarea.md": {
+    "mtime": 1780031840.9802496,
+    "ast_hash": "6da30d278b50d313d07b29283d7cdc3f",
+    "semantic_hash": "6da30d278b50d313d07b29283d7cdc3f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/timepicker.md": {
+    "mtime": 1780031840.9803662,
+    "ast_hash": "762e015dca1a2b5c2d096f5d4a340ba1",
+    "semantic_hash": "762e015dca1a2b5c2d096f5d4a340ba1"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/toast-message.md": {
+    "mtime": 1780031840.9804678,
+    "ast_hash": "b361a4e46313b5b2ad070579299ccf4e",
+    "semantic_hash": "b361a4e46313b5b2ad070579299ccf4e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/toast.md": {
+    "mtime": 1780031840.9806,
+    "ast_hash": "96ef99bbc50f02a19b4326ca19e7c9af",
+    "semantic_hash": "96ef99bbc50f02a19b4326ca19e7c9af"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/toggle-group-button.md": {
+    "mtime": 1780031840.9807181,
+    "ast_hash": "c77f367fa2ea1dd42134d61278c8c775",
+    "semantic_hash": "c77f367fa2ea1dd42134d61278c8c775"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/toggle-group.md": {
+    "mtime": 1780031840.9808304,
+    "ast_hash": "c9c094ab568f671cacdead03cdfe2215",
+    "semantic_hash": "c9c094ab568f671cacdead03cdfe2215"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/toggle.md": {
+    "mtime": 1780031840.9809692,
+    "ast_hash": "3486244d07821fc3383dc3f1895ff5b2",
+    "semantic_hash": "3486244d07821fc3383dc3f1895ff5b2"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/tooltip.md": {
+    "mtime": 1780031840.98111,
+    "ast_hash": "ebcd10e897f449c2edfb641affb9e7fd",
+    "semantic_hash": "ebcd10e897f449c2edfb641affb9e7fd"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/ui/crayons-docs/user.md": {
+    "mtime": 1780031840.9812124,
+    "ast_hash": "bd885052ba1ca7e0b4cd9a5dabc4a0ea",
+    "semantic_hash": "bd885052ba1ca7e0b4cd9a5dabc4a0ea"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/references/validation-examples.md": {
+    "mtime": 1780031840.9813414,
+    "ast_hash": "9ac7d0d480acccad80105b59ed6247aa",
+    "semantic_hash": "9ac7d0d480acccad80105b59ed6247aa"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-publish/README.md": {
+    "mtime": 1780031840.9836624,
+    "ast_hash": "17d1f9c5a679ba4450879a577f63741f",
+    "semantic_hash": "17d1f9c5a679ba4450879a577f63741f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-publish/SKILL.md": {
+    "mtime": 1780383678.6963518,
+    "ast_hash": "9dfd56547390aec9efa560e215be5614",
+    "semantic_hash": "9dfd56547390aec9efa560e215be5614"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/README.md": {
+    "mtime": 1780031840.984656,
+    "ast_hash": "0c54401f806e959db1071d0569cc06c0",
+    "semantic_hash": "0c54401f806e959db1071d0569cc06c0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/SKILL.md": {
+    "mtime": 1780031840.9847667,
+    "ast_hash": "09303d638dcc51aeb11c6f2415c0dd11",
+    "semantic_hash": "09303d638dcc51aeb11c6f2415c0dd11"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/rules/frontend-files-rules.md": {
+    "mtime": 1780031840.9849322,
+    "ast_hash": "5fbb9190089aa65044bc127fb86eab7d",
+    "semantic_hash": "5fbb9190089aa65044bc127fb86eab7d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/rules/iparam-rules.md": {
+    "mtime": 1780031840.9850597,
+    "ast_hash": "06e6632eae16e327dd103c4db80380c7",
+    "semantic_hash": "06e6632eae16e327dd103c4db80380c7"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/rules/report.md": {
+    "mtime": 1780031840.9851913,
+    "ast_hash": "71cf92bbe66d01fe806546bb7d8d8970",
+    "semantic_hash": "71cf92bbe66d01fe806546bb7d8d8970"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-review/rules/script-check-rules.md": {
+    "mtime": 1780031840.9853036,
+    "ast_hash": "3a81ed9121906a3aaac5322afda8098f",
+    "semantic_hash": "3a81ed9121906a3aaac5322afda8098f"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/README.md": {
+    "mtime": 1780031840.986603,
+    "ast_hash": "76cfab72903609b23ccfb896d6e11f94",
+    "semantic_hash": "76cfab72903609b23ccfb896d6e11f94"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/SKILL.md": {
+    "mtime": 1780031840.9867525,
+    "ast_hash": "06640317e30eb6c072f87a6c978ad246",
+    "semantic_hash": "06640317e30eb6c072f87a6c978ad246"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-downgrade.md": {
+    "mtime": 1780031840.9869401,
+    "ast_hash": "7436530ea1f9665be1bd9d1b40c2d2eb",
+    "semantic_hash": "7436530ea1f9665be1bd9d1b40c2d2eb"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-install.md": {
+    "mtime": 1780383699.3655639,
+    "ast_hash": "87e9f3c34494a7eed6345be717cb0ec0",
+    "semantic_hash": "87e9f3c34494a7eed6345be717cb0ec0"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-status.md": {
+    "mtime": 1780031840.9871597,
+    "ast_hash": "1375bd8fb2bb8e4b8e5aa87894ca85f5",
+    "semantic_hash": "1375bd8fb2bb8e4b8e5aa87894ca85f5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-troubleshoot.md": {
+    "mtime": 1780031840.9872782,
+    "ast_hash": "bc22a0e0cb5f6604bce67f4a685888fc",
+    "semantic_hash": "bc22a0e0cb5f6604bce67f4a685888fc"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-uninstall.md": {
+    "mtime": 1780031840.9874024,
+    "ast_hash": "5378c5652670fe4849683581ef3c16de",
+    "semantic_hash": "5378c5652670fe4849683581ef3c16de"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-upgrade.md": {
+    "mtime": 1780031840.9874976,
+    "ast_hash": "3bbe860bc02c0dabdc5f1983f6f33308",
+    "semantic_hash": "3bbe860bc02c0dabdc5f1983f6f33308"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/commands/fw-setup-use.md": {
+    "mtime": 1780031840.987615,
+    "ast_hash": "f67036492eb53518b1706fd3ce17b373",
+    "semantic_hash": "f67036492eb53518b1706fd3ce17b373"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/cross-platform-scenarios.md": {
+    "mtime": 1780031840.9877918,
+    "ast_hash": "a13ad9cc98bb74fa7c205d669946f1a4",
+    "semantic_hash": "a13ad9cc98bb74fa7c205d669946f1a4"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/cross-scenarios.md": {
+    "mtime": 1780031840.9879227,
+    "ast_hash": "07f7adb9d8076d78b3fede6107c94c1c",
+    "semantic_hash": "07f7adb9d8076d78b3fede6107c94c1c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/error-command-not-found.md": {
+    "mtime": 1780031840.988042,
+    "ast_hash": "cf927dba52e1a03c61e092a7ebf25fd6",
+    "semantic_hash": "cf927dba52e1a03c61e092a7ebf25fd6"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/interactive-troubleshooting-guide.md": {
+    "mtime": 1780031840.9882028,
+    "ast_hash": "af624fdd7a479818fc953d1d852c1aa9",
+    "semantic_hash": "af624fdd7a479818fc953d1d852c1aa9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/macos.md": {
+    "mtime": 1780031840.988334,
+    "ast_hash": "b7847c93a21a230ce4273e2755d3869e",
+    "semantic_hash": "b7847c93a21a230ce4273e2755d3869e"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/node-version-sop.md": {
+    "mtime": 1780031840.988442,
+    "ast_hash": "e016516bc6ce276a29aaccdabc59aa75",
+    "semantic_hash": "e016516bc6ce276a29aaccdabc59aa75"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/npm-permissions-sop.md": {
+    "mtime": 1780031840.9885268,
+    "ast_hash": "a290e3896d8af9517d6a9dd35f91f53d",
+    "semantic_hash": "a290e3896d8af9517d6a9dd35f91f53d"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/nvm-install-sop.md": {
+    "mtime": 1780031840.9886343,
+    "ast_hash": "6ef0428f8e3f38966cccb6191dc7089a",
+    "semantic_hash": "6ef0428f8e3f38966cccb6191dc7089a"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/real-world-scenarios.md": {
+    "mtime": 1780031840.9887664,
+    "ast_hash": "a22667524f12cff5a81486bfe57e2cf9",
+    "semantic_hash": "a22667524f12cff5a81486bfe57e2cf9"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/shell-persistence-sop.md": {
+    "mtime": 1780031840.9889002,
+    "ast_hash": "031e39157d9ccb57775e59e561fc4981",
+    "semantic_hash": "031e39157d9ccb57775e59e561fc4981"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/version-policy.md": {
+    "mtime": 1780031840.9889894,
+    "ast_hash": "f36600d3ffed2dca6def6f9af0ebb797",
+    "semantic_hash": "f36600d3ffed2dca6def6f9af0ebb797"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-setup/references/windows.md": {
+    "mtime": 1780031840.9891033,
+    "ast_hash": "ad996369ac5ff700a041ee90da8b416c",
+    "semantic_hash": "ad996369ac5ff700a041ee90da8b416c"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/assets/fw-logo.svg": {
+    "mtime": 1780031840.9314654,
+    "ast_hash": "4eeda79ee4f2367c8e5bb5bfc763174b",
+    "semantic_hash": "4eeda79ee4f2367c8e5bb5bfc763174b"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/frontend-skeleton/app/styles/images/icon.svg": {
+    "mtime": 1780031840.93932,
+    "ast_hash": "d1118ab60c0df0b76076d81722ba66e5",
+    "semantic_hash": "d1118ab60c0df0b76076d81722ba66e5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/hybrid-skeleton/app/styles/images/icon.svg": {
+    "mtime": 1780031840.9402297,
+    "ast_hash": "d1118ab60c0df0b76076d81722ba66e5",
+    "semantic_hash": "d1118ab60c0df0b76076d81722ba66e5"
+  },
+  "/Users/bramesh/Desktop/Repos/fw-dev-tools/skills/fw-app-dev/assets/templates/oauth-skeleton/app/styles/images/icon.svg": {
+    "mtime": 1780031840.9414928,
+    "ast_hash": "d1118ab60c0df0b76076d81722ba66e5",
+    "semantic_hash": "d1118ab60c0df0b76076d81722ba66e5"
+  }
+}

@@ -1,0 +1,1 @@
+{"nodes": [], "edges": [{"source": "scripts_app_fetchdata", "target": "oauth_skeleton_server_fetchoauthdata", "relation": "conceptually_related_to", "confidence": "INFERRED", "confidence_score": 0.85, "source_file": "skills/fw-app-dev/assets/templates/oauth-skeleton/app/scripts/app.js", "source_location": "L21", "weight": 1.0}], "hyperedges": []}
