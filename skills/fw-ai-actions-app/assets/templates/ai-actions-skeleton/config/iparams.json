@@ -10,6 +10,7 @@
     "display_name": "API Base URL",
     "description": "Base URL for the API (e.g., api.example.com)",
     "type": "text",
-    "required": true
+    "required": true,
+    "default_value": "api.example.com"
   }
 }
