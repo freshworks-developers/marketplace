@@ -108,10 +108,9 @@ app-root/
 
 ---
 
-## Skeleton templates
+## Skeleton template
 
-- **`scripts/ai-actions-skeleton/`** — minimal starter (actions, config, server stub).
-- **`assets/templates/ai-actions-skeleton/`** — fuller example (e.g. manifest, sample actions).
+- **`assets/templates/ai-actions-skeleton/`** — Fuller template with manifest, sample actions (`getResource`, `createResource`), request templates, server handlers with error sanitization, and test data.
 
 ---
 
