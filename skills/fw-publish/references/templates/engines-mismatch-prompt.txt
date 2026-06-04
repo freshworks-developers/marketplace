@@ -1,0 +1,14 @@
+Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
+
+Current environment: Node vW.X.Y, FDK vP.Q.R
+
+Would you like me to install/switch to the required versions? (yes/no)
+
+If yes, I'll use the fw-setup skill to:
+- Install Node.js X.Y.Z (if not present) and switch to it
+- Install/upgrade to FDK A.B.C
+
+If no, you can manually run:
+- /fw-setup-use (in app directory) - switches Node version
+- /fw-setup-install --version A.B.C - installs FDK version
+- /fw-setup-upgrade --to A.B.C - upgrades FDK version

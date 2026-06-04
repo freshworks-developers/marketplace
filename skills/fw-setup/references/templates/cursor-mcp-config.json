@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "fw-dev-mcp": {
+      "url": "https://mcp.freshworks.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer <JWT>"
+      }
+    }
+  }
+}

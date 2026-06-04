@@ -38,37 +38,11 @@ The MCP server is set up but the API key needs to be refreshed or was never set.
 
 1. Go to [https://developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
 2. Under **"Connect to Freddy AI Copilot MCP server"** → select your IDE tab (**Cursor** or **VS Code**)
-3. **Cursor:** Click **"Install in Cursor"** directly, or manually add to `~/.cursor/mcp.json`:
-   ```json
-   {
-     "mcpServers": {
-       "fw-dev-mcp": {
-         "url": "https://mcp.freshworks.dev/mcp",
-         "headers": {
-           "Authorization": "Bearer <your-api-key>"
-         }
-       }
-     }
-   }
-   ```
-   Replace `<your-api-key>` with the key copied in step 2, then restart Cursor.
+3. **Cursor:** Click **"Install in Cursor"** directly, or merge [`references/templates/cursor-mcp-setup.json`](references/templates/cursor-mcp-setup.json) into `~/.cursor/mcp.json` (replace `<your-api-key>`, restart Cursor).
 
    **Claude Code (via plugin):** The freshworks plugin prompts for the API key at install time. If you skipped it, run `/config` and update the plugin settings. The key is stored securely in the system keychain.
 
-   **Claude Code (standalone skill, no plugin):** Add the server to `.mcp.json` at your project root (or add via `claude mcp add` with `--scope user` to store it globally in `~/.claude.json`):
-   ```json
-   {
-     "mcpServers": {
-       "fw-dev-mcp": {
-         "url": "https://mcp.freshworks.dev/mcp",
-         "headers": {
-           "Authorization": "Bearer <your-api-key>"
-         }
-       }
-     }
-   }
-   ```
-   Replace `<your-api-key>` with the key copied in step 2, then restart Claude Code.
+   **Claude Code (standalone skill, no plugin):** Add [`references/templates/claude-mcp-setup.json`](references/templates/claude-mcp-setup.json) to project `.mcp.json` or `~/.claude.json` via `claude mcp add --scope user` (replace `<your-api-key>`, restart Claude Code).
 4. Re-run the publish command
 
 **DO NOT proceed with any publish step until auth is confirmed.**
@@ -92,23 +66,7 @@ The Developer API key is **product-specific**. Ask the user to confirm their con
 - Read `engines.node` and `engines.fdk` from `manifest.json` in the app directory
 - Check active versions: `node --version` and `fdk --version`
 - **If `fdk` is missing** (`fdk --version` fails / command not found): **STOP**. Do **not** auto-install or assume “latest FDK” without asking. Tell the user the Freshworks CLI is required for **`fdk validate`** / **`fdk pack`**. Offer **`fw-setup`**: **`/fw-setup-install`** (default FDK **10.x** on Node **24.11**). **Optional one-shot:** **“Run `/fw-setup-install` now? (y/n)”** — only on **yes**, follow **`skills/fw-setup/SKILL.md`**; on **no**, end until the user installs manually. **Do not** continue to step 4 until **`fdk`** is available (unless the user explicitly overrides with understanding of the risk).
-- **If versions mismatch** (but `fdk` is present), **STOP and inform user:**
-  ```
-  Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
-
-  Current environment: Node vW.X.Y, FDK vP.Q.R
-
-  Would you like me to install/switch to the required versions? (yes/no)
-
-  If yes, I'll use the fw-setup skill to:
-  - Install Node.js X.Y.Z (if not present) and switch to it
-  - Install/upgrade to FDK A.B.C
-
-  If no, you can manually run:
-  - /fw-setup-use (in app directory) - switches Node version
-  - /fw-setup-install --version A.B.C - installs FDK version
-  - /fw-setup-upgrade --to A.B.C - upgrades FDK version
-  ```
+- **If versions mismatch** (but `fdk` is present), **STOP** and show [`references/templates/engines-mismatch-prompt.txt`](references/templates/engines-mismatch-prompt.txt) (substitute manifest vs current versions).
 - **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
 
 ### 4. fdk validate (pre-publish)
@@ -182,12 +140,7 @@ List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc.
 
 ### 5.5 Custom app limit warning (MANDATORY — do not skip)
 
-Show this message to the user verbatim before proceeding:
-```
-⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
-    If you are creating a new listing, ensure you have not reached this limit.
-    Check your current count at https://developers.freshworks.com/developer/
-```
+Show [`references/templates/custom-app-limit-warning.txt`](references/templates/custom-app-limit-warning.txt) verbatim before proceeding.
 **Self-check: did you output the above warning in your response? If not, output it now before continuing to step 6.**
 
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
@@ -211,16 +164,7 @@ Do this **at publish time** — **after** you have a valid zip **that passes the
    a. **Call `list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**.
    
    b. **Check for stuck latest version:** Call **`list_app_versions`** with the selected **`appId`**. Check only the **latest version** (most recent by `updatedAt`).
-      - **If the latest version has `state: "development"`**, **STOP** and inform the user:
-        ```
-        Cannot publish — the latest version is stuck in "development" state.
-        Version: [id, version, state]
-        
-        This usually means a previous deployment failed. Please:
-        1. Go to https://developers.freshworks.com/developer/
-        2. Navigate to your app and delete or resolve the stuck version
-        3. Return here and retry
-        ```
+      - **If the latest version has `state: "development"`**, **STOP** and show [`references/templates/stuck-version-warning.txt`](references/templates/stuck-version-warning.txt) (fill version fields).
       - **If the latest version is in any other state**, proceed to step 7.
    
    c. **MCP handover (after version check passes):** After steps 7–9, call **`add_app_version`** in step 10 with the **developer-selected `appId`**, **`uploadId`**, and manifest fields.
@@ -297,13 +241,7 @@ Read `manifest.json` in the app directory. Extract:
 - If the user confirms **yes**, set `worksWith: ["ai_actions"]` for step 10.
 - If **no** or `actions.json` is absent, omit `worksWith`.
 
-**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show this warning before proceeding:
-```
-⚠️  If the previous version of this app included worksWith: ["ai_actions"],
-    removing it in this version is not supported and may cause failures.
-    Only continue if you are sure the previous version was NOT an AI Actions app.
-    Proceed? (yes/no)
-```
+**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show [`references/templates/downgrade-warning.txt`](references/templates/downgrade-warning.txt) verbatim before proceeding.
 **Do not proceed to step 10 until the user confirms.**
 
 

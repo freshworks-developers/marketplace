@@ -1,0 +1,22 @@
+{
+  "platform-version": "3.0",
+  "app": {},
+  "modules": {
+    "common": {
+      "requests": { "apiName": {} },
+      "functions": { "functionName": {} }
+    },
+    "support_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "24.11.0",
+    "fdk": "10.0.1"
+  }
+}

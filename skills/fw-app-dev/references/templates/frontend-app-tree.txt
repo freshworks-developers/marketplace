@@ -1,0 +1,10 @@
+README.md                     # MANDATORY - create FIRST
+app/
+├── index.html               # MUST include Crayons CDN (see references/templates/crayons-cdn.html)
+├── scripts/app.js           # Use IIFE pattern for async
+└── styles/
+    ├── style.css
+    └── images/
+        └── icon.svg         # REQUIRED - copy from assets/templates/*/app/styles/images/icon.svg
+config/
+└── iparams.json             # REQUIRED - even if empty {}
