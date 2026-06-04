@@ -1,0 +1,5 @@
+WARNING: DEPRECATED TOOLCHAIN — Manifest engines were set to FDK 9.8.2 + Node 18.20.8 as LAST RESORT after six validate iterations / CLI could not run on FDK 10.0.1 + Node 24.11.0.
+
+Reason: <one-line summary>
+
+- FDK 9.x + Node 18.x is DEPRECATED. Restore FDK 10.0.1 + Node 24.x for publishing.

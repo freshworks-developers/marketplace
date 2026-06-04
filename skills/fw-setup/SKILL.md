@@ -32,16 +32,7 @@ Parse user request and execute the appropriate operation:
 | "fdk broken", "fdk not found", `/fw-setup-troubleshoot`; **`--fix`** only if user asks | Diagnose inline; **`--fix`** spawns shell Task (see `commands/fw-setup-troubleshoot.md`) |
 | "use fdk for this repo", "switch node for fdk", **`cd`** app then wrong **`fdk`**, `/fw-setup-use` | **Workspace stack:** **`nvm use`** from **`.nvmrc`** or explicit **10**/**9** (Node **24.11** vs **18**); optional **`--write-nvmrc`** (inline only — see `commands/fw-setup-use.md`) |
 
-**FDK 9.x Deprecation Warning (Always show when installing/downgrading to FDK 9.x):**
-```
-WARNING: FDK 9.x + Node 18.x is DEPRECATED (ends May 31, 2026)
-
-- Development: Allowed for Platform 3.0 apps
-- Publishing: NOT SUPPORTED - requires FDK 10.x + Node 24.x
-- Recommendation: Use FDK 10.x for all new development
-
-Continue with FDK 9.x installation? (y/N)
-```
+**FDK 9.x deprecation (install/downgrade to 9.x):** Show verbatim from [`references/templates/fdk9-deprecation-warning.txt`](references/templates/fdk9-deprecation-warning.txt).
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
@@ -127,37 +118,15 @@ You are not a tutor. You are an enforcement layer.
 - ❌ `fdk version` on Node 24.14.x with FDK 10.1.0 → engine mismatch error
 - ❌ Only uninstalling `@freshworks/fdk` → leaves legacy `fdk` package behind
 
-### Correct Workflow:
+### Install execution
 
-```bash
-# Uninstall both package names
-npm uninstall -g @freshworks/fdk 2>/dev/null
-npm uninstall -g fdk 2>/dev/null
-rm -rf ~/.fdk
-npm cache clean --force
-
-# Install FDK 10.x on Node 24.11.x
-nvm install 24.11
-nvm use 24.11
-nvm alias default 24.11
-npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz
-
-# Verify
-fdk version  # Should show 10.x.x
-node --version  # Should show v24.11.x
-```
+Run **`/fw-setup-install`** and follow [`commands/fw-setup-install.md`](commands/fw-setup-install.md) only (CDN tarball + pinned Node per **`docs/engine-matrix.md`**).
 
 ## Quick Detection (Pre-Subagent)
 
 Run these checks directly before spawning subagents to provide context:
 
-```bash
-fdk version 2>&1 || echo "FDK not installed"
-node --version 2>&1 || echo "Node not installed"
-command -v nvm &>/dev/null && echo "nvm installed" || echo "nvm missing"
-nvm current 2>&1 || echo "No nvm version active"
-ls ~/.fdk 2>&1 || echo "No ~/.fdk directory"
-```
+**Inline:** `bash scripts/fw-setup-quick-detect.sh` (same checks as **`/fw-setup-status`** default block).
 
 **Report format:**
 ```
@@ -175,107 +144,11 @@ DETECTION:
 
 **Trigger:** FDK not installed or user requests installation.
 
-**AUTHORITATIVE SOURCE:** Follow **CDN Tarball Reality** (above). Do **not** use `@freshworks/fdk` from the public npm registry, `brew install fdk`, or `choco install fdk` as primary install paths—they do **not** replace **nvm/nvm-windows + CDN tarball + pinned Node**.
+1. Run **`/fw-setup-install`** → follow [`commands/fw-setup-install.md`](commands/fw-setup-install.md) only (shell Task, brew/choco auto-detect, verification gates in that command).
+2. Enforce **CDN Tarball Reality** (above) — not registry `@freshworks/fdk` as primary.
+3. On failure: `references/macos.md` or `references/windows.md`.
 
-**Steps:**
-
-1. Detect OS: `uname -s` (macOS: Darwin, Linux: Linux); on Windows PowerShell `$env:OS`.
-
-2. Check prerequisites (`nvm`/Node). On Windows use **nvm-windows** (see `references/windows.md`). **Do not** use **native** `nvm` on CMD without nvm-windows. If **`where.exe node`** shows **`Program Files\nodejs`** first or **winget/choco/Store** Node competes with nvm, read **`references/windows.md`** (*Installer-based setups*) before **`npm install -g`**.
-
-3. Spawn subagent with this prompt:
-
-```
-Install FDK 10.x (default) using nvm + CDN tarball per repository docs (see CDN Tarball Reality + docs/engine-matrix.md).
-
-DETECTION:
-- OS: [detected]
-- nvm / nvm-windows: [installed/missing]
-- Node: [version/missing]
-
-AUTHORITATIVE INSTALL (FDK 10.x line):
-- Node: nvm install 24.11.0 && nvm use 24.11.0 && nvm alias default 24.11.0 (Unix nvm) OR equivalent nvm-windows commands.
-- Remove old globals: npm uninstall -g @freshworks/fdk; npm uninstall -g fdk; rm -rf ~/.fdk (Unix) or remove %USERPROFILE%\.fdk on Windows.
-- npm cache clean --force
-- npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz
-
-FDK 9.x (deprecated): only if user confirms after warning — Node 18.x + npm install -g https://cdn.freshdev.io/fdk/latest.tgz — never publish with 9.x.
-
-PACKAGE MANAGER NOTE: Homebrew/Chocolatey are NOT authoritative for pinning; if user insists, verify same semver as CDN and still require correct Node via nvm when possible.
-
-VERIFICATION OS split:
-- macOS/Linux new shell: zsh -c 'fdk version' || bash -c 'fdk version'
-- Windows: new PowerShell window — where.exe fdk; fdk version (see references/windows.md for PATH refresh if needed).
-
-REPORT: FDK version, Node version, method = cdn_tarball+nvm.
-```
-
-4. **MANDATORY VERIFICATION (CRITICAL):** Use **Mandatory verification gates** section below (**Unix/Linux vs Windows** branches). Do **not** claim completion if the OS-appropriate gates fail.
-
-5. **Report format:**
-   ```
-   [VALID] FDK installed successfully
-   
-   Verification: ✓ Gates passed (current + new shell) per OS
-   
-   Installation: cdn_tarball+nvm
-   FDK version: [version]
-   Node version: [version]
-
-Next steps:
-   1. Restart terminal (Unix: source shell rc if needed)
-   2. Run: fdk version
-   3. Create app: fdk create
-   ```
-
-6. **Post-install: MCP server configuration (optional, skippable)**
-
-   After a successful install, offer to configure the MCP connection for publish tools:
-
-   ```
-   Would you like to configure the Marketplace MCP server for publishing?
-   This connects your IDE to the Freshworks openai-server so you can
-   use publish tools (list apps, submit, update, check status).
-   You can skip this and set it up later.  (y/N)
-   ```
-
-   **If user says yes:**
-   - Ask for their **API key**: API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
-   - The MCP server URL is fixed: `https://mcp.freshworks.dev/mcp`
-   - Detect IDE and write config:
-
-     **Claude Code:** Guide them to run `/config` and set the plugin's `mcp_auth_token` field (stored in system keychain via `userConfig`). The server URL is defined in **`.mcp.json`** at this repository’s root.
-
-     **Cursor:** Write or update `~/.cursor/mcp.json`:
-     ```json
-     {
-       "mcpServers": {
-         "fw-dev-mcp": {
-           "url": "https://mcp.freshworks.dev/mcp",
-           "headers": {
-             "Authorization": "Bearer <JWT>"
-           }
-         }
-       }
-     }
-     ```
-   - Confirm: "MCP server configured. Publish tools are now available."
-
-   **If user says no or skips:**
-   - "Skipped. Configure MCP later via your IDE settings (see AGENTS.md)."
-
-   **Rules:**
-   - NEVER ask the user to paste the JWT into chat — write to config file or direct to IDE settings UI
-   - Only offer this step after **successful install or upgrade**, not during status/troubleshoot/downgrade/uninstall
-
-**Error handling:** If installation fails, read `references/macos.md` or `references/windows.md` for OS-specific troubleshooting.
-
-**CRITICAL RULES:**
-- [INVALID] NEVER say "installation complete" until **Mandatory verification gates** below pass for the user's OS (Unix vs Windows).
-- On **macOS/Linux**, new-shell check uses `zsh -c 'fdk version'` or `bash -c 'fdk version'`.
-- On **Windows**, new-shell check opens a **new PowerShell window** (or subprocess) and runs `where.exe fdk` + `fdk version`; follow `references/windows.md` if PATH is stale.
-- [VALID] Node **24.11.x** active for FDK 10.x line unless user explicitly installs deprecated FDK 9 + Node 18 after confirmation.
-- [INVALID] NEVER skip verification steps
+**Post-install MCP (optional):** After successful install/upgrade only — offer Marketplace MCP setup; **Cursor** config shape: [`references/templates/cursor-mcp-config.json`](references/templates/cursor-mcp-config.json); **Claude Code:** `.mcp.json` + `mcp_auth_token` per **AGENTS.md**. Never paste JWT in chat.
 
 ---
 
@@ -338,21 +211,7 @@ Do **not** use `npm install -g @freshworks/fdk@latest` from the public npm regis
 
 **Trigger:** User checks FDK installation.
 
-**Steps:**
-
-1. Run checks directly (no subagent needed):
-
-```bash
-echo "=== FDK Status ==="
-fdk version 2>&1 || echo "Not installed"
-node --version 2>&1 || echo "Not installed"
-nvm --version 2>&1 || echo "Not installed"
-   which fdk
-[ -d ~/.fdk ] && echo "Cache exists" || echo "No cache"
-echo "=================="
-```
-
-2. Report findings to user.
+**Inline only.** Run bash blocks in [`commands/fw-setup-status.md`](commands/fw-setup-status.md) (default; `--verbose` adds PATH/nvm/rc diagnostics).
 
 ---
 

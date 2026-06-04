@@ -1,0 +1,7 @@
+WARNING: FDK 9.x + Node 18.x is DEPRECATED (ends May 31, 2026)
+
+- Development: Allowed for Platform 3.0 apps
+- Publishing: NOT SUPPORTED - requires FDK 10.x + Node 24.x
+- Recommendation: Use FDK 10.x for all new development
+
+Continue with FDK 9.x installation? (y/N)

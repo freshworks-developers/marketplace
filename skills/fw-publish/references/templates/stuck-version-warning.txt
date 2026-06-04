@@ -1,0 +1,7 @@
+Cannot publish — the latest version is stuck in "development" state.
+Version: [id, version, state]
+
+This usually means a previous deployment failed. Please:
+1. Go to https://developers.freshworks.com/developer/
+2. Navigate to your app and delete or resolve the stuck version
+3. Return here and retry

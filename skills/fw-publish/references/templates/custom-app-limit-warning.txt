@@ -1,0 +1,3 @@
+⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
+    If you are creating a new listing, ensure you have not reached this limit.
+    Check your current count at https://developers.freshworks.com/developer/

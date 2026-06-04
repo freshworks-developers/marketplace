@@ -1,0 +1,4 @@
+server/
+└── server.js                # Use $request.invokeTemplate()
+config/
+└── iparams.json             # REQUIRED - even if empty {}
