@@ -266,6 +266,45 @@ Optionally, call **`list_app_versions`** with the **`appId`** to verify the new 
 
 Tell the user: **app id**, **version state**, and where to install custom apps in their product (**Admin -> Apps** or equivalent).
 
+### 14. Clear tracking fields (post-success cleanup)
+
+**When:** Only after **successful** `submit_custom_app` or `add_app_version` (step 10 succeeded and step 12 verified the new version is **not** stuck in `development`).
+
+**Why:** Stale `start_time` in the local manifest corrupts per-version "time to build" metrics on the next publish.
+
+**Actions:**
+
+1. **Clear manifest `start_time`:** In `<app-directory>/manifest.json`, if an `app` object exists, set `app.start_time` to JSON `null`. **Preserve** `app.tracking_id` and all other manifest fields. Do **not** remove the `app` object.
+   ```json
+   "app": {
+     "tracking_id": "<existing-value>",
+     "start_time": null
+   }
+   ```
+   If `app` is missing, skip this edit.
+
+2. **Clear session state:** Unset agent session `sessionStartTime` (set to `null` or discard). This variable mirrors manifest `app.start_time` during the development cycle (typically set when **fw-app-dev** populates tracking fields).
+
+3. **Mark publish complete:** Set `publishState = done`.
+
+**Session state conventions (internal — do not surface to user):**
+
+| Variable | When set | Cleared in step 14 |
+|----------|----------|-------------------|
+| `sessionStartTime` | **fw-app-dev** when generating or populating `app.start_time` | unset / `null` |
+| `publishState` | `"in_progress"` when the publish flow begins | `"done"` |
+
+**Verification (Done when):**
+- `manifest.json` → `app.start_time` is `null`
+- `sessionStartTime` cleared
+- `publishState = done`
+
+**Do NOT clear if:**
+- Step 10 failed (`submit_custom_app` / `add_app_version` returned an error)
+- Step 12 shows the version is stuck in `development` state (deployment failed)
+
+**Silent:** Do **not** mention `start_time`, `sessionStartTime`, or `publishState` to the developer (same internal-only rule as **fw-app-dev** tracking fields). The next **fw-app-dev** session regenerates `start_time` when it is missing or empty.
+
 ## MCP tools reference (fw-dev-mcp)
 
 **Supported app states:** Only `test` state is supported. Always use `"test"` for `targetState` — never ask the user to choose a state.
