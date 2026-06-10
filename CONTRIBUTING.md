@@ -208,6 +208,43 @@ references/
 
 ## Testing Your Changes
 
+See **[tests/TESTING.md](tests/TESTING.md)** for the full test suite guide. Summary:
+
+### Layer 1 — Static tests (required, runs in CI)
+
+```bash
+cd tests && npm install && npm test
+```
+
+122 structural assertions across all skill files — no LLM, no API key. Must pass before opening a PR.
+
+### Layer 2 — LLM behavioral evals (required for skill edits, local only)
+
+```bash
+cd tests && ANTHROPIC_API_KEY=sk-... npm run eval
+```
+
+Or, if working in **Claude Code or Cursor**, just ask: *"Run the skill evals and write eval-report.md"* — no API key needed.
+
+**Attach `tests/eval-report.html` (or `eval-report.md`) to your PR.** This is required for any PR that modifies a `SKILL.md`, command file, or `app.info.template.json`.
+
+### PR checklist
+
+Every PR should satisfy the checklist in `.github/PULL_REQUEST_TEMPLATE.md` (auto-populated when you open a PR on GitHub):
+
+- [ ] `npm test` passes locally (122 static tests, no LLM)
+- [ ] For skill edits: existing eval scenarios reviewed and updated if needed, new scenarios added for new behavioral rules, evals run and passing
+- [ ] `tests/eval-report.html` attached to the PR
+
+### Writing new static tests — cross-platform rules
+
+The CI workflow runs on Linux; contributors may be on macOS or Windows. Any new test added to `skill-static.test.js` must follow these rules:
+
+- **Use `grepFiles()`** — the pure-Node helper already in the file — instead of shell `grep`. BSD `grep` (macOS) lacks `--exclude-dir`; Windows has no `grep` at all.
+- **Guard bash invocations** with `{ skip: process.platform === 'win32' }` if a test runs a `.sh` script.
+- **No Unix-only CLI flags** (`find -exec`, `chmod`, etc.) — use `node:fs` APIs.
+- **Paths via `join()`** — never string-concatenate with `/`.
+
 ### 0. Docs hygiene (optional, recommended)
 
 ```bash
@@ -215,29 +252,12 @@ python3 scripts/check-internal-links.py
 bash scripts/check-marketplace-versions.sh
 ```
 
-### 1. Validate Skill Structure
-
-Ensure your skill follows the correct structure:
-```bash
-# Check that SKILL.md exists and has valid frontmatter
-head -20 skills/your-skill/SKILL.md
-```
-
-### 2. Test in Cursor
-
-1. Copy the skill to your Cursor skills directory:
-   ```bash
-   cp -r skills/fw-app-dev ~/.cursor/skills/
-   ```
-2. Open Cursor and verify the skill loads
-3. Test commands and rules work as expected
-
-### 3. Smoke-test Claude Code or OpenAI Codex (optional)
+### Smoke-test in Cursor / Claude Code / Codex (optional)
 
 - **Claude Code:** Install or copy skills per **README.md**, then verify **`~/.claude/skills/`** layouts and MCP per **AGENTS.md** when testing **fw-publish**.
 - **Codex:** From a clone of your branch at repo root, run `codex plugin marketplace add ./` (per **README.md**). Confirm **`skills/*/SKILL.md`** is visible to the assistant and (**fw-publish**) MCP auth matches **`.mcp.json`** / **AGENTS.md** guidance.
 
-### 4. Validate Rules
+### Validate Rule Files
 
 For rule files, verify:
 - `name` field matches filename

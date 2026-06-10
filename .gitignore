@@ -118,7 +118,6 @@ coverage/
 *~.nib
 
 # Legacy files
-*.github/
 .tmp-skillguard/
 docs/
 

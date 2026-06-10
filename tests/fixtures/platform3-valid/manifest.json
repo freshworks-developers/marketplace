@@ -1,0 +1,20 @@
+{
+  "platform-version": "3.0",
+  "app": {},
+  "modules": {
+    "common": {
+      "location": {
+        "full_page_app": {
+          "url": "index.html",
+          "icon": "styles/images/icon.svg"
+        }
+      },
+      "requests": {}
+    },
+    "support_ticket": {}
+  },
+  "engines": {
+    "node": "24.11.0",
+    "fdk": "10.0.1"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "fw-skills-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test skill-static.test.js",
+    "eval": "node --test skill-eval.test.js && node report.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  }
+}

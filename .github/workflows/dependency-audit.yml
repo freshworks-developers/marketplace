@@ -1,0 +1,32 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        package:
+          - path: installer
+            name: installer
+          - path: tests
+            name: tests
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Audit ${{ matrix.package.name }}
+        # --audit-level=high: ignore low/moderate, fail on high/critical CVEs only
+        run: npm audit --audit-level=high
+        working-directory: ${{ matrix.package.path }}
