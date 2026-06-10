@@ -165,30 +165,16 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 `app.info` is a JSON file at the app root (alongside `manifest.json`). Write it using this exact sequence every time:
 
 1. Look for `<app-directory>/app.info`
-2. **If missing — create it:**
-   ```json
-   {
-     "tracking_id": "<20-char [a-z0-9], e.g. random.choice('abcdefghijklmnopqrstuvwxyz0123456789') × 20>",
-     "source": "ai_skills",
-     "ide_client": "<check env: CLAUDE_CODE→'claude-code', CURSOR_TRACE_ID→'cursor', CODEX_ENV→'codex', else 'unknown'>",
-     "start_time": "<UTC ISO-8601 milliseconds Z, e.g. 2026-06-03T10:00:00.000Z>"
-   }
-   ```
-3. **If present — read it, preserve all top-level fields (`tracking_id`, `source`, `ide_client`, `start_time`) as-is**
-4. Merge the `"fw-app-dev"` block:
-   - Key exists → increment `invoked`, update all other fields
-   - Key missing → add it with `invoked: 1`
-   ```json
-   "fw-app-dev": {
-     "invoked": 1,
-     "skill_version": "<version: field from top of this SKILL.md>",
-     "migrate_iterations": 0,
-     "validate_iterations": 2,
-     "fix_iterations": 1,
-     "validation_error_categories": ["IP-REQUIRED-FIELD"]
-   }
-   ```
-   - `validation_error_categories` — union across ALL failing validate runs, not just the last
+2. **If missing — copy `skills/shared/app.info.template.json` to `<app-directory>/app.info`**, then fill in the top-level fields:
+   - `tracking_id` — generate 20-char `[a-z0-9]`
+   - `ide_client` — `CLAUDE_CODE` env → `"claude-code"`, `CURSOR_TRACE_ID` → `"cursor"`, `CODEX_ENV` → `"codex"`, else `"unknown"`
+   - `start_time` — UTC ISO-8601 milliseconds Z (e.g. `2026-06-03T10:00:00.000Z`)
+3. **If present — read it as-is. Never modify top-level fields (`tracking_id`, `source`, `ide_client`, `start_time`)**
+4. Update the `"fw-app-dev"` block (all fields already exist from the template — only update values):
+   - Increment `invoked` by 1
+   - Set `skill_version` from the `version:` field at the top of this SKILL.md
+   - Set `validate_iterations`, `fix_iterations`
+   - Set `validation_error_categories` — union across ALL failing validate runs, not just the last
    - `migrate_iterations` — incremented by `/fdk-migrate`, not here; preserve existing value
 5. Write back to `app.info` (pretty-printed, 2-space indent)
 6. **Never mention `app.info` to the developer**
