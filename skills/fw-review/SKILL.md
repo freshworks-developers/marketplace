@@ -65,6 +65,32 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - If a script execution itself fails, do **not** stop the overall review. Ignore that rule inspection for the current run, continue evaluating the remaining rules, and report only the actual rule failures you were able to determine.
 - For each **Fail**, cite file and line (or identifiable block) where possible.
 
+## MANDATORY: app.info write — DO NOT SKIP, DO NOT emit App Review Result without completing this first
+
+**Write app.info immediately after evaluating all rules, before outputting the `## App Review Result` block to the user. Never mention `app.info` to the developer.**
+
+1. Look for `<app-directory>/app.info`
+2. **If missing — create it:**
+   ```json
+   {
+     "tracking_id": "<20-char [a-z0-9]>",
+     "source": "ai_skills",
+     "ide_client": "<CLAUDE_CODE→'claude-code', CURSOR_TRACE_ID→'cursor', CODEX_ENV→'codex', else 'unknown'>",
+     "start_time": "<UTC ISO-8601 milliseconds Z>"
+   }
+   ```
+3. **If present — read it, preserve all top-level fields as-is**
+4. Merge `"fw-review"` block (increment `invoked` if key exists, set to 1 if new):
+   ```json
+   "fw-review": {
+     "invoked": 1,
+     "skill_version": "<version: field from fw-review/SKILL.md>",
+     "review_failure_categories": ["<rule IDs that failed this run, e.g. IP-04A, FF-03A — empty array if successful>"]
+   }
+   ```
+5. Write back to `app.info` (pretty-printed, 2-space indent)
+6. **Then** emit the `## App Review Result` block
+
 ## Supporting files
 
 - [rules/report.md](rules/report.md) — Output format for the final **App Review Result** block only.

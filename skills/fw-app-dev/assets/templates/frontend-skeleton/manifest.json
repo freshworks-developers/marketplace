@@ -1,9 +1,6 @@
 {
   "platform-version": "3.0",
-  "app": {
-    "tracking_id": "",
-    "start_time": ""
-  },
+  "app": {},
   "modules": {
     "common": {
       "location": {
