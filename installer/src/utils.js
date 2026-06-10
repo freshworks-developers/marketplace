@@ -1,0 +1,75 @@
+import { readdir, cp, mkdir, writeFile, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { createInterface } from 'node:readline';
+
+export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+export const SKILLS_SRC = join(REPO_ROOT, 'skills');
+export const INSTALL_JSON = join(homedir(), '.fw-dev-tools', 'install.json');
+export const VERSION = '1.1.0';
+
+/**
+ * Copy all skill subdirectories from the repo's skills/ into targetDir.
+ * Each skill gets its own subdirectory: targetDir/fw-setup/, targetDir/fw-app-dev/, etc.
+ */
+export async function copySkills(targetDir) {
+  await mkdir(targetDir, { recursive: true });
+  const skills = await readdir(SKILLS_SRC, { withFileTypes: true });
+  for (const entry of skills) {
+    if (!entry.isDirectory()) continue;
+    const dest = join(targetDir, entry.name);
+    await cp(join(SKILLS_SRC, entry.name), dest, { recursive: true });
+  }
+}
+
+/**
+ * Write the install state marker file.
+ */
+export async function writeInstallState({ client, method = 'npx-github' }) {
+  await mkdir(dirname(INSTALL_JSON), { recursive: true });
+  const state = {
+    version: VERSION,
+    method,
+    client,
+    installedAt: new Date().toISOString(),
+  };
+  await writeFile(INSTALL_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');
+  return state;
+}
+
+/**
+ * Read the install state marker file. Returns null if absent.
+ */
+export async function readInstallState() {
+  if (!existsSync(INSTALL_JSON)) return null;
+  try {
+    return JSON.parse(await readFile(INSTALL_JSON, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Prompt the user for input. Returns empty string if --yes or non-interactive.
+ */
+export async function prompt(question, { yes = false } = {}) {
+  if (yes || !process.stdin.isTTY) return '';
+  return new Promise((resolve) => {
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
+/** Detect which clients are likely present on this machine. */
+export async function detectClients() {
+  const clients = [];
+  if (existsSync(join(homedir(), '.cursor'))) clients.push('cursor');
+  if (existsSync(join(homedir(), '.claude'))) clients.push('claude');
+  if (existsSync(join(homedir(), '.codex'))) clients.push('codex');
+  return clients;
+}

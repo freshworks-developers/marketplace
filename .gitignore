@@ -102,8 +102,6 @@ skills-lock.json
 
 # Test artifacts
 .tmp/
-*.test.js
-*.spec.js
 coverage/
 
 # FDK artifacts
@@ -124,3 +122,4 @@ coverage/
 .tmp-skillguard/
 docs/
 
+/graphify-out

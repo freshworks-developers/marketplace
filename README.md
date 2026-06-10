@@ -33,7 +33,7 @@
 |---------|---------|
 | [What You Can Do](#what-you-can-do) | Capability overview |
 | [Prerequisites](#prerequisites) | Before you run **`fdk`** or publish |
-| [Installation](#installation) | Cursor, Claude Code, Codex — marketplace vs **`npx skills`** |
+| [Installation](#installation) | One command for Cursor, Claude Code, and Codex |
 | [Available Tools](#available-tools) | Five skills at a glance |
 | [Workflow](#step-by-step-workflow) | Idea → validated app → publish |
 | [MCP (publish)](#mcp-marketplace-publish) | MCP / JWT — steps in **[AGENTS.md](AGENTS.md)** |
@@ -62,39 +62,33 @@
 
 ## Installation
 
-Skills are packaged for **Cursor**, **Claude Code**, and **OpenAI Codex**. How you attach them differs slightly by client.
-
-### Quick install
-
-**Claude Code:**
-
 ```bash
-claude plugin marketplace add freshworks-developers/fw-dev-tools
-claude plugin install fw-setup@freshworks-dev-tools
-claude plugin install fw-app-dev@freshworks-dev-tools
-claude plugin install fw-ai-actions-app@freshworks-dev-tools
-claude plugin install fw-review@freshworks-dev-tools
-claude plugin install fw-publish@freshworks-dev-tools
+npx github:freshworks-developers/fw-dev-tools install
 ```
 
-**Cursor** — Skills CLI:
+This installs all five skills, writes the orchestration spec to your IDE's always-loaded location, and merges the MCP config for publish workflows. Works for **Cursor**, **Claude Code**, and **OpenAI Codex** — auto-detects which are present.
 
+**Target a specific client:**
 ```bash
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-app
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-review
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
+npx github:freshworks-developers/fw-dev-tools install --tools cursor
+npx github:freshworks-developers/fw-dev-tools install --tools cursor,claude
 ```
 
-**OpenAI Codex:**
-
+**Non-interactive (CI / scripted):**
 ```bash
-codex plugin marketplace add freshworks-developers/fw-dev-tools
+npx github:freshworks-developers/fw-dev-tools install --yes
 ```
 
 > After install: restart your IDE, then type `/fw-setup-` in chat — autocomplete should list available commands.
-> For publish workflows: configure the **fw-dev-mcp** JWT first — see **[AGENTS.md](AGENTS.md)**.
+> For publish workflows: the installer prints the MCP setup step — follow it once to enable `fw-publish`.
+
+**Already on `npx skills add` or a manual install?** Still works — run the command above to migrate to the managed path with automatic update checks.
+
+**Check for updates:**
+```bash
+npx fw-dev-tools status
+npx fw-dev-tools update
+```
 
 ---
 

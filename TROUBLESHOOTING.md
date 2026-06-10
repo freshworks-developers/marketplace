@@ -26,7 +26,7 @@ ls ~/.claude/skills/
 # Should show: fw-app-dev  fw-ai-actions-app  fw-review  fw-setup  fw-publish (subset depends on what you installed)
 ```
 
-**If empty:** You need to install skills first. See [Installation](#installation-from-scratch).
+**If empty:** Run `npx github:freshworks-developers/fw-dev-tools install` or see [Installation](#installation-from-scratch).
 
 ---
 
@@ -100,28 +100,29 @@ More detail: **[README.md](README.md)** (Quick Start → OpenAI Codex); see **[C
 
 ## Installation from Scratch
 
-### Method 1: npx (Easiest)
+### Method 1: Installer (Recommended)
 
 ```bash
-# For Cursor
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
+npx github:freshworks-developers/fw-dev-tools install
+```
 
-# For Claude Code  
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup
+Auto-detects Cursor, Claude Code, and Codex. Copies all skills, writes the orchestration spec, and merges the MCP config.
+
+**Target a specific client:**
+```bash
+npx github:freshworks-developers/fw-dev-tools install --tools cursor
 ```
 
 **Then restart your IDE.**
 
-**If npx fails** or hangs, use Method 2.
+**If the installer fails** (network issues, corporate proxy), use Method 2.
 
 ---
 
-### Method 2: Manual Installation (Most Reliable)
+### Method 2: Manual Installation (Fallback)
 
 ```bash
-# 1. Download this repo
+# 1. Clone the repo
 cd ~/Downloads
 git clone https://github.com/freshworks-developers/fw-dev-tools.git
 cd fw-dev-tools
@@ -142,6 +143,8 @@ ls ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json  # Should exist
 
 # 4. Restart your IDE completely (close ALL windows)
 ```
+
+**Note:** Manual installs don't get the orchestration spec or MCP merge — you'll need to copy `.mcp.json` manually for `fw-publish`. Prefer Method 1 when possible.
 
 **Verify it worked:**
 - Type `/fdk` and see if commands autocomplete

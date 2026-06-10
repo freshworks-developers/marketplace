@@ -133,4 +133,12 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 
 ## Human-facing install
 
-See **[README.md](README.md#contents)** (human **Installation**) for Skills CLI (`npx skills add`), **Cursor** / **Claude** / **Codex** umbrella manifests, MCP pointers, and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.
+```bash
+npx github:freshworks-developers/fw-dev-tools install
+```
+
+This is the single supported install path. It copies all skills, writes the orchestration spec to always-loaded IDE locations, and merges the MCP config. See **[README.md](README.md#installation)** for options (`--tools`, `--yes`) and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.
+
+**Install state** is recorded at `~/.fw-dev-tools/install.json` (version, client, method, installedAt). The in-skill update check reads this to distinguish managed vs unmanaged installs.
+
+**Update:** `npx fw-dev-tools update` | **Status:** `npx fw-dev-tools status`

@@ -2,7 +2,7 @@
   "name": "freshworks-dev-tools",
   "displayName": "Freshworks Agentic Developer Toolkit",
   "description": "Freshworks Platform 3.0 developer skills: FDK and Node lifecycle, app development, AI Actions integrations, automated app review, and marketplace publishing.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "logo": "assets/fw-logo.svg",
   "owner": {
     "name": "Freshworks Developers",
@@ -31,7 +31,7 @@
       "source": "./skills/fw-setup",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "freshworks",
         "fdk",
@@ -64,7 +64,7 @@
       "source": "./skills/fw-app-dev",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -95,7 +95,7 @@
       "source": "./skills/fw-ai-actions-app",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -125,7 +125,7 @@
       "source": "./skills/fw-review",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -154,7 +154,7 @@
       "source": "./skills/fw-publish",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": [
         "freshworks",
         "marketplace",
