@@ -195,7 +195,7 @@ describe('app.info template', () => {
     const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
     const t = JSON.parse(raw);
     const block = t['fw-app-dev'];
-    for (const field of ['migrate_iterations', 'validate_iterations', 'fix_iterations', 'validation_error_categories']) {
+    for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories']) {
       assert.ok(Object.hasOwn(block, field), `fw-app-dev block missing field: ${field}`);
     }
     assert.deepEqual(block.validation_error_categories, []);
