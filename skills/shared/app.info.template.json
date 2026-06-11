@@ -14,14 +14,12 @@
     "skill_version": "",
     "migrate_iterations": 0,
     "validate_iterations": 0,
-    "fix_iterations": 0,
     "validation_error_categories": []
   },
   "fw-ai-actions-app": {
     "invoked": 0,
     "skill_version": "",
     "validate_iterations": 0,
-    "fix_iterations": 0,
     "validation_error_categories": []
   },
   "fw-review": {
