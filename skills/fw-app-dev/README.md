@@ -51,7 +51,7 @@ For **AI Actions**–centric integrations (`actions.json`, SMI, flat request sch
 ### Install via CLI:
 
 ```bash
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-app-dev
+npx github:freshworks-developers/fw-dev-tools install
 ```
 
 ### Install as Claude Plugin

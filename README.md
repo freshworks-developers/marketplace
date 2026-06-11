@@ -66,29 +66,24 @@
 npx github:freshworks-developers/fw-dev-tools install
 ```
 
-This installs all five skills, writes the orchestration spec to your IDE's always-loaded location, and merges the MCP config for publish workflows. Works for **Cursor**, **Claude Code**, and **OpenAI Codex** — auto-detects which are present.
+Auto-detects **Cursor**, **Claude Code**, and **OpenAI Codex**. Installs all five skills and configures MCP for publish workflows.
 
-**Target a specific client:**
+**Options:**
 ```bash
-npx github:freshworks-developers/fw-dev-tools install --tools cursor
-npx github:freshworks-developers/fw-dev-tools install --tools cursor,claude
+npx github:freshworks-developers/fw-dev-tools install --tools cursor        # specific client
+npx github:freshworks-developers/fw-dev-tools install --tools cursor,claude # multiple clients
+npx github:freshworks-developers/fw-dev-tools install --yes                 # non-interactive
 ```
 
-**Non-interactive (CI / scripted):**
+After install: restart your IDE and type `/fw-setup-` — autocomplete confirms the skills are active. For publish workflows, follow the MCP setup step the installer prints once to enable `fw-publish`.
+
+**Keep skills up to date:**
 ```bash
-npx github:freshworks-developers/fw-dev-tools install --yes
-```
-
-> After install: restart your IDE, then type `/fw-setup-` in chat — autocomplete should list available commands.
-> For publish workflows: the installer prints the MCP setup step — follow it once to enable `fw-publish`.
-
-**Already on `npx skills add` or a manual install?** Still works — run the command above to migrate to the managed path with automatic update checks.
-
-**Check for updates:**
-```bash
-npx fw-dev-tools status
 npx fw-dev-tools update
+npx fw-dev-tools status
 ```
+
+> Previously installed via `npx skills add` or manual copy? Run `npx github:freshworks-developers/fw-dev-tools install` — it migrates automatically.
 
 ---
 

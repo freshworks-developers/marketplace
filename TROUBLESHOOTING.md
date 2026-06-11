@@ -415,7 +415,7 @@ Instead of:
 ```
 
 **Root Cause:**
-`npx skills add` or `git clone` created extra nesting.
+`npx github:freshworks-developers/fw-dev-tools install` or `git clone` created extra nesting.
 
 **Technical Details:**
 Cursor skill loader expects:
@@ -453,7 +453,7 @@ ls -la fw-setup/SKILL.md
 
 **Why This Happens:**
 - Cloning entire repo instead of just skills
-- `npx skills add` with wrong path syntax
+- Running installer with wrong path syntax
 - Manual copy included parent directories
 
 ---

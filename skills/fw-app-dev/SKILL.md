@@ -77,10 +77,7 @@ This skill now uses **SMART PREREQUISITE CHECKING** that detects whether you're 
 **When the user’s shell is missing FDK, on the wrong Node major, or stuck on FDK 9.x for a Platform 3.0 app:**
 
 1. **If `fw-setup` is available** (workspace has `skills/fw-setup/`, or the IDE already loaded the **fw-setup** skill with slash commands such as `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`): **stop improvising shell scripts** and follow **fw-setup** to get **Node 24.x** + **FDK 10.x** before `fdk validate` / `fdk run` / `fdk pack`.
-2. **If `fw-setup` is not available:** say clearly that **fw-app-dev cannot install the toolchain**, then **ask the user to add the `fw-setup` skill**, for example:
-   - **From this marketplace repo:** install or copy the **`fw-setup`** skill into their agent skills/plugins path (same layout as `skills/fw-setup/` here).
-   - **Claude Code:** `npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup`
-   After it is installed, they should use **`/fw-setup-install`** or **`/fw-setup-upgrade`** (or legacy **`/fdk-install`** / **`/fdk-upgrade`**) per that skill’s `SKILL.md` / `README.md`.
+2. **If `fw-setup` is not available:** say clearly that **fw-app-dev cannot install the toolchain**, then **ask the user to add the `fw-setup` skill** by running `npx github:freshworks-developers/fw-dev-tools install`. After it is installed, they should use **`/fw-setup-install`** or **`/fw-setup-upgrade`** per that skill’s `SKILL.md` / `README.md`.
 
 Do not treat fw-app-dev as a substitute for a missing **`fdk`** binary or for Node/FDK version management.
 
