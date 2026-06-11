@@ -1,25 +1,23 @@
 import { rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { homedir } from 'node:os';
-import { readInstallState, prompt, INSTALL_JSON } from './utils.js';
+import { detectClients, INSTALL_JSON } from './utils.js';
 import { uninstall as cursorUninstall } from './clients/cursor.js';
 import { uninstall as claudeUninstall } from './clients/claude.js';
 import { uninstall as codexUninstall } from './clients/codex.js';
 
-const HANDLERS = { cursor: cursorUninstall, 'claude-code': claudeUninstall, codex: codexUninstall };
+const HANDLERS = { cursor: cursorUninstall, claude: claudeUninstall, codex: codexUninstall };
 
 export async function uninstall({ tools, yes = false } = {}) {
-  const state = await readInstallState();
-
   let clients;
   if (tools) {
     clients = tools.split(',').map((s) => s.trim().toLowerCase());
-  } else if (state?.client) {
-    clients = [state.client];
   } else {
-    console.log('No install record found. Pass --tools cursor|claude|codex to specify.');
-    process.exit(1);
+    clients = await detectClients();
+    if (clients.length === 0) {
+      console.log('No supported IDE clients detected. Pass --tools cursor|claude|codex to specify.');
+      process.exit(1);
+    }
+    console.log(`Detected clients: ${clients.join(', ')}\n`);
   }
 
   for (const client of clients) {
