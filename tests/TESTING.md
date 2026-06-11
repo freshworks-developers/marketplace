@@ -86,6 +86,86 @@ The model reads all skill files and evaluates the 13 scenarios inline, then writ
 | `platform2-legacy/` | Legacy 2.3 app with `product` block — triggers migrate-first gate |
 | `app-with-appinfo/` | 3.0 app with existing `app.info` (fw-app-dev block, `invoked: 1`) |
 
+## Layer 3 — End-to-end test (local only)
+
+```bash
+./tests/e2e.sh [options]
+```
+
+Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the full chain end-to-end. **Requires the chosen LLM CLI to be installed and authenticated.**
+
+**Options:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--branch <name>` | `main` | Installer branch to test (e.g. `feat/single-installer-cli`) |
+| `--client <name>` | `claude` | LLM client: `claude` \| `cursor` \| `codex` |
+| `--auth-token <jwt>` | _(none)_ | JWT for fw-publish; required with `--publish` |
+| `--output-dir <path>` | `~/Desktop/demo/e2e-test-app` | Directory where the app is generated |
+| `--app-prompt <text>` | Freshdesk-Asana sync | App generation prompt |
+| `--publish` | false | Run the fw-publish phase (requires `--auth-token`) |
+
+**Examples:**
+
+```bash
+# basic run — all defaults (claude, main branch, Freshdesk-Asana app, no publish)
+./tests/e2e.sh
+
+# test a specific installer branch
+./tests/e2e.sh --branch feat/single-installer-cli
+
+# use cursor instead of claude
+./tests/e2e.sh --client cursor
+
+# use codex
+./tests/e2e.sh --client codex
+
+# enable the publish phase (requires both flags)
+./tests/e2e.sh --publish --auth-token "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# change where the generated app is written
+./tests/e2e.sh --output-dir ~/Desktop/demo/my-test-app
+
+# use a custom app generation prompt
+./tests/e2e.sh --app-prompt "Build a Freshservice incident notifier that posts to Slack when a high-priority incident is created"
+
+# full run: feature branch, cursor, custom app, publish enabled
+./tests/e2e.sh \
+  --branch feat/single-installer-cli \
+  --client cursor \
+  --app-prompt "Build a Freshdesk-Asana sync app" \
+  --output-dir ~/Desktop/demo/asana-sync \
+  --publish \
+  --auth-token "Bearer eyJ..."
+```
+
+**Phases and what each checks:**
+
+After the run, two files are written:
+
+- `tests/e2e-results.json` — raw results (status per check, branch, client, timestamp)
+- `tests/e2e-report.html` — self-contained HTML report grouped by phase (open in browser)
+
+The reporter (`tests/e2e-report.js`) can also be run manually after a run:
+
+```bash
+node tests/e2e-report.js
+```
+
+**Phases and what each checks:**
+
+| Phase | Hard fail | Warning |
+|-------|-----------|---------|
+| Install | Installer exits 0; install paths exist | — |
+| Build | LLM CLI invocation completes | — |
+| Structure | `manifest.json`, `platform-version: 3.0`, `README.md`, `icon.svg` | `iparams.json` missing (may use `iparams.html`) |
+| fdk validate | Exit 0; 0 platform errors; 0 lint errors | — |
+| app.info | File exists; `tracking_id` 20 chars; `fw-app-dev.invoked > 0`; `skill_version` set | `fw-review.invoked = 0` (LLM skipped mandatory review) |
+| Publish | _(skipped if no token)_ | Publish outcome not confirmed |
+| Uninstall | Exits 0; install paths removed | — |
+
+`fw-review.invoked` is a **warning not a failure** — the check surfaces when the LLM skipped the mandatory review step without blocking the run, so you can investigate the skill gate separately.
+
 ## Adding tests
 
 **Static:** add assertions to `skill-static.test.js` using `node:test` + `assert/strict`.
