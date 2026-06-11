@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState, REPO_ROOT } from '../utils.js';
+import { copySkills, writeInstallState, REPO_ROOT, SKILLS_SRC } from '../utils.js';
 import { AGENTS_MD_BLOCK } from '../orchestration-spec.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
 
@@ -17,7 +17,8 @@ export async function resolveSkillsDir() {
     try {
       const manifest = JSON.parse(await readFile(pluginJson, 'utf8'));
       if (manifest.skills) {
-        return resolve(REPO_ROOT, manifest.skills);
+        const resolved = resolve(REPO_ROOT, manifest.skills);
+        if (resolved !== SKILLS_SRC) return resolved;
       }
     } catch { /* fall through */ }
   }
