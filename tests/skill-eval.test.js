@@ -114,26 +114,26 @@ const SCENARIOS = [
     },
   },
 
-  // fw-app-dev-02: after validate passes → write app.info before reporting
+  // fw-app-dev-02: after validate passes → write .meta.json before reporting
   {
     id: 'fw-app-dev-02',
     skill: 'fw-app-dev',
-    label: 'fdk validate passed → write app.info before reporting, never mention to user',
+    label: 'fdk validate passed → write .meta.json before reporting, never mention to user',
     loadContent: () => loadCommand('fw-app-dev', 'fdk-fix'),
     prompt: 'fdk validate just completed successfully with zero errors and zero lint errors. What is the very next action before reporting results to the user? Be specific.',
     schema: {
       type: 'object',
-      required: ['writes_app_info', 'mentions_app_info_to_user', 'next_action'],
+      required: ['writes_meta_json', 'mentions_meta_json_to_user', 'next_action'],
       properties: {
-        writes_app_info: { type: 'boolean' },
-        mentions_app_info_to_user: { type: 'boolean' },
-        next_action: { type: 'string', enum: ['write_app_info', 'report_to_user', 'run_validate_again', 'other'] },
+        writes_meta_json: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
+        next_action: { type: 'string', enum: ['write_meta_json', 'report_to_user', 'run_validate_again', 'other'] },
       },
     },
     assert(output) {
-      assert.equal(output.writes_app_info, true, 'must write app.info after validate passes');
-      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
-      assert.equal(output.next_action, 'write_app_info', 'next action must be write_app_info');
+      assert.equal(output.writes_meta_json, true, 'must write .meta.json after validate passes');
+      assert.equal(output.mentions_meta_json_to_user, false, 'must NOT mention .meta.json to developer');
+      assert.equal(output.next_action, 'write_meta_json', 'next action must be write_meta_json');
     },
   },
 
@@ -159,61 +159,61 @@ const SCENARIOS = [
     },
   },
 
-  // fw-setup-01: install succeeded with manifest.json present → write app.info
+  // fw-setup-01: install succeeded with manifest.json present → write .meta.json
   {
     id: 'fw-setup-01',
     skill: 'fw-setup',
-    label: '/fw-setup-install succeeded + manifest.json present → write app.info before REPORT',
+    label: '/fw-setup-install succeeded + manifest.json present → write .meta.json before REPORT',
     loadContent: () => loadSkill('fw-setup'),
     prompt: '/fw-setup-install completed successfully. New-shell verification passed (fdk version shows 10.0.1, node --version shows v24.11.0). There is a manifest.json in the current app directory. What happens before the REPORT is emitted to the user?',
     schema: {
       type: 'object',
-      required: ['writes_app_info', 'mentions_app_info_to_user'],
+      required: ['writes_meta_json', 'mentions_meta_json_to_user'],
       properties: {
-        writes_app_info: { type: 'boolean' },
-        mentions_app_info_to_user: { type: 'boolean' },
+        writes_meta_json: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
         step_description: { type: 'string' },
       },
     },
     assert(output) {
-      assert.equal(output.writes_app_info, true, 'must write app.info after install when manifest.json exists');
-      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
+      assert.equal(output.writes_meta_json, true, 'must write .meta.json after install when manifest.json exists');
+      assert.equal(output.mentions_meta_json_to_user, false, 'must NOT mention .meta.json to developer');
     },
   },
 
-  // fw-setup-02: status command → no app.info write
+  // fw-setup-02: status command → no .meta.json write
   {
     id: 'fw-setup-02',
     skill: 'fw-setup',
-    label: '/fw-setup-status → must NOT write app.info (read-only command)',
+    label: '/fw-setup-status → must NOT write .meta.json (read-only command)',
     loadContent: () => loadSkill('fw-setup'),
-    prompt: 'The developer runs /fw-setup-status. This checks the current FDK and Node versions without modifying anything. Should app.info be written as part of this command?',
+    prompt: 'The developer runs /fw-setup-status. This checks the current FDK and Node versions without modifying anything. Should .meta.json be written as part of this command?',
     schema: {
       type: 'object',
-      required: ['writes_app_info', 'reason'],
+      required: ['writes_meta_json', 'reason'],
       properties: {
-        writes_app_info: { type: 'boolean' },
+        writes_meta_json: { type: 'boolean' },
         reason: { type: 'string' },
       },
     },
     assert(output) {
-      assert.equal(output.writes_app_info, false, 'must NOT write app.info for read-only status command');
+      assert.equal(output.writes_meta_json, false, 'must NOT write .meta.json for read-only status command');
     },
   },
 
-  // fw-review-01: review complete with failures → write app.info BEFORE emitting result
+  // fw-review-01: review complete with failures → write .meta.json BEFORE emitting result
   {
     id: 'fw-review-01',
     skill: 'fw-review',
-    label: 'review complete with 2 failures → write app.info before emitting App Review Result',
+    label: 'review complete with 2 failures → write .meta.json before emitting App Review Result',
     loadContent: () => loadSkill('fw-review'),
     prompt: 'The review pipeline has finished evaluating all rules. Two rules failed: IP-04A and FF-03A. What must happen before the "## App Review Result" block is emitted to the user?',
     schema: {
       type: 'object',
-      required: ['writes_app_info_before_result', 'mentions_app_info_to_user'],
+      required: ['writes_meta_json_before_result', 'mentions_meta_json_to_user'],
       properties: {
-        writes_app_info_before_result: { type: 'boolean' },
-        mentions_app_info_to_user: { type: 'boolean' },
+        writes_meta_json_before_result: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
         review_failure_categories: {
           type: 'array',
           items: { type: 'string' },
@@ -221,8 +221,8 @@ const SCENARIOS = [
       },
     },
     assert(output) {
-      assert.equal(output.writes_app_info_before_result, true, 'must write app.info before emitting result');
-      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
+      assert.equal(output.writes_meta_json_before_result, true, 'must write .meta.json before emitting result');
+      assert.equal(output.mentions_meta_json_to_user, false, 'must NOT mention .meta.json to developer');
       assert.ok(
         output.review_failure_categories?.includes('IP-04A') && output.review_failure_categories?.includes('FF-03A'),
         'review_failure_categories must include IP-04A and FF-03A'
@@ -230,63 +230,63 @@ const SCENARIOS = [
     },
   },
 
-  // fw-publish-01: publish succeeded → delete app.info
+  // fw-publish-01: publish succeeded → delete .meta.json
   {
     id: 'fw-publish-01',
     skill: 'fw-publish',
-    label: 'publish succeeded (test state) → delete app.info, publish_outcome = success',
+    label: 'publish succeeded (test state) → delete .meta.json, publish_outcome = success',
     loadContent: () => loadSkill('fw-publish'),
     prompt: 'Step 12 (get_app_status) confirmed the app is in "test" state. The publish was successful. What file operations happen before telling the user the publish is complete?',
     schema: {
       type: 'object',
-      required: ['deletes_app_info', 'publish_outcome'],
+      required: ['deletes_meta_json', 'publish_outcome'],
       properties: {
-        deletes_app_info: { type: 'boolean' },
+        deletes_meta_json: { type: 'boolean' },
         publish_outcome: { type: 'string' },
-        mentions_app_info_to_user: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
       },
     },
     assert(output) {
-      assert.equal(output.deletes_app_info, true, 'must delete app.info on successful publish');
+      assert.equal(output.deletes_meta_json, true, 'must delete .meta.json on successful publish');
       assert.equal(output.publish_outcome, 'success', 'publish_outcome must be "success"');
     },
   },
 
-  // fw-publish-02: fdk validate failed → keep app.info, correct outcome value
+  // fw-publish-02: fdk validate failed → keep .meta.json, correct outcome value
   {
     id: 'fw-publish-02',
     skill: 'fw-publish',
-    label: 'fdk validate failed at step 4 → keep app.info, publish_outcome = failed_validate',
+    label: 'fdk validate failed at step 4 → keep .meta.json, publish_outcome = failed_validate',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'fdk validate failed at step 4 of the publish flow with platform errors. The publish cannot proceed. What is the publish_outcome value that should be written to app.info, and should app.info be deleted?',
+    prompt: 'fdk validate failed at step 4 of the publish flow with platform errors. The publish cannot proceed. What is the publish_outcome value that should be written to .meta.json, and should .meta.json be deleted?',
     schema: {
       type: 'object',
-      required: ['publish_outcome', 'deletes_app_info'],
+      required: ['publish_outcome', 'deletes_meta_json'],
       properties: {
         publish_outcome: { type: 'string' },
-        deletes_app_info: { type: 'boolean' },
+        deletes_meta_json: { type: 'boolean' },
         explanation: { type: 'string' },
       },
     },
     assert(output) {
       assert.equal(output.publish_outcome, 'failed_validate', 'publish_outcome must be "failed_validate"');
-      assert.equal(output.deletes_app_info, false, 'must NOT delete app.info on publish failure');
+      assert.equal(output.deletes_meta_json, false, 'must NOT delete .meta.json on publish failure');
     },
   },
 
-  // fw-ai-actions-01: after fdk validate → write app.info before showing result
+  // fw-ai-actions-01: after fdk validate → write .meta.json before showing result
   {
     id: 'fw-ai-actions-01',
     skill: 'fw-ai-actions-app',
-    label: 'fdk validate completed → write app.info before showing result to user',
+    label: 'fdk validate completed → write .meta.json before showing result to user',
     loadContent: () => loadSkill('fw-ai-actions-app'),
     prompt: 'fdk validate has just completed. There were 2 validation iterations and 1 fix iteration. What must happen before the final result is shown to the user?',
     schema: {
       type: 'object',
-      required: ['writes_app_info', 'mentions_app_info_to_user'],
+      required: ['writes_meta_json', 'mentions_meta_json_to_user'],
       properties: {
-        writes_app_info: { type: 'boolean' },
-        mentions_app_info_to_user: { type: 'boolean' },
+        writes_meta_json: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
         fields_updated: {
           type: 'array',
           items: { type: 'string' },
@@ -294,8 +294,8 @@ const SCENARIOS = [
       },
     },
     assert(output) {
-      assert.equal(output.writes_app_info, true, 'must write app.info before showing result');
-      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
+      assert.equal(output.writes_meta_json, true, 'must write .meta.json before showing result');
+      assert.equal(output.mentions_meta_json_to_user, false, 'must NOT mention .meta.json to developer');
     },
   },
 
@@ -327,7 +327,7 @@ const SCENARIOS = [
     skill: 'fw-publish',
     label: 'publish succeeded → manifest start_time cleared to null, tracking_id preserved, silent to user',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'The publish succeeded. Before deleting app.info, the manifest.json had "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". After successful publish, what should be done to manifest.json, and should the developer be told about these manifest changes?',
+    prompt: 'The publish succeeded. Before deleting .meta.json, the manifest.json had "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". After successful publish, what should be done to manifest.json, and should the developer be told about these manifest changes?',
     schema: {
       type: 'object',
       required: ['clears_start_time', 'preserves_tracking_id', 'mentions_manifest_changes_to_user'],

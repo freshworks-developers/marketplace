@@ -18,15 +18,15 @@ npm test
 Checks structural correctness of all skill files without any API calls:
 
 - Frontmatter fields (`name`, `version`, `description`) and valid semver
-- Gate language (`DO NOT SKIP`, output blocked until app.info is written)
-- app.info template-copy pattern present in every skill
-- "Never mention app.info to developer" rule present in every skill
-- `skills/shared/app.info.template.json` is valid JSON with all required skill blocks and fields
+- Gate language (`DO NOT SKIP`, output blocked until .meta.json is written)
+- .meta.json template-copy pattern present in every skill
+- "Never mention .meta.json to developer" rule present in every skill
+- `skills/shared/.meta.template.json` is valid JSON with all required skill blocks and fields
 - Manifest skeleton templates have no tracking fields, use `modules` not `product`, have `engines`
-- fw-app-dev command files have MANDATORY app.info write steps
+- fw-app-dev command files have MANDATORY .meta.json write steps
 - fw-publish defines all 4 `publish_outcome` values and delete/keep logic
-- fw-review gates result emission behind app.info write
-- fw-setup excludes read-only commands from app.info writes
+- fw-review gates result emission behind .meta.json write
+- fw-setup excludes read-only commands from .meta.json writes
 - Line count warning (not a failure) if any SKILL.md exceeds 500 lines
 - PR#21 structural checks: fdk-review removal, reference file existence, JSON/JS validity, link integrity, plugin version consistency, script executable bits
 
@@ -45,18 +45,18 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | ID | Skill | What it tests |
 |----|-------|---------------|
 | `fw-app-dev-01` | fw-app-dev | platform-version 2.3 → must run `/fdk-migrate` before `fdk validate` |
-| `fw-app-dev-02` | fw-app-dev | validate passed → write app.info before reporting, never mention to user |
+| `fw-app-dev-02` | fw-app-dev | validate passed → write .meta.json before reporting, never mention to user |
 | `fw-app-dev-03` | fw-app-dev | 1 lint error remaining → cannot mark app complete |
 | `fw-app-dev-04` | fw-app-dev | `/fdk-review` invoked → redirect to fw-review, not handled by fw-app-dev |
-| `fw-setup-01` | fw-setup | `/fw-setup-install` succeeded → write app.info before REPORT |
-| `fw-setup-02` | fw-setup | `/fw-setup-status` → must NOT write app.info (read-only) |
+| `fw-setup-01` | fw-setup | `/fw-setup-install` succeeded → write .meta.json before REPORT |
+| `fw-setup-02` | fw-setup | `/fw-setup-status` → must NOT write .meta.json (read-only) |
 | `fw-setup-03` | fw-setup | "install FDK 9" → deprecation warning must be shown before proceeding |
-| `fw-review-01` | fw-review | review failures → app.info written before `## App Review Result` emitted |
-| `fw-publish-01` | fw-publish | publish succeeded → delete app.info, `publish_outcome = "success"` |
-| `fw-publish-02` | fw-publish | validate failed → keep app.info, `publish_outcome = "failed_validate"` |
-| `fw-publish-03` | fw-publish | publish succeeded → `start_time` cleared to null, `tracking_id` preserved, silent |
+| `fw-review-01` | fw-review | review failures → .meta.json written before `## App Review Result` emitted |
+| `fw-publish-01` | fw-publish | publish succeeded → delete .meta.json, `publish_outcome = "success"` |
+| `fw-publish-02` | fw-publish | validate failed → keep .meta.json, `publish_outcome = "failed_validate"` |
+| `fw-publish-03` | fw-publish | publish succeeded → `start_time` cleared, `tracking_id` preserved, silent |
 | `fw-publish-04` | fw-publish | publish failed → manifest unchanged, `start_time` not cleared |
-| `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write app.info before showing result |
+| `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
 
 Each failing scenario retries up to 3 times; passes if 2/3 succeed (handles non-determinism).
 
@@ -84,7 +84,7 @@ The model reads all skill files and evaluates the 13 scenarios inline, then writ
 |---------|---------|
 | `platform3-valid/` | Clean Platform 3.0 app with `"app": {}` and correct engines |
 | `platform2-legacy/` | Legacy 2.3 app with `product` block — triggers migrate-first gate |
-| `app-with-appinfo/` | 3.0 app with existing `app.info` (fw-app-dev block, `invoked: 1`) |
+| `app-with-meta/` | 3.0 app with existing `.meta.json` (fw-app-dev block, `invoked: 1`) |
 
 ## Layer 3 — End-to-end test (local only)
 
@@ -160,7 +160,7 @@ node tests/e2e-report.js
 | Build | LLM CLI invocation completes | — |
 | Structure | `manifest.json`, `platform-version: 3.0`, `README.md`, `icon.svg` | `iparams.json` missing (may use `iparams.html`) |
 | fdk validate | Exit 0; 0 platform errors; 0 lint errors | — |
-| app.info | File exists; `tracking_id` 20 chars; `fw-app-dev.invoked > 0`; `skill_version` set | `fw-review.invoked = 0` (LLM skipped mandatory review) |
+| .meta.json | File exists; `tracking_id` 20 chars; `fw-app-dev.invoked > 0`; `skill_version` set | `fw-review.invoked = 0` (LLM skipped mandatory review) |
 | Publish | _(skipped if no token)_ | Publish outcome not confirmed |
 | Uninstall | Exits 0; install paths removed | — |
 

@@ -158,7 +158,7 @@
     <tr class="row-pass">
       <td><code>fw-app-dev-02</code></td>
       <td><span class="skill-tag">fw-app-dev</span></td>
-      <td>fdk validate passed → write app.info before reporting, never mention to user</td>
+      <td>fdk validate passed → write .meta.json before reporting, never mention to user</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
@@ -179,14 +179,14 @@
     <tr class="row-pass">
       <td><code>fw-setup-01</code></td>
       <td><span class="skill-tag">fw-setup</span></td>
-      <td>/fw-setup-install succeeded + manifest.json present → write app.info before REPORT</td>
+      <td>/fw-setup-install succeeded + manifest.json present → write .meta.json before REPORT</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
     <tr class="row-pass">
       <td><code>fw-setup-02</code></td>
       <td><span class="skill-tag">fw-setup</span></td>
-      <td>/fw-setup-status → must NOT write app.info (read-only command)</td>
+      <td>/fw-setup-status → must NOT write .meta.json (read-only command)</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
@@ -200,21 +200,21 @@
     <tr class="row-pass">
       <td><code>fw-review-01</code></td>
       <td><span class="skill-tag">fw-review</span></td>
-      <td>review complete with 2 failures → write app.info before emitting App Review Result</td>
+      <td>review complete with 2 failures → write .meta.json before emitting App Review Result</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
     <tr class="row-pass">
       <td><code>fw-publish-01</code></td>
       <td><span class="skill-tag">fw-publish</span></td>
-      <td>publish succeeded (test state) → delete app.info, publish_outcome = success</td>
+      <td>publish succeeded (test state) → delete .meta.json, publish_outcome = success</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
     <tr class="row-pass">
       <td><code>fw-publish-02</code></td>
       <td><span class="skill-tag">fw-publish</span></td>
-      <td>fdk validate failed at step 4 → keep app.info, publish_outcome = failed_validate</td>
+      <td>fdk validate failed at step 4 → keep .meta.json, publish_outcome = failed_validate</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>
@@ -235,7 +235,7 @@
     <tr class="row-pass">
       <td><code>fw-ai-actions-01</code></td>
       <td><span class="skill-tag">fw-ai-actions-app</span></td>
-      <td>fdk validate completed → write app.info before showing result to user</td>
+      <td>fdk validate completed → write .meta.json before showing result to user</td>
       <td class="result-cell">✅</td>
       <td class="attempts-cell">1/1</td>
     </tr>

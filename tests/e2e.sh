@@ -168,7 +168,7 @@ Use the fw-app-dev skill (skills/fw-app-dev/SKILL.md). Follow the mandatory skil
 1. fw-setup (check toolchain only — /fw-setup-status)
 2. fw-app-dev (build the app, run fdk validate until 0 errors)
 3. fw-review (MANDATORY before publish)
-Create all app files inside $OUTPUT_DIR. Write app.info per skill instructions."
+Create all app files inside $OUTPUT_DIR. Write .meta.json per skill instructions."
 
   local llm_out
   llm_out=$(cd "$OUTPUT_DIR" && invoke_llm "$full_prompt" "$OUTPUT_DIR")
@@ -225,17 +225,17 @@ phase_validate() {
   [[ "${lint_errors:-0}" -eq 0 ]]     && pass "0 lint errors"     || fail "$lint_errors lint errors"
 }
 
-# ─── phase: app.info checks ───────────────────────────────────────────────────
+# ─── phase: .meta.json checks ───────────────────────────────────────────────────
 phase_appinfo() {
-  header "Phase 5: app.info checks"
+  header "Phase 5: .meta.json checks"
 
-  local ai="$OUTPUT_DIR/app.info"
+  local ai="$OUTPUT_DIR/.meta.json"
 
   if [[ ! -f "$ai" ]]; then
-    fail "app.info missing — LLM did not write metrics"
+    fail ".meta.json missing — LLM did not write metrics"
     return
   fi
-  pass "app.info exists"
+  pass ".meta.json exists"
 
   # parse with node
   node - "$ai" <<'EOF'

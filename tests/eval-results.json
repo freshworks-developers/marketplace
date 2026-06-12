@@ -14,7 +14,7 @@
     {
       "id": "fw-app-dev-02",
       "skill": "fw-app-dev",
-      "label": "fdk validate passed → write app.info before reporting, never mention to user",
+      "label": "fdk validate passed → write .meta.json before reporting, never mention to user",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -41,7 +41,7 @@
     {
       "id": "fw-setup-01",
       "skill": "fw-setup",
-      "label": "/fw-setup-install succeeded + manifest.json present → write app.info before REPORT",
+      "label": "/fw-setup-install succeeded + manifest.json present → write .meta.json before REPORT",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -50,7 +50,7 @@
     {
       "id": "fw-setup-02",
       "skill": "fw-setup",
-      "label": "/fw-setup-status → must NOT write app.info (read-only command)",
+      "label": "/fw-setup-status → must NOT write .meta.json (read-only command)",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -68,7 +68,7 @@
     {
       "id": "fw-review-01",
       "skill": "fw-review",
-      "label": "review complete with 2 failures → write app.info before emitting App Review Result",
+      "label": "review complete with 2 failures → write .meta.json before emitting App Review Result",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -77,7 +77,7 @@
     {
       "id": "fw-publish-01",
       "skill": "fw-publish",
-      "label": "publish succeeded (test state) → delete app.info, publish_outcome = success",
+      "label": "publish succeeded (test state) → delete .meta.json, publish_outcome = success",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -86,7 +86,7 @@
     {
       "id": "fw-publish-02",
       "skill": "fw-publish",
-      "label": "fdk validate failed at step 4 → keep app.info, publish_outcome = failed_validate",
+      "label": "fdk validate failed at step 4 → keep .meta.json, publish_outcome = failed_validate",
       "passed": 1,
       "total": 1,
       "pass": true,
@@ -113,7 +113,7 @@
     {
       "id": "fw-ai-actions-01",
       "skill": "fw-ai-actions-app",
-      "label": "fdk validate completed → write app.info before showing result to user",
+      "label": "fdk validate completed → write .meta.json before showing result to user",
       "passed": 1,
       "total": 1,
       "pass": true,

@@ -9,18 +9,18 @@
 | ID | Skill | Scenario | Result | Attempts |
 |----|-------|----------|--------|----------|
 | `fw-app-dev-01` | fw-app-dev | platform-version 2.3 → must run fdk-migrate before fdk validate | ✅ | 1/1 |
-| `fw-app-dev-02` | fw-app-dev | fdk validate passed → write app.info before reporting, never mention to user | ✅ | 1/1 |
+| `fw-app-dev-02` | fw-app-dev | fdk validate passed → write .meta.json before reporting, never mention to user | ✅ | 1/1 |
 | `fw-app-dev-03` | fw-app-dev | 1 lint error remaining after 3 iterations → cannot mark app complete | ✅ | 1/1 |
 | `fw-app-dev-04` | fw-app-dev | /fdk-review invoked → agent must redirect to fw-review skill, not handle in fw-app-dev | ✅ | 1/1 |
-| `fw-setup-01` | fw-setup | /fw-setup-install succeeded + manifest.json present → write app.info before REPORT | ✅ | 1/1 |
-| `fw-setup-02` | fw-setup | /fw-setup-status → must NOT write app.info (read-only command) | ✅ | 1/1 |
+| `fw-setup-01` | fw-setup | /fw-setup-install succeeded + manifest.json present → write .meta.json before REPORT | ✅ | 1/1 |
+| `fw-setup-02` | fw-setup | /fw-setup-status → must NOT write .meta.json (read-only command) | ✅ | 1/1 |
 | `fw-setup-03` | fw-setup | "install FDK 9" request → deprecation warning must be shown before proceeding | ✅ | 1/1 |
-| `fw-review-01` | fw-review | review complete with 2 failures → write app.info before emitting App Review Result | ✅ | 1/1 |
-| `fw-publish-01` | fw-publish | publish succeeded (test state) → delete app.info, publish_outcome = success | ✅ | 1/1 |
-| `fw-publish-02` | fw-publish | fdk validate failed at step 4 → keep app.info, publish_outcome = failed_validate | ✅ | 1/1 |
+| `fw-review-01` | fw-review | review complete with 2 failures → write .meta.json before emitting App Review Result | ✅ | 1/1 |
+| `fw-publish-01` | fw-publish | publish succeeded (test state) → delete .meta.json, publish_outcome = success | ✅ | 1/1 |
+| `fw-publish-02` | fw-publish | fdk validate failed at step 4 → keep .meta.json, publish_outcome = failed_validate | ✅ | 1/1 |
 | `fw-publish-03` | fw-publish | publish succeeded → start_time cleared to null, tracking_id preserved, silent to user | ✅ | 1/1 |
 | `fw-publish-04` | fw-publish | publish failed (step 4) → manifest unchanged, start_time not cleared | ✅ | 1/1 |
-| `fw-ai-actions-01` | fw-ai-actions-app | fdk validate completed → write app.info before showing result to user | ✅ | 1/1 |
+| `fw-ai-actions-01` | fw-ai-actions-app | fdk validate completed → write .meta.json before showing result to user | ✅ | 1/1 |
 
 ## All scenarios passed 🎉
 

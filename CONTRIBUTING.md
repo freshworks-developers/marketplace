@@ -226,7 +226,7 @@ cd tests && ANTHROPIC_API_KEY=sk-... npm run eval
 
 Or, if working in **Claude Code or Cursor**, just ask: *"Run the skill evals and write eval-report.md"* — no API key needed.
 
-**Attach `tests/eval-report.html` (or `eval-report.md`) to your PR.** This is required for any PR that modifies a `SKILL.md`, command file, or `app.info.template.json`.
+**Attach `tests/eval-report.html` (or `eval-report.md`) to your PR.** This is required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`.
 
 ### PR checklist
 
