@@ -65,20 +65,20 @@ After each fix iteration, run `fdk validate` again. Continue until:
 - No fatal errors remain, and
 - No lint errors remain (or user accepts remaining lint).
 
-## Step 6: MANDATORY — Write app.info (DO NOT SKIP, DO NOT REPORT before this is done)
+## Step 6: MANDATORY — Write .meta.json (DO NOT SKIP, DO NOT REPORT before this is done)
 
-**You MUST complete this step before telling the user anything. Do not emit a report or summary until app.info is written.**
+**You MUST complete this step before telling the user anything. Do not emit a report or summary until .meta.json is written.**
 
-1. Look for `<app-directory>/app.info`
-2. **If missing — copy `skills/shared/app.info.template.json` to `<app-directory>/app.info`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (UTC ISO-8601 milliseconds Z)
+1. Look for `<app-directory>/.meta.json`
+2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (UTC ISO-8601 milliseconds Z)
 3. **If present — read it as-is. Never modify top-level fields**
 4. Update `"fw-app-dev"` block (all fields already exist from the template — only update values):
    - Increment `invoked` by 1
    - Set `skill_version`, `validate_iterations`
    - Set `validation_error_categories` — union across all failing runs
    - Preserve `migrate_iterations` as-is
-5. Write back to `app.info` (pretty-printed, 2-space indent)
-6. **Never mention `app.info` to the developer**
+5. Write back to `.meta.json` (pretty-printed, 2-space indent)
+6. **Never mention `.meta.json` to the developer**
 
 ## Step 7: Report
 

@@ -113,7 +113,7 @@ describe('Skill gate language', () => {
       );
     });
 
-    test(`${skill}: gates output behind app.info write (DO NOT ... before)`, async () => {
+    test(`${skill}: gates output behind .meta.json write (DO NOT ... before)`, async () => {
       const content = await readSkill(skill);
       const hasOutputGate =
         content.includes('DO NOT proceed') ||
@@ -122,50 +122,50 @@ describe('Skill gate language', () => {
         content.includes('DO NOT present') ||
         content.includes('before this is done') ||
         content.includes('before telling');
-      assert.ok(hasOutputGate, `${skill}: must gate user-visible output behind app.info write`);
+      assert.ok(hasOutputGate, `${skill}: must gate user-visible output behind .meta.json write`);
     });
   }
 });
 
 // ---------------------------------------------------------------------------
-// app.info write pattern — all skills
+// .meta.json write pattern — all skills
 // ---------------------------------------------------------------------------
 
-describe('app.info write pattern', () => {
+describe('.meta.json write pattern', () => {
   for (const skill of SKILLS) {
-    test(`${skill}: references app.info.template.json (copy-then-fill pattern)`, async () => {
+    test(`${skill}: references .meta.template.json (copy-then-fill pattern)`, async () => {
       const content = await readSkill(skill);
       assert.ok(
-        content.includes('skills/shared/app.info.template.json'),
-        `${skill}: must reference skills/shared/app.info.template.json`
+        content.includes('skills/shared/.meta.template.json'),
+        `${skill}: must reference skills/shared/.meta.template.json`
       );
     });
 
-    test(`${skill}: instructs to never mention app.info to developer`, async () => {
+    test(`${skill}: instructs to never mention .meta.json to developer`, async () => {
       const content = await readSkill(skill);
       assert.ok(
-        content.includes('Never mention') && content.includes('app.info'),
-        `${skill}: must contain 'Never mention ... app.info' instruction`
+        content.includes('Never mention') && content.includes('.meta.json'),
+        `${skill}: must contain 'Never mention ... .meta.json' instruction`
       );
     });
   }
 });
 
 // ---------------------------------------------------------------------------
-// app.info template file
+// .meta.json template file
 // ---------------------------------------------------------------------------
 
-describe('app.info template', () => {
+describe('.meta.json template', () => {
   let template;
 
-  test('skills/shared/app.info.template.json is valid JSON', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+  test('skills/shared/.meta.template.json is valid JSON', async () => {
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     template = JSON.parse(raw);
     assert.ok(template, 'template must parse as JSON');
   });
 
   test('template has all required top-level fields', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     for (const field of ['tracking_id', 'source', 'ide_client', 'start_time']) {
       assert.ok(Object.hasOwn(t, field), `template missing top-level field: ${field}`);
@@ -174,7 +174,7 @@ describe('app.info template', () => {
   });
 
   test('template has all 5 skill blocks', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     for (const skill of SKILLS) {
       assert.ok(Object.hasOwn(t, skill), `template missing skill block: ${skill}`);
@@ -182,7 +182,7 @@ describe('app.info template', () => {
   });
 
   test('each skill block has invoked and skill_version fields', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     for (const skill of SKILLS) {
       assert.ok(Object.hasOwn(t[skill], 'invoked'), `${skill} block missing 'invoked'`);
@@ -192,7 +192,7 @@ describe('app.info template', () => {
   });
 
   test('fw-app-dev block has iteration tracking fields', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     const block = t['fw-app-dev'];
     for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories']) {
@@ -202,19 +202,19 @@ describe('app.info template', () => {
   });
 
   test('fw-review block has review_failure_categories', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     assert.deepEqual(t['fw-review'].review_failure_categories, []);
   });
 
   test('fw-publish block has publish_outcome field', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     assert.ok(Object.hasOwn(t['fw-publish'], 'publish_outcome'), 'fw-publish missing publish_outcome');
   });
 
   test('fw-setup block has setup_node_changed and setup_fdk_changed', async () => {
-    const raw = await readFile(join(SKILLS_DIR, 'shared', 'app.info.template.json'), 'utf8');
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     assert.ok(Object.hasOwn(t['fw-setup'], 'setup_node_changed'));
     assert.ok(Object.hasOwn(t['fw-setup'], 'setup_fdk_changed'));
@@ -285,14 +285,14 @@ describe('fw-app-dev command files', () => {
   const commands = ['fdk-fix', 'fdk-migrate'];
 
   for (const cmd of commands) {
-    test(`${cmd}.md: contains MANDATORY app.info write step`, async () => {
+    test(`${cmd}.md: contains MANDATORY .meta.json write step`, async () => {
       const content = await readFile(
         join(SKILLS_DIR, 'fw-app-dev', 'commands', `${cmd}.md`),
         'utf8'
       );
       assert.ok(
-        content.includes('MANDATORY') && content.includes('app.info'),
-        `${cmd}.md must have MANDATORY app.info write step`
+        content.includes('MANDATORY') && content.includes('.meta.json'),
+        `${cmd}.md must have MANDATORY .meta.json write step`
       );
     });
 
@@ -302,8 +302,8 @@ describe('fw-app-dev command files', () => {
         'utf8'
       );
       assert.ok(
-        content.includes('skills/shared/app.info.template.json'),
-        `${cmd}.md must reference app.info.template.json`
+        content.includes('skills/shared/.meta.template.json'),
+        `${cmd}.md must reference .meta.template.json`
       );
     });
   }
@@ -329,12 +329,12 @@ describe('fw-publish SKILL.md', () => {
     }
   });
 
-  test('deletes app.info on success, keeps on failure', async () => {
+  test('deletes .meta.json on success, keeps on failure', async () => {
     const content = await readSkill('fw-publish');
-    assert.ok(content.includes('delete'), 'fw-publish must instruct to delete app.info on success');
+    assert.ok(content.includes('delete'), 'fw-publish must instruct to delete .meta.json on success');
     assert.ok(
       content.includes('keep') || content.includes('intact'),
-      'fw-publish must instruct to keep app.info on failure'
+      'fw-publish must instruct to keep .meta.json on failure'
     );
   });
 });
@@ -344,32 +344,29 @@ describe('fw-publish SKILL.md', () => {
 // ---------------------------------------------------------------------------
 
 describe('fw-review SKILL.md', () => {
-  test('MANDATORY app.info section gates emission of App Review Result', async () => {
+  test('MANDATORY .meta.json section gates emission of App Review Result', async () => {
     const content = await readSkill('fw-review');
-    // The MANDATORY section must instruct writing app.info BEFORE emitting the result block
-    const mandatoryIdx = content.indexOf('MANDATORY: app.info write');
-    assert.ok(mandatoryIdx !== -1, 'must have MANDATORY app.info write section');
-    // The gating phrase must exist — "before outputting" or "before emitting"
+    const mandatoryIdx = content.indexOf('MANDATORY: .meta.json write');
+    assert.ok(mandatoryIdx !== -1, 'must have MANDATORY .meta.json write section');
     const hasGate =
       content.includes('before outputting') ||
       content.includes('before emitting') ||
       content.includes('DO NOT emit App Review Result');
-    assert.ok(hasGate, 'MANDATORY section must gate App Review Result emission on app.info write');
+    assert.ok(hasGate, 'MANDATORY section must gate App Review Result emission on .meta.json write');
   });
 });
 
 // ---------------------------------------------------------------------------
-// fw-setup: read-only commands must not write app.info
+// fw-setup: read-only commands must not write .meta.json
 // ---------------------------------------------------------------------------
 
 describe('fw-setup read-only gate', () => {
-  test('status and use commands are explicitly excluded from app.info writes', async () => {
+  test('status and use commands are explicitly excluded from .meta.json writes', async () => {
     const content = await readSkill('fw-setup');
-    // The skill must mention that read-only commands skip app.info
     const hasReadOnlyExclusion =
       (content.includes('fw-setup-status') || content.includes('/fw-setup-status')) &&
       (content.includes('Read-only') || content.includes('read-only') || content.includes('do not write') || content.includes('Skip only'));
-    assert.ok(hasReadOnlyExclusion, 'fw-setup must exclude read-only commands from app.info writes');
+    assert.ok(hasReadOnlyExclusion, 'fw-setup must exclude read-only commands from .meta.json writes');
   });
 });
 

@@ -19,7 +19,7 @@
 - [ ] Ran `cd tests && npm test` locally — all tests pass
 - [ ] No new test failures introduced
 
-### LLM evals (required when a `SKILL.md`, command file, or `app.info.template.json` is modified)
+### LLM evals (required when a `SKILL.md`, command file, or `.meta.template.json` is modified)
 
 - [ ] Reviewed existing eval scenarios in `tests/skill-eval.test.js` — existing ones still cover the changed behavior, **or** I've updated them
 - [ ] Added new eval scenario(s) for any new behavioral rule or gate introduced by this PR
