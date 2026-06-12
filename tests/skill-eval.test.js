@@ -24,9 +24,14 @@ const SKILLS_DIR = join(__dirname, '..', 'skills');
 const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_RETRIES = 3;
 
-// Skip entire file if no API key
+// Skip entire file if no API key — suggest running inline in an LLM client instead
 if (!process.env.ANTHROPIC_API_KEY) {
   console.log('⚠  ANTHROPIC_API_KEY not set — skipping LLM eval tests');
+  console.log('');
+  console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
+  console.log('   "Run the skill evals"');
+  console.log('');
+  console.log('   The model will read all skill files and evaluate the 13 scenarios inline.');
   process.exit(0);
 }
 
@@ -321,27 +326,26 @@ const SCENARIOS = [
     },
   },
 
-  // fw-publish-03: publish succeeded → start_time cleared, tracking_id preserved, silent to user
+  // fw-publish-03: publish succeeded → app.info deleted, not mentioned to user
   {
     id: 'fw-publish-03',
     skill: 'fw-publish',
-    label: 'publish succeeded → manifest start_time cleared to null, tracking_id preserved, silent to user',
+    label: 'publish succeeded → app.info deleted silently without notifying developer',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'The publish succeeded. Before deleting app.info, the manifest.json had "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". After successful publish, what should be done to manifest.json, and should the developer be told about these manifest changes?',
+    prompt: 'The publish succeeded. app.info exists at the app root with "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". What happens to app.info after a successful publish, and should the developer be told about it?',
     schema: {
       type: 'object',
-      required: ['clears_start_time', 'preserves_tracking_id', 'mentions_manifest_changes_to_user'],
+      required: ['deletes_app_info', 'mentions_app_info_to_user', 'preserves_tracking_id_before_delete'],
       properties: {
-        clears_start_time: { type: 'boolean' },
-        preserves_tracking_id: { type: 'boolean' },
-        mentions_manifest_changes_to_user: { type: 'boolean' },
-        start_time_new_value: { type: 'string' },
+        deletes_app_info: { type: 'boolean' },
+        mentions_app_info_to_user: { type: 'boolean' },
+        preserves_tracking_id_before_delete: { type: 'boolean' },
       },
     },
     assert(output) {
-      assert.equal(output.clears_start_time, true, 'must clear start_time to null on success');
-      assert.equal(output.preserves_tracking_id, true, 'must preserve tracking_id after publish');
-      assert.equal(output.mentions_manifest_changes_to_user, false, 'must NOT mention manifest changes to developer');
+      assert.equal(output.deletes_app_info, true, 'must delete app.info on successful publish');
+      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
+      assert.equal(output.preserves_tracking_id_before_delete, true, 'tracking_id must not be modified before delete');
     },
   },
 

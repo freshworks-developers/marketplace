@@ -54,7 +54,7 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | `fw-review-01` | fw-review | review failures → app.info written before `## App Review Result` emitted |
 | `fw-publish-01` | fw-publish | publish succeeded → delete app.info, `publish_outcome = "success"` |
 | `fw-publish-02` | fw-publish | validate failed → keep app.info, `publish_outcome = "failed_validate"` |
-| `fw-publish-03` | fw-publish | publish succeeded → `start_time` cleared to null, `tracking_id` preserved, silent |
+| `fw-publish-03` | fw-publish | publish succeeded → `app.info` deleted silently without notifying developer |
 | `fw-publish-04` | fw-publish | publish failed → manifest unchanged, `start_time` not cleared |
 | `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write app.info before showing result |
 
@@ -65,16 +65,17 @@ Each failing scenario retries up to 3 times; passes if 2/3 succeed (handles non-
 After `npm run eval`, two files are written:
 
 - `tests/eval-results.json` — raw results (pass/fail per scenario, model, timestamp)
-- `tests/eval-report.md` — formatted markdown table + failure details → **attach to your PR**
-- `tests/eval-report.html` — same report as a self-contained HTML page (open in browser)
+- `tests/eval-report.html` — HTML report with results table and failure details (open in browser)
 
-### Running in Claude Code or Cursor (no API key needed)
+### Running in Claude Code, Cursor, or Codex (no API key needed)
 
-Instead of `npm run eval`, open this repo in Claude Code or Cursor and ask:
+Instead of `npm run eval`, open this repo in Claude Code, Cursor, or Codex and ask:
 
-> "Run the skill evals and write eval-report.md"
+> "Run the skill evals"
 
 The model reads all skill files and evaluates the 13 scenarios inline, then writes the report. Same result, no API key required.
+
+This is also the fallback message shown when `npm run eval` is run without `ANTHROPIC_API_KEY`.
 
 ## Fixtures
 

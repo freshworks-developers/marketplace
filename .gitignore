@@ -104,6 +104,12 @@ skills-lock.json
 .tmp/
 coverage/
 
+# Eval and e2e report outputs (generated locally, not versioned)
+tests/eval-results.json
+tests/eval-report.html
+tests/e2e-results.json
+tests/e2e-report.html
+
 # FDK artifacts
 .fdk/
 *.fdk-*

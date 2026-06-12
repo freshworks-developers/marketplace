@@ -6,13 +6,29 @@ set -euo pipefail
 BRANCH="main"
 CLIENT="claude"
 AUTH_TOKEN=""
-OUTPUT_DIR="$HOME/Desktop/demo/e2e-test-app"
+OUTPUT_DIR="${HOME:-$(cd ~ && pwd)}/Desktop/demo/e2e-test-app"
 PUBLISH=false
+SKIP_BUILD=false
 APP_PROMPT="Build a Freshdesk-Asana sync app that creates an Asana task whenever a Freshdesk ticket is created, and syncs ticket status changes back. Use iparams for Asana PAT and project ID."
 
 PASS=0
 FAIL=0
 WARN=0
+
+# ensure HOME is always set
+HOME="${HOME:-$(cd ~ && pwd)}"
+
+# ─── always write report on exit (even if script dies mid-run) ───────────────
+_on_exit() {
+  local exit_code=$?
+  # only write if summary() hasn't already run (it sets _SUMMARY_DONE)
+  if [[ "${_SUMMARY_DONE:-}" != "1" ]]; then
+    summary
+  fi
+  exit $exit_code
+}
+trap _on_exit EXIT
+_SUMMARY_DONE=0
 
 # ─── colours ─────────────────────────────────────────────────────────────────
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; RESET='\033[0m'
@@ -20,9 +36,9 @@ GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; RESET='\033[0m'
 CURRENT_PHASE="Setup"
 CHECK_RESULTS=()
 
-pass() { echo -e "${GREEN}✓${RESET} $1"; ((PASS++)); CHECK_RESULTS+=("pass|${CURRENT_PHASE}|$1"); }
-fail() { echo -e "${RED}✗${RESET} $1"; ((FAIL++));  CHECK_RESULTS+=("fail|${CURRENT_PHASE}|$1"); }
-warn() { echo -e "${YELLOW}⚠${RESET} $1"; ((WARN++)); CHECK_RESULTS+=("warn|${CURRENT_PHASE}|$1"); }
+pass() { printf '%s✓%s %s\n' "${GREEN}" "${RESET}" "$1"; PASS=$((PASS+1)); CHECK_RESULTS+=("pass|${CURRENT_PHASE}|$1"); }
+fail() { printf '%s✗%s %s\n' "${RED}"   "${RESET}" "$1"; FAIL=$((FAIL+1)); CHECK_RESULTS+=("fail|${CURRENT_PHASE}|$1"); }
+warn() { printf '%s⚠%s %s\n' "${YELLOW}" "${RESET}" "$1"; WARN=$((WARN+1)); CHECK_RESULTS+=("warn|${CURRENT_PHASE}|$1"); }
 header() {
   CURRENT_PHASE="${1#Phase [0-9]*: }"   # strip "Phase N: " prefix for cleaner phase names
   echo; echo "──────────────────────────────────────────"
@@ -42,6 +58,7 @@ Options:
   --output-dir <path>   App output directory (default: ~/Desktop/demo/e2e-test-app)
   --app-prompt <text>   App generation prompt (default: Freshdesk-Asana sync)
   --publish             Run the fw-publish phase (requires --auth-token)
+  --skip-build          Skip Phase 2 (use when app already built manually in --output-dir)
   -h, --help            Show this help
 EOF
   exit 0
@@ -53,9 +70,10 @@ while [[ $# -gt 0 ]]; do
     --branch)       BRANCH="$2";       shift 2 ;;
     --client)       CLIENT="$2";       shift 2 ;;
     --auth-token)   AUTH_TOKEN="$2";   shift 2 ;;
-    --output-dir)   OUTPUT_DIR="$2";   shift 2 ;;
+    --output-dir)   OUTPUT_DIR="${2/#\~/$HOME}"; shift 2 ;;
     --app-prompt)   APP_PROMPT="$2";   shift 2 ;;
     --publish)      PUBLISH=true;      shift   ;;
+    --skip-build)   SKIP_BUILD=true;   shift   ;;
     -h|--help)      usage              ;;
     *) echo "Unknown option: $1"; usage ;;
   esac
@@ -94,14 +112,10 @@ invoke_llm() {
   echo "  Invoking $CLIENT with prompt..."
   case "$CLIENT" in
     claude)
-      claude --print \
-        --dangerously-skip-permissions \
-        --model claude-sonnet-4-6 \
-        "$prompt" 2>&1
+      echo "$prompt" | claude --dangerously-skip-permissions 2>&1
       ;;
     cursor)
-      # cursor agent --print runs headless in the given directory
-      cursor agent --print "$prompt" 2>&1
+      cursor agent --print --force --approve-mcps --workspace "$workdir" "$prompt" 2>&1
       ;;
     codex)
       codex --dangerously-auto-approve-everything \
@@ -140,7 +154,7 @@ phase_install() {
       [[ -d "$HOME/.claude/skills/fw-publish" ]] && pass "~/.claude/skills/fw-publish exists"  || fail "~/.claude/skills/fw-publish missing"
       ;;
     cursor)
-      [[ -f "$HOME/.cursor/rules/freshworks-dev-tools.mdc" ]] && pass "Cursor rules installed" || fail "Cursor rules missing"
+      [[ -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules installed" || fail "Cursor rules missing"
       [[ -d "$HOME/.cursor/skills/fw-app-dev" ]]              && pass "~/.cursor/skills/fw-app-dev exists" || fail "~/.cursor/skills/fw-app-dev missing"
       ;;
     codex)
@@ -155,6 +169,11 @@ phase_install() {
 phase_build() {
   header "Phase 2: Build app via $CLIENT"
 
+  # wipe any previous run so the LLM starts from a clean slate
+  if [[ -d "$OUTPUT_DIR" ]]; then
+    echo "  Cleaning previous run at $OUTPUT_DIR"
+    rm -rf "$OUTPUT_DIR"
+  fi
   mkdir -p "$OUTPUT_DIR"
   echo "  Output dir: $OUTPUT_DIR"
 
@@ -170,10 +189,16 @@ Use the fw-app-dev skill (skills/fw-app-dev/SKILL.md). Follow the mandatory skil
 3. fw-review (MANDATORY before publish)
 Create all app files inside $OUTPUT_DIR. Write app.info per skill instructions."
 
-  local llm_out
-  llm_out=$(cd "$OUTPUT_DIR" && invoke_llm "$full_prompt" "$OUTPUT_DIR")
-  echo "$llm_out" > "$OUTPUT_DIR/e2e-llm-output.log"
-  pass "LLM invocation complete (log: e2e-llm-output.log)"
+  local log="$OUTPUT_DIR/e2e-llm-output.log"
+  local llm_exit=0
+  echo "  Invoking $CLIENT (output streaming below)..."
+  echo "  Log: $log"
+  (cd "$OUTPUT_DIR" && invoke_llm "$full_prompt" "$OUTPUT_DIR") 2>&1 | tee "$log" || llm_exit=${PIPESTATUS[0]}
+  if [[ $llm_exit -ne 0 ]]; then
+    fail "LLM invocation failed (exit $llm_exit)"
+  else
+    pass "LLM invocation complete"
+  fi
 }
 
 # ─── phase: structural checks ─────────────────────────────────────────────────
@@ -237,8 +262,10 @@ phase_appinfo() {
   fi
   pass "app.info exists"
 
-  # parse with node
-  node - "$ai" <<'EOF'
+  # parse with node — write script to a temp file to avoid process.argv[1] = '-' issue
+  local _script
+  _script=$(mktemp /tmp/e2e-appinfo-XXXXXX.js)
+  cat > "$_script" <<'EOF'
 const fs = require('fs');
 const ai = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
 let p = 0, f = 0;
@@ -275,8 +302,9 @@ else {
 
 process.exit(f > 0 ? 1 : 0);
 EOF
-  local node_exit=$?
-  [[ $node_exit -eq 0 ]] && ((PASS++)) || ((FAIL++))
+  node "$_script" "$ai"; local node_exit=$?
+  rm -f "$_script"
+  [[ $node_exit -eq 0 ]] && PASS=$((PASS+1)) || FAIL=$((FAIL+1))
 }
 
 # ─── phase: publish ──────────────────────────────────────────────────────────
@@ -312,7 +340,13 @@ Use this as the Bearer token for the MCP server auth."
 phase_uninstall() {
   header "Phase 7: Uninstall"
 
-  if npx fw-dev-tools uninstall --tools "$CLIENT" --yes; then
+  local uninstall_ref
+  if [[ "$BRANCH" == "main" ]]; then
+    uninstall_ref="github:freshworks-developers/fw-dev-tools"
+  else
+    uninstall_ref="github:freshworks-developers/fw-dev-tools#$BRANCH"
+  fi
+  if npx "$uninstall_ref" uninstall --tools "$CLIENT" --yes; then
     pass "Uninstall exited 0"
   else
     fail "Uninstall failed"
@@ -325,7 +359,7 @@ phase_uninstall() {
       [[ ! -d "$HOME/.claude/skills/fw-app-dev" ]] && pass "~/.claude/skills/fw-app-dev removed" || fail "~/.claude/skills/fw-app-dev still present"
       ;;
     cursor)
-      [[ ! -f "$HOME/.cursor/rules/freshworks-dev-tools.mdc" ]] && pass "Cursor rules removed" || fail "Cursor rules still present"
+      [[ ! -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules removed" || fail "Cursor rules still present"
       ;;
     codex)
       [[ ! -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev removed" || fail "~/.codex/skills/fw-app-dev still present"
@@ -338,9 +372,9 @@ phase_uninstall() {
 # ─── summary + JSON results ───────────────────────────────────────────────────
 summary() {
   header "Results"
-  echo -e "  ${GREEN}Passed:${RESET}   $PASS"
-  echo -e "  ${RED}Failed:${RESET}   $FAIL"
-  echo -e "  ${YELLOW}Warnings:${RESET} $WARN"
+  printf '  %sPassed:%s   %s\n' "${GREEN}" "${RESET}" "$PASS"
+  printf '  %sFailed:%s   %s\n' "${RED}"   "${RESET}" "$FAIL"
+  printf '  %sWarnings:%s %s\n' "${YELLOW}" "${RESET}" "$WARN"
   echo
 
   # write e2e-results.json for the HTML reporter
@@ -382,11 +416,13 @@ EOF
     node "$(dirname "$0")/e2e-report.js" && echo "Report written to tests/e2e-report.html"
   fi
 
+  _SUMMARY_DONE=1
+
   if [[ $FAIL -eq 0 ]]; then
-    echo -e "${GREEN}E2E test passed.${RESET}"
+    printf '%sE2E test passed.%s\n' "${GREEN}" "${RESET}"
     exit 0
   else
-    echo -e "${RED}E2E test FAILED — $FAIL check(s) failed.${RESET}"
+    printf '%sE2E test FAILED — %s check(s) failed.%s\n' "${RED}" "$FAIL" "${RESET}"
     exit 1
   fi
 }
