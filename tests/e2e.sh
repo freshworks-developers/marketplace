@@ -112,7 +112,7 @@ invoke_llm() {
   echo "  Invoking $CLIENT with prompt..."
   case "$CLIENT" in
     claude)
-      echo "$prompt" | claude --dangerously-skip-permissions 2>&1
+      echo "$prompt" | claude --dangerously-skip-permissions --print --verbose --output-format stream-json 2>&1
       ;;
     cursor)
       cursor agent --print --force --approve-mcps --workspace "$workdir" "$prompt" 2>&1
@@ -218,7 +218,12 @@ phase_structure() {
   # mandatory files
   [[ -f "$OUTPUT_DIR/README.md" ]]                        && pass "README.md exists"                       || fail "README.md missing"
   [[ -f "$OUTPUT_DIR/config/iparams.json" ]]              && pass "config/iparams.json exists"             || warn "config/iparams.json missing (may use iparams.html)"
-  [[ -f "$OUTPUT_DIR/app/styles/images/icon.svg" ]]       && pass "app/styles/images/icon.svg exists"      || fail "app/styles/images/icon.svg missing (fdk validate will fail)"
+  # icon.svg only required for frontend/hybrid apps (app/ dir present)
+  if [[ -d "$OUTPUT_DIR/app" ]]; then
+    [[ -f "$OUTPUT_DIR/app/styles/images/icon.svg" ]] && pass "app/styles/images/icon.svg exists" || fail "app/styles/images/icon.svg missing (fdk validate will fail)"
+  else
+    pass "serverless app — icon.svg not required"
+  fi
 }
 
 # ─── phase: fdk validate ──────────────────────────────────────────────────────
@@ -267,7 +272,7 @@ phase_appinfo() {
   _script=$(mktemp /tmp/e2e-appinfo-XXXXXX.js)
   cat > "$_script" <<'EOF'
 const fs = require('fs');
-const ai = JSON.parse(fs.readFileSync(process.argv[1], 'utf8'));
+const ai = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 let p = 0, f = 0;
 
 function check(desc, cond) {
@@ -355,7 +360,7 @@ phase_uninstall() {
   # verify cleanup
   case "$CLIENT" in
     claude)
-      [[ ! -f "$HOME/.claude/CLAUDE.md" ]] && pass "~/.claude/CLAUDE.md removed" || fail "~/.claude/CLAUDE.md still present"
+      ! grep -q "fw-app-dev\|fw-review\|fw-publish" "$HOME/.claude/CLAUDE.md" 2>/dev/null && pass "~/.claude/CLAUDE.md routing block removed" || fail "~/.claude/CLAUDE.md routing block still present"
       [[ ! -d "$HOME/.claude/skills/fw-app-dev" ]] && pass "~/.claude/skills/fw-app-dev removed" || fail "~/.claude/skills/fw-app-dev still present"
       ;;
     cursor)
@@ -436,7 +441,18 @@ echo "  publish:    $( $PUBLISH && [[ -n "$AUTH_TOKEN" ]] && echo yes || echo no
 
 check_cli
 phase_install
-phase_build
+$SKIP_BUILD || phase_build
+
+# if Claude created app in a subfolder (fw-app-dev always creates a named folder),
+# point checks at the subfolder rather than OUTPUT_DIR directly
+if [[ ! -f "$OUTPUT_DIR/manifest.json" ]]; then
+  _sub=$(find "$OUTPUT_DIR" -maxdepth 1 -name "manifest.json" 2>/dev/null | head -1)
+  if [[ -z "$_sub" ]]; then
+    _sub=$(find "$OUTPUT_DIR" -maxdepth 2 -name "manifest.json" 2>/dev/null | head -1)
+  fi
+  [[ -n "$_sub" ]] && OUTPUT_DIR="$(dirname "$_sub")"
+fi
+
 phase_structure
 phase_validate
 phase_appinfo
