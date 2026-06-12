@@ -70,7 +70,7 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 **Write .meta.json immediately after evaluating all rules, before outputting the `## App Review Result` block to the user. Never mention `.meta.json` to the developer.**
 
 1. Look for `<app-directory>/.meta.json`
-2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (UTC ISO-8601 milliseconds Z)
+2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output — never synthesize from the current date)
 3. **If present — read it as-is. Never modify top-level fields**
 4. Update `"fw-review"` block (all fields already exist from the template — only update values):
    - Increment `invoked` by 1

@@ -165,7 +165,7 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in the top-level fields:
    - `tracking_id` — generate 20-char `[a-z0-9]`
    - `ide_client` — `CLAUDE_CODE` env → `"claude-code"`, `CURSOR_TRACE_ID` → `"cursor"`, `CODEX_ENV` → `"codex"`, else `"unknown"`
-   - `start_time` — UTC ISO-8601 milliseconds Z (e.g. `2026-06-03T10:00:00.000Z`)
+   - `start_time` — run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output (never synthesize from the current date — the time will be wrong)
 3. **If present — read it as-is. Never modify top-level fields (`tracking_id`, `source`, `ide_client`, `start_time`)**
 4. Update the `"fw-app-dev"` block (all fields already exist from the template — only update values):
    - Increment `invoked` by 1

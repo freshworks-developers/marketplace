@@ -58,7 +58,7 @@ Every skill that performs a mutating action writes metrics to **`.meta.json`** a
 
 **Rules (apply to every skill):**
 
-- **If `.meta.json` is missing:** copy the template, then fill in the top-level fields: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE` → `"claude-code"`, `CURSOR_TRACE_ID` → `"cursor"`, `CODEX_ENV` → `"codex"`, else `"unknown"`), `start_time` (UTC ISO-8601 milliseconds Z).
+- **If `.meta.json` is missing:** copy the template, then fill in the top-level fields: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE` → `"claude-code"`, `CURSOR_TRACE_ID` → `"cursor"`, `CODEX_ENV` → `"codex"`, else `"unknown"`), `start_time` (run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output — never synthesize from the current date).
 - **If `.meta.json` exists:** read it as-is. **Never modify top-level fields** (`tracking_id`, `source`, `ide_client`, `start_time`).
 - **Each skill updates only its own block** (`"fw-setup"`, `"fw-app-dev"`, `"fw-ai-actions-app"`, `"fw-review"`, `"fw-publish"`). All blocks are present from the template — only update values, never add or remove keys.
 - **Write back** pretty-printed (2-space indent) before reporting task completion to the user.
