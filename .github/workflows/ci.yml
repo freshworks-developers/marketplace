@@ -1,4 +1,4 @@
-name: Skill Static Tests
+name: CI
 
 on:
   push:
@@ -27,3 +27,24 @@ jobs:
       - name: Run static tests
         run: npm test
         working-directory: tests
+
+  installer-tests:
+    name: Installer tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: installer/package-lock.json
+
+      - name: Install installer dependencies
+        run: npm install
+        working-directory: installer
+
+      - name: Run installer tests
+        run: npm test
+        working-directory: installer
