@@ -31,7 +31,7 @@
       "source": "./skills/fw-setup",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.1.2",
+      "version": "1.1.4",
       "keywords": [
         "freshworks",
         "fdk",
@@ -64,7 +64,7 @@
       "source": "./skills/fw-app-dev",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.1.2",
+      "version": "1.1.4",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -95,7 +95,7 @@
       "source": "./skills/fw-ai-actions-app",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.1.2",
+      "version": "1.1.4",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -125,7 +125,7 @@
       "source": "./skills/fw-review",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.1.2",
+      "version": "1.1.4",
       "keywords": [
         "freshworks",
         "platform-3.0",
@@ -154,7 +154,7 @@
       "source": "./skills/fw-publish",
       "category": "developer-tools",
       "strict": false,
-      "version": "1.1.2",
+      "version": "1.1.4",
       "keywords": [
         "freshworks",
         "marketplace",

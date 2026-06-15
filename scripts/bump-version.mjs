@@ -2,7 +2,7 @@
 /**
  * Propagates the version from the root package.json to all static files
  * that embed it: installer/package.json, skills SKILL.md frontmatter,
- * and plugin manifests.
+ * and plugin manifests (umbrella + per-skill + marketplace plugins[]).
  *
  * Run automatically via `npm version` (preversion hook).
  * Can also be run directly: node scripts/bump-version.mjs
@@ -24,6 +24,19 @@ async function updateJson(filePath, updater) {
   console.log(`  updated ${filePath.replace(ROOT + '/', '')}`);
 }
 
+function applyVersionToManifest(obj, version) {
+  if (obj && typeof obj === 'object' && 'version' in obj) {
+    obj.version = version;
+  }
+  if (Array.isArray(obj?.plugins)) {
+    for (const plugin of obj.plugins) {
+      if (plugin && typeof plugin === 'object' && 'version' in plugin) {
+        plugin.version = version;
+      }
+    }
+  }
+}
+
 async function updateText(filePath, pattern, replacement) {
   const raw = await readFile(filePath, 'utf8');
   const updated = raw.replace(pattern, replacement);
@@ -34,29 +47,34 @@ async function updateText(filePath, pattern, replacement) {
 }
 
 // installer/package.json
-await updateJson(join(ROOT, 'installer/package.json'), (pkg) => { pkg.version = version; });
+await updateJson(join(ROOT, 'installer/package.json'), (pkg) => {
+  pkg.version = version;
+});
 
-// plugin manifests
+// Umbrella plugin manifests
 for (const dir of ['.cursor-plugin', '.claude-plugin', '.codex-plugin']) {
   for (const file of ['plugin.json', 'marketplace.json']) {
     try {
       const p = join(ROOT, dir, file);
-      await updateJson(p, (obj) => {
-        if ('version' in obj) obj.version = version;
-        // also update nested skill versions inside marketplace.json
-        for (const val of Object.values(obj)) {
-          if (val && typeof val === 'object' && 'version' in val) val.version = version;
-        }
-      });
+      await updateJson(p, (obj) => applyVersionToManifest(obj, version));
     } catch { /* file may not exist */ }
   }
 }
 
-// skills/*/SKILL.md frontmatter: version: "x.y.z"
+// Per-skill plugin manifests (when published standalone)
 const skillsDir = join(ROOT, 'skills');
 const skills = await readdir(skillsDir, { withFileTypes: true });
 for (const entry of skills) {
   if (!entry.isDirectory()) continue;
+  for (const pluginDir of ['.cursor-plugin', '.claude-plugin']) {
+    const pluginJson = join(skillsDir, entry.name, pluginDir, 'plugin.json');
+    try {
+      await updateJson(pluginJson, (obj) => {
+        obj.version = version;
+      });
+    } catch { /* no plugin.json in this skill */ }
+  }
+
   const skillMd = join(skillsDir, entry.name, 'SKILL.md');
   try {
     await updateText(skillMd, /^version: "[\d.]+"/m, `version: "${version}"`);

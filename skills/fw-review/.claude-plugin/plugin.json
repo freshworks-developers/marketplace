@@ -1,6 +1,6 @@
 {
   "name": "fw-review",
-  "version": "1.0.0",
+  "version": "1.1.4",
   "description": "Automated Freshworks custom app review: iparams, frontend, deterministic script checks, security, and structured report output.",
   "author": {
     "name": "Freshworks Developers",

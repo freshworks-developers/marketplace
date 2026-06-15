@@ -1,7 +1,7 @@
 {
   "name": "fw-ai-actions-app",
   "displayName": "Freshworks AI Actions",
-  "version": "1.0.0",
+  "version": "1.1.4",
   "description": "AI Actions on Freshworks Platform 3.0: actions.json, SMI serverless handlers, request templates, validation, integration checklists, and optional integration agent prompts.",
   "author": {
     "name": "Freshworks Developers",
