@@ -1,16 +1,22 @@
 #!/usr/bin/env node
+import { readFile } from 'node:fs/promises';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { install } from '../src/install.js';
 import { update } from '../src/update.js';
 import { status } from '../src/status.js';
 import { uninstall } from '../src/uninstall.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const { version } = JSON.parse(await readFile(join(__dirname, '../../package.json'), 'utf8'));
+
 const program = new Command();
 
 program
   .name('fw-dev-tools')
   .description('Freshworks Agentic Developer Toolkit — installer')
-  .version('1.1.0');
+  .version(version);
 
 program
   .command('install')

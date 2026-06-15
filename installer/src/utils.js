@@ -8,7 +8,9 @@ import { createInterface } from 'node:readline';
 export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
 export const INSTALL_JSON = join(homedir(), '.fw-dev-tools', 'install.json');
-export const VERSION = '1.1.0';
+
+const _pkg = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8'));
+export const VERSION = _pkg.version;
 
 /**
  * Copy all skill subdirectories from the repo's skills/ into targetDir.

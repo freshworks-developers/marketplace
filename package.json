@@ -12,6 +12,9 @@
     "skills/",
     ".mcp.json"
   ],
+  "scripts": {
+    "version": "node scripts/bump-version.mjs && git add -A"
+  },
   "dependencies": {
     "commander": "^12.0.0"
   },
