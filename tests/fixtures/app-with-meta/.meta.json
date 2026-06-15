@@ -14,14 +14,12 @@
     "skill_version": "1.0.0",
     "migrate_iterations": 0,
     "validate_iterations": 2,
-    "fix_iterations": 1,
     "validation_error_categories": ["lint-async-no-await"]
   },
   "fw-ai-actions-app": {
     "invoked": 0,
     "skill_version": "",
     "validate_iterations": 0,
-    "fix_iterations": 0,
     "validation_error_categories": []
   },
   "fw-review": {

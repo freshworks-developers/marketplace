@@ -69,7 +69,7 @@ Uses `run-inline-eval.mjs` to verify each scenario's rules are present in skill 
 
 Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the critical behavioral rules in each skill. Each scenario forces structured JSON output via tool use, then asserts the fields deterministically.
 
-**28 scenarios across all 5 skills:**
+**66 scenarios** across all 5 skills + orchestration spec:
 
 | ID | Skill | What it tests |
 |----|-------|---------------|
@@ -101,6 +101,48 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | `fw-review-03` | fw-review | multi-manifest → only ask which app |
 | `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
 | `spec-01` | (all) | update check → `check-update.sh` on first invocation only, not every message |
+| `spec-02` | (all) | update check → do not run `check-update.sh` again on later messages in session |
+| **P0** | | |
+| `fw-ai-actions-02` | fw-ai-actions-app | nested vendor payload → flat `parameters`, nest in `server.js` |
+| `fw-ai-actions-03` | fw-ai-actions-app | no `api_key` in `actions.json` → secure iparams |
+| `fw-review-04` | fw-review | `fdk` missing → STOP, offer fw-setup, no silent install |
+| `fw-app-dev-08` | fw-app-dev | refuse deprecated `implement_app` MCP tool |
+| `fw-app-dev-09` | fw-app-dev | legacy manifest engines → raise engines, not downgrade toolchain |
+| **P1** | | |
+| `fw-setup-05` | fw-setup | `/fw-setup-upgrade` → write `.meta.json` before REPORT |
+| `fw-setup-06` | fw-setup | `/fw-setup-troubleshoot` without `--fix` → no metrics write |
+| `fw-setup-07` | fw-setup | `/fw-setup-troubleshoot --fix` → write `.meta.json` |
+| `fw-setup-08` | fw-setup | refuse `npm install -g @freshworks/fdk` → CDN tarball only |
+| `fw-ai-actions-04` | fw-ai-actions-app | external HTTP → `$request.invokeTemplate` only |
+| `fw-ai-actions-05` | fw-ai-actions-app | AI-only app → no `app/` folder |
+| `fw-publish-13` | fw-publish | stuck `development` version → STOP, stuck-version warning |
+| `fw-publish-14` | fw-publish | MCP 401 → STOP auth setup, no retry |
+| `fw-publish-15` | fw-publish | engines mismatch → STOP, no `fdk pack` |
+| **P2** | | |
+| `fw-app-dev-10` | fw-app-dev | LAST RESORT engines downgrade only after 6 validate iterations |
+| `fw-app-dev-11` | fw-app-dev | Platform 2.x `product` block → migrate first |
+| `fw-ai-actions-06` | fw-ai-actions-app | multi-manifest → ask which app (Q1) |
+| `fw-ai-actions-07` | fw-ai-actions-app | handler names must match case-sensitively |
+| `fw-review-05` | fw-review | script checker crash → continue review |
+| `fw-publish-16` | fw-publish | `targetState` always `"test"`, never ask user |
+| `fw-publish-17` | fw-publish | zip with only `./manifest.json` → STOP before upload URL |
+| `fw-setup-09` | fw-setup | `/fw-setup-use` → no `.meta.json` write |
+| **P3** | | |
+| `fw-setup-10` | fw-setup | `/fw-setup-downgrade` → write `.meta.json` before REPORT |
+| `fw-setup-11` | fw-setup | install success, no manifest → skip metrics |
+| `fw-app-dev-12` | fw-app-dev | `fdk` missing → offer fw-setup, no silent install |
+| `fw-app-dev-13` | fw-app-dev | Scenario A: FDK 9 + 2.x → setup then migrate |
+| `fw-app-dev-14` | fw-app-dev | Scenario E: FDK 9 + 3.0 manifest → upgrade toolchain |
+| `fw-app-dev-15` | fw-app-dev | `$request.post` → `invokeTemplate` |
+| `fw-app-dev-16` | fw-app-dev | `product` block → `modules` |
+| `fw-review-06` | fw-review | 0 failures → still write meta before result |
+| `fw-publish-18` | fw-publish | `failed_submit`, keep meta |
+| `fw-publish-19` | fw-publish | custom app limit (25) warning |
+| `fw-publish-20` | fw-publish | `fdk` missing at publish |
+| `fw-publish-21` | fw-publish | update path → no `supportEmail` required |
+| `fw-ai-actions-08` | fw-ai-actions-app | array of objects in parameters forbidden |
+| `fw-ai-actions-09` | fw-ai-actions-app | no manifest → stop |
+| `spec-03` | (all) | mandatory skill order through fw-publish |
 
 Each failing scenario retries up to 3 times; passes if 2/3 succeed (handles non-determinism).
 
@@ -117,7 +159,7 @@ Instead of `npm run eval`, open this repo in Claude Code, Cursor, or Codex and a
 
 > "Run the skill evals"
 
-The model reads all skill files and evaluates the 13 scenarios inline, then writes the report. Same result, no API key required.
+The model reads all skill files and evaluates the 66 scenarios inline, then writes the report. Same result, no API key required.
 
 This is also the fallback message shown when `npm run eval` is run without `ANTHROPIC_API_KEY`.
 

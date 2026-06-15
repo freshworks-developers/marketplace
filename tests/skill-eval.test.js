@@ -31,7 +31,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
   console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
   console.log('   "Run the skill evals"');
   console.log('');
-  console.log('   The model will read all skill files and evaluate the 24 scenarios inline.');
+  console.log('   The model will read all skill files and evaluate the 66 scenarios inline.');
   process.exit(0);
 }
 
@@ -748,6 +748,801 @@ const SCENARIOS = [
     assert(output) {
       assert.equal(output.shows_downgrade_warning, true, 'must warn about ai_actions downgrade');
       assert.equal(output.proceeds_without_confirmation, false, 'must not proceed without confirmation');
+    },
+  },
+
+  // ─── P0: highest-risk behavioral gates ─────────────────────────────────────
+
+  {
+    id: 'fw-ai-actions-02',
+    skill: 'fw-ai-actions-app',
+    label: 'nested vendor API payload → flat parameters in actions.json, nest in server.js',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'The Stripe API expects a nested object: { "customer": { "email": "...", "name": "..." } }. How should you define the actions.json request parameters schema?',
+    schema: {
+      type: 'object',
+      required: ['parameters_stay_flat', 'nest_in_server_js'],
+      properties: {
+        parameters_stay_flat: { type: 'boolean' },
+        nest_in_server_js: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.parameters_stay_flat, true, 'request parameters must stay flat');
+      assert.equal(output.nest_in_server_js, true, 'nested structure must be built in server.js');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-03',
+    skill: 'fw-ai-actions-app',
+    label: 'api_key in actions.json → must use secure iparams instead',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'The developer asks you to add api_key directly in actions.json parameters for convenience. Should you do that?',
+    schema: {
+      type: 'object',
+      required: ['allows_api_key_in_actions_json', 'uses_secure_iparams'],
+      properties: {
+        allows_api_key_in_actions_json: { type: 'boolean' },
+        uses_secure_iparams: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_api_key_in_actions_json, false, 'must not put secrets in actions.json');
+      assert.equal(output.uses_secure_iparams, true, 'must use secure iparams or OAuth');
+    },
+  },
+
+  {
+    id: 'fw-review-04',
+    skill: 'fw-review',
+    label: 'fdk missing → STOP, offer fw-setup, no silent install, no full review report',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'You are about to run fw-review but `fdk --version` fails (command not found). What should you do? Should you emit a full "## App Review Result" block as if all phases ran?',
+    schema: {
+      type: 'object',
+      required: ['stops_pipeline', 'offers_fw_setup', 'silent_install', 'emits_full_review_result'],
+      properties: {
+        stops_pipeline: { type: 'boolean' },
+        offers_fw_setup: { type: 'boolean' },
+        silent_install: { type: 'boolean' },
+        emits_full_review_result: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.stops_pipeline, true, 'must STOP when fdk missing');
+      assert.equal(output.offers_fw_setup, true, 'must offer /fw-setup-install');
+      assert.equal(output.silent_install, false, 'must not silently install fdk');
+      assert.equal(output.emits_full_review_result, false, 'must not emit full App Review Result without fdk');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-08',
+    skill: 'fw-app-dev',
+    label: 'implement_app MCP tool requested → refuse, use fw-app-dev skill flow',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'The developer says: use the implement_app MCP tool to build this Freshdesk app quickly. Should you call implement_app?',
+    schema: {
+      type: 'object',
+      required: ['should_call_implement_app', 'should_use_fw_app_dev_skill'],
+      properties: {
+        should_call_implement_app: { type: 'boolean' },
+        should_use_fw_app_dev_skill: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.should_call_implement_app, false, 'must NOT call deprecated implement_app');
+      assert.equal(output.should_use_fw_app_dev_skill, true, 'must use fw-app-dev skill workflow');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-09',
+    skill: 'fw-app-dev',
+    label: 'FDK 10 + Node 24 installed, manifest engines 9/18 → raise engines, not downgrade toolchain',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Shell has FDK 10.0.1 and Node v24.11.0. manifest.json engines are "fdk": "9.8.2", "node": "18.20.8". platform-version is "3.0". Should you downgrade the machine to FDK 9 / Node 18 to match manifest engines?',
+    schema: {
+      type: 'object',
+      required: ['downgrades_toolchain', 'updates_manifest_engines_upward'],
+      properties: {
+        downgrades_toolchain: { type: 'boolean' },
+        updates_manifest_engines_upward: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.downgrades_toolchain, false, 'must NOT downgrade toolchain to match legacy engines');
+      assert.equal(output.updates_manifest_engines_upward, true, 'must align manifest engines upward to 10.x/24.x');
+    },
+  },
+
+  // ─── P1: setup, ai-actions HTTP, publish guards ────────────────────────────
+
+  {
+    id: 'fw-setup-05',
+    skill: 'fw-setup',
+    label: '/fw-setup-upgrade succeeded + manifest present → write .meta.json before REPORT',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: '/fw-setup-upgrade completed successfully. Verification passed in a new shell. manifest.json exists in the app directory. Should .meta.json be written before the REPORT?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: {
+        writes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, true, 'upgrade must write .meta.json when manifest exists');
+    },
+  },
+
+  {
+    id: 'fw-setup-06',
+    skill: 'fw-setup',
+    label: '/fw-setup-troubleshoot without --fix → no .meta.json write',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'The developer runs /fw-setup-troubleshoot (diagnostic only, no --fix flag). Should .meta.json be written?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: {
+        writes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, false, 'troubleshoot without --fix must not write metrics');
+    },
+  },
+
+  {
+    id: 'fw-setup-07',
+    skill: 'fw-setup',
+    label: '/fw-setup-troubleshoot --fix → write .meta.json before REPORT',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: '/fw-setup-troubleshoot --fix completed successfully and fixed PATH issues. manifest.json exists. Should .meta.json be written before REPORT?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: {
+        writes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, true, 'troubleshoot --fix must write .meta.json when manifest exists');
+    },
+  },
+
+  {
+    id: 'fw-setup-08',
+    skill: 'fw-setup',
+    label: 'npm install -g @freshworks/fdk → refuse, use CDN tarball',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'The developer asks you to run: npm install -g @freshworks/fdk@10.0.1. Should you use this method to install FDK?',
+    schema: {
+      type: 'object',
+      required: ['uses_npm_registry', 'uses_cdn_tarball'],
+      properties: {
+        uses_npm_registry: { type: 'boolean' },
+        uses_cdn_tarball: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_npm_registry, false, 'must NOT install FDK from npm registry');
+      assert.equal(output.uses_cdn_tarball, true, 'must use CDN tarball install path');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-04',
+    skill: 'fw-ai-actions-app',
+    label: 'external HTTP in server → $request.invokeTemplate only',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'You need to call a third-party REST API from the AI Actions server.js handler. Can you use axios or fetch directly?',
+    schema: {
+      type: 'object',
+      required: ['allows_axios_or_fetch', 'uses_invoke_template'],
+      properties: {
+        allows_axios_or_fetch: { type: 'boolean' },
+        uses_invoke_template: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_axios_or_fetch, false, 'must not use axios/fetch for external HTTP');
+      assert.equal(output.uses_invoke_template, true, 'must use $request.invokeTemplate');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-05',
+    skill: 'fw-ai-actions-app',
+    label: 'AI-only app → no app/ folder or Crayons UI',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'Building a pure AI Actions integration (actions.json + server only). Should you create an app/ folder with Crayons UI and icon.svg?',
+    schema: {
+      type: 'object',
+      required: ['creates_app_folder', 'ai_actions_only_layout'],
+      properties: {
+        creates_app_folder: { type: 'boolean' },
+        ai_actions_only_layout: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.creates_app_folder, false, 'must not create app/ folder for AI-only apps');
+      assert.equal(output.ai_actions_only_layout, true, 'must use actions.json + server layout only');
+    },
+  },
+
+  {
+    id: 'fw-publish-13',
+    skill: 'fw-publish',
+    label: 'latest version in development state → STOP, stuck-version warning',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'list_app_versions shows the latest version is stuck in "development" state. Should you proceed to create_app_upload_url anyway?',
+    schema: {
+      type: 'object',
+      required: ['stops_for_stuck_version', 'shows_stuck_version_warning'],
+      properties: {
+        stops_for_stuck_version: { type: 'boolean' },
+        shows_stuck_version_warning: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.stops_for_stuck_version, true, 'must STOP when version stuck in development');
+      assert.equal(output.shows_stuck_version_warning, true, 'must show stuck-version-warning template');
+    },
+  },
+
+  {
+    id: 'fw-publish-14',
+    skill: 'fw-publish',
+    label: 'MCP 401 → STOP auth setup, no retry loop',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'list_custom_apps returned HTTP 401 Unauthorized. Should you retry the MCP call three times, or stop and show auth setup instructions?',
+    schema: {
+      type: 'object',
+      required: ['stops_immediately', 'retries_without_fixing_auth'],
+      properties: {
+        stops_immediately: { type: 'boolean' },
+        retries_without_fixing_auth: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.stops_immediately, true, 'must STOP on 401 and show auth instructions');
+      assert.equal(output.retries_without_fixing_auth, false, 'must not retry MCP without fixing token');
+    },
+  },
+
+  {
+    id: 'fw-publish-15',
+    skill: 'fw-publish',
+    label: 'manifest engines mismatch → STOP, engines-mismatch prompt, no fdk pack',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'fdk is installed (10.0.1 / Node 24.11) but manifest engines say fdk 9.8.2 and node 18.20.8. Should you run fdk pack and continue publish?',
+    schema: {
+      type: 'object',
+      required: ['stops_for_mismatch', 'runs_fdk_pack_anyway'],
+      properties: {
+        stops_for_mismatch: { type: 'boolean' },
+        runs_fdk_pack_anyway: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.stops_for_mismatch, true, 'must STOP on engines mismatch');
+      assert.equal(output.runs_fdk_pack_anyway, false, 'must not run fdk pack until resolved');
+    },
+  },
+
+  // ─── P2: additional gates ──────────────────────────────────────────────────
+
+  {
+    id: 'fw-app-dev-10',
+    skill: 'fw-app-dev',
+    label: '6 validate iterations failed → LAST RESORT engines downgrade only then',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'fdk validate has been run 6 times on FDK 10 + Node 24 and still fails. The developer asks to downgrade manifest engines to FDK 9 / Node 18 immediately to unblock. Should you downgrade engines before exhausting the 6-iteration loop?',
+    schema: {
+      type: 'object',
+      required: ['downgrade_before_six_iterations', 'last_resort_only_after_six'],
+      properties: {
+        downgrade_before_six_iterations: { type: 'boolean' },
+        last_resort_only_after_six: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.downgrade_before_six_iterations, false, 'must not downgrade engines as first move');
+      assert.equal(output.last_resort_only_after_six, true, 'LAST RESORT only after 6 failed iterations');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-11',
+    skill: 'fw-app-dev',
+    label: 'Platform 2.x product block → migrate, not validate on 3.0 toolchain',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'manifest.json has platform-version "2.3" and a legacy "product" block. FDK 10 and Node 24 are installed. Should you run fdk validate directly?',
+    schema: {
+      type: 'object',
+      required: ['should_run_fdk_migrate_first', 'should_run_fdk_validate_directly'],
+      properties: {
+        should_run_fdk_migrate_first: { type: 'boolean' },
+        should_run_fdk_validate_directly: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.should_run_fdk_migrate_first, true, 'must migrate Platform 2.x first');
+      assert.equal(output.should_run_fdk_validate_directly, false, 'must not validate 2.x manifest directly');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-06',
+    skill: 'fw-ai-actions-app',
+    label: 'multiple manifest.json → ask which app (Q1)',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'Workspace has ./slack-bot/manifest.json and ./teams-bot/manifest.json. User says "build the AI action". Should you pick one silently or ask which app directory to use?',
+    schema: {
+      type: 'object',
+      required: ['asks_which_app', 'picks_silently'],
+      properties: {
+        asks_which_app: { type: 'boolean' },
+        picks_silently: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.asks_which_app, true, 'must ask which app when multiple manifests');
+      assert.equal(output.picks_silently, false, 'must not pick app directory silently');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-07',
+    skill: 'fw-ai-actions-app',
+    label: 'actions.json handler name mismatch → must align case-sensitively',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'actions.json defines handler "createTicket" but server.js exports "createticket". Is this acceptable?',
+    schema: {
+      type: 'object',
+      required: ['acceptable_mismatch', 'must_match_case_sensitive'],
+      properties: {
+        acceptable_mismatch: { type: 'boolean' },
+        must_match_case_sensitive: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.acceptable_mismatch, false, 'handler name mismatch is not acceptable');
+      assert.equal(output.must_match_case_sensitive, true, 'function names must match exactly');
+    },
+  },
+
+  {
+    id: 'fw-review-05',
+    skill: 'fw-review',
+    label: 'deterministic script crashes → continue review, do not abort',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'The fw-review script external-import-sources.js crashed with an exception while checking the app. Should you abort the entire review pipeline?',
+    schema: {
+      type: 'object',
+      required: ['aborts_entire_review', 'continues_other_rules'],
+      properties: {
+        aborts_entire_review: { type: 'boolean' },
+        continues_other_rules: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.aborts_entire_review, false, 'must not abort entire review on script failure');
+      assert.equal(output.continues_other_rules, true, 'must continue evaluating remaining rules');
+    },
+  },
+
+  {
+    id: 'fw-publish-16',
+    skill: 'fw-publish',
+    label: 'targetState → always "test", never prompt user',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'Before submit_custom_app, should you ask the developer which marketplace state to publish to (test vs live)?',
+    schema: {
+      type: 'object',
+      required: ['asks_user_for_state', 'target_state_is_test'],
+      properties: {
+        asks_user_for_state: { type: 'boolean' },
+        target_state_is_test: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.asks_user_for_state, false, 'must not ask user to choose state');
+      assert.equal(output.target_state_is_test, true, 'targetState must always be test');
+    },
+  },
+
+  {
+    id: 'fw-publish-17',
+    skill: 'fw-publish',
+    label: 'zip has only ./manifest.json → STOP before create_app_upload_url',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'After fdk pack, the zip lists only "./manifest.json" at root (with leading ./) and no bare "manifest.json" member. Can you call create_app_upload_url?',
+    schema: {
+      type: 'object',
+      required: ['can_call_upload_url', 'must_repack_or_stop'],
+      properties: {
+        can_call_upload_url: { type: 'boolean' },
+        must_repack_or_stop: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.can_call_upload_url, false, 'must not upload zip with only ./manifest.json');
+      assert.equal(output.must_repack_or_stop, true, 'must STOP and repack with root manifest.json');
+    },
+  },
+
+  {
+    id: 'fw-setup-09',
+    skill: 'fw-setup',
+    label: '/fw-setup-use → no .meta.json write (read-only stack switch)',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'The developer runs /fw-setup-use 24.11 to switch Node for this shell. manifest.json exists. Should .meta.json metrics be written?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: {
+        writes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, false, 'fw-setup-use must not write .meta.json');
+    },
+  },
+
+  {
+    id: 'spec-02',
+    skill: 'fw-app-dev',
+    label: 'update check: check-update.sh once per session only',
+    loadContent: () => loadSpec(),
+    prompt: 'This is the developer\'s fifth message in the same Cursor session. fw-dev-tools was already loaded earlier. Should you run check-update.sh again on this message?',
+    schema: {
+      type: 'object',
+      required: ['runs_check_update_again', 'once_per_session'],
+      properties: {
+        runs_check_update_again: { type: 'boolean' },
+        once_per_session: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.runs_check_update_again, false, 'must not run check-update on every message');
+      assert.equal(output.once_per_session, true, 'update check is once per session');
+    },
+  },
+
+  // ─── P3: high-value gaps from second audit ─────────────────────────────────
+
+  {
+    id: 'fw-setup-10',
+    skill: 'fw-setup',
+    label: '/fw-setup-downgrade succeeded + manifest present → write .meta.json before REPORT',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: '/fw-setup-downgrade to FDK 9.x completed successfully. Verification passed. manifest.json exists in the app directory. Should .meta.json be written before REPORT?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: { writes_meta_json: { type: 'boolean' }, explanation: { type: 'string' } },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, true, 'downgrade must write .meta.json when manifest exists');
+    },
+  },
+
+  {
+    id: 'fw-setup-11',
+    skill: 'fw-setup',
+    label: '/fw-setup-install succeeded, no manifest.json → skip .meta.json write',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: '/fw-setup-install completed successfully on a bare machine with no app project open. There is no manifest.json anywhere in the working directory. Should .meta.json metrics be written?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json'],
+      properties: { writes_meta_json: { type: 'boolean' }, explanation: { type: 'string' } },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json, false, 'bare install without manifest must skip metrics');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-12',
+    skill: 'fw-app-dev',
+    label: 'fdk missing → offer fw-setup, no silent install',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'You are about to build a new app but `fdk --version` fails (command not found). Should you silently run /fw-setup-install, or STOP and ask the user first?',
+    schema: {
+      type: 'object',
+      required: ['stops_for_missing_fdk', 'silent_install', 'offers_fw_setup'],
+      properties: {
+        stops_for_missing_fdk: { type: 'boolean' },
+        silent_install: { type: 'boolean' },
+        offers_fw_setup: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.stops_for_missing_fdk, true, 'must STOP when fdk missing');
+      assert.equal(output.silent_install, false, 'must not silently install fdk');
+      assert.equal(output.offers_fw_setup, true, 'must offer fw-setup');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-13',
+    skill: 'fw-app-dev',
+    label: 'Scenario A: FDK 9 + Platform 2.x → fw-setup-install then fdk-migrate',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Installed toolchain: FDK 9.8.2, Node 18.20.8. manifest.json has platform-version "2.3" and engines fdk 9.x / node 18.x. User asks to work on this app. What is the correct first sequence?',
+    schema: {
+      type: 'object',
+      required: ['runs_fw_setup_install_first', 'runs_fdk_migrate', 'runs_fdk_validate_directly'],
+      properties: {
+        runs_fw_setup_install_first: { type: 'boolean' },
+        runs_fdk_migrate: { type: 'boolean' },
+        runs_fdk_validate_directly: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.runs_fw_setup_install_first, true, 'must upgrade toolchain first (Scenario A)');
+      assert.equal(output.runs_fdk_migrate, true, 'must migrate after toolchain upgrade');
+      assert.equal(output.runs_fdk_validate_directly, false, 'must not validate 2.x app on legacy toolchain');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-14',
+    skill: 'fw-app-dev',
+    label: 'Scenario E: FDK 9 + Platform 3.0 manifest → upgrade toolchain, not downgrade app',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Installed: FDK 9.8.2, Node 18.20.8. manifest.json is already platform-version "3.0" with engines fdk 9.8.2 and node 18.20.8. Should you downgrade the app manifest to match the old toolchain, or upgrade the toolchain?',
+    schema: {
+      type: 'object',
+      required: ['downgrades_app_engines', 'upgrades_toolchain'],
+      properties: {
+        downgrades_app_engines: { type: 'boolean' },
+        upgrades_toolchain: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.downgrades_app_engines, false, 'must not downgrade 3.0 app to FDK 9/Node 18');
+      assert.equal(output.upgrades_toolchain, true, 'must upgrade toolchain to FDK 10 + Node 24');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-15',
+    skill: 'fw-app-dev',
+    label: 'client $request.post() → must use $request.invokeTemplate',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'In app/scripts/app.js you need to call an external API from the Freshdesk client UI. Can you use $request.post() directly?',
+    schema: {
+      type: 'object',
+      required: ['allows_request_post', 'uses_invoke_template'],
+      properties: {
+        allows_request_post: { type: 'boolean' },
+        uses_invoke_template: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_request_post, false, 'must not use $request.post in client');
+      assert.equal(output.uses_invoke_template, true, 'must use $request.invokeTemplate via request templates');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-16',
+    skill: 'fw-app-dev',
+    label: '"product" block in manifest → reject, use "modules"',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'A generated manifest.json contains `"product": { "freshdesk": {} }` instead of a modules block. Is this valid for Platform 3.0?',
+    schema: {
+      type: 'object',
+      required: ['is_valid_platform3', 'must_use_modules'],
+      properties: {
+        is_valid_platform3: { type: 'boolean' },
+        must_use_modules: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.is_valid_platform3, false, 'product block is forbidden on Platform 3.0');
+      assert.equal(output.must_use_modules, true, 'must use modules not product');
+    },
+  },
+
+  {
+    id: 'fw-review-06',
+    skill: 'fw-review',
+    label: 'review with 0 failures → still write .meta.json before App Review Result',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'The fw-review pipeline completed with zero failures — all rules passed. The skill says to write .meta.json "before emitting ## App Review Result". Does this requirement apply only when there are failures, or unconditionally?',
+    schema: {
+      type: 'object',
+      required: ['writes_meta_json_before_result'],
+      properties: {
+        writes_meta_json_before_result: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_meta_json_before_result, true, 'must write .meta.json even when all rules pass');
+    },
+  },
+
+  {
+    id: 'fw-publish-18',
+    skill: 'fw-publish',
+    label: 'submit_custom_app fails → publish_outcome failed_submit, keep .meta.json',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'submit_custom_app failed at step 10 with an API error. What publish_outcome should be written, and should .meta.json be deleted?',
+    schema: {
+      type: 'object',
+      required: ['publish_outcome', 'deletes_meta_json'],
+      properties: {
+        publish_outcome: { type: 'string' },
+        deletes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.publish_outcome, 'failed_submit', 'publish_outcome must be failed_submit');
+      assert.equal(output.deletes_meta_json, false, 'must keep .meta.json on submit failure');
+    },
+  },
+
+  {
+    id: 'fw-publish-19',
+    skill: 'fw-publish',
+    label: 'custom app limit warning must be shown before step 6',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'You are about to start step 6 (new vs existing app routing) in the publish flow. Must you show the custom app limit warning text first?',
+    schema: {
+      type: 'object',
+      required: ['must_show_limit_warning', 'can_skip_warning'],
+      properties: {
+        must_show_limit_warning: { type: 'boolean' },
+        can_skip_warning: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.must_show_limit_warning, true, 'must show custom-app-limit-warning before step 6');
+      assert.equal(output.can_skip_warning, false, 'warning is mandatory');
+    },
+  },
+
+  {
+    id: 'fw-publish-20',
+    skill: 'fw-publish',
+    label: 'fdk missing at publish → STOP, offer fw-setup',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'User wants to publish but `fdk --version` fails. Should you continue to fdk validate or STOP and offer /fw-setup-install?',
+    schema: {
+      type: 'object',
+      required: ['continues_publish', 'offers_fw_setup'],
+      properties: {
+        continues_publish: { type: 'boolean' },
+        offers_fw_setup: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.continues_publish, false, 'must STOP publish when fdk missing');
+      assert.equal(output.offers_fw_setup, true, 'must offer fw-setup install');
+    },
+  },
+
+  {
+    id: 'fw-publish-21',
+    skill: 'fw-publish',
+    label: 'update existing listing → supportEmail not required',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'Developer chose "update existing app" (add_app_version path). Must you collect supportEmail before create_app_upload_url?',
+    schema: {
+      type: 'object',
+      required: ['requires_support_email', 'can_proceed_without_email'],
+      properties: {
+        requires_support_email: { type: 'boolean' },
+        can_proceed_without_email: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.requires_support_email, false, 'supportEmail not required for update path');
+      assert.equal(output.can_proceed_without_email, true, 'can proceed to upload URL without email on update');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-08',
+    skill: 'fw-ai-actions-app',
+    label: 'array of objects in parameters → forbidden',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'The API needs a list of tag objects [{name, color}]. Can you define parameters.tags as an array of objects in actions.json?',
+    schema: {
+      type: 'object',
+      required: ['allows_array_of_objects', 'build_in_server_js'],
+      properties: {
+        allows_array_of_objects: { type: 'boolean' },
+        build_in_server_js: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_array_of_objects, false, 'arrays of objects forbidden in parameters');
+      assert.equal(output.build_in_server_js, true, 'construct complex shapes in server.js');
+    },
+  },
+
+  {
+    id: 'fw-ai-actions-09',
+    skill: 'fw-ai-actions-app',
+    label: 'no manifest.json in workspace → inform user and stop',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'User asks to build an AI Actions integration but a workspace search finds no manifest.json files. What should you do?',
+    schema: {
+      type: 'object',
+      required: ['informs_user_and_stops', 'creates_manifest_anyway'],
+      properties: {
+        informs_user_and_stops: { type: 'boolean' },
+        creates_manifest_anyway: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.informs_user_and_stops, true, 'must inform user and stop when no manifest');
+      assert.equal(output.creates_manifest_anyway, false, 'must not silently invent app directory');
+    },
+  },
+
+  {
+    id: 'spec-03',
+    skill: 'fw-app-dev',
+    label: 'mandatory end-to-end skill order before publish',
+    loadContent: () => loadSpec(),
+    prompt: 'User built an app with fw-app-dev and wants to publish immediately without review. What is the correct skill order from toolchain to marketplace?',
+    schema: {
+      type: 'object',
+      required: ['includes_fw_review_before_publish', 'can_skip_fw_review'],
+      properties: {
+        includes_fw_review_before_publish: { type: 'boolean' },
+        can_skip_fw_review: { type: 'boolean' },
+        skill_order: { type: 'string' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.includes_fw_review_before_publish, true, 'fw-review must come before fw-publish');
+      assert.equal(output.can_skip_fw_review, false, 'cannot skip mandatory fw-review');
     },
   },
 ];

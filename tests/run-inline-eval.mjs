@@ -27,6 +27,10 @@ async function skillWithSpec(name) {
   return `${spec}\n\n---\n\n${s}`;
 }
 
+async function loadSpec() {
+  return readFile(SPEC, 'utf8');
+}
+
 function pass(id, skillName, label) {
   return { id, skill: skillName, label, passed: 1, total: 1, pass: true, attempts: [{ pass: true, error: null }] };
 }
@@ -314,6 +318,396 @@ const results = [];
     /downgrade-warning/i.test(c)
       ? pass('fw-publish-12', 'fw-publish', 'update existing listing without actions.json → downgrade warning and confirm')
       : fail('fw-publish-12', 'fw-publish', 'update existing listing without actions.json → downgrade warning and confirm', 'missing downgrade warning'),
+  );
+}
+
+// ─── P0 ───────────────────────────────────────────────────────────────────────
+
+// fw-ai-actions-02
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /flat/i.test(c) && /server\.js/i.test(c) && /nested/i.test(c)
+      ? pass('fw-ai-actions-02', 'fw-ai-actions-app', 'nested vendor API payload → flat parameters in actions.json, nest in server.js')
+      : fail('fw-ai-actions-02', 'fw-ai-actions-app', 'nested vendor API payload → flat parameters in actions.json, nest in server.js', 'missing flat-params rule'),
+  );
+}
+
+// fw-ai-actions-03
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /never hardcode|secure:\s*true|iparams/i.test(c) && /credentials/i.test(c)
+      ? pass('fw-ai-actions-03', 'fw-ai-actions-app', 'api_key in actions.json → must use secure iparams instead')
+      : fail('fw-ai-actions-03', 'fw-ai-actions-app', 'api_key in actions.json → must use secure iparams instead', 'missing secure credential rule'),
+  );
+}
+
+// fw-review-04
+{
+  const c = await skill('fw-review');
+  results.push(
+    /STOP/i.test(c) && /fw-setup-install/i.test(c) && /do not.*silently install|not.*silently install/i.test(c)
+      ? pass('fw-review-04', 'fw-review', 'fdk missing → STOP, offer fw-setup, no silent install, no full review report')
+      : fail('fw-review-04', 'fw-review', 'fdk missing → STOP, offer fw-setup, no silent install, no full review report', 'missing fdk-missing gate'),
+  );
+}
+
+// fw-app-dev-08
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /DO NOT.*implement_app|implement_app.*DO NOT/i.test(c)
+      ? pass('fw-app-dev-08', 'fw-app-dev', 'implement_app MCP tool requested → refuse, use fw-app-dev skill flow')
+      : fail('fw-app-dev-08', 'fw-app-dev', 'implement_app MCP tool requested → refuse, use fw-app-dev skill flow', 'missing implement_app ban'),
+  );
+}
+
+// fw-app-dev-09
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /Do not.*lower.*engines|do not install.*FDK 9|never.*downgrade/i.test(c) && /24\.11|engines/i.test(c)
+      ? pass('fw-app-dev-09', 'fw-app-dev', 'FDK 10 + Node 24 installed, manifest engines 9/18 → raise engines, not downgrade toolchain')
+      : fail('fw-app-dev-09', 'fw-app-dev', 'FDK 10 + Node 24 installed, manifest engines 9/18 → raise engines, not downgrade toolchain', 'missing engines-upward rule'),
+  );
+}
+
+// ─── P1 ───────────────────────────────────────────────────────────────────────
+
+// fw-setup-05
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /fw-setup-upgrade/i.test(c) && /meta-init\.sh/i.test(c)
+      ? pass('fw-setup-05', 'fw-setup', '/fw-setup-upgrade succeeded + manifest present → write .meta.json before REPORT')
+      : fail('fw-setup-05', 'fw-setup', '/fw-setup-upgrade succeeded + manifest present → write .meta.json before REPORT', 'upgrade not in metrics write list'),
+  );
+}
+
+// fw-setup-06
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /fw-setup-troubleshoot` without `--fix`\) do not write metrics/i.test(c)
+      ? pass('fw-setup-06', 'fw-setup', '/fw-setup-troubleshoot without --fix → no .meta.json write')
+      : fail('fw-setup-06', 'fw-setup', '/fw-setup-troubleshoot without --fix → no .meta.json write', 'troubleshoot read-only not documented'),
+  );
+}
+
+// fw-setup-07
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /fw-setup-troubleshoot --fix/i.test(c) && /meta-init\.sh/i.test(c)
+      ? pass('fw-setup-07', 'fw-setup', '/fw-setup-troubleshoot --fix → write .meta.json before REPORT')
+      : fail('fw-setup-07', 'fw-setup', '/fw-setup-troubleshoot --fix → write .meta.json before REPORT', 'troubleshoot --fix not in metrics write list'),
+  );
+}
+
+// fw-setup-08
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /DO NOT use npm registry|NOT published on registry/i.test(c) && /cdn\.freshdev\.io|CDN/i.test(c)
+      ? pass('fw-setup-08', 'fw-setup', 'npm install -g @freshworks/fdk → refuse, use CDN tarball')
+      : fail('fw-setup-08', 'fw-setup', 'npm install -g @freshworks/fdk → refuse, use CDN tarball', 'missing CDN-only install rule'),
+  );
+}
+
+// fw-ai-actions-04
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /\$request\.invokeTemplate/i.test(c) && /never|must not|only/i.test(c)
+      ? pass('fw-ai-actions-04', 'fw-ai-actions-app', 'external HTTP in server → $request.invokeTemplate only')
+      : fail('fw-ai-actions-04', 'fw-ai-actions-app', 'external HTTP in server → $request.invokeTemplate only', 'missing invokeTemplate rule'),
+  );
+}
+
+// fw-ai-actions-05
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /do not need the app folder|no app folder/i.test(c)
+      ? pass('fw-ai-actions-05', 'fw-ai-actions-app', 'AI-only app → no app/ folder or Crayons UI')
+      : fail('fw-ai-actions-05', 'fw-ai-actions-app', 'AI-only app → no app/ folder or Crayons UI', 'missing no-app-folder rule'),
+  );
+}
+
+// fw-publish-13
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /stuck-version-warning/i.test(c) && /development/i.test(c)
+      ? pass('fw-publish-13', 'fw-publish', 'latest version in development state → STOP, stuck-version warning')
+      : fail('fw-publish-13', 'fw-publish', 'latest version in development state → STOP, stuck-version warning', 'missing stuck version gate'),
+  );
+}
+
+// fw-publish-14
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /401\/403/i.test(c) && /Do not retry/i.test(c)
+      ? pass('fw-publish-14', 'fw-publish', 'MCP 401 → STOP auth setup, no retry loop')
+      : fail('fw-publish-14', 'fw-publish', 'MCP 401 → STOP auth setup, no retry loop', 'missing 401 STOP rule'),
+  );
+}
+
+// fw-publish-15
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /engines-mismatch-prompt/i.test(c) && /DO NOT proceed with `fdk pack`/i.test(c)
+      ? pass('fw-publish-15', 'fw-publish', 'manifest engines mismatch → STOP, engines-mismatch prompt, no fdk pack')
+      : fail('fw-publish-15', 'fw-publish', 'manifest engines mismatch → STOP, engines-mismatch prompt, no fdk pack', 'missing engines mismatch gate'),
+  );
+}
+
+// ─── P2 ─────────────────────────────────────────────────────────────────────
+
+// fw-app-dev-10
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /LAST RESORT/i.test(c) && /6 iteration/i.test(c)
+      ? pass('fw-app-dev-10', 'fw-app-dev', '6 validate iterations failed → LAST RESORT engines downgrade only then')
+      : fail('fw-app-dev-10', 'fw-app-dev', '6 validate iterations failed → LAST RESORT engines downgrade only then', 'missing LAST RESORT gate'),
+  );
+}
+
+// fw-app-dev-11
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /fdk-migrate|2\.x|2\.3/i.test(c) && /product/i.test(c)
+      ? pass('fw-app-dev-11', 'fw-app-dev', 'Platform 2.x product block → migrate, not validate on 3.0 toolchain')
+      : fail('fw-app-dev-11', 'fw-app-dev', 'Platform 2.x product block → migrate, not validate on 3.0 toolchain', 'missing 2.x migrate rule'),
+  );
+}
+
+// fw-ai-actions-06
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /multiple folders.*manifest|Ask the user which app/i.test(c)
+      ? pass('fw-ai-actions-06', 'fw-ai-actions-app', 'multiple manifest.json → ask which app (Q1)')
+      : fail('fw-ai-actions-06', 'fw-ai-actions-app', 'multiple manifest.json → ask which app (Q1)', 'missing multi-manifest Q1'),
+  );
+}
+
+// fw-ai-actions-07
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /case-sensitive|match exactly/i.test(c)
+      ? pass('fw-ai-actions-07', 'fw-ai-actions-app', 'actions.json handler name mismatch → must align case-sensitively')
+      : fail('fw-ai-actions-07', 'fw-ai-actions-app', 'actions.json handler name mismatch → must align case-sensitively', 'missing case-sensitive handler rule'),
+  );
+}
+
+// fw-review-05
+{
+  const c = await skill('fw-review');
+  results.push(
+    /script execution itself fails/i.test(c) && /stop the overall review/i.test(c)
+      ? pass('fw-review-05', 'fw-review', 'deterministic script crashes → continue review, do not abort')
+      : fail('fw-review-05', 'fw-review', 'deterministic script crashes → continue review, do not abort', 'missing script-failure continue rule'),
+  );
+}
+
+// fw-publish-16
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /targetState.*test/i.test(c) && /never ask the user to choose a state/i.test(c)
+      ? pass('fw-publish-16', 'fw-publish', 'targetState → always "test", never prompt user')
+      : fail('fw-publish-16', 'fw-publish', 'targetState → always "test", never prompt user', 'missing targetState test rule'),
+  );
+}
+
+// fw-publish-17
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /\.\/manifest\.json/i.test(c) && /create_app_upload_url/i.test(c)
+      ? pass('fw-publish-17', 'fw-publish', 'zip has only ./manifest.json → STOP before create_app_upload_url')
+      : fail('fw-publish-17', 'fw-publish', 'zip has only ./manifest.json → STOP before create_app_upload_url', 'missing zip layout gate'),
+  );
+}
+
+// fw-setup-09
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /fw-setup-use`/i.test(c) && /do not write metrics/i.test(c)
+      ? pass('fw-setup-09', 'fw-setup', '/fw-setup-use → no .meta.json write (read-only stack switch)')
+      : fail('fw-setup-09', 'fw-setup', '/fw-setup-use → no .meta.json write (read-only stack switch)', 'fw-setup-use not marked read-only'),
+  );
+}
+
+// spec-02
+{
+  const c = await loadSpec();
+  results.push(
+    /once per session/i.test(c) && /first skill invocation/i.test(c)
+      ? pass('spec-02', 'fw-app-dev', 'update check: check-update.sh once per session only')
+      : fail('spec-02', 'fw-app-dev', 'update check: check-update.sh once per session only', 'missing once-per-session update rule'),
+  );
+}
+
+// ─── P3: high-value gaps ───────────────────────────────────────────────────
+
+// fw-setup-10
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /fw-setup-downgrade/i.test(c) && /\.meta\.json metrics write/i.test(c) && /DO NOT emit REPORT before/i.test(c)
+      ? pass('fw-setup-10', 'fw-setup', '/fw-setup-downgrade succeeded + manifest present → write .meta.json before REPORT')
+      : fail('fw-setup-10', 'fw-setup', '/fw-setup-downgrade succeeded + manifest present → write .meta.json before REPORT', 'downgrade not in mutating meta write list'),
+  );
+}
+
+// fw-setup-11
+{
+  const c = await skill('fw-setup');
+  results.push(
+    /Skip only if no `manifest\.json`/i.test(c)
+      ? pass('fw-setup-11', 'fw-setup', '/fw-setup-install succeeded, no manifest.json → skip .meta.json write')
+      : fail('fw-setup-11', 'fw-setup', '/fw-setup-install succeeded, no manifest.json → skip .meta.json write', 'missing bare-install skip rule'),
+  );
+}
+
+// fw-app-dev-12
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /Do not.*silently install/i.test(c) && /fw-setup/i.test(c)
+      ? pass('fw-app-dev-12', 'fw-app-dev', 'fdk missing → offer fw-setup, no silent install')
+      : fail('fw-app-dev-12', 'fw-app-dev', 'fdk missing → offer fw-setup, no silent install', 'missing no-silent-install rule'),
+  );
+}
+
+// fw-app-dev-13
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /Platform 2\.x manifest.*fw-setup-install.*fdk-migrate/is.test(c) ||
+    /fw-setup-install` THEN `\/fdk-migrate/i.test(c)
+      ? pass('fw-app-dev-13', 'fw-app-dev', 'Scenario A: FDK 9 + Platform 2.x → fw-setup-install then fdk-migrate')
+      : fail('fw-app-dev-13', 'fw-app-dev', 'Scenario A: FDK 9 + Platform 2.x → fw-setup-install then fdk-migrate', 'missing 2.x → setup then migrate rule'),
+  );
+}
+
+// fw-app-dev-14
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /Platform 3\.0 manifest.*don't downgrade/i.test(c) ||
+    (/Never downgrade the shell to match the file/i.test(c) && /fw-setup-install/i.test(c))
+      ? pass('fw-app-dev-14', 'fw-app-dev', 'Scenario E: FDK 9 + Platform 3.0 manifest → upgrade toolchain, not downgrade app')
+      : fail('fw-app-dev-14', 'fw-app-dev', 'Scenario E: FDK 9 + Platform 3.0 manifest → upgrade toolchain, not downgrade app', 'missing 3.0 + stale toolchain upgrade rule'),
+  );
+}
+
+// fw-app-dev-15
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /\$request\.post\(\)/i.test(c) && /invokeTemplate/i.test(c)
+      ? pass('fw-app-dev-15', 'fw-app-dev', 'client $request.post() → must use $request.invokeTemplate')
+      : fail('fw-app-dev-15', 'fw-app-dev', 'client $request.post() → must use $request.invokeTemplate', 'missing invokeTemplate forbidden-post rule'),
+  );
+}
+
+// fw-app-dev-16
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /FORBIDDEN.*"product"/i.test(c) && /MUST use.*"modules"/i.test(c)
+      ? pass('fw-app-dev-16', 'fw-app-dev', '"product" block in manifest → reject, use "modules"')
+      : fail('fw-app-dev-16', 'fw-app-dev', '"product" block in manifest → reject, use "modules"', 'missing product→modules rule'),
+  );
+}
+
+// fw-review-06
+{
+  const c = await skill('fw-review');
+  results.push(
+    /evaluating all rules/i.test(c) && /before outputting the `## App Review Result`/i.test(c)
+      ? pass('fw-review-06', 'fw-review', 'review with 0 failures → still write .meta.json before App Review Result')
+      : fail('fw-review-06', 'fw-review', 'review with 0 failures → still write .meta.json before App Review Result', 'missing meta-before-result rule'),
+  );
+}
+
+// fw-publish-18
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /failed_submit/i.test(c) && /publish_outcome/i.test(c)
+      ? pass('fw-publish-18', 'fw-publish', 'submit_custom_app fails → publish_outcome failed_submit, keep .meta.json')
+      : fail('fw-publish-18', 'fw-publish', 'submit_custom_app fails → publish_outcome failed_submit, keep .meta.json', 'missing failed_submit outcome'),
+  );
+}
+
+// fw-publish-19
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /custom-app-limit-warning/i.test(c) && /before proceeding/i.test(c)
+      ? pass('fw-publish-19', 'fw-publish', 'custom app limit warning must be shown before step 6')
+      : fail('fw-publish-19', 'fw-publish', 'custom app limit warning must be shown before step 6', 'missing custom-app-limit-warning'),
+  );
+}
+
+// fw-publish-20
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /If `fdk` is missing/i.test(c) && /STOP/i.test(c) && /fw-setup-install/i.test(c)
+      ? pass('fw-publish-20', 'fw-publish', 'fdk missing at publish → STOP, offer fw-setup')
+      : fail('fw-publish-20', 'fw-publish', 'fdk missing at publish → STOP, offer fw-setup', 'missing fdk-missing STOP rule'),
+  );
+}
+
+// fw-publish-21
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /Existing app \(update\)/i.test(c) && /supportEmail.*is \*\*not\*\* part/i.test(c)
+      ? pass('fw-publish-21', 'fw-publish', 'update existing listing → supportEmail not required')
+      : fail('fw-publish-21', 'fw-publish', 'update existing listing → supportEmail not required', 'missing update-path no-email rule'),
+  );
+}
+
+// fw-ai-actions-08
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /no arrays of objects/i.test(c)
+      ? pass('fw-ai-actions-08', 'fw-ai-actions-app', 'array of objects in parameters → forbidden')
+      : fail('fw-ai-actions-08', 'fw-ai-actions-app', 'array of objects in parameters → forbidden', 'missing no-arrays-of-objects rule'),
+  );
+}
+
+// fw-ai-actions-09
+{
+  const c = await skill('fw-ai-actions-app');
+  results.push(
+    /If \*\*none\*\*: Inform the user and stop/i.test(c)
+      ? pass('fw-ai-actions-09', 'fw-ai-actions-app', 'no manifest.json in workspace → inform user and stop')
+      : fail('fw-ai-actions-09', 'fw-ai-actions-app', 'no manifest.json in workspace → inform user and stop', 'missing no-manifest stop rule'),
+  );
+}
+
+// spec-03
+{
+  const c = await loadSpec();
+  results.push(
+    /fw-review \(MANDATORY\)/i.test(c) && /never skip it/i.test(c)
+      ? pass('spec-03', 'fw-app-dev', 'mandatory end-to-end skill order before publish')
+      : fail('spec-03', 'fw-app-dev', 'mandatory end-to-end skill order before publish', 'missing mandatory fw-review before publish'),
   );
 }
 
