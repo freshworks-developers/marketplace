@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { homedir } from 'node:os';
 
 const INSTALL_JSON = join(homedir(), '.fw-dev-tools', 'install.json');
-const RELEASES_API = 'https://api.github.com/repos/freshworks-developers/fw-dev-tools/releases/latest';
+const NPM_REGISTRY_API = 'https://registry.npmjs.org/@freshworks%2ffw-dev-tools/latest';
 
 /**
  * Read the locally recorded install state.
@@ -29,16 +29,14 @@ export async function readInstallState() {
  */
 export async function fetchLatestRelease() {
   try {
-    const res = await fetch(RELEASES_API, {
+    const res = await fetch(NPM_REGISTRY_API, {
       headers: { 'User-Agent': 'fw-dev-tools-installer' },
       signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return null;
     const data = await res.json();
-    const tag = data.tag_name ?? '';
-    const version = tag.replace(/^v/, '');
-    const url = data.html_url ?? '';
-    return version ? { tag, version, url } : null;
+    const version = data.version ?? '';
+    return version ? { version, url: `https://www.npmjs.com/package/@freshworks/fw-dev-tools` } : null;
   } catch {
     return null;
   }

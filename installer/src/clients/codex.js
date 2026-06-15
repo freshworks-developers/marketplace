@@ -3,15 +3,12 @@ import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { copySkills, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC } from '../utils.js';
-import { AGENTS_MD_BLOCK, CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
+import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
-/**
- * Determine the Codex skills directory.
- * Prefers the `skills` field in .codex-plugin/plugin.json relative to repo root,
- * falls back to ~/.codex/skills/.
- */
+const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
+
 export async function resolveSkillsDir() {
   const pluginJson = join(REPO_ROOT, '.codex-plugin', 'plugin.json');
   if (existsSync(pluginJson)) {
@@ -26,18 +23,17 @@ export async function resolveSkillsDir() {
   return join(homedir(), '.codex', 'skills');
 }
 
-/**
- * Idempotently write the fw-dev-tools routing block into AGENTS.md in cwd (if present)
- * or into ~/.codex/AGENTS.md as a fallback.
- */
 export async function writeAgentsMdBlock(cwd = process.cwd()) {
   const cwdAgents = join(cwd, 'AGENTS.md');
   const fallbackAgents = join(homedir(), '.codex', 'AGENTS.md');
   const target = existsSync(cwdAgents) ? cwdAgents : fallbackAgents;
 
+  const specContent = await readFile(SPEC_SRC, 'utf8');
+  const block = `\n<!-- fw-dev-tools start -->\n${specContent}\n<!-- fw-dev-tools end -->\n`;
+
   await mkdir(join(homedir(), '.codex'), { recursive: true });
   const existing = existsSync(target) ? await readFile(target, 'utf8') : '';
-  await writeFile(target, upsertBlock(existing, AGENTS_MD_BLOCK), 'utf8');
+  await writeFile(target, upsertBlock(existing, block), 'utf8');
   return target;
 }
 
@@ -82,7 +78,6 @@ export async function install({ yes = false } = {}) {
 }
 
 export async function uninstall({ yes = false } = {}) {
-  const { prompt } = await import('../utils.js');
   const confirmed = yes
     ? 'y'
     : await prompt('Remove fw-dev-tools skills from Codex? [y/N] ', { yes });
@@ -101,5 +96,19 @@ export async function uninstall({ yes = false } = {}) {
       console.log(`  ✓ Removed ${p}`);
     }
   }
+
+  const cwdAgents = join(process.cwd(), 'AGENTS.md');
+  const fallbackAgents = join(homedir(), '.codex', 'AGENTS.md');
+  for (const target of [cwdAgents, fallbackAgents]) {
+    if (existsSync(target)) {
+      const content = await readFile(target, 'utf8');
+      const updated = removeBlock(content);
+      if (updated !== content) {
+        await writeFile(target, updated, 'utf8');
+        console.log(`  ✓ Routing block removed from ${target}`);
+      }
+    }
+  }
+
   console.log('\n✓ Codex uninstall complete.');
 }

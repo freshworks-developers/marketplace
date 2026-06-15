@@ -39,11 +39,11 @@ export async function status() {
   const { current, latest, updateAvailable, releaseUrl } = await checkForUpdate();
 
   if (latest === null) {
-    console.log('  (offline — could not reach GitHub)');
+    console.log('  (offline — could not reach npm registry)');
   } else if (updateAvailable) {
     console.log(`  Update available: v${current} → v${latest}`);
     if (releaseUrl) console.log(`  Release notes:    ${releaseUrl}`);
-    console.log('  Run: npx fw-dev-tools update');
+    console.log('  Run: npx @freshworks/fw-dev-tools update');
   } else {
     console.log(`  v${current} is up to date.`);
   }

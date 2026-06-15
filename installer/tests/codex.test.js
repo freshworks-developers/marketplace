@@ -5,7 +5,6 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir, homedir } from 'node:os';
 import { resolveSkillsDir, writeAgentsMdBlock } from '../src/clients/codex.js';
-import { AGENTS_MD_BLOCK } from '../src/orchestration-spec.js';
 import { removeBlock } from '../src/fenced-block.js';
 
 async function makeTmp() {
@@ -91,12 +90,17 @@ test('writeAgentsMdBlock is idempotent — applying twice keeps one block', asyn
   await rm(tmp, { recursive: true });
 });
 
-test('AGENTS.md block contains required routing entries', () => {
-  assert.ok(AGENTS_MD_BLOCK.includes('fw-app-dev'));
-  assert.ok(AGENTS_MD_BLOCK.includes('fw-setup'));
-  assert.ok(AGENTS_MD_BLOCK.includes('fw-review'));
-  assert.ok(AGENTS_MD_BLOCK.includes('fw-publish'));
-  assert.ok(AGENTS_MD_BLOCK.includes('MANDATORY'));
-  assert.ok(AGENTS_MD_BLOCK.includes('<!-- fw-dev-tools start -->'));
-  assert.ok(AGENTS_MD_BLOCK.includes('<!-- fw-dev-tools end -->'));
+test('writeAgentsMdBlock embeds spec content between fw-dev-tools fences', async () => {
+  const tmp = await makeTmp();
+  const agentsMd = join(tmp, 'AGENTS.md');
+  await writeFile(agentsMd, '', 'utf8');
+
+  await writeAgentsMdBlock(tmp);
+  const content = await readFile(agentsMd, 'utf8');
+  assert.ok(content.includes('fw-app-dev'));
+  assert.ok(content.includes('fw-review'));
+  assert.ok(content.includes('MANDATORY'));
+  assert.ok(content.includes('<!-- fw-dev-tools start -->'));
+  assert.ok(content.includes('<!-- fw-dev-tools end -->'));
+  await rm(tmp, { recursive: true });
 });

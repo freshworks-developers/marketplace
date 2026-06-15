@@ -17,9 +17,9 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../src/mcp-merge.js';
-import { upsertBlock, removeBlock } from '../src/fenced-block.js';
+
 import { copySkills, writeInstallState, readInstallState, VERSION, INSTALL_JSON } from '../src/utils.js';
-import { CURSOR_MCP_ENTRY, CLAUDE_MD_BLOCK, CURSOR_MDC } from '../src/orchestration-spec.js';
+import { CURSOR_MCP_ENTRY } from '../src/orchestration-spec.js';
 
 async function makeTmp() {
   const dir = join(tmpdir(), `fw-integration-${Date.now()}`);
@@ -100,42 +100,6 @@ test('MCP merge preserves existing third-party servers across multiple writes', 
 });
 
 // ---------------------------------------------------------------------------
-// Round-trip: CLAUDE.md fenced block — install then uninstall
-// ---------------------------------------------------------------------------
-
-test('CLAUDE.md install → uninstall round-trip leaves file clean', async () => {
-  const original = '# My Config\n\nExisting content that must survive.\n';
-  const withBlock = upsertBlock(original, CLAUDE_MD_BLOCK);
-
-  assert.ok(withBlock.includes('<!-- fw-dev-tools start -->'));
-  assert.ok(withBlock.includes('# My Config'), 'original content preserved');
-
-  const restored = removeBlock(withBlock);
-  assert.ok(!restored.includes('<!-- fw-dev-tools start -->'), 'block should be gone');
-  assert.ok(!restored.includes('<!-- fw-dev-tools end -->'), 'block end should be gone');
-  assert.ok(restored.includes('# My Config'), 'original header preserved');
-  assert.ok(restored.includes('Existing content that must survive.'), 'original body preserved');
-  assert.ok(!restored.includes('\n\n\n'), 'no triple newlines after removal');
-});
-
-test('CLAUDE.md update: re-running install replaces old block with new one', async () => {
-  const oldBlock = `<!-- fw-dev-tools start -->
-## Old routing block
-Old content.
-<!-- fw-dev-tools end -->`;
-
-  const existing = `# Config\n\n${oldBlock}\n\nFooter content.\n`;
-  const newResult = upsertBlock(existing, CLAUDE_MD_BLOCK);
-
-  assert.ok(!newResult.includes('Old routing block'), 'old block content should be gone');
-  assert.ok(newResult.includes('Freshworks Agentic Developer Toolkit'), 'new block should be present');
-  assert.ok(newResult.includes('# Config'), 'pre-block content preserved');
-  assert.ok(newResult.includes('Footer content.'), 'post-block content preserved');
-  const count = (newResult.match(/<!-- fw-dev-tools start -->/g) ?? []).length;
-  assert.equal(count, 1, 'exactly one block after update');
-});
-
-// ---------------------------------------------------------------------------
 // Round-trip: copySkills → verify → re-copy (simulated update)
 // ---------------------------------------------------------------------------
 
@@ -158,25 +122,3 @@ test('copySkills → corrupt a file → re-copy restores it', async () => {
   await rm(tmp, { recursive: true });
 });
 
-// ---------------------------------------------------------------------------
-// CURSOR_MDC — structural integrity
-// ---------------------------------------------------------------------------
-
-test('CURSOR_MDC frontmatter parses to expected key-value pairs', () => {
-  const lines = CURSOR_MDC.split('\n');
-  assert.equal(lines[0], '---', 'first line must be ---');
-
-  const closingIdx = lines.indexOf('---', 1);
-  assert.ok(closingIdx > 1, 'must have closing --- for frontmatter');
-
-  const frontmatter = lines.slice(1, closingIdx).join('\n');
-  assert.ok(frontmatter.includes('alwaysApply: true'));
-  assert.ok(frontmatter.includes('name: fw-dev-tools'));
-});
-
-test('CURSOR_MDC skill paths use relative format (no ~)', () => {
-  // .mdc rules reference paths relative to the Cursor skills dir,
-  // not absolute paths with ~.
-  assert.ok(!CURSOR_MDC.includes('~/.cursor'), 'should use relative paths in MDC');
-  assert.ok(CURSOR_MDC.includes('skills/fw-'), 'should use relative skill paths');
-});

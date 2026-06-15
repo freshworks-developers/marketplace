@@ -1,15 +1,24 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState, prompt } from '../utils.js';
+import { copySkills, writeInstallState, prompt, REPO_ROOT } from '../utils.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
-import { CURSOR_MDC, CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
+import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
 const SKILLS_DIR = join(homedir(), '.cursor', 'skills');
 const RULES_DIR = join(homedir(), '.cursor', 'rules');
 const MCP_JSON = join(homedir(), '.cursor', 'mcp.json');
 const SPEC_FILE = join(RULES_DIR, 'fw-dev-tools.mdc');
+const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
+
+const MDC_FRONTMATTER = `---
+name: fw-dev-tools
+description: Freshworks Agentic Developer Toolkit — routing and skill orchestration
+alwaysApply: true
+---
+
+`;
 
 export async function install({ yes = false } = {}) {
   console.log('→ Installing for Cursor...');
@@ -18,19 +27,22 @@ export async function install({ yes = false } = {}) {
   console.log(`  ✓ Skills copied to ${SKILLS_DIR}`);
 
   await mkdir(RULES_DIR, { recursive: true });
-  await writeFile(SPEC_FILE, CURSOR_MDC, 'utf8');
-  console.log(`  ✓ Orchestration spec written to ${SPEC_FILE}`);
+  const specContent = await readFile(SPEC_SRC, 'utf8');
+  await writeFile(SPEC_FILE, MDC_FRONTMATTER + specContent, 'utf8');
+  console.log(`  ✓ Routing spec written to ${SPEC_FILE}`);
 
   const { action, backupPath } = await mergeMcpServer(MCP_JSON, CURSOR_MCP_ENTRY);
-  if (action !== 'unchanged') {
+  if (action === 'unchanged') {
+    console.log(`  ✓ MCP config already up to date`);
+  } else {
     console.log(`  ✓ MCP config ${action === 'created' ? 'added' : 'merged'} in ${MCP_JSON}`);
     if (backupPath) console.log(`    (backup: ${backupPath})`);
-  } else {
-    console.log(`  ✓ MCP config already up to date`);
   }
 
   const existingToken = await readMcpToken(MCP_JSON);
-  if (!existingToken) {
+  if (existingToken) {
+    console.log('  ✓ API key already configured');
+  } else {
     const token = await prompt(
       '\n  Enter your Freshworks Developer Portal API key\n  (get one at https://developers.freshworks.com/developer/ → leave blank to skip):\n  > ',
       { yes }
@@ -41,8 +53,6 @@ export async function install({ yes = false } = {}) {
     } else {
       console.log('  ℹ  API key skipped — add it later to enable fw-publish');
     }
-  } else {
-    console.log('  ✓ API key already configured');
   }
 
   await writeInstallState({ client: 'cursor' });
@@ -54,7 +64,7 @@ export async function install({ yes = false } = {}) {
 export async function uninstall({ yes = false } = {}) {
   const confirmed = yes
     ? 'y'
-    : await prompt('Remove fw-dev-tools skills and orchestration spec from Cursor? [y/N] ', { yes });
+    : await prompt('Remove fw-dev-tools skills and routing spec from Cursor? [y/N] ', { yes });
   if (confirmed.toLowerCase() !== 'y') {
     console.log('Uninstall cancelled.');
     return;
