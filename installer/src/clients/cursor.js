@@ -26,8 +26,26 @@ export async function install({ yes = false } = {}) {
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
+  // Remove stale skill from old naming (fw-marketplace-app-dev → fw-app-dev)
+  const { rm: rmStale } = await import('node:fs/promises');
+  const staleSkill = join(SKILLS_DIR, 'fw-marketplace-app-dev');
+  if (existsSync(staleSkill)) {
+    await rmStale(staleSkill, { recursive: true });
+    console.log('  ✓ Removed stale skill fw-marketplace-app-dev (replaced by fw-app-dev)');
+  }
+
   await copySkills(SKILLS_DIR);
   console.log(`  ✓ Skills copied to ${SKILLS_DIR}`);
+
+  // Warn if old npx-skills-add workspace installs exist
+  const workspaceSkillsDir = join(process.cwd(), '.agents', 'skills');
+  const OLD_SKILLS = ['fw-setup', 'fw-app-dev', 'fw-marketplace-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
+  const foundWorkspace = OLD_SKILLS.filter(s => existsSync(join(workspaceSkillsDir, s)));
+  if (foundWorkspace.length > 0) {
+    console.log(`  ⚠  Found old workspace skills in ${workspaceSkillsDir}: ${foundWorkspace.join(', ')}`);
+    console.log('     These were installed via "npx skills add" and are no longer needed.');
+    console.log(`     Remove them with: rm -rf ${workspaceSkillsDir}/fw-*`);
+  }
 
   await mkdir(RULES_DIR, { recursive: true });
   const specContent = await readFile(SPEC_SRC, 'utf8');
@@ -73,7 +91,7 @@ export async function uninstall({ yes = false } = {}) {
     return;
   }
   const { rm } = await import('node:fs/promises');
-  const skills = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
+  const skills = ['fw-setup', 'fw-app-dev', 'fw-marketplace-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
   for (const skill of skills) {
     const p = join(SKILLS_DIR, skill);
     if (existsSync(p)) {

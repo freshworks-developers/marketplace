@@ -6,4 +6,7 @@ Next steps:
 1. cd <app-directory>
 2. fdk run
 3. Test in Freshworks product with ?dev=true
-4. When ready to publish: use the publish skill
+
+Would you like me to review and publish this app to the Freshworks Marketplace? (yes / no)
+- yes → run fw-review now, then fw-publish
+- no  → you're done; run the above steps to test locally

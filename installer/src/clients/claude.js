@@ -1,5 +1,8 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { homedir } from 'node:os';
 import { writeInstallState, prompt, copyScripts } from '../utils.js';
 
 const execFileAsync = promisify(execFile);
@@ -22,6 +25,14 @@ export async function install({ yes = false } = {}) {
 
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
+
+  // Remove legacy install.json left by old manual install method
+  const legacyInstallJson = join(homedir(), '.fw-dev-tools', 'install.json');
+  if (existsSync(legacyInstallJson)) {
+    const { rm } = await import('node:fs/promises');
+    await rm(legacyInstallJson);
+    console.log('  ✓ Removed legacy install.json (replaced by .meta.json)');
+  }
 
   const addResult = await runClaude(['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE]);
   if (addResult.ok) {
