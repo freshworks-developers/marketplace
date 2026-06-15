@@ -1,7 +1,7 @@
 ---
 name: fw-publish
 description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Pre-publish: confirm Developer JWT matches manifest product modules (Freshdesk support_* vs Freshservice service_*; multiproduct sequential). At publish time, ask new vs existing listing; for new listings, prompt for supportEmail before create_app_upload_url (required for submit_custom_app). list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace (test), check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
-version: "1.1.3"
+version: "1.1.4"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
