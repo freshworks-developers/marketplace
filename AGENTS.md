@@ -17,6 +17,8 @@ The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plu
 | **fw-ai-actions-app** | `skills/fw-ai-actions-app/SKILL.md` | **AI Actions** and third-party integrations: `actions.json`, SMI handlers, flat request schemas, `$request.invokeTemplate`, test data, validation, debugging endpoints, and integration scoping (no full UI app folder). Pair with **fw-app-dev** when the work is a full marketplace app with locations and Crayons. |
 | **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. If **`fdk`** is missing: **STOP**, offer **`/fw-setup-install`** (+ optional **y/n**); no silent install. See skill for output exception when toolchain is absent. |
 | **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app via MCP (**openai-server**): `fdk validate`, `fdk pack`, **`create_app_upload_url`**, zip upload, **`submit_custom_app`** / **`add_app_version`**, **`get_app_status`**. Tool names match **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Checks auth before publish; step **2.5** confirms JWT ↔ manifest product modules (**Freshdesk** `support_*`, **Freshservice** `service_*`, multiproduct sequential). If **`fdk`** missing: **STOP**, offer **`/fw-setup-install`** (+ optional **y/n**); no silent install (step **3**). |
+| **fw-new-react-app** | `skills/fw-new-react-app/SKILL.md` | **Greenfield** React Meta apps: `fdk create` → `react-starter-template`, Crayons/Tailwind/Redux/Router, multi-surface placeholders, CTI embed, OAuth sidebar patterns. Slash: `/fw-new-react-app`, `/fw-new-react-app-scaffold`, `/fw-new-react-app-add-surface`, `/fw-new-react-app-validate`. **Does not install `fdk`.** **Does not** migrate vanilla `app/scripts/*.js`. |
+| **fw-react-migrate** | `skills/fw-react-migrate/SKILL.md` | **Migrate** PF3 vanilla or pre-meta frontends to React Meta (`metaConfig`, JSX entries). Preserves server/OAuth/requests. Slash: `/fw-react-migrate`, `/fw-react-migrate-review`. Requires **`3.0`** — use **fw-app-dev** `/fdk-migrate` for 2.x first. |
 
 ### MCP tools (fw-dev-mcp server)
 
@@ -45,6 +47,8 @@ This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp
 | Structured **app review** (iparams, frontend, script-backed checks, fixed report format) | `skills/fw-review/SKILL.md` | **Does not** install FDK; verify CLI with **fw-setup** (`/fw-setup-status`) or `fdk --version` before phases that need `fdk` |
 | Install, upgrade, or troubleshoot **FDK** and **Node** (nvm, PATH, versions) | `skills/fw-setup/SKILL.md` | Use before relying on `fdk validate` when the toolchain is missing or wrong |
 | Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (JWT from Portal: **API key for Freddy AI Copilot for VS Code plugin & AI Developer Tools.** → **Connect to Developer MCP server**) |
+| **New** React Meta app (greenfield, add surface) | `skills/fw-new-react-app/SKILL.md` | **`fdk create`** + patterns; not for vanilla migration |
+| **Migrate** existing PF3 UI to React Meta | `skills/fw-react-migrate/SKILL.md` | Vanilla `app/scripts/*.js` or missing `metaConfig`; PF 2.x → **fw-app-dev** first |
 
 If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-actions-app** (by task), **MANDATORY fw-review** before submission, then **fw-publish** when publishing.
 
@@ -63,9 +67,9 @@ When generating or editing **Freshworks apps** (not this repo’s markdown), **`
 
 ## Repository layout (skills)
 
-- **`skills/{fw-app-dev|fw-ai-actions-app|fw-review|fw-setup|fw-publish}/SKILL.md`** — skill entry and frontmatter
+- **`skills/{fw-app-dev|fw-ai-actions-app|fw-review|fw-setup|fw-publish|fw-new-react-app|fw-react-migrate}/SKILL.md`** — skill entry and frontmatter
 - **`skills/*/rules/*.{mdc,md}`** — editor rules (`.mdc`) or **fw-review** audit rules (`.md`); loaded via each plugin’s `rulesDirectory` / `rulesPath`
-- **`skills/*/commands/*.md`** — slash-command bodies where the skill defines them (**fw-app-dev**, **fw-setup** only); stem of filename → `/command-name` in the IDE
+- **`skills/*/commands/*.md`** — slash-command bodies where the skill defines them (**fw-app-dev**, **fw-setup**, **fw-new-react-app**, **fw-react-migrate**); stem of filename → `/command-name` in the IDE
 - **`skills/fw-review/scripts/*.js`** — deterministic SC-* checks (not slash commands); mapped from `skills/fw-review/rules/script-check-rules.md`
 - **`skills/*/references/**`** — load **on demand** (API, errors, events, playbooks); index: `skills/fw-app-dev/references/skill-advanced-topics.md`
 - **`skills/*/assets/templates/**`** — app skeletons
@@ -123,6 +127,26 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 ### fw-publish — `skills/fw-publish/`
 
 **Commands:** none. **Rules:** none. Playbooks in `SKILL.md`, `references/`, and `subagents/`; MCP in repo root **`.mcp.json`**.
+
+### fw-new-react-app — `skills/fw-new-react-app/`
+
+| Slash command | Command file |
+|---------------|----------------|
+| `/fw-new-react-app` | `commands/fw-new-react-app.md` |
+| `/fw-new-react-app-scaffold` | `commands/fw-new-react-app-scaffold.md` |
+| `/fw-new-react-app-add-surface` | `commands/fw-new-react-app-add-surface.md` |
+| `/fw-new-react-app-validate` | `commands/fw-new-react-app-validate.md` |
+
+**Rules (`.mdc`):** `react-meta-bootstrap.mdc`, `react-meta-orchestration.mdc`, `react-meta-dependencies.mdc`, `react-meta-crayons-react.mdc`
+
+### fw-react-migrate — `skills/fw-react-migrate/`
+
+| Slash command | Command file |
+|---------------|----------------|
+| `/fw-react-migrate` | `commands/fw-react-migrate.md` |
+| `/fw-react-migrate-review` | `commands/fw-react-migrate-review.md` |
+
+**Rules (`.mdc`):** `fw-react-migrate.mdc`, `fw-react-migrate-gates.mdc`
 
 ## Editing this repo (maintenance)
 

@@ -1,0 +1,60 @@
+---
+description: package.json dependencies for Freshworks React Meta apps, by feature flag (Crayons, Tailwind, Redux, Router).
+globs: ["**/package.json"]
+alwaysApply: false
+---
+
+# React Meta dependencies (by feature)
+
+Add **only** what the use case needs. Do not pre-install Crayons, Tailwind, Redux, or Router unless the prompt asks for them.
+
+## Always present (from `react-starter-template`)
+
+```json
+{
+  "dependencies": {
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "~7.24.0",
+    "@babel/preset-react": "~7.23.3",
+    "@testing-library/react": "~14.2.1",
+    "@vitejs/plugin-react": "~4.7.0",
+    "@vitest/coverage-v8": "~2.1.8",
+    "eslint-plugin-react": "~7.34.1",
+    "identity-obj-proxy": "~3.0.0",
+    "jsdom": "~26.1.0",
+    "vite": "~5.0.0",
+    "vitest": "~2.1.8"
+  }
+}
+```
+
+## Add by feature
+
+| Feature flag | `dependencies` add | `devDependencies` add |
+|--------------|--------------------|------------------------|
+| **Crayons React** | `@freshworks/crayons` (~4.6.0) | — |
+| **Tailwind** | — | `tailwindcss` (~3.4.0), `postcss` (~8.4.0), `autoprefixer` (~10.4.0) |
+| **Redux Toolkit** | `@reduxjs/toolkit` (~2.2.0), `react-redux` (~9.1.0) | — |
+| **React Router** (full-page routing) | `react-router-dom` (~6.26.0) | — |
+
+## Process
+
+1. Decide which feature flags apply (see SKILL.md use case table).
+2. Edit `package.json` to add **only** those deps.
+3. `npm install` from the app root.
+4. Commit `package.json` + the regenerated `package-lock.json`. **Never** hand-edit `package-lock.json`.
+
+## Forbidden
+
+- Adding `@freshworks/crayons/react` as a separate package — it's a sub-export of `@freshworks/crayons`.
+- Adding `redux` standalone — `@reduxjs/toolkit` brings it transitively.
+- Adding `react-router` standalone — use `react-router-dom`.
+- Adding Tailwind v4 (`@tailwindcss/vite`) until FDK explicitly supports it.
+- Pinning `react`/`react-dom` to a major different from what `react-starter-template` ships (currently 18.x).
+
+## Pre-validate gate
+
+`engines` in `manifest.json` must stay at **`"node": "24.11.0"`** and **`"fdk": "10.0.0"`** while iterating. Do not downgrade engines to silence a warning.

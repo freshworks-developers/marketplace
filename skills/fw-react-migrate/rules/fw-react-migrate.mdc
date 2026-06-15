@@ -1,0 +1,24 @@
+---
+description: Ordered checklist for migrating vanilla Platform 3.0 frontends to React Meta.
+globs: ["**/app/**/*", "**/manifest.json", "**/package.json"]
+alwaysApply: false
+---
+
+# Vanilla → React Meta migration
+
+Apply in order (details in **SKILL.md**):
+
+1. **Backup / branch**; inventory all **`location`** **`url`** / **`icon`** and **`app/*.html`**.
+2. **Toolchain**: **FDK 10** + **Node 24**; add **`package.json`** like **react-starter-template** if missing; **`npm install`**.
+3. Add **`metaConfig`**: `{ "framework": "react" }`; align **`engines`** with **fw-app-dev**.
+4. **Icons**: every **`icon`** path must resolve (**`app/styles/images/icon.svg`** is the usual **fw-app-dev** expectation).
+5. For **each** **`location.url`** HTML: add **`{{{appclient}}}`**, **`#root`** (mount), module script → **dedicated JSX entry**; move logic into **`app/components/`**.
+6. **DOM → React**: replace **`getElementById`**, **`innerHTML`**, globals with **state** and **hooks** where appropriate.
+7. **Init gate** on every entry: **`window.app.initialized()`** before APIs / dependent UI.
+8. **`config/iparams.html`**: if custom UI, React under **`config/assets/components/`** with **`window.getConfigs`**, **`window.validate`**, **`window.postConfigs`**.
+9. Remove dead **`app/scripts/*.js`** only after **`fdk validate`** passes.
+10. **`fdk validate`** to **0 / 0**; smoke-test with **`?dev=true`** and **system_settings** module subscription.
+
+## Not in scope
+
+Platform **2.x → 3.0**: **fw-app-dev** **`/fdk-migrate`** first.

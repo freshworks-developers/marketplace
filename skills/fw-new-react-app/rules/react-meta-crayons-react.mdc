@@ -1,0 +1,78 @@
+---
+description: Crayons React wrapper integration — defineCustomElements, CSS import, wrapper imports, no mixing with raw web components.
+globs: ["**/app/**/*.jsx", "**/app/**/*.html", "**/config/**/*.jsx", "**/config/**/*.html"]
+alwaysApply: false
+---
+
+# Crayons React rules (dashboard, stateful sidebar, hybrid patterns)
+
+## Imports
+
+- Import wrappers from **`@freshworks/crayons/react`**:
+  ```jsx
+  import { FwButton, FwInput, FwSelect, FwTextarea, FwTabs, FwTab, FwToast, FwDataTable, FwSpinner, FwToggle } from '@freshworks/crayons/react';
+  ```
+- Import `defineCustomElements` from **`@freshworks/crayons/loader`** (not from `@freshworks/crayons`).
+
+## Bootstrap (every entry that renders Crayons)
+
+```jsx
+import { defineCustomElements } from '@freshworks/crayons/loader';
+import '@freshworks/crayons/css/crayons-min.css';
+defineCustomElements();
+```
+
+- Call `defineCustomElements()` **exactly once per entry**, **before** `createRoot`.
+- Import the CSS **exactly once per entry**.
+- Do not call `defineCustomElements()` inside `useEffect` or any component body — it must run at module scope before rendering.
+
+## Naming and props
+
+- Component names are PascalCase with `Fw` prefix (`FwButton`, not `fw-button`).
+- Custom-element attributes become camelCase props (`is-selectable` → `isSelectable`).
+- DOM events become `on{EventName}` props (`fw-click` → `onFwClick`, `fw-change` → `onFwChange`).
+- Event detail is on `event.detail` (typically `{ value }` or `{ checked }`).
+
+## Forbidden patterns
+
+- ❌ Mixing `<fw-button>` raw element with `<FwButton>` wrapper inside the same render tree.
+- ❌ Loading the Crayons CDN script tag in HTML when also importing wrappers — pick one strategy. (This skill picks wrappers.)
+- ❌ Setting `FwDataTable.columns`/`rows` as JSX props — they are **element properties**; assign via ref + `useEffect`:
+  ```jsx
+  const ref = useRef(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.columns = COLUMNS;
+      ref.current.rows = rows;
+    }
+  }, [rows]);
+  return <FwDataTable ref={ref} label="…" />;
+  ```
+- ❌ Calling `toastRef.current.trigger()` before the toast component has mounted.
+
+## Toast usage
+
+```jsx
+const toastRef = useRef(null);
+// ...
+<FwToast ref={toastRef} position="top-center" />
+// trigger:
+toastRef.current?.trigger({ type: 'success', content: 'Saved' });
+```
+
+Allowed `type` values: `success`, `error`, `warning`, `inprogress`.
+
+## Tabs usage
+
+```jsx
+<FwTabs activeTabIndex={index} onFwChange={(e) => setIndex(e.detail.tabIndex)}>
+  <FwTab tab-header="Overview">…</FwTab>
+  <FwTab tab-header="Details">…</FwTab>
+</FwTabs>
+```
+
+`tab-header` stays as a kebab-case JSX attribute string.
+
+## CSS scope
+
+`@freshworks/crayons/css/crayons-min.css` is global. Do not deep-style internals; if you need custom looks, use Crayons CSS variables (e.g. `--button-color`) on a wrapper class.

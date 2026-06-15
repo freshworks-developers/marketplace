@@ -59,7 +59,9 @@ fw-dev-tools/
 │   │   ├── commands/         # Slash commands (/fdk-fix, /fdk-migrate, etc.)
 │   │   ├── references/       # Documentation loaded on-demand
 │   │   └── assets/           # Templates and resources
-│   ├── fw-ai-actions-app/    # AI Actions + third-party integrations (skill id: fw-ai-actions-app; actions.json, SMI)
+│   ├── fw-ai-actions-app/    # AI Actions + third-party integrations (actions.json, SMI)
+│   ├── fw-new-react-app/     # Greenfield React Meta apps (fdk create, patterns)
+│   ├── fw-react-migrate/     # Migrate vanilla PF3 frontends to React Meta
 │   ├── fw-review/            # Automated app review (rules + scripts, structured report)
 │   ├── fw-setup/             # FDK + Node install / lifecycle (nvm)
 │   └── fw-publish/           # Marketplace publish (MCP) guidance

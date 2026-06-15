@@ -66,7 +66,7 @@
       "interface": {
         "displayName": "Freshworks App Development",
         "shortDescription": "Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI.",
-        "longDescription": "Enforces Platform 3.0 patterns (modules, request templates, engines), Crayons UI, validation workflows, and slash commands /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review. Does not install FDK or Node — pair with fw-setup."
+        "longDescription": "Enforces Platform 3.0 patterns (modules, request templates, engines), Crayons UI, validation workflows, and slash commands /fdk-fix, /fdk-migrate, /fdk-refactor, /fdk-review. Does not install FDK or Node \u2014 pair with fw-setup."
       }
     },
     {
@@ -152,6 +152,64 @@
         "displayName": "Freshworks Marketplace Publish",
         "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
         "longDescription": "Guides agents through auth preflight, fdk validate/pack, app-upload, and marketplace submit/update via MCP. MCP config: **.mcp.json** at repository root. Pair with fw-app-dev for manifest and validation fixes."
+      }
+    },
+    {
+      "name": "fw-new-react-app",
+      "description": "Greenfield Platform 3.0 React Meta apps via react-starter-template and pattern library.",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
+      "source": "./skills/fw-new-react-app",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "platform-3.0",
+        "react-meta",
+        "fdk",
+        "react"
+      ],
+      "rulesPath": "./skills/fw-new-react-app/rules",
+      "commandsPath": "./skills/fw-new-react-app/commands",
+      "interface": {
+        "displayName": "Freshworks React Meta \u2014 New Apps",
+        "shortDescription": "Greenfield React Meta: Crayons, Tailwind, multi-surface, CTI.",
+        "longDescription": "fdk create + react-starter-template workflows to 0/0 validate. Pair with fw-react-migrate for vanilla samples."
+      }
+    },
+    {
+      "name": "fw-react-migrate",
+      "description": "Migrate Platform 3.0 vanilla or pre-meta frontends to React Meta.",
+      "author": {
+        "name": "Freshworks Developers",
+        "email": "skills@dev-assist.freshservice.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+      "repository": "https://github.com/freshworks-developers/fw-dev-tools",
+      "source": "./skills/fw-react-migrate",
+      "category": "developer-tools",
+      "strict": false,
+      "version": "1.0.0",
+      "keywords": [
+        "freshworks",
+        "platform-3.0",
+        "react-meta",
+        "migration",
+        "fdk"
+      ],
+      "rulesPath": "./skills/fw-react-migrate/rules",
+      "commandsPath": "./skills/fw-react-migrate/commands",
+      "interface": {
+        "displayName": "Freshworks React Meta \u2014 Migrate",
+        "shortDescription": "Vanilla PF3 \u2192 React Meta frontend migration.",
+        "longDescription": "Preserves server, OAuth, requests.json. Requires Platform 3.0 \u2014 use fw-app-dev /fdk-migrate for 2.x first."
       }
     }
   ]

@@ -35,7 +35,9 @@ This skill does **not** install FDK or Node — use **fw-setup** for the toolcha
 
 ### Related Skills
 
-For **AI Actions**–centric integrations (`actions.json`, SMI, flat request schemas) without a full UI app focus, use sibling skill **[fw-ai-actions-app](../fw-ai-actions-app/)** — see **[AGENTS.md](../../AGENTS.md)**.
+- **React Meta greenfield** → **[fw-new-react-app](../fw-new-react-app/)** (`/fw-new-react-app`)
+- **React Meta migration** (vanilla `app/scripts/*.js`) → **[fw-react-migrate](../fw-react-migrate/)** (`/fw-react-migrate`)
+- **AI Actions** (`actions.json`, SMI) → **[fw-ai-actions-app](../fw-ai-actions-app/)** — see **[AGENTS.md](../../AGENTS.md)**.
 
 ## Features
 

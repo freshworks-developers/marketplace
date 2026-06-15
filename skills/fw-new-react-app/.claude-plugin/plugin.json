@@ -1,0 +1,27 @@
+{
+  "name": "fw-new-react-app",
+  "displayName": "Freshworks React Meta — New Apps",
+  "version": "1.0.0",
+  "description": "Greenfield Platform 3.0 React Meta apps via react-starter-template. Slash: /fw-new-react-app, /fw-new-react-app-scaffold, /fw-new-react-app-add-surface, /fw-new-react-app-validate.",
+  "author": { "name": "Freshworks Developers", "email": "skills@dev-assist.freshservice.com" },
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-new-react-app",
+  "license": "MIT",
+  "keywords": ["freshworks", "platform-3.0", "react-meta", "fdk", "react", "crayons"],
+  "strict": false,
+  "interface": {
+    "displayName": "Freshworks React Meta — New Apps",
+    "shortDescription": "Greenfield React Meta apps: Crayons, Tailwind, Redux, multi-surface, CTI.",
+    "longDescription": "Scaffolds new Platform 3.0 React Meta apps to 0/0 fdk validate. For migrations use fw-react-migrate."
+  },
+  "category": "developer-tools",
+  "tags": ["freshworks", "react", "fdk", "react-meta"],
+  "rulesDirectory": "./rules",
+  "commandsDirectory": "./commands",
+  "commands": [
+    { "name": "fw-new-react-app", "description": "One-shot greenfield React Meta app", "file": "commands/fw-new-react-app.md" },
+    { "name": "fw-new-react-app-scaffold", "description": "Interactive scaffold", "file": "commands/fw-new-react-app-scaffold.md" },
+    { "name": "fw-new-react-app-add-surface", "description": "Add surface to React Meta app", "file": "commands/fw-new-react-app-add-surface.md" },
+    { "name": "fw-new-react-app-validate", "description": "Validate with autofix table", "file": "commands/fw-new-react-app-validate.md" }
+  ]
+}

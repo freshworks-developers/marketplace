@@ -1,0 +1,24 @@
+---
+description: Gates—when to use migration skill vs Platform 2.x migrate vs fw-new-react-app scaffold.
+globs: ["**/manifest.json"]
+alwaysApply: false
+---
+
+# Migration gates
+
+## Use this skill (fw-react-migrate)
+
+- **`platform-version`** is **`3.0`**.
+- Frontend is **vanilla** (**`app/scripts/*.js`**, imperative DOM) or **non–React Meta** (no **`metaConfig.framework` `"react"`**).
+
+## Do not use this skill yet
+
+- **`platform-version`** **2.x** or **`product`** key → **fw-app-dev** **`/fdk-migrate`** until **3.0**.
+
+## Greenfield React app
+
+- Empty directory → **fw-new-react-app** / **`fdk create`** → **react-starter-template**, not migration.
+
+## After migration
+
+- **fw-new-react-app** **`/fw-new-react-app-validate`** or **fw-app-dev** **`/fdk-review`** for hard validation passes.

@@ -1,0 +1,25 @@
+{
+  "name": "fw-react-migrate",
+  "displayName": "Freshworks React Meta — Migrate",
+  "version": "1.0.0",
+  "description": "Migrate PF3 vanilla or pre-meta frontends to React Meta. Slash: /fw-react-migrate, /fw-react-migrate-review.",
+  "author": { "name": "Freshworks Developers", "email": "skills@dev-assist.freshservice.com" },
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-react-migrate",
+  "license": "MIT",
+  "keywords": ["freshworks", "platform-3.0", "react-meta", "fdk", "migration"],
+  "strict": false,
+  "interface": {
+    "displayName": "Freshworks React Meta — Migrate",
+    "shortDescription": "Vanilla PF3 to React Meta frontend migration.",
+    "longDescription": "Preserves server, OAuth, requests. Greenfield apps use fw-new-react-app."
+  },
+  "category": "developer-tools",
+  "tags": ["freshworks", "react", "migration"],
+  "rulesDirectory": "./rules",
+  "commandsDirectory": "./commands",
+  "commands": [
+    { "name": "fw-react-migrate", "description": "Migrate vanilla frontend to React Meta", "file": "commands/fw-react-migrate.md" },
+    { "name": "fw-react-migrate-review", "description": "Review migration completeness", "file": "commands/fw-react-migrate-review.md" }
+  ]
+}
