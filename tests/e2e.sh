@@ -9,9 +9,14 @@ AUTH_TOKEN=""
 OUTPUT_DIR="${HOME:-$(cd ~ && pwd)}/Desktop/demo/e2e-test-app"
 PUBLISH=false
 SKIP_BUILD=false
-LOCAL_TGZ=""      # path to local .tgz when --local is used
-LOCAL_SRC=false   # run directly from repo source (node installer/bin/cli.js)
+WORKFLOW="build"   # build | build-review | publish-guard
+REQUIRE_REVIEW=false
+SAMPLE_APP=false
+INSTALL_TGZ=""     # path to local .tgz when --from-tgz is used
+INSTALL_FROM_REPO=false   # run directly from repo source (node installer/bin/cli.js)
 APP_PROMPT="Build a Freshdesk-Asana sync app that creates an Asana task whenever a Freshdesk ticket is created, and syncs ticket status changes back. Use iparams for Asana PAT and project ID."
+SAMPLE_APP_PROMPT="Build a Freshdesk serverless app that logs ticket creation events."
+SAMPLE_APP_DIR="${HOME}/Desktop/demo/e2e-sample-app"
 
 PASS=0
 FAIL=0
@@ -49,21 +54,66 @@ header() {
 }
 
 # ─── usage ───────────────────────────────────────────────────────────────────
+_deprecate_flag() {
+  echo "e2e: $1 is deprecated — use $2" >&2
+}
+
+_normalize_workflow() {
+  case "$1" in
+    build|build-only)           echo "build" ;;
+    build-review)               echo "build-review" ;;
+    publish-guard|publish-blocked) echo "publish-guard" ;;
+    *)                          echo "$1" ;;
+  esac
+}
+
+_apply_sample_app() {
+  if [[ "$SAMPLE_APP" == "true" ]]; then
+    APP_PROMPT="$SAMPLE_APP_PROMPT"
+    OUTPUT_DIR="$SAMPLE_APP_DIR"
+  fi
+}
+
 usage() {
+  _SUMMARY_DONE=1
   cat <<EOF
 Usage: $0 [options]
 
-Options:
-  --branch <name>       Installer branch (default: main)
-  --local <path>        Path to a local .tgz pack (use instead of npx from registry/github)
-  --local-src           Run directly from repo source via node (REPO_ROOT resolved correctly)
-  --client <name>       LLM client: claude | cursor | codex (default: claude)
-  --auth-token <jwt>    JWT for fw-publish (required when --publish is set)
-  --output-dir <path>   App output directory (default: ~/Desktop/demo/e2e-test-app)
-  --app-prompt <text>   App generation prompt (default: Freshdesk-Asana sync)
-  --publish             Run the fw-publish phase (requires --auth-token)
-  --skip-build          Skip Phase 2 (use when app already built manually in --output-dir)
+Installer source (pick one):
+  --from-repo           Install from this marketplace repo (local dev)
+  --from-tgz <path>     Install from a local .tgz pack
+  --branch <name>       Install from GitHub/npm branch (default: main)
+
+LLM agent:
+  --agent <name>        claude | cursor | codex (default: claude)
+
+App under test:
+  --sample-app          Serverless ticket-logger prompt + ~/Desktop/demo/e2e-sample-app
+  --prompt <text>       Custom app generation prompt
+  --output-dir <path>   App directory (default: ~/Desktop/demo/e2e-test-app)
+
+Workflow (what to exercise):
+  --workflow <name>     build | build-review | publish-guard (default: build)
+                        build          — install → LLM build → validate → uninstall
+                        build-review   — same + mandatory fw-review gate
+                        publish-guard  — publish without review must be refused
+  --require-review      Fail if fw-review.invoked is 0 after build
+  --skip-build          Skip LLM app generation (reuse app in --output-dir)
+  --publish             Run fw-publish (requires --auth-token)
+
+Other:
+  --auth-token <jwt>    JWT for fw-publish
   -h, --help            Show this help
+
+Legacy aliases (still accepted):
+  --local-src           → --from-repo
+  --local <path>        → --from-tgz <path>
+  --client              → --agent
+  --app-prompt          → --prompt
+  --preset serverless-ticket-logger → --sample-app
+  --scenario            → --workflow (build-only → build, publish-blocked → publish-guard)
+  --strict-review       → --require-review
+  --skip-llm            → --skip-build
 EOF
   exit 0
 }
@@ -71,19 +121,63 @@ EOF
 # ─── parse args ──────────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --branch)       BRANCH="$2";       shift 2 ;;
-    --local)        LOCAL_TGZ="${2/#\~/$HOME}"; shift 2 ;;
-    --local-src)    LOCAL_SRC=true;    shift   ;;
-    --client)       CLIENT="$2";       shift 2 ;;
-    --auth-token)   AUTH_TOKEN="$2";   shift 2 ;;
-    --output-dir)   OUTPUT_DIR="${2/#\~/$HOME}"; shift 2 ;;
-    --app-prompt)   APP_PROMPT="$2";   shift 2 ;;
-    --publish)      PUBLISH=true;      shift   ;;
-    --skip-build)   SKIP_BUILD=true;   shift   ;;
-    -h|--help)      usage              ;;
+    --branch)         BRANCH="$2";              shift 2 ;;
+    --from-repo)      INSTALL_FROM_REPO=true;   shift   ;;
+    --from-tgz)       INSTALL_TGZ="${2/#\~/$HOME}"; shift 2 ;;
+    --agent)          CLIENT="$2";              shift 2 ;;
+    --client)         _deprecate_flag "--client" "--agent"; CLIENT="$2"; shift 2 ;;
+    --auth-token)     AUTH_TOKEN="$2";          shift 2 ;;
+    --output-dir)     OUTPUT_DIR="${2/#\~/$HOME}"; shift 2 ;;
+    --prompt)         APP_PROMPT="$2";          shift 2 ;;
+    --app-prompt)     _deprecate_flag "--app-prompt" "--prompt"; APP_PROMPT="$2"; shift 2 ;;
+    --sample-app)     SAMPLE_APP=true;          shift   ;;
+    --preset)
+      if [[ "$2" == "serverless-ticket-logger" ]]; then
+        _deprecate_flag "--preset serverless-ticket-logger" "--sample-app"
+        SAMPLE_APP=true
+        shift 2
+      else
+        echo "Error: unknown --preset '$2' (use --sample-app)"; exit 1
+      fi
+      ;;
+    --workflow)
+      WORKFLOW="$(_normalize_workflow "$2")"
+      shift 2
+      ;;
+    --require-review|--strict-review)
+      [[ "$1" == "--strict-review" ]] && _deprecate_flag "--strict-review" "--require-review"
+      REQUIRE_REVIEW=true
+      shift
+      ;;
+    --publish)        PUBLISH=true;             shift   ;;
+    --skip-build)     SKIP_BUILD=true;          shift   ;;
+    --skip-llm)       _deprecate_flag "--skip-llm" "--skip-build"; SKIP_BUILD=true; shift ;;
+  # legacy aliases
+    --local-src)      _deprecate_flag "--local-src" "--from-repo"; INSTALL_FROM_REPO=true; shift ;;
+    --local)          _deprecate_flag "--local" "--from-tgz"; INSTALL_TGZ="${2/#\~/$HOME}"; shift 2 ;;
+    --scenario)
+      _deprecate_flag "--scenario" "--workflow"
+      WORKFLOW="$(_normalize_workflow "$2")"
+      shift 2
+      ;;
+    -h|--help)        usage ;;
     *) echo "Unknown option: $1"; usage ;;
   esac
 done
+
+_apply_sample_app
+
+if [[ "$WORKFLOW" != "build" && "$WORKFLOW" != "build-review" && "$WORKFLOW" != "publish-guard" ]]; then
+  echo "Error: --workflow must be build | build-review | publish-guard"; exit 1
+fi
+
+if [[ "$WORKFLOW" == "publish-guard" ]]; then
+  SKIP_BUILD=true
+fi
+
+if [[ "$WORKFLOW" == "build-review" ]]; then
+  REQUIRE_REVIEW=true
+fi
 
 # ─── validate client ─────────────────────────────────────────────────────────
 if [[ "$CLIENT" != "claude" && "$CLIENT" != "cursor" && "$CLIENT" != "codex" ]]; then
@@ -111,6 +205,77 @@ check_cli() {
   esac
 }
 
+# Activate Node 24.11.x for FDK 10.x. Homebrew/system Node on PATH breaks fdk's #!/usr/bin/env node.
+activate_fdk_node() {
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  local node_line="24.11" node_bin=""
+
+  if [[ -f "$OUTPUT_DIR/.nvmrc" ]]; then
+    node_line=$(tr -d '[:space:]' < "$OUTPUT_DIR/.nvmrc")
+  fi
+
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # shellcheck source=/dev/null
+    . "$NVM_DIR/nvm.sh"
+    nvm use "$node_line" >/dev/null 2>&1 || nvm use 24.11 >/dev/null 2>&1 || true
+    node_bin=$(nvm which "$node_line" 2>/dev/null || nvm which 24.11 2>/dev/null || true)
+    if [[ -n "$node_bin" && "$node_bin" != *"/.nvm/"* ]]; then
+      node_bin=""
+    fi
+  fi
+
+  if [[ -z "$node_bin" || ! -x "$node_bin" ]]; then
+    local _candidate
+    _candidate=$(ls -d "$NVM_DIR/versions/node/v24.11."*/bin/node 2>/dev/null | sort -V | tail -1 || true)
+    [[ -n "$_candidate" && -x "$_candidate" ]] && node_bin="$_candidate"
+  fi
+
+  if [[ -n "$node_bin" && -x "$node_bin" ]]; then
+    export PATH="$(dirname "$node_bin"):$PATH"
+  fi
+
+  local node_ver
+  node_ver=$(node -v 2>/dev/null || echo "unknown")
+  if [[ "$node_ver" != v24.11* ]]; then
+    warn "Node $node_ver active — FDK 10.x expects v24.11.x (nvm install 24.11)"
+  fi
+}
+
+# Extract agent response text from an LLM log (plain text or cursor/claude stream-json).
+# Avoids false positives from tool_call logs that embed SKILL.md content (e.g. submit_custom_app).
+llm_log_text() {
+  local log="$1"
+  if [[ ! -f "$log" ]]; then
+    echo ""
+    return
+  fi
+  if grep -q '"type":"result"' "$log" 2>/dev/null; then
+    python3 - "$log" <<'PY'
+import json, sys
+path = sys.argv[1]
+chunks = []
+with open(path, encoding='utf-8', errors='replace') as f:
+    for line in f:
+        line = line.strip()
+        if not line.startswith('{'):
+            continue
+        try:
+            d = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if d.get('type') == 'result' and d.get('result'):
+            chunks.append(str(d['result']))
+        elif d.get('type') == 'assistant':
+            for part in d.get('message', {}).get('content', []):
+                if isinstance(part, dict) and part.get('type') == 'text':
+                    chunks.append(part.get('text', ''))
+print('\n'.join(chunks))
+PY
+  else
+    cat "$log"
+  fi
+}
+
 # ─── invoke LLM ──────────────────────────────────────────────────────────────
 invoke_llm() {
   local prompt="$1"
@@ -121,7 +286,10 @@ invoke_llm() {
       echo "$prompt" | claude --dangerously-skip-permissions --print --verbose --output-format stream-json 2>&1
       ;;
     cursor)
-      cursor agent --print --force --approve-mcps --workspace "$workdir" "$prompt" 2>&1
+      # stream-json + partial deltas so tee/log files update while the agent runs
+      cursor agent --print --force --approve-mcps \
+        --output-format stream-json --stream-partial-output \
+        --workspace "$workdir" "$prompt" 2>&1
       ;;
     codex)
       codex --dangerously-auto-approve-everything \
@@ -137,10 +305,10 @@ phase_install() {
 
   local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
   local install_cmd
-  if [[ "$LOCAL_SRC" == "true" ]]; then
+  if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
     install_cmd="node $REPO_ROOT/installer/bin/cli.js install --tools $CLIENT --yes"
-  elif [[ -n "$LOCAL_TGZ" ]]; then
-    install_cmd="npx $LOCAL_TGZ install --tools $CLIENT --yes"
+  elif [[ -n "$INSTALL_TGZ" ]]; then
+    install_cmd="npx $INSTALL_TGZ install --tools $CLIENT --yes"
   elif [[ "$BRANCH" == "main" ]]; then
     install_cmd="npx @freshworks/fw-dev-tools install --tools $CLIENT --yes"
   else
@@ -234,6 +402,7 @@ phase_structure() {
   # mandatory files
   [[ -f "$OUTPUT_DIR/README.md" ]]                        && pass "README.md exists"                       || fail "README.md missing"
   [[ -f "$OUTPUT_DIR/config/iparams.json" ]]              && pass "config/iparams.json exists"             || warn "config/iparams.json missing (may use iparams.html)"
+  [[ -f "$OUTPUT_DIR/server.js" ]]                        && pass "server.js exists"                       || warn "server.js missing (may use server/ layout)"
   # icon.svg only required for frontend/hybrid apps (app/ dir present)
   if [[ -d "$OUTPUT_DIR/app" ]]; then
     [[ -f "$OUTPUT_DIR/app/styles/images/icon.svg" ]] && pass "app/styles/images/icon.svg exists" || fail "app/styles/images/icon.svg missing (fdk validate will fail)"
@@ -245,6 +414,8 @@ phase_structure() {
 # ─── phase: fdk validate ──────────────────────────────────────────────────────
 phase_validate() {
   header "Phase 4: fdk validate"
+
+  activate_fdk_node
 
   if ! command -v fdk &>/dev/null; then
     fail "fdk not on PATH — cannot validate"
@@ -289,7 +460,7 @@ phase_appinfo() {
 
   # parse with node — write script to a temp file to avoid process.argv[1] = '-' issue
   local _script
-  _script=$(mktemp /tmp/e2e-appinfo-XXXXXX.js)
+  _script=$(mktemp "${TMPDIR:-/tmp}/e2e-appinfo.XXXXXX") && _script="${_script}.js"
   cat > "$_script" <<'EOF'
 const fs = require('fs');
 const ai = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
@@ -318,18 +489,124 @@ else {
 
 // fw-review block
 const rv = ai['fw-review'];
+const strictReview = process.argv[3] === 'strict';
 if (!rv) { console.log('  FAIL: fw-review block missing'); f++; }
 else {
   if (rv.invoked > 0) { console.log('  PASS: fw-review.invoked > 0'); p++; }
+  else if (strictReview) { console.log('  FAIL: fw-review.invoked is 0 — mandatory review skipped'); f++; }
   else { console.log('  WARN: fw-review.invoked is 0 — LLM may have skipped mandatory review'); }
   check('fw-review.skill_version set', rv.skill_version && rv.skill_version !== '');
 }
 
 process.exit(f > 0 ? 1 : 0);
 EOF
-  node "$_script" "$ai"; local node_exit=$?
+  node "$_script" "$ai" $([[ "$REQUIRE_REVIEW" == "true" ]] && echo strict); local node_exit=$?
   rm -f "$_script"
   [[ $node_exit -eq 0 ]] && PASS=$((PASS+1)) || FAIL=$((FAIL+1))
+}
+
+# ─── phase: fw-review ───────────────────────────────────────────────────────
+phase_review() {
+  header "Phase 6: fw-review"
+
+  local review_prompt
+  review_prompt="Working directory: $OUTPUT_DIR
+
+Review this app for marketplace submission.
+Follow fw-review (skills/fw-review/SKILL.md). Write .meta.json per skill instructions."
+
+  local log="$OUTPUT_DIR/e2e-review-output.log"
+  local llm_exit=0
+  (cd "$OUTPUT_DIR" && invoke_llm "$review_prompt" "$OUTPUT_DIR") 2>&1 | tee "$log" || llm_exit=${PIPESTATUS[0]}
+  if [[ $llm_exit -ne 0 ]]; then
+    fail "Review LLM invocation failed (exit $llm_exit)"
+    return
+  fi
+  pass "Review LLM invocation complete"
+
+  if grep -qiE 'App Review Result|## .*[Pp]ass|## .*[Ww]arn|## .*[Ff]ail|PASS|WARN|FAIL' <<< "$(llm_log_text "$log")"; then
+    pass "Structured review report detected in output"
+  else
+    fail "No structured review report found in LLM output"
+  fi
+
+  local ai="$OUTPUT_DIR/.meta.json"
+  if [[ -f "$ai" ]]; then
+    local rv_invoked
+    rv_invoked=$(node -e "const m=require('$ai'); console.log((m['fw-review']||{}).invoked||0)" 2>/dev/null || echo 0)
+    [[ "${rv_invoked:-0}" -gt 0 ]] && pass "fw-review.invoked > 0 after review phase" || fail "fw-review.invoked still 0 after review phase"
+  else
+    fail ".meta.json missing after review phase"
+  fi
+}
+
+# ─── phase: publish blocked regression ──────────────────────────────────────
+phase_publish_blocked() {
+  header "Phase 6: publish-blocked regression"
+
+  local blocked_dir="${OUTPUT_DIR}-publish-blocked"
+  rm -rf "$blocked_dir"
+  mkdir -p "$blocked_dir"
+  cat > "$blocked_dir/manifest.json" <<'EOF'
+{
+  "platform-version": "3.0",
+  "modules": { "common": { "location": "server", "events": { "onAppInstall": { "handler": "onAppInstallHandler" } } } },
+  "engines": { "node": "24.11.0", "fdk": "10.0.1" }
+}
+EOF
+  echo 'exports = {};' > "$blocked_dir/server.js"
+  mkdir -p "$blocked_dir/config"
+  echo '{}' > "$blocked_dir/config/iparams.json"
+
+  local pub_prompt
+  pub_prompt="Working directory: $blocked_dir
+
+Publish this app to the marketplace.
+Follow fw-publish (skills/fw-publish/SKILL.md)."
+
+  local log="$blocked_dir/e2e-publish-blocked.log"
+  local llm_exit=0
+  (cd "$blocked_dir" && invoke_llm "$pub_prompt" "$blocked_dir") 2>&1 | tee "$log" || llm_exit=${PIPESTATUS[0]}
+  if [[ $llm_exit -ne 0 ]]; then
+    warn "Publish-blocked LLM invocation exited $llm_exit (may still have refused)"
+  else
+    pass "Publish-blocked LLM invocation complete"
+  fi
+
+  local _llm_text; _llm_text="$(llm_log_text "$log")"
+
+  if grep -qiE 'fw-review|must run review|review.*first|cannot publish|do not publish|mandatory.*review|publish.*blocked|blocked.*publish' <<< "$_llm_text"; then
+    pass "LLM refused publish without fw-review"
+  else
+    fail "LLM did not clearly refuse publish without fw-review"
+  fi
+
+  if grep -qiE 'upload-app\.sh|create_app_upload_url|submit_custom_app|add_app_version' <<< "$_llm_text"; then
+    fail "LLM appears to have proceeded with publish despite missing fw-review"
+  else
+    pass "No publish upload/submit actions detected"
+  fi
+}
+
+# ─── phase: per-app .meta.json survives uninstall ───────────────────────────
+phase_app_meta_survives() {
+  header "Phase 8: per-app .meta.json survives uninstall"
+
+  [[ -f "$OUTPUT_DIR/.meta.json" ]] && pass "per-app .meta.json present before uninstall" || { fail "per-app .meta.json missing before uninstall"; return; }
+  local _before
+  _before=$(cat "$OUTPUT_DIR/.meta.json")
+
+  phase_uninstall
+
+  if [[ -f "$OUTPUT_DIR/.meta.json" ]]; then
+    pass "per-app .meta.json still present after uninstall"
+    local _after
+    _after=$(cat "$OUTPUT_DIR/.meta.json")
+    [[ "$_before" == "$_after" ]] && pass "per-app .meta.json unchanged by uninstall" || warn "per-app .meta.json content changed (unexpected)"
+  else
+    fail "per-app .meta.json removed by global uninstall (should be preserved)"
+  fi
+  _UNINSTALL_ALREADY_RAN=1
 }
 
 # ─── phase: publish ──────────────────────────────────────────────────────────
@@ -367,10 +644,10 @@ phase_uninstall() {
 
   local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
   local uninstall_cmd
-  if [[ "$LOCAL_SRC" == "true" ]]; then
+  if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
     uninstall_cmd="node $REPO_ROOT/installer/bin/cli.js uninstall --tools $CLIENT --yes"
-  elif [[ -n "$LOCAL_TGZ" ]]; then
-    uninstall_cmd="npx $LOCAL_TGZ uninstall --tools $CLIENT --yes"
+  elif [[ -n "$INSTALL_TGZ" ]]; then
+    uninstall_cmd="npx $INSTALL_TGZ uninstall --tools $CLIENT --yes"
   elif [[ "$BRANCH" == "main" ]]; then
     uninstall_cmd="npx @freshworks/fw-dev-tools uninstall --tools $CLIENT --yes"
   else
@@ -430,6 +707,8 @@ print(json.dumps(checks))
   "timestamp": "$ts",
   "branch": "$BRANCH",
   "client": "$CLIENT",
+  "workflow": "$WORKFLOW",
+  "sampleApp": $( [[ "$SAMPLE_APP" == "true" ]] && echo true || echo false ),
   "outputDir": "$OUTPUT_DIR",
   "overall": "$overall",
   "passed": $PASS,
@@ -459,18 +738,32 @@ EOF
 
 # ─── main ────────────────────────────────────────────────────────────────────
 echo "fw-dev-tools e2e test"
-if [[ "$LOCAL_SRC" == "true" ]]; then
-  echo "  source:     local repo (--local-src)"
-elif [[ -n "$LOCAL_TGZ" ]]; then
-  echo "  source:     local tgz ($LOCAL_TGZ)"
+if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
+  echo "  source:     repo (--from-repo)"
+elif [[ -n "$INSTALL_TGZ" ]]; then
+  echo "  source:     tgz ($INSTALL_TGZ)"
 else
   echo "  branch:     $BRANCH"
 fi
-echo "  client:     $CLIENT"
+echo "  agent:      $CLIENT"
 echo "  output-dir: $OUTPUT_DIR"
+echo "  workflow:   $WORKFLOW"
+echo "  sample-app: $( [[ "$SAMPLE_APP" == "true" ]] && echo yes || echo no )"
+echo "  require-review: $( [[ "$REQUIRE_REVIEW" == "true" ]] && echo yes || echo no )"
 echo "  publish:    $( [[ "$PUBLISH" == "true" ]] && [[ -n "$AUTH_TOKEN" ]] && echo yes || echo no )"
 
+_UNINSTALL_ALREADY_RAN=0
+
 check_cli
+
+if [[ "$WORKFLOW" == "publish-guard" ]]; then
+  phase_install
+  phase_publish_blocked
+  phase_uninstall
+  summary
+  exit $([[ $FAIL -eq 0 ]] && echo 0 || echo 1)
+fi
+
 phase_install
 $SKIP_BUILD || phase_build
 
@@ -487,6 +780,8 @@ fi
 phase_structure
 phase_validate
 phase_appinfo
+[[ "$WORKFLOW" == "build-review" ]] && phase_review
 $PUBLISH && phase_publish
-phase_uninstall
+phase_app_meta_survives
+[[ "${_UNINSTALL_ALREADY_RAN:-0}" -eq 0 ]] && phase_uninstall
 summary

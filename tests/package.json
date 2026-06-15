@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test skill-static.test.js",
-    "eval": "node --test skill-eval.test.js && node report.js"
+    "eval": "node --test skill-eval.test.js && node report.js",
+    "eval:inline": "node run-inline-eval.mjs && node report.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0"

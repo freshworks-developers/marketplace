@@ -33,15 +33,43 @@ Checks structural correctness of all skill files without any API calls:
 
 **140 tests. Expected output: 140 pass, 0 fail.**
 
+### Installer lifecycle + e2e scenarios
+
+| Area | Layer | Where |
+|------|-------|-------|
+| Install, status, update, uninstall, migrations | **Installer** | `installer/tests/installer-lifecycle.test.js` |
+| Metrics scripts | **Installer** | `installer/tests/scripts.test.js` |
+| Build, review, publish guard | **E2E** | `tests/e2e.sh` (`--from-repo`, `--sample-app`, `--workflow`) |
+| Skill behavioral gates | **LLM eval** | `tests/skill-eval.test.js` |
+
+**Local run (all four layers):**
+
+```bash
+cd tests && npm test                              # Layer 1 static
+cd installer && npm test                          # Layer 4 installer + lifecycle
+cd tests && npm run eval                          # Layer 2 eval (API key optional)
+./tests/e2e.sh --from-repo --sample-app --agent cursor
+./tests/e2e.sh --from-repo --sample-app --workflow build-review --agent cursor
+./tests/e2e.sh --from-repo --workflow publish-guard --agent cursor
+```
+
 ## Layer 2 — LLM eval (local only)
 
 ```bash
 ANTHROPIC_API_KEY=sk-... npm run eval
 ```
 
+Without an API key, run the content-based inline checker instead:
+
+```bash
+npm run eval:inline
+```
+
+Uses `run-inline-eval.mjs` to verify each scenario's rules are present in skill files, then writes `eval-report.html`.
+
 Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the critical behavioral rules in each skill. Each scenario forces structured JSON output via tool use, then asserts the fields deterministically.
 
-**24 scenarios across all 5 skills:**
+**28 scenarios across all 5 skills:**
 
 | ID | Skill | What it tests |
 |----|-------|---------------|
@@ -67,6 +95,10 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | `fw-publish-08` | fw-publish | feedback step → must ask; skip gracefully; never write null or empty |
 | `fw-publish-09` | fw-publish | new vs existing → must ask user; never assume appId from `.fdk/app-info.json` |
 | `fw-publish-10` | fw-publish | fw-review prerequisite → cannot publish without running fw-review first |
+| `fw-publish-11` | fw-publish | `actions.json` → ask about `worksWith: ai_actions` before submit |
+| `fw-publish-12` | fw-publish | update without `actions.json` → downgrade warning and confirm |
+| `fw-app-dev-07` | fw-app-dev | `/fw-setup-status` before building a new app |
+| `fw-review-03` | fw-review | multi-manifest → only ask which app |
 | `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
 | `spec-01` | (all) | update check → `check-update.sh` on first invocation only, not every message |
 
@@ -111,12 +143,29 @@ Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the f
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--branch <name>` | `main` | Installer branch to test (e.g. `feat/single-installer-cli`) |
-| `--client <name>` | `claude` | LLM client: `claude` \| `cursor` \| `codex` |
-| `--auth-token <jwt>` | _(none)_ | JWT for fw-publish; required with `--publish` |
+| `--from-repo` | false | Install from this marketplace repo (local dev) |
+| `--from-tgz <path>` | _(none)_ | Install from a local `.tgz` pack |
+| `--branch <name>` | `main` | Installer branch from GitHub/npm |
+| `--agent <name>` | `claude` | LLM CLI: `claude` \| `cursor` \| `codex` |
+| Cursor streaming | — | `--agent cursor` uses `--output-format stream-json --stream-partial-output` so logs update live |
+| `--sample-app` | false | Serverless ticket-logger prompt + `~/Desktop/demo/e2e-sample-app` |
+| `--workflow <name>` | `build` | `build` \| `build-review` \| `publish-guard` |
+| `--require-review` | false | Fail if `fw-review.invoked` is 0 after build (`build-review` sets this automatically) |
+| `--skip-build` | false | Skip LLM app generation; reuse app in `--output-dir` |
+| `--prompt <text>` | Asana sync | Custom app generation prompt |
 | `--output-dir <path>` | `~/Desktop/demo/e2e-test-app` | Directory where the app is generated |
-| `--app-prompt <text>` | Freshdesk-Asana sync | App generation prompt |
+| `--auth-token <jwt>` | _(none)_ | JWT for fw-publish; required with `--publish` |
 | `--publish` | false | Run the fw-publish phase (requires `--auth-token`) |
+
+**Workflows:**
+
+| `--workflow` | What it does |
+|--------------|--------------|
+| `build` | Install → LLM build → validate → uninstall |
+| `build-review` | Same as `build`, plus mandatory `fw-review` gate (`--require-review`) |
+| `publish-guard` | Publish without review must be refused (skips LLM build) |
+
+Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm`, etc.) still work and print a deprecation notice.
 
 **Examples:**
 
@@ -124,14 +173,20 @@ Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the f
 # basic run — all defaults (claude, main branch, Freshdesk-Asana app, no publish)
 ./tests/e2e.sh
 
+# local dev: repo installer + cursor + sample app
+./tests/e2e.sh --from-repo --sample-app --agent cursor
+
+# build + mandatory review gate
+./tests/e2e.sh --from-repo --sample-app --workflow build-review --agent cursor
+
+# publish without review must be blocked
+./tests/e2e.sh --from-repo --workflow publish-guard --agent cursor
+
+# re-validate an existing app (skip LLM build)
+./tests/e2e.sh --from-repo --sample-app --skip-build --agent cursor
+
 # test a specific installer branch
 ./tests/e2e.sh --branch feat/single-installer-cli
-
-# use cursor instead of claude
-./tests/e2e.sh --client cursor
-
-# use codex
-./tests/e2e.sh --client codex
 
 # enable the publish phase (requires both flags)
 ./tests/e2e.sh --publish --auth-token "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -140,13 +195,13 @@ Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the f
 ./tests/e2e.sh --output-dir ~/Desktop/demo/my-test-app
 
 # use a custom app generation prompt
-./tests/e2e.sh --app-prompt "Build a Freshservice incident notifier that posts to Slack when a high-priority incident is created"
+./tests/e2e.sh --prompt "Build a Freshservice incident notifier that posts to Slack when a high-priority incident is created"
 
 # full run: feature branch, cursor, custom app, publish enabled
 ./tests/e2e.sh \
   --branch feat/single-installer-cli \
-  --client cursor \
-  --app-prompt "Build a Freshdesk-Asana sync app" \
+  --agent cursor \
+  --prompt "Build a Freshdesk-Asana sync app" \
   --output-dir ~/Desktop/demo/asana-sync \
   --publish \
   --auth-token "Bearer eyJ..."

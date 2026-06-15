@@ -3,6 +3,10 @@ import { readInstallState } from './utils.js';
 const NPM_REGISTRY_API = 'https://registry.npmjs.org/@freshworks%2ffw-dev-tools/latest';
 
 export async function fetchLatestRelease() {
+  const mock = process.env.FW_TEST_MOCK_LATEST_VERSION;
+  if (mock) {
+    return { version: mock, url: 'https://www.npmjs.com/package/@freshworks/fw-dev-tools' };
+  }
   try {
     const res = await fetch(NPM_REGISTRY_API, {
       headers: { 'User-Agent': 'fw-dev-tools-installer' },

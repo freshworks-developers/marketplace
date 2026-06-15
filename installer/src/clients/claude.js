@@ -11,9 +11,11 @@ const MARKETPLACE_SOURCE = 'freshworks-developers/fw-dev-tools';
 const PLUGIN_NAME = 'freshworks-dev-tools';
 const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
 
+const CLAUDE_CMD = process.env.FW_CLAUDE_CMD || 'claude';
+
 async function runClaude(args) {
   try {
-    const { stdout, stderr } = await execFileAsync('claude', args, { timeout: 60_000 });
+    const { stdout, stderr } = await execFileAsync(CLAUDE_CMD, args, { timeout: 60_000 });
     return { ok: true, output: (stdout + stderr).trim() };
   } catch (err) {
     return { ok: false, output: (err.stdout ?? err.stderr ?? err.message ?? '').trim() };

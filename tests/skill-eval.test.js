@@ -662,6 +662,94 @@ const SCENARIOS = [
       assert.equal(output.stops_if_email_missing, true, 'must STOP if developer cannot provide supportEmail');
     },
   },
+
+  // fw-app-dev-07: prerequisite check — /fw-setup-status before build
+  {
+    id: 'fw-app-dev-07',
+    skill: 'fw-app-dev',
+    label: 'must run /fw-setup-status before building a new app',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'A developer asks you to build a new Freshdesk serverless app from scratch. You have not checked the toolchain yet. What is the first fw-setup command you must run before creating any app files or running fdk validate?',
+    schema: {
+      type: 'object',
+      required: ['first_command', 'proceeds_without_setup_check'],
+      properties: {
+        first_command: { type: 'string' },
+        proceeds_without_setup_check: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.match(output.first_command, /fw-setup-status/i, 'must run /fw-setup-status first');
+      assert.equal(output.proceeds_without_setup_check, false, 'must not proceed without toolchain check');
+    },
+  },
+
+  // fw-review-03: multi-manifest — only allowed question is which app
+  {
+    id: 'fw-review-03',
+    skill: 'fw-review',
+    label: 'multiple manifest.json — only ask which app to review',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'The workspace contains two apps: ./ticket-logger/manifest.json and ./sync-app/manifest.json. The developer says "review this app". Besides asking which app folder to review, may you ask other clarifying questions about scope, features, or publishing intent before running the review?',
+    schema: {
+      type: 'object',
+      required: ['asks_which_app', 'asks_other_questions_before_review'],
+      properties: {
+        asks_which_app: { type: 'boolean' },
+        asks_other_questions_before_review: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.asks_which_app, true, 'must ask which app when multiple manifests exist');
+      assert.equal(output.asks_other_questions_before_review, false, 'must not ask extra questions beyond app selection');
+    },
+  },
+
+  // fw-publish-11: actions.json → ask worksWith ai_actions
+  {
+    id: 'fw-publish-11',
+    skill: 'fw-publish',
+    label: 'actions.json present → ask about worksWith ai_actions before submit',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'You are publishing an app that contains config/actions.json with AI Actions definitions. Before submit, should you automatically set worksWith: ai_actions in the marketplace listing, or must you ask the developer first?',
+    schema: {
+      type: 'object',
+      required: ['asks_developer_about_ai_actions', 'auto_sets_without_asking'],
+      properties: {
+        asks_developer_about_ai_actions: { type: 'boolean' },
+        auto_sets_without_asking: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.asks_developer_about_ai_actions, true, 'must ask about worksWith: ai_actions');
+      assert.equal(output.auto_sets_without_asking, false, 'must not set ai_actions flag without asking');
+    },
+  },
+
+  // fw-publish-12: update without actions.json → downgrade warning
+  {
+    id: 'fw-publish-12',
+    skill: 'fw-publish',
+    label: 'update existing listing without actions.json → downgrade warning and confirm',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'You are updating an existing marketplace listing. The new app package has no config/actions.json, but the live listing currently has worksWith: ai_actions enabled. Should you proceed silently, or show a downgrade warning and get confirmation before continuing?',
+    schema: {
+      type: 'object',
+      required: ['shows_downgrade_warning', 'proceeds_without_confirmation'],
+      properties: {
+        shows_downgrade_warning: { type: 'boolean' },
+        proceeds_without_confirmation: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.shows_downgrade_warning, true, 'must warn about ai_actions downgrade');
+      assert.equal(output.proceeds_without_confirmation, false, 'must not proceed without confirmation');
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------

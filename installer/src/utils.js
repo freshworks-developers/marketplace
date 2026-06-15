@@ -75,7 +75,11 @@ export async function readInstallState() {
  * Prompt the user for input. Returns empty string if --yes or non-interactive.
  */
 export async function prompt(question, { yes = false } = {}) {
-  if (yes || !process.stdin.isTTY) return '';
+  if (yes) return '';
+  if (process.env.FW_TEST_PROMPT_ANSWER !== undefined) {
+    return process.env.FW_TEST_PROMPT_ANSWER;
+  }
+  if (!process.stdin.isTTY) return '';
   return new Promise((resolve) => {
     const rl = createInterface({ input: process.stdin, output: process.stdout });
     rl.question(question, (answer) => {

@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-06-15T15:52:41.000Z",
+  "branch": "main",
+  "client": "claude",
+  "outputDir": "/Users/ashivakumar/Desktop/demo/e2e-test-app",
+  "overall": "fail",
+  "passed": 0,
+  "failed": 1,
+  "warned": 0,
+  "checks": [{"status": "fail", "phase": "Install fw-dev-tools (branch: main)", "label": "Installer failed (exit 127)"}]
+}

@@ -86,6 +86,19 @@ test('checkForUpdate returns expected shape', async () => {
   await removeState();
 });
 
+test('fetchLatestRelease uses FW_TEST_MOCK_LATEST_VERSION when set', async () => {
+  const prev = process.env.FW_TEST_MOCK_LATEST_VERSION;
+  process.env.FW_TEST_MOCK_LATEST_VERSION = '42.0.0';
+  try {
+    const { fetchLatestRelease } = await import('../src/version-check.js');
+    const result = await fetchLatestRelease();
+    assert.equal(result.version, '42.0.0');
+  } finally {
+    if (prev === undefined) delete process.env.FW_TEST_MOCK_LATEST_VERSION;
+    else process.env.FW_TEST_MOCK_LATEST_VERSION = prev;
+  }
+});
+
 // ---------------------------------------------------------------------------
 // fetchLatestRelease — offline graceful failure
 // ---------------------------------------------------------------------------
