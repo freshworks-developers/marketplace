@@ -104,7 +104,7 @@ test('update: prints up-to-date message when versions match (offline or same ver
     update_check: { lastChecked: null, lastNudged: null, latestVersion: null, updateAvailable: false },
   });
   const { update } = await import('../src/update.js');
-  const { lines, restore } = captureConsole();
+  const { restore } = captureConsole();
   try {
     await update({ yes: true });
   } finally {

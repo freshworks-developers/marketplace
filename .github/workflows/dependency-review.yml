@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: ["**"]
 
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   dependency-review:
     name: Block high/critical CVEs in new deps

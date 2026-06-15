@@ -2,6 +2,19 @@
 
 Two-layer test suite for the marketplace skills. **Layer 1** runs in CI (no LLM). **Layer 2** runs locally and produces a report to attach to your PR.
 
+## GitHub Actions (CI)
+
+Runs on **pull requests** and **pushes to `main`** (no duplicate push+PR runs on feature branches). No LLM or API keys in CI.
+
+| Workflow | Jobs | What it gates |
+|----------|------|----------------|
+| `ci.yml` | Static skill tests (Node 22), Installer tests (Node 24) | `tests/npm test`, `installer/npm test` |
+| `dependency-review.yml` | Block high/critical CVEs in new deps | PR dependency changes only |
+| `dependency-audit.yml` | npm audit (installer, tests) | Lockfile high/critical CVEs |
+| `secret-scan.yml` | gitleaks CLI | Leaked secrets in git history |
+
+**Org-level (not in repo YAML):** CodeQL JS/TS, Dependabot alerts. **Not in CI:** LLM eval (`npm run eval`), agent eval (“Run skill evals”), e2e (`tests/e2e.sh`).
+
 ## Quick start
 
 ```bash
@@ -59,7 +72,9 @@ cd tests && npm run eval                          # Layer 2 eval (API key option
 ANTHROPIC_API_KEY=sk-... npm run eval
 ```
 
-Without an API key, run the content-based inline checker instead:
+Without an API key, run evals in **Cursor / Claude Code / Codex** (agent session): ask **"Run the skill evals"**. The model reads skill files and judges all 66 scenarios — behavioral eval, not CI.
+
+Optional doc-regression check (regex only, not behavioral):
 
 ```bash
 npm run eval:inline

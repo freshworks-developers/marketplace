@@ -3,22 +3,19 @@
 # GitHub uses this file when branch protection is configured with
 # "Require review from Code Owners". Every PR touching matched paths
 # will require approval from the listed owner(s) before it can merge.
-#
-# Replace @freshworks-developers/devrel-maintainers with your actual
-# GitHub team or individual usernames (e.g. @ashivakumar).
 
-# Default: all changes require a maintainer review
-*                                   @freshworks-developers/devrel-maintainers
+# Default: all changes require owner review
+*                                   @shivakumar-ashwin
 
 # Skill content — changes to any SKILL.md or command file
-skills/*/SKILL.md                   @freshworks-developers/devrel-maintainers
-skills/*/commands/                  @freshworks-developers/devrel-maintainers
-skills/shared/                      @freshworks-developers/devrel-maintainers
+skills/*/SKILL.md                   @shivakumar-ashwin
+skills/*/commands/                  @shivakumar-ashwin
+skills/shared/                      @shivakumar-ashwin
 
 # Plugin manifests
-.claude-plugin/                     @freshworks-developers/devrel-maintainers
-.cursor-plugin/                     @freshworks-developers/devrel-maintainers
-.codex-plugin/                      @freshworks-developers/devrel-maintainers
+.claude-plugin/                     @shivakumar-ashwin
+.cursor-plugin/                     @shivakumar-ashwin
+.codex-plugin/                      @shivakumar-ashwin
 
 # CI/security workflows
-.github/                            @freshworks-developers/devrel-maintainers
+.github/                            @shivakumar-ashwin

@@ -11,7 +11,6 @@ import { fileURLToPath } from 'node:url';
 const execFileAsync = promisify(execFile);
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SCRIPTS_DIR = join(REPO_ROOT, 'skills', 'shared', 'scripts');
-const TEMPLATE = join(SCRIPTS_DIR, '.meta.template.json');
 
 async function makeTmp() {
   const dir = join(tmpdir(), `scripts-test-${Date.now()}`);

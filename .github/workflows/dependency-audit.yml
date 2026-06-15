@@ -1,10 +1,15 @@
 name: Dependency Audit
 
 on:
-  push:
-    branches: ["**"]
   pull_request:
     branches: ["**"]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   audit:

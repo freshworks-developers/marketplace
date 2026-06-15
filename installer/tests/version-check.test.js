@@ -1,8 +1,8 @@
-import { test, mock } from 'node:test';
+import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFile, rm, mkdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
-import { tmpdir, homedir } from 'node:os';
+import { homedir } from 'node:os';
 
 // version-check.js uses a module-level INSTALL_JSON constant derived from homedir().
 // We test the exported logic against the real install.json path, cleaning up after.
