@@ -22,11 +22,11 @@ ls ~/.cursor/skills/
 
 **Claude Code:**
 ```bash
-ls ~/.claude/skills/
-# Should show: fw-app-dev  fw-ai-actions-app  fw-review  fw-setup  fw-publish (subset depends on what you installed)
+claude plugin list
+# Should show entries for fw-setup, fw-app-dev, fw-ai-actions-app, fw-review, fw-publish
 ```
 
-**If empty:** Run `npx @freshworks/fw-dev-tools install` or see [Installation](#installation-from-scratch).
+**If missing:** Run `npx @freshworks/fw-dev-tools install` or see [Installation](#installation-from-scratch).
 
 ---
 
@@ -38,7 +38,7 @@ ls ~/.claude/skills/
 ```
 
 - ✅ Command shows in autocomplete → Commands work
-- ❌ "Command not found" → See [Issue #3: Commands Not Working](#issue-3-claude-code-ignoring-commands)
+- ❌ "Command not found" → See [Issue #3: Commands Don't Show Up](#issue-3-commands-dont-show-up)
 
 ---
 
@@ -307,13 +307,13 @@ ls ~/.cursor/skills/fw-app-dev/SKILL.md
 ls ~/.cursor/skills/fw-app-dev/commands/
 
 # Claude Code
-ls ~/.claude/skills/fw-app-dev/SKILL.md
-ls ~/.claude/skills/fw-app-dev/commands/
+claude plugin list
+# Should show fw-app-dev in the list
 ```
 
-**If files don't exist:** Skill isn't installed. See [Installation from Scratch](#installation-from-scratch).
+**If missing:** Skill isn't installed. See [Installation from Scratch](#installation-from-scratch).
 
-**If files exist but commands still don't work:**
+**If installed but commands still don't work:**
 
 **Option 1: Restart your IDE** (close ALL windows, reopen)
 - Most common fix for command discovery
@@ -324,9 +324,8 @@ ls ~/.claude/skills/fw-app-dev/commands/
 rm -rf ~/.cursor/skills/fw-app-dev
 # Then follow installation steps again
 
-# For Claude Code - remove and reinstall  
-rm -rf ~/.claude/skills/fw-app-dev
-# Then follow installation steps again
+# For Claude Code - uninstall and reinstall
+npx @freshworks/fw-dev-tools install
 ```
 
 **Option 3: The skill is broken**
@@ -477,14 +476,13 @@ macOS 13+ Ventura requires:
 
 **Fix (Quick):**
 ```bash
-cd ~/.cursor/skills/fw-setup/
+cd ~/.fw-dev-tools/scripts/
 
 # Remove quarantine attribute
-xattr -r -d com.apple.quarantine scripts/
 xattr -r -d com.apple.quarantine .
 
 # Make executable
-chmod +x scripts/*.sh
+chmod +x *.sh
 ```
 
 **Fix (Proper):**
@@ -494,7 +492,7 @@ Then allow the script when prompted.
 
 **Verification:**
 ```bash
-xattr -l scripts/fw-setup-run-background.sh
+xattr -l ~/.fw-dev-tools/scripts/meta-init.sh
 # Should NOT show com.apple.quarantine
 ```
 
@@ -591,6 +589,14 @@ Cursor changed how skills work between versions. Your old skill format is outdat
 
 **Fix: Reinstall the skills**
 
+```bash
+# Easiest: re-run the installer
+npx @freshworks/fw-dev-tools install
+
+# Then restart Cursor (close ALL windows)
+```
+
+**If the installer doesn't resolve it** (rare), reinstall manually:
 ```bash
 # 1. Remove old skills
 rm -rf ~/.cursor/skills/fw-app-dev
@@ -928,4 +934,4 @@ Use **[ISSUES.md](ISSUES.md)** at the repository root for:
 
 ---
 
-**Last Updated:** 2026-05-14
+**Last Updated:** 2026-06-16
