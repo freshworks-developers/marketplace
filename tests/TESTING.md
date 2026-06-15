@@ -246,7 +246,7 @@ Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm
 ./tests/e2e.sh --branch feat/single-installer-cli
 
 # enable the publish phase (requires both flags)
-./tests/e2e.sh --publish --auth-token "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+./tests/e2e.sh --publish --auth-token "Bearer <jwt-from-developer-portal>"
 
 # change where the generated app is written
 ./tests/e2e.sh --output-dir ~/Desktop/demo/my-test-app
@@ -261,7 +261,7 @@ Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm
   --prompt "Build a Freshdesk-Asana sync app" \
   --output-dir ~/Desktop/demo/asana-sync \
   --publish \
-  --auth-token "Bearer eyJ..."
+  --auth-token "Bearer <jwt-from-developer-portal>"
 ```
 
 **Phases and what each checks:**

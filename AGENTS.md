@@ -164,6 +164,6 @@ npx @freshworks/fw-dev-tools install
 
 This is the single supported install path. It copies all skills, writes the orchestration spec to always-loaded IDE locations, and merges the MCP config. See **[README.md](README.md#installation)** for options (`--tools`, `--yes`) and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.
 
-**Install state** is recorded at `~/.fw-dev-tools/install.json` (version, client, method, installedAt). The in-skill update check reads this to distinguish managed vs unmanaged installs.
+**Install state** is recorded at `~/.fw-dev-tools/.meta.json` (version, client, method, installedAt). The in-skill update check reads this to distinguish managed vs unmanaged installs.
 
 **Update:** `npx fw-dev-tools update` | **Status:** `npx fw-dev-tools status`
