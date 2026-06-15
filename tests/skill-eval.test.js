@@ -31,7 +31,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
   console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
   console.log('   "Run the skill evals"');
   console.log('');
-  console.log('   The model will read all skill files and evaluate the 66 scenarios inline.');
+  console.log('   The model will read all skill files and evaluate the 67 scenarios inline.');
   process.exit(0);
 }
 
@@ -1543,6 +1543,34 @@ const SCENARIOS = [
     assert(output) {
       assert.equal(output.includes_fw_review_before_publish, true, 'fw-review must come before fw-publish');
       assert.equal(output.can_skip_fw_review, false, 'cannot skip mandatory fw-review');
+    },
+  },
+
+  {
+    id: 'spec-04',
+    skill: 'fw-app-dev',
+    label: 'check-update.sh writes update_check to ~/.fw-dev-tools/.meta.json, not per-app .meta.json',
+    loadContent: () => loadSpec(),
+    prompt: 'You are about to run check-update.sh on the first skill invocation of this session. Which .meta.json file does it update? Which fields does it write? Should you add update_check fields to the app directory .meta.json via meta-update.sh?',
+    schema: {
+      type: 'object',
+      required: [
+        'updates_install_meta_json',
+        'writes_update_check_fields',
+        'writes_update_check_to_per_app_meta',
+      ],
+      properties: {
+        updates_install_meta_json: { type: 'boolean' },
+        writes_update_check_fields: { type: 'boolean' },
+        writes_update_check_to_per_app_meta: { type: 'boolean' },
+        target_path: { type: 'string' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.updates_install_meta_json, true, 'must update ~/.fw-dev-tools/.meta.json');
+      assert.equal(output.writes_update_check_fields, true, 'must write update_check fields via script');
+      assert.equal(output.writes_update_check_to_per_app_meta, false, 'must NOT write update_check to per-app .meta.json');
     },
   },
 ];

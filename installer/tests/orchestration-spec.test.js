@@ -42,6 +42,14 @@ test('spec file includes update command hint', async () => {
   assert.ok(content.includes('npx @freshworks/fw-dev-tools update'), 'should mention update command');
 });
 
+test('spec file instructs check-update.sh on first skill invocation', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  assert.ok(content.includes('check-update.sh'), 'should reference check-update.sh');
+  assert.ok(content.includes('first skill invocation'), 'should gate update check to first invocation');
+  assert.ok(content.includes('update_check'), 'should document update_check metrics');
+  assert.ok(content.includes('~/.fw-dev-tools/.meta.json'), 'should target install .meta.json path');
+});
+
 test('spec file has no HTML fences or MDC frontmatter', async () => {
   const content = await readFile(SPEC_FILE, 'utf8');
   assert.ok(!content.includes('<!-- fw-dev-tools'), 'spec file must not contain fenced block markers');

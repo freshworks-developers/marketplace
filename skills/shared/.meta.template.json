@@ -3,6 +3,16 @@
   "source": "ai_skills",
   "ide_client": "",
   "start_time": "",
+  "version": "",
+  "method": "",
+  "client": "",
+  "installedAt": "",
+  "update_check": {
+    "lastChecked": null,
+    "lastNudged": null,
+    "latestVersion": null,
+    "updateAvailable": false
+  },
   "fw-setup": {
     "invoked": 0,
     "skill_version": "",

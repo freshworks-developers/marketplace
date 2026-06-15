@@ -6,6 +6,8 @@ Managed install. Update with: `npx @freshworks/fw-dev-tools update`
 
 On the first skill invocation of each session: run `bash ~/.fw-dev-tools/scripts/check-update.sh` and print its output if non-empty. Then proceed normally.
 
+`check-update.sh` writes `update_check` fields (`lastChecked`, `lastNudged`, `latestVersion`, `updateAvailable`) to **`~/.fw-dev-tools/.meta.json`** (install state). Do **not** write `update_check` to per-app `<app-dir>/.meta.json` — that file is for skill metrics only (`meta-init.sh` / `meta-update.sh`).
+
 ## Which skill to use
 
 | Goal | Skill |

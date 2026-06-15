@@ -72,7 +72,7 @@ cd tests && npm run eval                          # Layer 2 eval (API key option
 ANTHROPIC_API_KEY=sk-... npm run eval
 ```
 
-Without an API key, run evals in **Cursor / Claude Code / Codex** (agent session): ask **"Run the skill evals"**. The model reads skill files and judges all 66 scenarios — behavioral eval, not CI.
+Without an API key, run evals in **Cursor / Claude Code / Codex** (agent session): ask **"Run the skill evals"**. The model reads skill files and judges all 67 scenarios — behavioral eval, not CI.
 
 Optional doc-regression check (regex only, not behavioral):
 
@@ -84,7 +84,7 @@ Uses `run-inline-eval.mjs` to verify each scenario's rules are present in skill 
 
 Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the critical behavioral rules in each skill. Each scenario forces structured JSON output via tool use, then asserts the fields deterministically.
 
-**66 scenarios** across all 5 skills + orchestration spec:
+**67 scenarios** across all 5 skills + orchestration spec:
 
 | ID | Skill | What it tests |
 |----|-------|---------------|
@@ -117,6 +117,7 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
 | `spec-01` | (all) | update check → `check-update.sh` on first invocation only, not every message |
 | `spec-02` | (all) | update check → do not run `check-update.sh` again on later messages in session |
+| `spec-04` | (all) | `check-update.sh` writes `update_check` to `~/.fw-dev-tools/.meta.json`, not per-app `.meta.json` |
 | **P0** | | |
 | `fw-ai-actions-02` | fw-ai-actions-app | nested vendor payload → flat `parameters`, nest in `server.js` |
 | `fw-ai-actions-03` | fw-ai-actions-app | no `api_key` in `actions.json` → secure iparams |
@@ -174,7 +175,7 @@ Instead of `npm run eval`, open this repo in Claude Code, Cursor, or Codex and a
 
 > "Run the skill evals"
 
-The model reads all skill files and evaluates the 66 scenarios inline, then writes the report. Same result, no API key required.
+The model reads all skill files and evaluates the 67 scenarios inline, then writes the report. Same result, no API key required.
 
 This is also the fallback message shown when `npm run eval` is run without `ANTHROPIC_API_KEY`.
 

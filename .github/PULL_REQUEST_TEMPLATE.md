@@ -33,7 +33,7 @@ cd installer && npm install && npm test    # installer lifecycle tests — CI us
 
 ### LLM evals (required when `SKILL.md`, a command file, or `.meta.template.json` is modified)
 
-66 behavioral scenarios in `tests/skill-eval.test.js`. Run in an **agent session** (recommended, no API key):
+67 behavioral scenarios in `tests/skill-eval.test.js`. Run in an **agent session** (recommended, no API key):
 
 > "Run the skill evals"
 
@@ -41,7 +41,7 @@ Or with API key: `cd tests && ANTHROPIC_API_KEY=sk-... npm run eval`
 
 - [ ] Reviewed / updated scenarios in `tests/skill-eval.test.js` (and `tests/run-inline-eval.mjs` if adding doc-regression checks)
 - [ ] Added new scenario(s) for any new behavioral rule or gate
-- [ ] **66/66** scenarios pass (or explained in summary why a failure is acceptable)
+- [ ] **67/67** scenarios pass (or explained in summary why a failure is acceptable)
 - [ ] Attached **`tests/eval-report.html`** below (or linked in PR description)
 
 `npm run eval:inline` is optional doc-regression only — **not** a substitute for agent/API eval.

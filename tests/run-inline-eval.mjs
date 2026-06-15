@@ -711,6 +711,21 @@ const results = [];
   );
 }
 
+// spec-04
+{
+  const c = await loadSpec();
+  const hasTarget =
+    /~\/\.fw-dev-tools\/\.meta\.json/i.test(c) && /update_check/i.test(c) && /check-update\.sh/i.test(c);
+  const excludesPerApp =
+    /not.*per-app|Do \*\*not\*\* write `update_check`/i.test(c) ||
+    (/per-app/i.test(c) && /skill metrics only/i.test(c));
+  results.push(
+    hasTarget && excludesPerApp
+      ? pass('spec-04', 'fw-app-dev', 'check-update.sh writes update_check to ~/.fw-dev-tools/.meta.json, not per-app .meta.json')
+      : fail('spec-04', 'fw-app-dev', 'check-update.sh writes update_check to ~/.fw-dev-tools/.meta.json, not per-app .meta.json', 'spec missing install update_check target or per-app exclusion'),
+  );
+}
+
 const payload = {
   model: 'inline-skill-content-check (no ANTHROPIC_API_KEY)',
   timestamp: new Date().toISOString(),

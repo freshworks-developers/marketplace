@@ -347,6 +347,34 @@ phase_install() {
   esac
 
   [[ -f "$HOME/.fw-dev-tools/.meta.json" ]] && pass "~/.fw-dev-tools/.meta.json written" || fail "~/.fw-dev-tools/.meta.json missing"
+
+  if [[ -f "$HOME/.fw-dev-tools/.meta.json" ]]; then
+    if node -e "
+      const m = JSON.parse(require('fs').readFileSync(process.env.HOME + '/.fw-dev-tools/.meta.json', 'utf8'));
+      const uc = m.update_check;
+      if (!uc || typeof uc !== 'object') process.exit(1);
+      for (const k of ['lastChecked', 'lastNudged', 'latestVersion', 'updateAvailable']) {
+        if (!Object.hasOwn(uc, k)) process.exit(1);
+      }
+    "; then
+      pass "install .meta.json has update_check block"
+    else
+      fail "install .meta.json missing update_check block"
+    fi
+  fi
+
+  if [[ -x "$HOME/.fw-dev-tools/scripts/check-update.sh" ]]; then
+    bash "$HOME/.fw-dev-tools/scripts/check-update.sh" >/dev/null 2>&1 || true
+    _today=$(date -u +"%Y-%m-%d")
+    if node -e "
+      const m = JSON.parse(require('fs').readFileSync(process.env.HOME + '/.fw-dev-tools/.meta.json', 'utf8'));
+      process.exit(m.update_check?.lastChecked === '$_today' ? 0 : 1);
+    "; then
+      pass "check-update.sh set update_check.lastChecked to today"
+    else
+      fail "check-update.sh did not set update_check.lastChecked"
+    fi
+  fi
 }
 
 # ─── phase: build app ─────────────────────────────────────────────────────────

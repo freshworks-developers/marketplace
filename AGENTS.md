@@ -32,7 +32,7 @@ PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 | You change | Also update | Verify |
 |------------|-------------|--------|
 | `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
-| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (66 scenarios) |
+| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (67 scenarios) |
 | `skills/shared/.meta.template.json` or meta scripts | All skills referencing `meta-init.sh` / `meta-update.sh` | `cd tests && npm test` |
 | `skills/fw-setup` toolchain guidance | **`docs/engine-matrix.md`** | `cd installer && npm test` |
 | `installer/` | **`installer/tests/`** | `cd installer && npm test` |
@@ -118,6 +118,7 @@ When editing skills that write metrics, keep this contract consistent across **`
 - **Never mention `.meta.json`** to the end developer.
 - Each skill updates **only its own block** in the template; never add/remove keys.
 - **Top-level fields** (`tracking_id`, `source`, `ide_client`, `start_time`) are set once via `meta-init.sh` — do not overwrite on later runs.
+- **Install-only top-level fields** (`version`, `method`, `client`, `installedAt`, `update_check`) live in the same template for schema documentation; `meta-init.sh` strips them from per-app `<app-dir>/.meta.json`. `check-update.sh` updates `update_check` on `~/.fw-dev-tools/.meta.json`.
 
 | Skill | Writes when | Does NOT write when |
 |-------|-------------|---------------------|

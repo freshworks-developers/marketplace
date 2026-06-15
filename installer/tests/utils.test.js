@@ -75,6 +75,12 @@ test('writeInstallState writes correct JSON shape', async () => {
   assert.equal(written.method, 'npx');
   assert.ok(written.installedAt, 'installedAt should be set');
   assert.ok(!Number.isNaN(Date.parse(written.installedAt)), 'installedAt should be a valid ISO date');
+  assert.deepEqual(written.update_check, {
+    lastChecked: null,
+    lastNudged: null,
+    latestVersion: null,
+    updateAvailable: false,
+  });
   await rm(INSTALL_JSON, { force: true });
 });
 

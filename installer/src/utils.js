@@ -8,8 +8,28 @@ import { createInterface } from 'node:readline';
 export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
 export const SCRIPTS_SRC = join(REPO_ROOT, 'skills', 'shared', 'scripts');
+export const META_TEMPLATE = join(REPO_ROOT, 'skills', 'shared', '.meta.template.json');
 export const FW_DEV_TOOLS_DIR = join(homedir(), '.fw-dev-tools');
 export const INSTALL_JSON = join(FW_DEV_TOOLS_DIR, '.meta.json');
+
+const DEFAULT_UPDATE_CHECK = {
+  lastChecked: null,
+  lastNudged: null,
+  latestVersion: null,
+  updateAvailable: false,
+};
+
+async function readUpdateCheckDefaults() {
+  try {
+    const template = JSON.parse(await readFile(META_TEMPLATE, 'utf8'));
+    if (template.update_check && typeof template.update_check === 'object') {
+      return { ...DEFAULT_UPDATE_CHECK, ...template.update_check };
+    }
+  } catch {
+    // fall through to hardcoded defaults
+  }
+  return { ...DEFAULT_UPDATE_CHECK };
+}
 
 const _pkg = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8'));
 export const VERSION = _pkg.version;
@@ -48,12 +68,7 @@ export async function writeInstallState({ client, method = 'npx' }) {
     method,
     client,
     installedAt: existing.installedAt ?? new Date().toISOString(),
-    update_check: existing.update_check ?? {
-      lastChecked: null,
-      lastNudged: null,
-      latestVersion: null,
-      updateAvailable: false,
-    },
+    update_check: existing.update_check ?? await readUpdateCheckDefaults(),
   };
   await writeFile(INSTALL_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');
   return state;

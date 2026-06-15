@@ -227,6 +227,22 @@ describe('.meta.json template', () => {
     assert.ok(Object.hasOwn(t['fw-setup'], 'setup_node_changed'));
     assert.ok(Object.hasOwn(t['fw-setup'], 'setup_fdk_changed'));
   });
+
+  test('template has update_check block for install state', async () => {
+    const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
+    const t = JSON.parse(raw);
+    for (const field of ['lastChecked', 'lastNudged', 'latestVersion', 'updateAvailable']) {
+      assert.ok(Object.hasOwn(t.update_check, field), `update_check missing field: ${field}`);
+    }
+    assert.equal(t.update_check.lastChecked, null);
+    assert.equal(t.update_check.updateAvailable, false);
+  });
+
+  test('scripts/.meta.template.json matches skills/shared/.meta.template.json', async () => {
+    const root = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
+    const scripts = await readFile(join(SKILLS_DIR, 'shared', 'scripts', '.meta.template.json'), 'utf8');
+    assert.deepEqual(JSON.parse(root), JSON.parse(scripts), 'template copies must stay in sync');
+  });
 });
 
 // ---------------------------------------------------------------------------

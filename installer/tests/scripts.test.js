@@ -45,6 +45,7 @@ test('meta-init.sh creates .meta.json from template', async () => {
   assert.ok(meta.tracking_id.length === 20, 'tracking_id should be 20 chars');
   assert.match(meta.tracking_id, /^[a-z0-9]{20}$/, 'tracking_id should be lowercase alphanumeric');
   assert.match(meta.start_time, /^\d{4}-\d{2}-\d{2}T/, 'start_time should be ISO date');
+  assert.ok(!Object.hasOwn(meta, 'update_check'), 'per-app .meta.json must not include install-only update_check');
   await rm(tmp, { recursive: true });
 });
 

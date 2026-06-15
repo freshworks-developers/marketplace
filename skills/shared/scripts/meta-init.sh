@@ -25,9 +25,14 @@ TRACKING_ID=$(node -e "
 
 node -e "
   const fs = require('fs');
+  const installOnly = new Set(['version', 'method', 'client', 'installedAt', 'update_check']);
   const m = JSON.parse(fs.readFileSync('$TEMPLATE', 'utf8'));
-  m.tracking_id = '$TRACKING_ID';
-  m.ide_client = '$IDE_CLIENT';
-  m.start_time = '$START_TIME';
-  fs.writeFileSync('$APP_DIR/.meta.json', JSON.stringify(m, null, 2) + '\n');
+  const app = {};
+  for (const [k, v] of Object.entries(m)) {
+    if (!installOnly.has(k)) app[k] = v;
+  }
+  app.tracking_id = '$TRACKING_ID';
+  app.ide_client = '$IDE_CLIENT';
+  app.start_time = '$START_TIME';
+  fs.writeFileSync('$APP_DIR/.meta.json', JSON.stringify(app, null, 2) + '\n');
 "
