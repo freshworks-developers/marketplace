@@ -1,6 +1,6 @@
 {
   "name": "freshworks-dev-tools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Freshworks Platform 3.0 Cursor skills bundled for Codex: FDK toolchain (fw-setup), app development (fw-app-dev), AI Actions (fw-ai-actions-app), marketplace review (fw-review), publish via MCP (fw-publish).",
   "logo": "assets/fw-logo.svg",
   "author": {
