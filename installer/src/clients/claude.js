@@ -2,9 +2,13 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState } from '../utils.js';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { copySkills, writeInstallState, prompt } from '../utils.js';
 import { CLAUDE_MD_BLOCK } from '../orchestration-spec.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
+
+const execFileAsync = promisify(execFile);
 
 const SKILLS_DIR = join(homedir(), '.claude', 'skills');
 const CLAUDE_MD = join(homedir(), '.claude', 'CLAUDE.md');
@@ -24,14 +28,26 @@ export async function install({ yes = false } = {}) {
   await writeClaudeMdBlock();
   console.log(`  ✓ Routing spec written to ${CLAUDE_MD}`);
 
-  console.log(`
-  ℹ  MCP setup (one-time, for fw-publish):
-     Claude Code stores MCP tokens in the system keychain.
-     Run this after getting your API key from https://developers.freshworks.com/developer/:
+  const token = await prompt(
+    '\n  Enter your Freshworks Developer Portal API key\n  (get one at https://developers.freshworks.com/developer/ → leave blank to skip):\n  > ',
+    { yes }
+  );
 
-       claude mcp add fw-dev-mcp https://mcp.freshworks.dev/mcp \\
-         --header "Authorization: Bearer YOUR_API_KEY"
-`);
+  if (token) {
+    try {
+      await execFileAsync('claude', [
+        'mcp', 'add', 'fw-dev-mcp', 'https://mcp.freshworks.dev/mcp',
+        '--header', `Authorization: Bearer ${token}`,
+      ]);
+      console.log('  ✓ MCP server configured via claude CLI');
+    } catch {
+      console.log('  ℹ  Could not run claude CLI — run this manually to enable fw-publish:');
+      console.log(`\n    claude mcp add fw-dev-mcp https://mcp.freshworks.dev/mcp \\\n      --header "Authorization: Bearer ${token}"\n`);
+    }
+  } else {
+    console.log('  ℹ  API key skipped — run this later to enable fw-publish:');
+    console.log('\n    claude mcp add fw-dev-mcp https://mcp.freshworks.dev/mcp \\\n      --header "Authorization: Bearer YOUR_API_KEY"\n');
+  }
 
   await writeInstallState({ client: 'claude-code' });
   console.log('✓ fw-dev-tools installed for Claude Code');

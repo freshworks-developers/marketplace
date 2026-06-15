@@ -48,7 +48,7 @@ Canonical table: repository [`AGENTS.md`](../../AGENTS.md) → **Rules and slash
 ### Install via CLI:
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install
+npx @freshworks/fw-dev-tools install
 ```
 
 ### Install as Claude Plugin

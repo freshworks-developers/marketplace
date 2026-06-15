@@ -27,7 +27,7 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
 
 - **fw-app-dev** does not install **`fdk`**, **Node**, **nvm**, or **PATH**.
 - Use **`fw-setup`** when present: `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`.
-- If **fw-setup** is missing: prompt the user to add it (`npx github:freshworks-developers/fw-dev-tools install`), then continue Step 0.
+- If **fw-setup** is missing: prompt the user to add it (`npx @freshworks/fw-dev-tools install`), then continue Step 0.
 - Do not invent one-off global `npm install` scripts here. Canonical wording: **SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*.
 
 1. Check Node.js version:
@@ -58,7 +58,7 @@ You are migrating a **legacy** Freshworks app to **Platform 3.0**. Typical sourc
 
      To fix:
      1. Install the fw-setup skill:
-        npx github:freshworks-developers/fw-dev-tools install
+        npx @freshworks/fw-dev-tools install
 
      2. Use /fw-setup-install or /fw-setup-upgrade (or legacy /fdk-install, /fdk-upgrade) to install FDK 10.x on Node 24.x
      ```

@@ -1,5 +1,5 @@
 {
-  "name": "fw-dev-tools",
+  "name": "@freshworks/fw-dev-tools",
   "version": "1.1.0",
   "description": "Freshworks Agentic Developer Toolkit — installer CLI",
   "type": "module",

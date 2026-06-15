@@ -18,7 +18,7 @@ claude plugin install fw-publish@freshworks-dev-tools
 **Cursor:**
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install --tools cursor
+npx @freshworks/fw-dev-tools install --tools cursor
 ```
 
 **OpenAI Codex:**

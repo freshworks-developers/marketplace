@@ -257,7 +257,7 @@ bash scripts/check-marketplace-versions.sh
 Run the installer against your branch and verify the skills load in your IDE:
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install
+npx @freshworks/fw-dev-tools install
 ```
 
 Then type `/fw-setup-` in chat — autocomplete should list available commands. For **fw-publish**, confirm MCP is configured per **[AGENTS.md](AGENTS.md)**.

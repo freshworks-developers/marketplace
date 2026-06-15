@@ -16,7 +16,7 @@ export async function status() {
 
   if (!state) {
     console.log('fw-dev-tools is not installed via the managed installer.');
-    console.log('Run: npx github:freshworks-developers/fw-dev-tools install');
+    console.log('Run: npx @freshworks/fw-dev-tools install');
     console.log();
     console.log('Previously installed via npx skills add or git clone?');
     console.log('Run the command above to migrate to the managed path.');

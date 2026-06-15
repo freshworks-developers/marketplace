@@ -1,18 +1,34 @@
 {
-  "name": "fw-dev-tools",
+  "name": "@freshworks/fw-dev-tools",
   "version": "1.1.0",
   "description": "Freshworks Agentic Developer Toolkit — installer CLI",
   "type": "module",
   "bin": {
     "fw-dev-tools": "./installer/bin/cli.js"
   },
+  "files": [
+    "installer/bin/",
+    "installer/src/",
+    "skills/",
+    ".mcp.json"
+  ],
   "dependencies": {
     "commander": "^12.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
+  "keywords": [
+    "freshworks",
+    "fdk",
+    "platform-3.0",
+    "marketplace"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
   "repository": {
     "type": "git",
     "url": "https://github.com/freshworks-developers/fw-dev-tools.git"

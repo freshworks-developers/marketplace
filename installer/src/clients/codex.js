@@ -2,9 +2,10 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState, REPO_ROOT, SKILLS_SRC } from '../utils.js';
-import { AGENTS_MD_BLOCK } from '../orchestration-spec.js';
+import { copySkills, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC } from '../utils.js';
+import { AGENTS_MD_BLOCK, CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
+import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 
 /**
  * Determine the Codex skills directory.
@@ -50,24 +51,30 @@ export async function install({ yes = false } = {}) {
   const agentsPath = await writeAgentsMdBlock();
   console.log(`  ✓ Routing spec written to ${agentsPath}`);
 
-  console.log(`
-  ℹ  MCP setup (one-time, for fw-publish):
-     Codex reads MCP config from .mcp.json at your repository root.
-     The file is already bundled at: ${join(REPO_ROOT, '.mcp.json')}
+  const mcpJson = join(process.cwd(), '.mcp.json');
+  const { action, backupPath } = await mergeMcpServer(mcpJson, CURSOR_MCP_ENTRY);
+  if (action === 'unchanged') {
+    console.log(`  ✓ MCP config already up to date`);
+  } else {
+    console.log(`  ✓ MCP config ${action === 'created' ? 'added' : 'merged'} in ${mcpJson}`);
+    if (backupPath) console.log(`    (backup: ${backupPath})`);
+  }
 
-     Replace <your-api-token> with your key from https://developers.freshworks.com/developer/
-
-     Or copy the block below into your project's .mcp.json:
-
-     {
-       "mcpServers": {
-         "fw-dev-mcp": {
-           "url": "https://mcp.freshworks.dev/mcp",
-           "headers": { "Authorization": "Bearer YOUR_API_KEY" }
-         }
-       }
-     }
-`);
+  const existingToken = await readMcpToken(mcpJson);
+  if (existingToken) {
+    console.log('  ✓ API key already configured');
+  } else {
+    const token = await prompt(
+      '\n  Enter your Freshworks Developer Portal API key\n  (get one at https://developers.freshworks.com/developer/ → leave blank to skip):\n  > ',
+      { yes }
+    );
+    if (token) {
+      await patchMcpToken(mcpJson, token);
+      console.log('  ✓ API key saved to .mcp.json');
+    } else {
+      console.log('  ℹ  API key skipped — add it later to enable fw-publish');
+    }
+  }
 
   await writeInstallState({ client: 'codex' });
   console.log('✓ fw-dev-tools installed for Codex');

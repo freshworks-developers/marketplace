@@ -35,7 +35,7 @@ app-root/
 ## Installation
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install
+npx @freshworks/fw-dev-tools install
 ```
 
 Or copy this folder into `.cursor/skills/fw-ai-actions-app/` (or your tool’s skills directory).

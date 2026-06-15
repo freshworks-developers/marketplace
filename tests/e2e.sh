@@ -131,7 +131,7 @@ phase_install() {
 
   local install_cmd
   if [[ "$BRANCH" == "main" ]]; then
-    install_cmd="npx github:freshworks-developers/fw-dev-tools install --tools $CLIENT --yes"
+    install_cmd="npx @freshworks/fw-dev-tools install --tools $CLIENT --yes"
   else
     install_cmd="npx github:freshworks-developers/fw-dev-tools#$BRANCH install --tools $CLIENT --yes"
   fi
@@ -159,6 +159,7 @@ phase_install() {
       ;;
     codex)
       [[ -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev exists" || fail "~/.codex/skills/fw-app-dev missing"
+      [[ -f ".mcp.json" ]] && pass ".mcp.json written in cwd" || fail ".mcp.json missing in cwd"
       ;;
   esac
 
@@ -347,7 +348,7 @@ phase_uninstall() {
 
   local uninstall_ref
   if [[ "$BRANCH" == "main" ]]; then
-    uninstall_ref="github:freshworks-developers/fw-dev-tools"
+    uninstall_ref="@freshworks/fw-dev-tools"
   else
     uninstall_ref="github:freshworks-developers/fw-dev-tools#$BRANCH"
   fi

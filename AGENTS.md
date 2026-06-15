@@ -76,7 +76,6 @@ Every skill that performs a mutating action writes metrics to **`.meta.json`** a
 
 **Each skill's `SKILL.md` has the authoritative field-level detail for its own block.** This section is the cross-skill overview — read it first to understand the shared file, then follow the per-skill instructions for exact field names and values.
 
-**Legacy name:** Earlier versions of the skills used `app.info` as the filename. All references now use **`.meta.json`**. If you encounter `app.info` in an older app directory, treat it the same way — read it, but write back as **`.meta.json`**.
 
 ## Non-negotiables (app work)
 
@@ -160,7 +159,7 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 ## Human-facing install
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install
+npx @freshworks/fw-dev-tools install
 ```
 
 This is the single supported install path. It copies all skills, writes the orchestration spec to always-loaded IDE locations, and merges the MCP config. See **[README.md](README.md#installation)** for options (`--tools`, `--yes`) and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.

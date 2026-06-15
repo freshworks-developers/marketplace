@@ -26,7 +26,7 @@ ls ~/.claude/skills/
 # Should show: fw-app-dev  fw-ai-actions-app  fw-review  fw-setup  fw-publish (subset depends on what you installed)
 ```
 
-**If empty:** Run `npx github:freshworks-developers/fw-dev-tools install` or see [Installation](#installation-from-scratch).
+**If empty:** Run `npx @freshworks/fw-dev-tools install` or see [Installation](#installation-from-scratch).
 
 ---
 
@@ -103,14 +103,14 @@ More detail: **[README.md](README.md)** (Quick Start → OpenAI Codex); see **[C
 ### Method 1: Installer (Recommended)
 
 ```bash
-npx github:freshworks-developers/fw-dev-tools install
+npx @freshworks/fw-dev-tools install
 ```
 
 Auto-detects Cursor, Claude Code, and Codex. Copies all skills, writes the orchestration spec, and merges the MCP config.
 
 **Target a specific client:**
 ```bash
-npx github:freshworks-developers/fw-dev-tools install --tools cursor
+npx @freshworks/fw-dev-tools install --tools cursor
 ```
 
 **Then restart your IDE.**
@@ -415,7 +415,7 @@ Instead of:
 ```
 
 **Root Cause:**
-`npx github:freshworks-developers/fw-dev-tools install` or `git clone` created extra nesting.
+`npx @freshworks/fw-dev-tools install` or `git clone` created extra nesting.
 
 **Technical Details:**
 Cursor skill loader expects:

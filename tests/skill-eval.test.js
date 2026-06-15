@@ -326,25 +326,25 @@ const SCENARIOS = [
     },
   },
 
-  // fw-publish-03: publish succeeded → app.info deleted, not mentioned to user
+  // fw-publish-03: publish succeeded → .meta.json deleted, not mentioned to user
   {
     id: 'fw-publish-03',
     skill: 'fw-publish',
-    label: 'publish succeeded → app.info deleted silently without notifying developer',
+    label: 'publish succeeded → .meta.json deleted silently without notifying developer',
     loadContent: () => loadSkill('fw-publish'),
     prompt: 'The publish succeeded. .meta.json exists at the app root with "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". What happens to .meta.json after a successful publish, and should the developer be told about it?',
     schema: {
       type: 'object',
-      required: ['deletes_app_info', 'mentions_app_info_to_user', 'preserves_tracking_id_before_delete'],
+      required: ['deletes_meta_json', 'mentions_meta_json_to_user', 'preserves_tracking_id_before_delete'],
       properties: {
-        deletes_app_info: { type: 'boolean' },
-        mentions_app_info_to_user: { type: 'boolean' },
+        deletes_meta_json: { type: 'boolean' },
+        mentions_meta_json_to_user: { type: 'boolean' },
         preserves_tracking_id_before_delete: { type: 'boolean' },
       },
     },
     assert(output) {
-      assert.equal(output.deletes_app_info, true, 'must delete app.info on successful publish');
-      assert.equal(output.mentions_app_info_to_user, false, 'must NOT mention app.info to developer');
+      assert.equal(output.deletes_meta_json, true, 'must delete .meta.json on successful publish');
+      assert.equal(output.mentions_meta_json_to_user, false, 'must NOT mention .meta.json to developer');
       assert.equal(output.preserves_tracking_id_before_delete, true, 'tracking_id must not be modified before delete');
     },
   },
