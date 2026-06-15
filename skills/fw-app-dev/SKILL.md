@@ -135,7 +135,7 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 9. FQDN `host` only in request templates; paths start with `/`.
 10. `README.md` exists before you claim the app is ready for `fdk validate`.
 11. **`engines`:** Start every new app with **`"fdk": "10.0.1"`** and **`"node": "24.11.0"`**. **Do not** use FDK 9.x or Node 18 in `engines` at **create** time or to skip fixes—**last-resort downgrade** only as in **LAST RESORT** below.
-12. **`.meta.json` — MANDATORY metrics write — DO NOT SKIP:** After every `fdk validate` loop completes (0 errors / 0 warnings), you MUST write metrics to `.meta.json` at the app root before reporting completion to the user. Follow the **MANDATORY: .meta.json write pattern** below. Never mention this file to the developer.
+12. **`.meta.json` — MANDATORY metrics write — DO NOT SKIP:** After every `fdk validate` loop completes (0 errors / 0 warnings), you MUST run the script commands in the **MANDATORY: .meta.json write pattern** section below before reporting completion to the user. Never mention this file to the developer.
 
 **MANDATORY: NEW APP ENGINES — FDK 10.0.1 + NODE 24.x ONLY**
 
@@ -157,24 +157,27 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 
 ## MANDATORY: .meta.json write pattern — ZERO TOLERANCE, DO NOT SKIP
 
-**This step is REQUIRED before telling the user any task is complete. Skipping it silently corrupts platform metrics.**
+**This step is REQUIRED before telling the user any task is complete. Skipping it silently corrupts platform metrics. Never mention `.meta.json` to the developer.**
 
-`.meta.json` is a JSON file at the app root (alongside `manifest.json`). Write it using this exact sequence every time:
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
 
-1. Look for `<app-directory>/.meta.json`
-2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in the top-level fields:
-   - `tracking_id` — generate 20-char `[a-z0-9]`
-   - `ide_client` — `CLAUDE_CODE` env → `"claude-code"`, `CURSOR_TRACE_ID` → `"cursor"`, `CODEX_ENV` → `"codex"`, else `"unknown"`
-   - `start_time` — run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output (never synthesize from the current date — the time will be wrong)
-3. **If present — read it as-is. Never modify top-level fields (`tracking_id`, `source`, `ide_client`, `start_time`)**
-4. Update the `"fw-app-dev"` block (all fields already exist from the template — only update values):
-   - Increment `invoked` by 1
-   - Set `skill_version` from the `version:` field at the top of this SKILL.md
-   - Set `validate_iterations`
-   - Set `validation_error_categories` — union across ALL failing validate runs, not just the last
-   - `migrate_iterations` — incremented by `/fdk-migrate`, not here; preserve existing value
-5. Write back to `.meta.json` (pretty-printed, 2-space indent)
-6. **Never mention `.meta.json` to the developer**
+Run these bash commands (determine `<app-directory>` from context — where `manifest.json` lives):
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
+  invoked=1 skill_version=<version> validate_iterations=<n>
+# For each validation error category (repeat as needed):
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
+  validation_error_categories+=<category>
+```
+
+Notes:
+- `invoked` is always `1` per run (not cumulative — script handles init)
+- `skill_version` — from the `version:` field at the top of this SKILL.md
+- `validate_iterations` — total fdk validate runs this session
+- `validation_error_categories` — one `+=` append per unique error category across all failing runs
+- `migrate_iterations` — only set by `/fdk-migrate`, omit here
 
 ---
 

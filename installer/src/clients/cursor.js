@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState, prompt, REPO_ROOT } from '../utils.js';
+import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT } from '../utils.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
@@ -22,6 +22,9 @@ alwaysApply: true
 
 export async function install({ yes = false } = {}) {
   console.log('→ Installing for Cursor...');
+
+  await copyScripts();
+  console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
   await copySkills(SKILLS_DIR);
   console.log(`  ✓ Skills copied to ${SKILLS_DIR}`);

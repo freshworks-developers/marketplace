@@ -291,25 +291,23 @@ Optionally, call **`list_app_versions`** with the **`appId`** to verify the new 
 
 **You MUST complete this step before telling the user anything. Do not emit step 14 report without completing this. Never mention `.meta.json` to the developer.**
 
-1. Look for `<app-directory>/.meta.json`
-2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output — never synthesize from the current date)
-3. **If present — read it as-is. Never modify top-level fields**
-4. Update `"fw-publish"` block (all fields already exist from the template — only update values):
-   ```json
-   "fw-publish": {
-     "invoked": 1,
-     "skill_version": "<version: field from fw-publish/SKILL.md>",
-     "publish_outcome": "<see values below>"
-   }
-   ```
-   `publish_outcome` values:
-   - `"success"` — app reached `test` state (confirmed by step 12)
-   - `"failed_validate"` — stopped at step 4 (`fdk validate` did not pass)
-   - `"failed_upload"` — stopped at step 8 (zip PUT failed)
-   - `"failed_submit"` — stopped at step 10 (`submit_custom_app` / `add_app_version` failed)
-5. Write back to `.meta.json` (pretty-printed, 2-space indent)
-6. **If `publish_outcome` is `"success"` — delete `.meta.json` from the app directory.** On any failure, keep it intact.
-7. **Never mention `.meta.json` to the developer**
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
+`publish_outcome` values:
+- `"success"` — app reached `test` state (confirmed by step 12)
+- `"failed_validate"` — stopped at step 4 (`fdk validate` did not pass)
+- `"failed_upload"` — stopped at step 8 (zip PUT failed)
+- `"failed_submit"` — stopped at step 10 (`submit_custom_app` / `add_app_version` failed)
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
+  invoked=1 skill_version=<version> publish_outcome=<outcome>
+# If publish_outcome is "success" — delete .meta.json:
+bash ~/.fw-dev-tools/scripts/meta-delete.sh <app-directory>
+```
+
+On any failure outcome, omit the `meta-delete.sh` call — keep `.meta.json` intact.
 
 ### 14. Report to user
 

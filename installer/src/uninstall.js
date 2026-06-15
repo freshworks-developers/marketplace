@@ -1,6 +1,6 @@
 import { rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { detectClients, INSTALL_JSON } from './utils.js';
+import { detectClients, INSTALL_JSON, FW_DEV_TOOLS_DIR } from './utils.js';
 import { uninstall as cursorUninstall } from './clients/cursor.js';
 import { uninstall as claudeUninstall } from './clients/claude.js';
 import { uninstall as codexUninstall } from './clients/codex.js';
@@ -29,7 +29,13 @@ export async function uninstall({ tools, yes = false } = {}) {
     await handler({ yes });
   }
 
-  // Remove the install marker
+  // Remove scripts dir and install marker
+  const scriptsDir = `${FW_DEV_TOOLS_DIR}/scripts`;
+  if (existsSync(scriptsDir)) {
+    await rm(scriptsDir, { recursive: true });
+    console.log(`  ✓ Removed ${scriptsDir}`);
+  }
+
   if (existsSync(INSTALL_JSON)) {
     await rm(INSTALL_JSON);
     console.log(`  ✓ Removed ${INSTALL_JSON}`);

@@ -72,7 +72,7 @@ test('writeInstallState writes correct JSON shape', async () => {
   const written = await writeInstallState({ client: 'cursor' });
   assert.equal(written.version, VERSION);
   assert.equal(written.client, 'cursor');
-  assert.equal(written.method, 'npx-github');
+  assert.equal(written.method, 'npx');
   assert.ok(written.installedAt, 'installedAt should be set');
   assert.ok(!Number.isNaN(Date.parse(written.installedAt)), 'installedAt should be a valid ISO date');
   await rm(INSTALL_JSON, { force: true });

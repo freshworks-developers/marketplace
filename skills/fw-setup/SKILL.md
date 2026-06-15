@@ -74,15 +74,13 @@ Parse user request and execute the appropriate operation:
 
 10. **MANDATORY: .meta.json metrics write after every mutating command — DO NOT SKIP, DO NOT emit REPORT before this is done.** Applies to: `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-downgrade`, `/fw-setup-troubleshoot --fix`. Skip only if no `manifest.json` exists in the app directory (bare install with no app present). Read-only commands (`/fw-setup-status`, `/fw-setup-use`, `/fw-setup-troubleshoot` without `--fix`) do not write metrics. Never mention `.meta.json` to the developer.
 
-After new-shell verification passes, write using this exact sequence:
-1. Look for `<app-directory>/.meta.json`
-2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output — never synthesize from the current date)
-3. **If present — read it as-is. Never modify top-level fields**
-4. Update `"fw-setup"` block (all fields already exist from the template — only update values):
-   - Increment `invoked` by 1
-   - Set `skill_version`, `setup_node_changed`, `setup_fdk_changed`
-5. Write back to `.meta.json` (pretty-printed, 2-space indent)
-6. **Never mention `.meta.json` to the developer**
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-setup \
+  invoked=1 skill_version=<version> setup_node_changed=<true|false> setup_fdk_changed=<true|false>
+```
 
 You are not a tutor. You are an enforcement layer.
 

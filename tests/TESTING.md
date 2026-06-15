@@ -19,18 +19,19 @@ Checks structural correctness of all skill files without any API calls:
 
 - Frontmatter fields (`name`, `version`, `description`) and valid semver
 - Gate language (`DO NOT SKIP`, output blocked until .meta.json is written)
-- .meta.json template-copy pattern present in every skill
+- Script-based .meta.json pattern: every skill references `meta-init.sh` and `meta-update.sh`
 - "Never mention .meta.json to developer" rule present in every skill
 - `skills/shared/.meta.template.json` is valid JSON with all required skill blocks and fields
-- Manifest skeleton templates have no tracking fields, use `modules` not `product`, have `engines`
-- fw-app-dev command files have MANDATORY .meta.json write steps
-- fw-publish defines all 4 `publish_outcome` values and delete/keep logic
+- `skills/shared/scripts/` — all 4 scripts (`meta-init.sh`, `meta-update.sh`, `meta-delete.sh`, `check-update.sh`) exist and have execute bits set
+- fw-app-dev command files (`fdk-fix.md`, `fdk-migrate.md`) use `meta-init.sh` / `meta-update.sh` pattern
+- fw-publish uses `meta-delete.sh` for post-publish cleanup and defines all 4 `publish_outcome` values
 - fw-review gates result emission behind .meta.json write
 - fw-setup excludes read-only commands from .meta.json writes
+- Manifest skeleton templates have no tracking fields, use `modules` not `product`, have `engines`
 - Line count warning (not a failure) if any SKILL.md exceeds 500 lines
 - PR#21 structural checks: fdk-review removal, reference file existence, JSON/JS validity, link integrity, plugin version consistency, script executable bits
 
-**122 tests. Expected output: 122 pass, 0 fail.**
+**140 tests. Expected output: 140 pass, 0 fail.**
 
 ## Layer 2 — LLM eval (local only)
 
@@ -40,7 +41,7 @@ ANTHROPIC_API_KEY=sk-... npm run eval
 
 Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the critical behavioral rules in each skill. Each scenario forces structured JSON output via tool use, then asserts the fields deterministically.
 
-**13 scenarios across all 5 skills:**
+**24 scenarios across all 5 skills:**
 
 | ID | Skill | What it tests |
 |----|-------|---------------|
@@ -48,15 +49,26 @@ Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the
 | `fw-app-dev-02` | fw-app-dev | validate passed → write .meta.json before reporting, never mention to user |
 | `fw-app-dev-03` | fw-app-dev | 1 lint error remaining → cannot mark app complete |
 | `fw-app-dev-04` | fw-app-dev | `/fdk-review` invoked → redirect to fw-review, not handled by fw-app-dev |
+| `fw-app-dev-05` | fw-app-dev | .meta.json write → must invoke `meta-init.sh` + `meta-update.sh`, not write JSON directly |
+| `fw-app-dev-06` | fw-app-dev | metrics: `validate_iterations` = total runs, `validation_error_categories` deduped |
 | `fw-setup-01` | fw-setup | `/fw-setup-install` succeeded → write .meta.json before REPORT |
 | `fw-setup-02` | fw-setup | `/fw-setup-status` → must NOT write .meta.json (read-only) |
 | `fw-setup-03` | fw-setup | "install FDK 9" → deprecation warning must be shown before proceeding |
+| `fw-setup-04` | fw-setup | metrics: `setup_node_changed`/`setup_fdk_changed` reflect actual change, not always true |
 | `fw-review-01` | fw-review | review failures → .meta.json written before `## App Review Result` emitted |
+| `fw-review-02` | fw-review | metrics: `review_failure_categories` populated with actual rule IDs |
 | `fw-publish-01` | fw-publish | publish succeeded → delete .meta.json, `publish_outcome = "success"` |
 | `fw-publish-02` | fw-publish | validate failed → keep .meta.json, `publish_outcome = "failed_validate"` |
 | `fw-publish-03` | fw-publish | publish succeeded → `.meta.json` deleted silently without notifying developer |
 | `fw-publish-04` | fw-publish | publish failed → manifest unchanged, `start_time` not cleared |
+| `fw-publish-05` | fw-publish | zip upload → must use `upload-app.sh`, not Python/Node/curl |
+| `fw-publish-06` | fw-publish | upload failed after 3 retries → `publish_outcome = "failed_upload"`, keep .meta.json |
+| `fw-publish-07` | fw-publish | new listing → `supportEmail` collected before `create_app_upload_url`; STOP if missing |
+| `fw-publish-08` | fw-publish | feedback step → must ask; skip gracefully; never write null or empty |
+| `fw-publish-09` | fw-publish | new vs existing → must ask user; never assume appId from `.fdk/app-info.json` |
+| `fw-publish-10` | fw-publish | fw-review prerequisite → cannot publish without running fw-review first |
 | `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
+| `spec-01` | (all) | update check → `check-update.sh` on first invocation only, not every message |
 
 Each failing scenario retries up to 3 times; passes if 2/3 succeed (handles non-determinism).
 

@@ -23,7 +23,7 @@
 | [Prerequisites](#prerequisites) | Before you run **`fdk`** or publish |
 | [Available Tools](#available-tools) | Five skills at a glance |
 | [Workflow](#step-by-step-workflow) | Idea → validated app → publish |
-| [MCP (publish)](#mcp-marketplace-publish) | MCP / JWT — steps in AGENTS.md |
+| [MCP (publish)](#mcp-marketplace-publish) | MCP / JWT — token setup and tool names |
 | [Troubleshooting](#troubleshooting) | Skills, rules, PATH, Codex |
 | [Resources](#resources) | Docs, links, runbooks |
 | [Support](#support) | Issues and community |
@@ -73,7 +73,7 @@ npx @freshworks/fw-dev-tools status
 |-------|----------|
 | **Installing these skills into an IDE** | Works without FDK installed first; skill content lives in **`skills/*/SKILL.md`** and plugin manifests. |
 | **Running Freshworks workflows (`fdk`, validate, pack)** | Use **fw-setup** (FDK **10.x**, Node **24.11.x** per **[engine-matrix.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/engine-matrix.md)**). |
-| **Publishing to Marketplace (MCP)** | One-time **Developer Portal JWT** + **fw-dev-mcp** config — see **[MCP (marketplace publish)](#mcp-marketplace-publish)** → **[AGENTS.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/AGENTS.md)** (no keys in chat). |
+| **Publishing to Marketplace (MCP)** | One-time **Developer Portal JWT** + **fw-dev-mcp** config — see **[MCP (marketplace publish)](#mcp-marketplace-publish)** (no keys in chat). |
 | **Corporate networks** | Firewall / proxy: **[network-requirements.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/network-requirements.md)**. |
 
 ---
@@ -135,7 +135,7 @@ Guides you through `fdk validate → pack → upload → submit` via MCP without
 
 ## MCP (marketplace publish)
 
-Publishing uses the **fw-dev-mcp server**. This repo bundles `.mcp.json` at the repository root (URL + `Authorization` header). Cursor, Claude Code, and Codex MCP token placement, copy-paste blocks, and tool names are documented in **[AGENTS.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/AGENTS.md)** and the publish skill under **[skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/)**.
+Publishing uses the **fw-dev-mcp server**. This repo bundles `.mcp.json` at the repository root (URL + `Authorization` header). MCP token placement, copy-paste blocks, and tool names are documented in the publish skill under **[skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/)**.
 
 ---
 
@@ -157,7 +157,7 @@ Having issues with skills installation or usage?
 
 | Doc | Purpose |
 |-----|---------|
-| [AGENTS.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/AGENTS.md) | MCP config and AI agent routing |
+| [skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/) | MCP config and publish workflow |
 | [TROUBLESHOOTING.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/TROUBLESHOOTING.md) | Install and runtime issues |
 | [engine-matrix.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/engine-matrix.md) | FDK ↔ Node version matrix |
 | [network-requirements.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/network-requirements.md) | Firewall / proxy requirements |

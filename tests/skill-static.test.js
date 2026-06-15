@@ -133,11 +133,19 @@ describe('Skill gate language', () => {
 
 describe('.meta.json write pattern', () => {
   for (const skill of SKILLS) {
-    test(`${skill}: references .meta.template.json (copy-then-fill pattern)`, async () => {
+    test(`${skill}: references meta-init.sh (script-based pattern)`, async () => {
       const content = await readSkill(skill);
       assert.ok(
-        content.includes('skills/shared/.meta.template.json'),
-        `${skill}: must reference skills/shared/.meta.template.json`
+        content.includes('meta-init.sh'),
+        `${skill}: must reference meta-init.sh for .meta.json initialisation`
+      );
+    });
+
+    test(`${skill}: references meta-update.sh (script-based update pattern)`, async () => {
+      const content = await readSkill(skill);
+      assert.ok(
+        content.includes('meta-update.sh'),
+        `${skill}: must reference meta-update.sh for .meta.json updates`
       );
     });
 
@@ -296,14 +304,25 @@ describe('fw-app-dev command files', () => {
       );
     });
 
-    test(`${cmd}.md: uses template-copy pattern`, async () => {
+    test(`${cmd}.md: uses meta-init.sh script pattern`, async () => {
       const content = await readFile(
         join(SKILLS_DIR, 'fw-app-dev', 'commands', `${cmd}.md`),
         'utf8'
       );
       assert.ok(
-        content.includes('skills/shared/.meta.template.json'),
-        `${cmd}.md must reference .meta.template.json`
+        content.includes('meta-init.sh'),
+        `${cmd}.md must reference meta-init.sh`
+      );
+    });
+
+    test(`${cmd}.md: uses meta-update.sh script pattern`, async () => {
+      const content = await readFile(
+        join(SKILLS_DIR, 'fw-app-dev', 'commands', `${cmd}.md`),
+        'utf8'
+      );
+      assert.ok(
+        content.includes('meta-update.sh'),
+        `${cmd}.md must reference meta-update.sh`
       );
     });
   }
@@ -770,5 +789,54 @@ describe('PR#21 — internal link integrity', () => {
       if (!(await fileExists(full))) missing.push(rel);
     }
     assert.deepEqual(missing, [], `broken links in fw-setup/SKILL.md: ${missing.join(', ')}`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Shared scripts — existence and execute bits
+// ---------------------------------------------------------------------------
+
+describe('skills/shared/scripts', () => {
+  const SCRIPTS = ['meta-init.sh', 'meta-update.sh', 'meta-delete.sh', 'check-update.sh'];
+  const SCRIPTS_DIR = join(REPO_DIR, 'skills', 'shared', 'scripts');
+
+  for (const script of SCRIPTS) {
+    test(`${script}: exists`, async () => {
+      assert.ok(await fileExists(join(SCRIPTS_DIR, script)), `missing: skills/shared/scripts/${script}`);
+    });
+
+    test(`${script}: has execute bit set`, { skip: process.platform === 'win32' }, async () => {
+      const s = await stat(join(SCRIPTS_DIR, script));
+      // eslint-disable-next-line no-bitwise
+      assert.ok(s.mode & 0o111, `${script} must be executable`);
+    });
+  }
+
+  test('.meta.template.json exists in scripts dir', async () => {
+    assert.ok(
+      await fileExists(join(SCRIPTS_DIR, '.meta.template.json')),
+      'missing: skills/shared/scripts/.meta.template.json'
+    );
+  });
+
+  test('.meta.template.json in scripts dir is valid JSON', async () => {
+    const raw = await readFile(join(SCRIPTS_DIR, '.meta.template.json'), 'utf8');
+    const t = JSON.parse(raw);
+    assert.ok(t, 'must parse as valid JSON');
+    assert.equal(t.source, 'ai_skills');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-publish: meta-delete.sh usage
+// ---------------------------------------------------------------------------
+
+describe('fw-publish meta-delete.sh', () => {
+  test('references meta-delete.sh for success cleanup', async () => {
+    const content = await readSkill('fw-publish');
+    assert.ok(
+      content.includes('meta-delete.sh'),
+      'fw-publish must reference meta-delete.sh for post-publish cleanup'
+    );
   });
 });

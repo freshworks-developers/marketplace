@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { writeInstallState, prompt } from '../utils.js';
+import { writeInstallState, prompt, copyScripts } from '../utils.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -19,6 +19,9 @@ async function runClaude(args) {
 
 export async function install({ yes = false } = {}) {
   console.log('→ Installing for Claude Code...');
+
+  await copyScripts();
+  console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
   const addResult = await runClaude(['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE]);
   if (addResult.ok) {

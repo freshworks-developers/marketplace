@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC } from '../utils.js';
+import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC } from '../utils.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
@@ -39,6 +39,9 @@ export async function writeAgentsMdBlock(cwd = process.cwd()) {
 
 export async function install({ yes = false } = {}) {
   console.log('→ Installing for OpenAI Codex...');
+
+  await copyScripts();
+  console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
   const skillsDir = await resolveSkillsDir();
   await copySkills(skillsDir);

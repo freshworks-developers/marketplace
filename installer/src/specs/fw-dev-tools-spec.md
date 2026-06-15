@@ -2,11 +2,9 @@
 
 Managed install. Update with: `npx @freshworks/fw-dev-tools update`
 
-## Update check (once per day, passive)
+## Update check (once per session)
 
-On the first skill invocation of each day: read `~/.fw-dev-tools/install.json` (field: `version`), fetch `https://registry.npmjs.org/@freshworks%2ffw-dev-tools/latest` (field: `version`), compare. If behind, show exactly one line — **before** responding to the user's request:
-`⚠ fw-dev-tools v<current> → v<latest> available. Run: npx @freshworks/fw-dev-tools update`
-Then proceed normally. Do not block, do not repeat within the same day.
+On the first skill invocation of each session: run `bash ~/.fw-dev-tools/scripts/check-update.sh` and print its output if non-empty. Then proceed normally.
 
 ## Which skill to use
 

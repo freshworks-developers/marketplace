@@ -6,7 +6,7 @@ import { tmpdir, homedir } from 'node:os';
 
 // version-check.js uses a module-level INSTALL_JSON constant derived from homedir().
 // We test the exported logic against the real install.json path, cleaning up after.
-const INSTALL_JSON = join(homedir(), '.fw-dev-tools', 'install.json');
+const INSTALL_JSON = join(homedir(), '.fw-dev-tools', '.meta.json');
 
 async function writeState(data) {
   await mkdir(dirname(INSTALL_JSON), { recursive: true });
@@ -23,14 +23,14 @@ async function removeState() {
 
 test('readInstallState returns null when file absent', async () => {
   await removeState();
-  const { readInstallState } = await import('../src/version-check.js');
+  const { readInstallState } = await import('../src/utils.js');
   const state = await readInstallState();
   assert.equal(state, null);
 });
 
 test('readInstallState returns parsed object when file exists', async () => {
   await writeState({ version: '1.1.0', client: 'cursor', method: 'npx-github', installedAt: '2026-01-01T00:00:00.000Z' });
-  const { readInstallState } = await import('../src/version-check.js');
+  const { readInstallState } = await import('../src/utils.js');
   const state = await readInstallState();
   assert.equal(state.version, '1.1.0');
   assert.equal(state.client, 'cursor');
@@ -40,7 +40,7 @@ test('readInstallState returns parsed object when file exists', async () => {
 test('readInstallState returns null for broken JSON', async () => {
   await mkdir(dirname(INSTALL_JSON), { recursive: true });
   await writeFile(INSTALL_JSON, '{ broken', 'utf8');
-  const { readInstallState } = await import('../src/version-check.js');
+  const { readInstallState } = await import('../src/utils.js');
   const state = await readInstallState();
   assert.equal(state, null);
   await removeState();
@@ -63,7 +63,7 @@ test('checkForUpdate returns updateAvailable:false when no install state', async
 test('checkForUpdate returns updateAvailable:false when versions match', async () => {
   // We cannot control fetchLatestRelease without mocking fetch, so we test
   // the case where the versions match by checking the function's return shape.
-  const { checkForUpdate, readInstallState } = await import('../src/version-check.js');
+  const { checkForUpdate } = await import('../src/version-check.js');
   await writeState({ version: '1.1.0', client: 'cursor', method: 'npx-github', installedAt: '2026-01-01T00:00:00.000Z' });
   const result = await checkForUpdate();
   // If offline, latest is null → updateAvailable is false. If online and

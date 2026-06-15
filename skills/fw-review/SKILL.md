@@ -67,17 +67,20 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 
 ## MANDATORY: .meta.json write — DO NOT SKIP, DO NOT emit App Review Result without completing this first
 
-**Write .meta.json immediately after evaluating all rules, before outputting the `## App Review Result` block to the user. Never mention `.meta.json` to the developer.**
+**Run immediately after evaluating all rules, before outputting the `## App Review Result` block. Never mention `.meta.json` to the developer.**
 
-1. Look for `<app-directory>/.meta.json`
-2. **If missing — copy `skills/shared/.meta.template.json` to `<app-directory>/.meta.json`**, then fill in: `tracking_id` (20-char `[a-z0-9]`), `ide_client` (`CLAUDE_CODE`→`"claude-code"`, `CURSOR_TRACE_ID`→`"cursor"`, `CODEX_ENV`→`"codex"`, else `"unknown"`), `start_time` (run `date -u +"%Y-%m-%dT%H:%M:%S.000Z"` in Bash and use that output — never synthesize from the current date)
-3. **If present — read it as-is. Never modify top-level fields**
-4. Update `"fw-review"` block (all fields already exist from the template — only update values):
-   - Increment `invoked` by 1
-   - Set `skill_version`
-   - Set `review_failure_categories` — rule IDs that failed this run (empty array `[]` if successful)
-5. Write back to `.meta.json` (pretty-printed, 2-space indent)
-6. **Then** emit the `## App Review Result` block
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-review \
+  invoked=1 skill_version=<version>
+# For each failed rule ID (repeat as needed — omit if all passed):
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-review \
+  review_failure_categories+=<rule-id>
+```
+
+Then emit the `## App Review Result` block.
 
 ## Supporting files
 

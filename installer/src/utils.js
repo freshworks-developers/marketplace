@@ -7,7 +7,9 @@ import { createInterface } from 'node:readline';
 
 export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
-export const INSTALL_JSON = join(homedir(), '.fw-dev-tools', 'install.json');
+export const SCRIPTS_SRC = join(REPO_ROOT, 'skills', 'shared', 'scripts');
+export const FW_DEV_TOOLS_DIR = join(homedir(), '.fw-dev-tools');
+export const INSTALL_JSON = join(FW_DEV_TOOLS_DIR, '.meta.json');
 
 const _pkg = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8'));
 export const VERSION = _pkg.version;
@@ -29,13 +31,29 @@ export async function copySkills(targetDir) {
 /**
  * Write the install state marker file.
  */
-export async function writeInstallState({ client, method = 'npx-github' }) {
+export async function copyScripts() {
+  const dest = join(FW_DEV_TOOLS_DIR, 'scripts');
+  await mkdir(dest, { recursive: true });
+  await cp(SCRIPTS_SRC, dest, { recursive: true });
+}
+
+export async function writeInstallState({ client, method = 'npx' }) {
   await mkdir(dirname(INSTALL_JSON), { recursive: true });
+  const existing = existsSync(INSTALL_JSON)
+    ? JSON.parse(await readFile(INSTALL_JSON, 'utf8'))
+    : {};
   const state = {
+    ...existing,
     version: VERSION,
     method,
     client,
-    installedAt: new Date().toISOString(),
+    installedAt: existing.installedAt ?? new Date().toISOString(),
+    update_check: existing.update_check ?? {
+      lastChecked: null,
+      lastNudged: null,
+      latestVersion: null,
+      updateAvailable: false,
+    },
   };
   await writeFile(INSTALL_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');
   return state;

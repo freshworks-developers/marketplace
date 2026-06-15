@@ -9,6 +9,8 @@ AUTH_TOKEN=""
 OUTPUT_DIR="${HOME:-$(cd ~ && pwd)}/Desktop/demo/e2e-test-app"
 PUBLISH=false
 SKIP_BUILD=false
+LOCAL_TGZ=""      # path to local .tgz when --local is used
+LOCAL_SRC=false   # run directly from repo source (node installer/bin/cli.js)
 APP_PROMPT="Build a Freshdesk-Asana sync app that creates an Asana task whenever a Freshdesk ticket is created, and syncs ticket status changes back. Use iparams for Asana PAT and project ID."
 
 PASS=0
@@ -53,6 +55,8 @@ Usage: $0 [options]
 
 Options:
   --branch <name>       Installer branch (default: main)
+  --local <path>        Path to a local .tgz pack (use instead of npx from registry/github)
+  --local-src           Run directly from repo source via node (REPO_ROOT resolved correctly)
   --client <name>       LLM client: claude | cursor | codex (default: claude)
   --auth-token <jwt>    JWT for fw-publish (required when --publish is set)
   --output-dir <path>   App output directory (default: ~/Desktop/demo/e2e-test-app)
@@ -68,6 +72,8 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --branch)       BRANCH="$2";       shift 2 ;;
+    --local)        LOCAL_TGZ="${2/#\~/$HOME}"; shift 2 ;;
+    --local-src)    LOCAL_SRC=true;    shift   ;;
     --client)       CLIENT="$2";       shift 2 ;;
     --auth-token)   AUTH_TOKEN="$2";   shift 2 ;;
     --output-dir)   OUTPUT_DIR="${2/#\~/$HOME}"; shift 2 ;;
@@ -129,8 +135,13 @@ invoke_llm() {
 phase_install() {
   header "Phase 1: Install fw-dev-tools (branch: $BRANCH)"
 
+  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
   local install_cmd
-  if [[ "$BRANCH" == "main" ]]; then
+  if [[ "$LOCAL_SRC" == "true" ]]; then
+    install_cmd="node $REPO_ROOT/installer/bin/cli.js install --tools $CLIENT --yes"
+  elif [[ -n "$LOCAL_TGZ" ]]; then
+    install_cmd="npx $LOCAL_TGZ install --tools $CLIENT --yes"
+  elif [[ "$BRANCH" == "main" ]]; then
     install_cmd="npx @freshworks/fw-dev-tools install --tools $CLIENT --yes"
   else
     install_cmd="npx github:freshworks-developers/fw-dev-tools#$BRANCH install --tools $CLIENT --yes"
@@ -148,22 +159,26 @@ phase_install() {
   # verify install paths
   case "$CLIENT" in
     claude)
-      [[ -f "$HOME/.claude/CLAUDE.md" ]]         && pass "~/.claude/CLAUDE.md exists"       || fail "~/.claude/CLAUDE.md missing"
-      [[ -d "$HOME/.claude/skills/fw-app-dev" ]] && pass "~/.claude/skills/fw-app-dev exists" || fail "~/.claude/skills/fw-app-dev missing"
-      [[ -d "$HOME/.claude/skills/fw-review" ]]  && pass "~/.claude/skills/fw-review exists"  || fail "~/.claude/skills/fw-review missing"
-      [[ -d "$HOME/.claude/skills/fw-publish" ]] && pass "~/.claude/skills/fw-publish exists"  || fail "~/.claude/skills/fw-publish missing"
+      # claude uses native plugin system — verify scripts dir and .meta.json state file
+      [[ -d "$HOME/.fw-dev-tools/scripts" ]]       && pass "~/.fw-dev-tools/scripts exists"       || fail "~/.fw-dev-tools/scripts missing"
+      [[ -f "$HOME/.fw-dev-tools/scripts/meta-init.sh" ]]   && pass "meta-init.sh installed"   || fail "meta-init.sh missing"
+      [[ -f "$HOME/.fw-dev-tools/scripts/meta-update.sh" ]]  && pass "meta-update.sh installed"  || fail "meta-update.sh missing"
+      [[ -f "$HOME/.fw-dev-tools/scripts/meta-delete.sh" ]]  && pass "meta-delete.sh installed"  || fail "meta-delete.sh missing"
+      [[ -f "$HOME/.fw-dev-tools/scripts/check-update.sh" ]] && pass "check-update.sh installed" || fail "check-update.sh missing"
       ;;
     cursor)
       [[ -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules installed" || fail "Cursor rules missing"
-      [[ -d "$HOME/.cursor/skills/fw-app-dev" ]]              && pass "~/.cursor/skills/fw-app-dev exists" || fail "~/.cursor/skills/fw-app-dev missing"
+      [[ -d "$HOME/.cursor/skills/fw-app-dev" ]]      && pass "~/.cursor/skills/fw-app-dev exists" || fail "~/.cursor/skills/fw-app-dev missing"
+      [[ -d "$HOME/.fw-dev-tools/scripts" ]]           && pass "~/.fw-dev-tools/scripts exists" || fail "~/.fw-dev-tools/scripts missing"
       ;;
     codex)
       [[ -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev exists" || fail "~/.codex/skills/fw-app-dev missing"
       [[ -f ".mcp.json" ]] && pass ".mcp.json written in cwd" || fail ".mcp.json missing in cwd"
+      [[ -d "$HOME/.fw-dev-tools/scripts" ]] && pass "~/.fw-dev-tools/scripts exists" || fail "~/.fw-dev-tools/scripts missing"
       ;;
   esac
 
-  [[ -f "$HOME/.fw-dev-tools/install.json" ]] && pass "~/.fw-dev-tools/install.json written" || fail "~/.fw-dev-tools/install.json missing"
+  [[ -f "$HOME/.fw-dev-tools/.meta.json" ]] && pass "~/.fw-dev-tools/.meta.json written" || fail "~/.fw-dev-tools/.meta.json missing"
 }
 
 # ─── phase: build app ─────────────────────────────────────────────────────────
@@ -263,7 +278,11 @@ phase_appinfo() {
   local ai="$OUTPUT_DIR/.meta.json"
 
   if [[ ! -f "$ai" ]]; then
-    fail ".meta.json missing — LLM did not write metrics"
+    if [[ "$SKIP_BUILD" == "true" ]]; then
+      warn ".meta.json missing — expected (--skip-build, no LLM ran)"
+    else
+      fail ".meta.json missing — LLM did not write metrics"
+    fi
     return
   fi
   pass ".meta.json exists"
@@ -346,13 +365,18 @@ Use this as the Bearer token for the MCP server auth."
 phase_uninstall() {
   header "Phase 7: Uninstall"
 
-  local uninstall_ref
-  if [[ "$BRANCH" == "main" ]]; then
-    uninstall_ref="@freshworks/fw-dev-tools"
+  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+  local uninstall_cmd
+  if [[ "$LOCAL_SRC" == "true" ]]; then
+    uninstall_cmd="node $REPO_ROOT/installer/bin/cli.js uninstall --tools $CLIENT --yes"
+  elif [[ -n "$LOCAL_TGZ" ]]; then
+    uninstall_cmd="npx $LOCAL_TGZ uninstall --tools $CLIENT --yes"
+  elif [[ "$BRANCH" == "main" ]]; then
+    uninstall_cmd="npx @freshworks/fw-dev-tools uninstall --tools $CLIENT --yes"
   else
-    uninstall_ref="github:freshworks-developers/fw-dev-tools#$BRANCH"
+    uninstall_cmd="npx github:freshworks-developers/fw-dev-tools#$BRANCH uninstall --tools $CLIENT --yes"
   fi
-  if npx "$uninstall_ref" uninstall --tools "$CLIENT" --yes; then
+  if eval "$uninstall_cmd"; then
     pass "Uninstall exited 0"
   else
     fail "Uninstall failed"
@@ -361,18 +385,18 @@ phase_uninstall() {
   # verify cleanup
   case "$CLIENT" in
     claude)
-      ! grep -q "fw-app-dev\|fw-review\|fw-publish" "$HOME/.claude/CLAUDE.md" 2>/dev/null && pass "~/.claude/CLAUDE.md routing block removed" || fail "~/.claude/CLAUDE.md routing block still present"
-      [[ ! -d "$HOME/.claude/skills/fw-app-dev" ]] && pass "~/.claude/skills/fw-app-dev removed" || fail "~/.claude/skills/fw-app-dev still present"
+      [[ ! -d "$HOME/.fw-dev-tools/scripts" ]] && pass "~/.fw-dev-tools/scripts removed" || fail "~/.fw-dev-tools/scripts still present"
       ;;
     cursor)
       [[ ! -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules removed" || fail "Cursor rules still present"
+      [[ ! -d "$HOME/.cursor/skills/fw-app-dev" ]] && pass "~/.cursor/skills/fw-app-dev removed" || fail "~/.cursor/skills/fw-app-dev still present"
       ;;
     codex)
       [[ ! -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev removed" || fail "~/.codex/skills/fw-app-dev still present"
       ;;
   esac
 
-  [[ ! -f "$HOME/.fw-dev-tools/install.json" ]] && pass "install.json removed" || fail "install.json still present"
+  [[ ! -f "$HOME/.fw-dev-tools/.meta.json" ]] && pass "~/.fw-dev-tools/.meta.json removed" || fail "~/.fw-dev-tools/.meta.json still present"
 }
 
 # ─── summary + JSON results ───────────────────────────────────────────────────
@@ -435,10 +459,16 @@ EOF
 
 # ─── main ────────────────────────────────────────────────────────────────────
 echo "fw-dev-tools e2e test"
-echo "  branch:     $BRANCH"
+if [[ "$LOCAL_SRC" == "true" ]]; then
+  echo "  source:     local repo (--local-src)"
+elif [[ -n "$LOCAL_TGZ" ]]; then
+  echo "  source:     local tgz ($LOCAL_TGZ)"
+else
+  echo "  branch:     $BRANCH"
+fi
 echo "  client:     $CLIENT"
 echo "  output-dir: $OUTPUT_DIR"
-echo "  publish:    $( $PUBLISH && [[ -n "$AUTH_TOKEN" ]] && echo yes || echo no )"
+echo "  publish:    $( [[ "$PUBLISH" == "true" ]] && [[ -n "$AUTH_TOKEN" ]] && echo yes || echo no )"
 
 check_cli
 phase_install

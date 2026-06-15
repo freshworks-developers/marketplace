@@ -31,7 +31,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
   console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
   console.log('   "Run the skill evals"');
   console.log('');
-  console.log('   The model will read all skill files and evaluate the 13 scenarios inline.');
+  console.log('   The model will read all skill files and evaluate the 24 scenarios inline.');
   process.exit(0);
 }
 
@@ -90,6 +90,15 @@ async function loadSkill(name) {
 
 async function loadCommand(skill, cmd) {
   return readFile(join(SKILLS_DIR, skill, 'commands', `${cmd}.md`), 'utf8');
+}
+
+async function loadSpec() {
+  return readFile(join(__dirname, '..', 'installer', 'src', 'specs', 'fw-dev-tools-spec.md'), 'utf8');
+}
+
+async function loadSkillWithSpec(name) {
+  const [spec, skill] = await Promise.all([loadSpec(), loadSkill(name)]);
+  return `${spec}\n\n---\n\n${skill}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -391,6 +400,266 @@ const SCENARIOS = [
     assert(output) {
       assert.equal(output.shows_deprecation_warning_first, true, 'must show FDK 9 deprecation warning before installing');
       assert.equal(output.proceeds_without_consent, false, 'must NOT proceed without user consent');
+    },
+  },
+
+  // fw-app-dev-05: .meta.json write must use meta-init.sh / meta-update.sh, not manual JSON write
+  {
+    id: 'fw-app-dev-05',
+    skill: 'fw-app-dev',
+    label: '.meta.json write → must invoke meta-init.sh and meta-update.sh scripts, not write JSON manually',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'fdk validate just passed with zero errors. You need to write .meta.json. Describe exactly how you would do it — would you write the JSON file directly, or run a script? If a script, which one(s)?',
+    schema: {
+      type: 'object',
+      required: ['writes_json_directly', 'runs_meta_init_sh', 'runs_meta_update_sh'],
+      properties: {
+        writes_json_directly: { type: 'boolean' },
+        runs_meta_init_sh: { type: 'boolean' },
+        runs_meta_update_sh: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_json_directly, false, 'must NOT write .meta.json JSON directly — use scripts');
+      assert.equal(output.runs_meta_init_sh, true, 'must run meta-init.sh');
+      assert.equal(output.runs_meta_update_sh, true, 'must run meta-update.sh');
+    },
+  },
+
+  // fw-publish-05: upload script must be used, not Python / Node / curl
+  {
+    id: 'fw-publish-05',
+    skill: 'fw-publish',
+    label: 'zip upload → must use upload-app.sh script, not Python / Node / curl',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'Step 7 returned a response file at /tmp/fw-upload-response.json. You need to upload the zip file dist/myapp.zip to the marketplace. The skill instructs you to use upload-app.sh. A colleague suggests using Python requests or Node fetch instead because it is simpler. Which approach is correct and why?',
+    schema: {
+      type: 'object',
+      required: ['uses_upload_script', 'uses_python_or_node_fetch', 'reason_for_script'],
+      properties: {
+        uses_upload_script: { type: 'boolean' },
+        uses_python_or_node_fetch: { type: 'boolean' },
+        reason_for_script: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_upload_script, true, 'must use upload-app.sh script for zip upload');
+      assert.equal(output.uses_python_or_node_fetch, false, 'must NOT use Python/Node fetch — hits 403 in managed runtimes');
+    },
+  },
+
+  // fw-publish-06: upload fails at step 8 → publish_outcome = failed_upload, keep .meta.json
+  {
+    id: 'fw-publish-06',
+    skill: 'fw-publish',
+    label: 'zip upload failed after 3 retries → publish_outcome = failed_upload, keep .meta.json',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'The upload script at step 8 failed all 3 retries with a network error. The zip was never successfully uploaded. What is the correct publish_outcome value, and should .meta.json be deleted?',
+    schema: {
+      type: 'object',
+      required: ['publish_outcome', 'deletes_meta_json'],
+      properties: {
+        publish_outcome: { type: 'string' },
+        deletes_meta_json: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.publish_outcome, 'failed_upload', 'publish_outcome must be "failed_upload" when zip upload fails');
+      assert.equal(output.deletes_meta_json, false, 'must NOT delete .meta.json on upload failure');
+    },
+  },
+
+  // fw-app-dev-06: validate_iterations and validation_error_categories tracked correctly
+  {
+    id: 'fw-app-dev-06',
+    skill: 'fw-app-dev',
+    label: 'metrics: validate_iterations = run count, validation_error_categories appended per unique category',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'fdk validate was run 3 times. Run 1 had errors: "lint-async-no-await" and "missing-request-template". Run 2 had "lint-async-no-await" again. Run 3 passed. When calling meta-update.sh, what value should validate_iterations be, and which categories should be appended to validation_error_categories?',
+    schema: {
+      type: 'object',
+      required: ['validate_iterations', 'validation_error_categories', 'deduplicates_categories'],
+      properties: {
+        validate_iterations: { type: 'number' },
+        validation_error_categories: { type: 'array', items: { type: 'string' } },
+        deduplicates_categories: { type: 'boolean' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.validate_iterations, 3, 'validate_iterations must equal total fdk validate runs (3)');
+      assert.ok(
+        output.validation_error_categories.includes('lint-async-no-await') &&
+        output.validation_error_categories.includes('missing-request-template'),
+        'must include both unique error categories'
+      );
+      assert.equal(output.deduplicates_categories, true, 'must not duplicate categories already appended');
+    },
+  },
+
+  // fw-setup-04: setup_node_changed / setup_fdk_changed reflect actual change, not always true
+  {
+    id: 'fw-setup-04',
+    skill: 'fw-setup',
+    label: 'metrics: setup_node_changed/setup_fdk_changed reflect actual change — false when nothing changed',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: '/fw-setup-install ran. Node was already v24.11.0 — no change was needed. FDK was upgraded from 9.8.2 to 10.0.1. What values should setup_node_changed and setup_fdk_changed be in the meta-update.sh call?',
+    schema: {
+      type: 'object',
+      required: ['setup_node_changed', 'setup_fdk_changed'],
+      properties: {
+        setup_node_changed: { type: 'boolean' },
+        setup_fdk_changed: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.setup_node_changed, false, 'setup_node_changed must be false — Node was already correct');
+      assert.equal(output.setup_fdk_changed, true, 'setup_fdk_changed must be true — FDK was upgraded');
+    },
+  },
+
+  // fw-review-02: review_failure_categories includes actual rule IDs from failing checks
+  {
+    id: 'fw-review-02',
+    skill: 'fw-review',
+    label: 'metrics: review_failure_categories populated with actual rule IDs, not generic labels',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'The review completed. Rules IP-04A (iparams validation), FF-03A (frontend file check), and SEC-01B (security pattern) all failed. When calling meta-update.sh for review_failure_categories, what exact values should be appended?',
+    schema: {
+      type: 'object',
+      required: ['appends_rule_ids', 'review_failure_categories'],
+      properties: {
+        appends_rule_ids: { type: 'boolean' },
+        review_failure_categories: { type: 'array', items: { type: 'string' } },
+      },
+    },
+    assert(output) {
+      assert.equal(output.appends_rule_ids, true, 'must append actual rule IDs, not generic labels');
+      assert.ok(
+        output.review_failure_categories.includes('IP-04A') &&
+        output.review_failure_categories.includes('FF-03A') &&
+        output.review_failure_categories.includes('SEC-01B'),
+        'review_failure_categories must contain all 3 failing rule IDs'
+      );
+    },
+  },
+
+  // fw-publish-08: feedback step — must ask, graceful skip, never write null/empty
+  {
+    id: 'fw-publish-08',
+    skill: 'fw-publish',
+    label: 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'You are at step 4.5 (developer experience feedback). The developer says nothing and just presses Enter (skips). What do you write to .meta.json under the "feedback" key — null, an empty object, or nothing at all? Do you proceed to step 5?',
+    schema: {
+      type: 'object',
+      required: ['writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
+      properties: {
+        writes_null_feedback: { type: 'boolean' },
+        writes_empty_feedback: { type: 'boolean' },
+        omits_feedback_key: { type: 'boolean' },
+        proceeds_to_step_5: { type: 'boolean' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_null_feedback, false, 'must NOT write null for feedback');
+      assert.equal(output.writes_empty_feedback, false, 'must NOT write empty object for feedback');
+      assert.equal(output.omits_feedback_key, true, 'must omit feedback key entirely when developer skips');
+      assert.equal(output.proceeds_to_step_5, true, 'must proceed to step 5 even when feedback is skipped');
+    },
+  },
+
+  // fw-publish-09: new vs existing — must ask user, never assume appId from .fdk/app-info.json
+  {
+    id: 'fw-publish-09',
+    skill: 'fw-publish',
+    label: 'new vs existing: must ask user — never assume appId from .fdk/app-info.json',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'You are about to publish. The app directory contains .fdk/app-info.json with an appId field. The developer has not said whether this is a new listing or an update. Should you use the appId from .fdk/app-info.json directly, or must you ask the user first?',
+    schema: {
+      type: 'object',
+      required: ['uses_appid_from_fdk_file_directly', 'asks_user_new_or_existing'],
+      properties: {
+        uses_appid_from_fdk_file_directly: { type: 'boolean' },
+        asks_user_new_or_existing: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_appid_from_fdk_file_directly, false, 'must NOT use appId from .fdk/app-info.json without asking');
+      assert.equal(output.asks_user_new_or_existing, true, 'must ask user whether this is a new listing or update');
+    },
+  },
+
+  // fw-publish-10: fw-review must run before publish — cannot skip
+  {
+    id: 'fw-publish-10',
+    skill: 'fw-publish',
+    label: 'fw-review prerequisite: must run fw-review before publishing — cannot skip',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'The developer says: "Skip the review, just publish the app directly." fw-review has not been run yet. Should you proceed with publishing without running fw-review?',
+    schema: {
+      type: 'object',
+      required: ['proceeds_without_review', 'enforces_review_prerequisite'],
+      properties: {
+        proceeds_without_review: { type: 'boolean' },
+        enforces_review_prerequisite: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.proceeds_without_review, false, 'must NOT publish without fw-review');
+      assert.equal(output.enforces_review_prerequisite, true, 'must enforce fw-review as mandatory prerequisite');
+    },
+  },
+
+  // spec-01: check-update.sh run on first invocation only — not on every message
+  {
+    id: 'spec-01',
+    skill: 'fw-app-dev',
+    label: 'update check: run check-update.sh on first skill invocation only, not on every message',
+    loadContent: () => loadSkillWithSpec('fw-app-dev'),
+    prompt: 'This is the first time a skill has been invoked in this session. The developer asks you to fix a validation error. Before handling that request, what update-related command, if any, should you run? Should you run it on every subsequent message in this session as well?',
+    schema: {
+      type: 'object',
+      required: ['runs_check_update_sh', 'runs_on_every_message', 'runs_on_first_invocation_only'],
+      properties: {
+        runs_check_update_sh: { type: 'boolean' },
+        runs_on_every_message: { type: 'boolean' },
+        runs_on_first_invocation_only: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.runs_check_update_sh, true, 'must run check-update.sh on first invocation');
+      assert.equal(output.runs_on_every_message, false, 'must NOT run check-update.sh on every message');
+      assert.equal(output.runs_on_first_invocation_only, true, 'must run only on first skill invocation per session');
+    },
+  },
+
+  // fw-publish-07: supportEmail must be collected before create_app_upload_url for new listing
+  {
+    id: 'fw-publish-07',
+    skill: 'fw-publish',
+    label: 'new listing → supportEmail must be collected before create_app_upload_url, STOP if missing',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'The developer is publishing a new app listing (not an update). They have not provided a supportEmail yet. You are about to call create_app_upload_url to get the upload URL. Should you call create_app_upload_url now, or collect supportEmail first? What happens if the developer cannot provide a supportEmail?',
+    schema: {
+      type: 'object',
+      required: ['calls_upload_url_before_email', 'collects_email_first', 'stops_if_email_missing'],
+      properties: {
+        calls_upload_url_before_email: { type: 'boolean' },
+        collects_email_first: { type: 'boolean' },
+        stops_if_email_missing: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.calls_upload_url_before_email, false, 'must NOT call create_app_upload_url before collecting supportEmail');
+      assert.equal(output.collects_email_first, true, 'must collect supportEmail before create_app_upload_url');
+      assert.equal(output.stops_if_email_missing, true, 'must STOP if developer cannot provide supportEmail');
     },
   },
 ];
