@@ -5,17 +5,17 @@
 # will require approval from the listed owner(s) before it can merge.
 
 # Default: all changes require owner review
-*                                   @shivakumar-ashwin
+*                                   @shivakumar-ashwin @rapchic
 
 # Skill content — changes to any SKILL.md or command file
-skills/*/SKILL.md                   @shivakumar-ashwin
-skills/*/commands/                  @shivakumar-ashwin
-skills/shared/                      @shivakumar-ashwin
+skills/*/SKILL.md                   @shivakumar-ashwin @rapchic
+skills/*/commands/                  @shivakumar-ashwin @rapchic
+skills/shared/                      @shivakumar-ashwin @rapchic
 
 # Plugin manifests
-.claude-plugin/                     @shivakumar-ashwin
-.cursor-plugin/                     @shivakumar-ashwin
-.codex-plugin/                      @shivakumar-ashwin
+.claude-plugin/                     @shivakumar-ashwin @rapchic
+.cursor-plugin/                     @shivakumar-ashwin @rapchic
+.codex-plugin/                      @shivakumar-ashwin @rapchic
 
 # CI/security workflows
-.github/                            @shivakumar-ashwin
+.github/                            @shivakumar-ashwin @rapchic

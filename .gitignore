@@ -134,3 +134,5 @@ installer/*.tgz
 docs/
 
 /graphify-out
+/tests/e2e-batch-results
+/tests/e2e-cursor-results

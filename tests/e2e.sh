@@ -9,9 +9,12 @@ AUTH_TOKEN=""
 OUTPUT_DIR="${HOME:-$(cd ~ && pwd)}/Desktop/demo/e2e-test-app"
 PUBLISH=false
 SKIP_BUILD=false
-WORKFLOW="build"   # build | build-review | publish-guard
+WORKFLOW="build"   # build | build-review | publish-guard | cold-build | cold-build-review
+WORKFLOW_LABEL=""
 REQUIRE_REVIEW=false
 SAMPLE_APP=false
+STRIP_FDK=false
+E2E_FDK_SNAPSHOT=""
 INSTALL_TGZ=""     # path to local .tgz when --from-tgz is used
 INSTALL_FROM_REPO=false   # run directly from repo source (node installer/bin/cli.js)
 APP_PROMPT="Build a Freshdesk-Asana sync app that creates an Asana task whenever a Freshdesk ticket is created, and syncs ticket status changes back. Use iparams for Asana PAT and project ID."
@@ -28,6 +31,9 @@ HOME="${HOME:-$(cd ~ && pwd)}"
 # ─── always write report on exit (even if script dies mid-run) ───────────────
 _on_exit() {
   local exit_code=$?
+  if [[ "${STRIP_FDK:-false}" == "true" ]]; then
+    restore_fdk_after_strip || true
+  fi
   # only write if summary() hasn't already run (it sets _SUMMARY_DONE)
   if [[ "${_SUMMARY_DONE:-}" != "1" ]]; then
     summary
@@ -93,10 +99,12 @@ App under test:
   --output-dir <path>   App directory (default: ~/Desktop/demo/e2e-test-app)
 
 Workflow (what to exercise):
-  --workflow <name>     build | build-review | publish-guard (default: build)
-                        build          — install → LLM build → validate → uninstall
-                        build-review   — same + mandatory fw-review gate
-                        publish-guard  — publish without review must be refused
+  --workflow <name>     build | build-review | publish-guard | cold-build | cold-build-review
+                        build / build-review — install → LLM build → validate → uninstall
+                        cold-build / cold-build-review — same, but FDK is removed first;
+                          LLM must run /fw-setup-install before building
+                        publish-guard — publish without review must be refused
+  --strip-fdk           Remove FDK from nvm globals before LLM build (same as cold-build)
   --require-review      Fail if fw-review.invoked is 0 after build
   --skip-build          Skip LLM app generation (reuse app in --output-dir)
   --publish             Run fw-publish (requires --auth-token)
@@ -141,9 +149,26 @@ while [[ $# -gt 0 ]]; do
       fi
       ;;
     --workflow)
-      WORKFLOW="$(_normalize_workflow "$2")"
+      case "$2" in
+        cold-build)
+          STRIP_FDK=true
+          WORKFLOW=build
+          WORKFLOW_LABEL=cold-build
+          ;;
+        cold-build-review)
+          STRIP_FDK=true
+          WORKFLOW=build-review
+          REQUIRE_REVIEW=true
+          WORKFLOW_LABEL=cold-build-review
+          ;;
+        *)
+          WORKFLOW="$(_normalize_workflow "$2")"
+          WORKFLOW_LABEL="$WORKFLOW"
+          ;;
+      esac
       shift 2
       ;;
+    --strip-fdk)      STRIP_FDK=true;           shift   ;;
     --require-review|--strict-review)
       [[ "$1" == "--strict-review" ]] && _deprecate_flag "--strict-review" "--require-review"
       REQUIRE_REVIEW=true
@@ -167,8 +192,19 @@ done
 
 _apply_sample_app
 
+if [[ -z "$WORKFLOW_LABEL" ]]; then
+  WORKFLOW_LABEL="$WORKFLOW"
+fi
+if [[ "$STRIP_FDK" == "true" && "$WORKFLOW_LABEL" == "$WORKFLOW" ]]; then
+  WORKFLOW_LABEL="cold-${WORKFLOW}"
+fi
+
 if [[ "$WORKFLOW" != "build" && "$WORKFLOW" != "build-review" && "$WORKFLOW" != "publish-guard" ]]; then
-  echo "Error: --workflow must be build | build-review | publish-guard"; exit 1
+  echo "Error: --workflow must be build | build-review | publish-guard | cold-build | cold-build-review"; exit 1
+fi
+
+if [[ "$STRIP_FDK" == "true" && "$WORKFLOW" == "publish-guard" ]]; then
+  echo "Error: --strip-fdk / cold-build is not compatible with publish-guard"; exit 1
 fi
 
 if [[ "$WORKFLOW" == "publish-guard" ]]; then
@@ -238,6 +274,108 @@ activate_fdk_node() {
   node_ver=$(node -v 2>/dev/null || echo "unknown")
   if [[ "$node_ver" != v24.11* ]]; then
     warn "Node $node_ver active — FDK 10.x expects v24.11.x (nvm install 24.11)"
+  fi
+}
+
+fdk_on_path() {
+  command -v fdk &>/dev/null
+}
+
+snapshot_fdk_before_strip() {
+  if fdk_on_path; then
+    E2E_FDK_SNAPSHOT=$(fdk version 2>&1 | head -1 | tr -d '\n' || echo "present")
+  else
+    E2E_FDK_SNAPSHOT=""
+  fi
+}
+
+strip_fdk_globals() {
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
+    warn "nvm not found — cannot strip global FDK"
+    return 1
+  fi
+  # shellcheck source=/dev/null
+  . "$NVM_DIR/nvm.sh"
+  local node_ver
+  for node_ver in 24.11 24 18; do
+    nvm use "$node_ver" >/dev/null 2>&1 || continue
+    npm uninstall -g @freshworks/fdk fdk 2>/dev/null || true
+  done
+  hash -r 2>/dev/null || true
+}
+
+restore_fdk_after_strip() {
+  [[ -n "$E2E_FDK_SNAPSHOT" ]] || return 0
+  fdk_on_path && return 0
+  echo "  e2e: restoring FDK after cold-start run..."
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  [[ -s "$NVM_DIR/nvm.sh" ]] || return 1
+  # shellcheck source=/dev/null
+  . "$NVM_DIR/nvm.sh"
+  nvm use 24.11 >/dev/null 2>&1 || nvm install 24.11 >/dev/null 2>&1 || true
+  npm install -g https://cdn.freshdev.io/fdk/latest-v24.tgz >/dev/null 2>&1 || true
+  hash -r 2>/dev/null || true
+}
+
+phase_strip_fdk() {
+  header "Phase 1b: Strip FDK (cold start)"
+
+  snapshot_fdk_before_strip
+  if [[ -n "$E2E_FDK_SNAPSHOT" ]]; then
+    pass "FDK was on PATH before strip ($E2E_FDK_SNAPSHOT)"
+  else
+    warn "FDK was not on PATH before strip"
+  fi
+
+  if strip_fdk_globals; then
+    pass "attempted global FDK uninstall via nvm"
+  fi
+
+  if fdk_on_path; then
+    fail "fdk still on PATH after strip — cold start not simulated"
+  else
+    pass "fdk not on PATH (cold start ready)"
+  fi
+}
+
+phase_fw_setup_verify() {
+  header "Phase 2b: fw-setup verification"
+
+  local log="$OUTPUT_DIR/e2e-llm-output.log"
+  local _llm_text _setup_evidence=false
+  _llm_text="$(llm_log_text "$log")"
+
+  if grep -qiE 'fw-setup-install|/fw-setup-install|fw-setup install' <<< "$_llm_text"; then
+    _setup_evidence=true
+  elif grep -qiE 'fw-setup.{0,40}(install|installed)|install.{0,40}fw-setup|latest-v24\.tgz' <<< "$_llm_text"; then
+    _setup_evidence=true
+  elif [[ -f "$log" ]] && grep -q 'fw-setup-install\.md' "$log" 2>/dev/null; then
+    _setup_evidence=true
+  fi
+
+  if [[ "$_setup_evidence" == "true" ]]; then
+    pass "LLM ran fw-setup install flow (log or tool evidence)"
+  else
+    fail "LLM did not show fw-setup install evidence (required when FDK was stripped)"
+  fi
+
+  activate_fdk_node
+  if fdk_on_path; then
+    pass "fdk on PATH after LLM session"
+    local ver
+    ver=$(fdk version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
+    [[ -n "$ver" ]] && pass "fdk version reported: $ver" || warn "fdk version output inconclusive"
+  else
+    fail "fdk still missing after LLM — fw-setup install did not restore toolchain"
+  fi
+
+  local ai="$OUTPUT_DIR/.meta.json"
+  if [[ -f "$ai" ]]; then
+    local su_invoked
+    su_invoked=$(node -e "const m=require('$ai'); console.log((m['fw-setup']||{}).invoked||0)" 2>/dev/null || echo 0)
+    [[ "${su_invoked:-0}" -gt 0 ]] && pass "fw-setup.invoked > 0 in per-app .meta.json" \
+      || warn "fw-setup.invoked still 0 (setup may have run before manifest existed)"
   fi
 }
 
@@ -391,12 +529,18 @@ phase_build() {
 
   # craft the full prompt including the output dir so the LLM creates files there
   local full_prompt
+  local setup_step
+  if [[ "$STRIP_FDK" == "true" ]]; then
+    setup_step="1. fw-setup — FDK is NOT installed on this machine. Run /fw-setup-install (FDK 10.x + Node 24.11), verify with /fw-setup-status, then continue"
+  else
+    setup_step="1. fw-setup (check toolchain only — /fw-setup-status)"
+  fi
   full_prompt="Working directory: $OUTPUT_DIR
 
 $APP_PROMPT
 
 Use the fw-app-dev skill (skills/fw-app-dev/SKILL.md). Follow the mandatory skill order:
-1. fw-setup (check toolchain only — /fw-setup-status)
+${setup_step}
 2. fw-app-dev (build the app, run fdk validate until 0 errors)
 3. fw-review (MANDATORY before publish)
 Create all app files inside $OUTPUT_DIR. Write .meta.json per skill instructions."
@@ -735,7 +879,8 @@ print(json.dumps(checks))
   "timestamp": "$ts",
   "branch": "$BRANCH",
   "client": "$CLIENT",
-  "workflow": "$WORKFLOW",
+  "workflow": "$WORKFLOW_LABEL",
+  "stripFdk": $( [[ "$STRIP_FDK" == "true" ]] && echo true || echo false ),
   "sampleApp": $( [[ "$SAMPLE_APP" == "true" ]] && echo true || echo false ),
   "outputDir": "$OUTPUT_DIR",
   "overall": "$overall",
@@ -775,8 +920,9 @@ else
 fi
 echo "  agent:      $CLIENT"
 echo "  output-dir: $OUTPUT_DIR"
-echo "  workflow:   $WORKFLOW"
+echo "  workflow:   $WORKFLOW_LABEL"
 echo "  sample-app: $( [[ "$SAMPLE_APP" == "true" ]] && echo yes || echo no )"
+echo "  strip-fdk:  $( [[ "$STRIP_FDK" == "true" ]] && echo yes || echo no )"
 echo "  require-review: $( [[ "$REQUIRE_REVIEW" == "true" ]] && echo yes || echo no )"
 echo "  publish:    $( [[ "$PUBLISH" == "true" ]] && [[ -n "$AUTH_TOKEN" ]] && echo yes || echo no )"
 
@@ -793,7 +939,9 @@ if [[ "$WORKFLOW" == "publish-guard" ]]; then
 fi
 
 phase_install
+[[ "$STRIP_FDK" == "true" ]] && phase_strip_fdk
 $SKIP_BUILD || phase_build
+[[ "$STRIP_FDK" == "true" ]] && phase_fw_setup_verify
 
 # if Claude created app in a subfolder (fw-app-dev always creates a named folder),
 # point checks at the subfolder rather than OUTPUT_DIR directly

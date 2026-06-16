@@ -1,12 +1,12 @@
-import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { tmpdir, homedir } from 'node:os';
 import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { homedir, tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');

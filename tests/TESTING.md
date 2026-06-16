@@ -207,7 +207,8 @@ Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the f
 | `--agent <name>` | `claude` | LLM CLI: `claude` \| `cursor` \| `codex` |
 | Cursor streaming | — | `--agent cursor` uses `--output-format stream-json --stream-partial-output` so logs update live |
 | `--sample-app` | false | Serverless ticket-logger prompt + `~/Desktop/demo/e2e-sample-app` |
-| `--workflow <name>` | `build` | `build` \| `build-review` \| `publish-guard` |
+| `--workflow <name>` | `build` | `build` \| `build-review` \| `publish-guard` \| `cold-build` \| `cold-build-review` |
+| `--strip-fdk` | false | Uninstall global FDK via nvm before LLM build (LLM must run `/fw-setup-install`) |
 | `--require-review` | false | Fail if `fw-review.invoked` is 0 after build (`build-review` sets this automatically) |
 | `--skip-build` | false | Skip LLM app generation; reuse app in `--output-dir` |
 | `--prompt <text>` | Asana sync | Custom app generation prompt |
@@ -221,7 +222,11 @@ Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the f
 |--------------|--------------|
 | `build` | Install → LLM build → validate → uninstall |
 | `build-review` | Same as `build`, plus mandatory `fw-review` gate (`--require-review`) |
+| `cold-build` | Same as `build`, but **strips FDK** first; LLM must run `/fw-setup-install` |
+| `cold-build-review` | Same as `cold-build`, plus mandatory `fw-review` |
 | `publish-guard` | Publish without review must be refused (skips LLM build) |
+
+`--strip-fdk` on `build` / `build-review` is equivalent to the `cold-*` workflows. After a cold run, e2e attempts to **restore FDK** from the CDN tarball if it was present before the strip.
 
 Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm`, etc.) still work and print a deprecation notice.
 
@@ -239,6 +244,9 @@ Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm
 
 # publish without review must be blocked
 ./tests/e2e.sh --from-repo --workflow publish-guard --agent cursor
+
+# cold start: strip FDK, LLM must fw-setup-install, then build
+./tests/e2e.sh --from-repo --sample-app --workflow cold-build --agent cursor
 
 # re-validate an existing app (skip LLM build)
 ./tests/e2e.sh --from-repo --sample-app --skip-build --agent cursor
@@ -283,7 +291,9 @@ node tests/e2e-report.js
 | Phase | Hard fail | Warning |
 |-------|-----------|---------|
 | Install | Installer exits 0; install paths exist | — |
+| Strip FDK (`cold-*` / `--strip-fdk`) | `fdk` not on PATH after strip | FDK was already missing before strip |
 | Build | LLM CLI invocation completes | — |
+| fw-setup verify (`cold-*`) | LLM mentions `fw-setup-install`; `fdk` back on PATH after LLM | `fw-setup.invoked` still 0 in per-app `.meta.json` |
 | Structure | `manifest.json`, `platform-version: 3.0`, `README.md`, `icon.svg` | `iparams.json` missing (may use `iparams.html`) |
 | fdk validate | Exit 0; 0 platform errors; 0 lint errors | — |
 | .meta.json | File exists; `tracking_id` 20 chars; `fw-app-dev.invoked > 0`; `skill_version` set | `fw-review.invoked = 0` (LLM skipped mandatory review) |

@@ -1,10 +1,10 @@
-import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { copySkills, writeInstallState, readInstallState, VERSION, INSTALL_JSON } from '../src/utils.js';
+import { dirname, join } from 'node:path';
+import { test } from 'node:test';
+import { copySkills, INSTALL_JSON, readInstallState, VERSION, writeInstallState } from '../src/utils.js';
 
 async function makeTmp() {
   const dir = join(tmpdir(), `utils-test-${Date.now()}-${Math.floor(Math.random() * 10000)}`);
