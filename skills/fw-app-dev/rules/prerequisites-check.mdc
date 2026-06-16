@@ -47,7 +47,7 @@ Install prerequisites first:
 
 [if fw-setup skill is NOT available:]
 1. Install fw-setup skill:
-   npx github:freshworks-developers/fw-dev-tools install
+   npx @freshworks/fw-dev-tools install
 2. Run: /fw-setup-install
 3. Then retry your command
 ```
@@ -97,7 +97,7 @@ fw-app-dev requires:
 Install prerequisites first:
 
 1. Install fw-setup skill:
-   npx github:freshworks-developers/fw-dev-tools install
+   npx @freshworks/fw-dev-tools install
 2. Run: /fw-setup-install
 3. Then retry your command
 ```

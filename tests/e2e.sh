@@ -88,7 +88,7 @@ Usage: $0 [options]
 Installer source (pick one):
   --from-repo           Install from this marketplace repo (local dev)
   --from-tgz <path>     Install from a local .tgz pack
-  --branch <name>       Install from GitHub/npm branch (default: main)
+  --branch <tag>        npm dist-tag or version (default: main → latest). Unpublished git work: --from-repo
 
 LLM agent:
   --agent <name>        claude | cursor | codex (default: claude)
@@ -447,21 +447,33 @@ invoke_llm() {
   esac
 }
 
+# Npx package spec for published @freshworks/fw-dev-tools (main = registry latest).
+installer_npx_spec() {
+  if [[ "$BRANCH" == "main" ]]; then
+    echo '@freshworks/fw-dev-tools'
+  else
+    echo "@freshworks/fw-dev-tools@$BRANCH"
+  fi
+}
+
+# install | uninstall — from repo, local .tgz, or npm (never github: URL).
+installer_cli_cmd() {
+  local subcmd="$1"
+  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+  if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
+    echo "node $REPO_ROOT/installer/bin/cli.js $subcmd --tools $CLIENT --yes"
+  elif [[ -n "$INSTALL_TGZ" ]]; then
+    echo "npx $INSTALL_TGZ $subcmd --tools $CLIENT --yes"
+  else
+    echo "npx $(installer_npx_spec) $subcmd --tools $CLIENT --yes"
+  fi
+}
+
 # ─── phase: install ──────────────────────────────────────────────────────────
 phase_install() {
   header "Phase 1: Install fw-dev-tools (branch: $BRANCH)"
 
-  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-  local install_cmd
-  if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
-    install_cmd="node $REPO_ROOT/installer/bin/cli.js install --tools $CLIENT --yes"
-  elif [[ -n "$INSTALL_TGZ" ]]; then
-    install_cmd="npx $INSTALL_TGZ install --tools $CLIENT --yes"
-  elif [[ "$BRANCH" == "main" ]]; then
-    install_cmd="npx @freshworks/fw-dev-tools install --tools $CLIENT --yes"
-  else
-    install_cmd="npx github:freshworks-developers/fw-dev-tools#$BRANCH install --tools $CLIENT --yes"
-  fi
+  local install_cmd; install_cmd="$(installer_cli_cmd install)"
 
   echo "  Running: $install_cmd"
   if eval "$install_cmd"; then
@@ -826,17 +838,7 @@ Use this as the Bearer token for the MCP server auth."
 phase_uninstall() {
   header "Phase 7: Uninstall"
 
-  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-  local uninstall_cmd
-  if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
-    uninstall_cmd="node $REPO_ROOT/installer/bin/cli.js uninstall --tools $CLIENT --yes"
-  elif [[ -n "$INSTALL_TGZ" ]]; then
-    uninstall_cmd="npx $INSTALL_TGZ uninstall --tools $CLIENT --yes"
-  elif [[ "$BRANCH" == "main" ]]; then
-    uninstall_cmd="npx @freshworks/fw-dev-tools uninstall --tools $CLIENT --yes"
-  else
-    uninstall_cmd="npx github:freshworks-developers/fw-dev-tools#$BRANCH uninstall --tools $CLIENT --yes"
-  fi
+  local uninstall_cmd; uninstall_cmd="$(installer_cli_cmd uninstall)"
   if eval "$uninstall_cmd"; then
     pass "Uninstall exited 0"
   else
