@@ -352,8 +352,10 @@ describe('fw-publish SKILL.md', () => {
   test('contains feedback prompt step before fdk pack', async () => {
     const content = await readSkill('fw-publish');
     assert.ok(
-      content.includes('feedback') && (content.includes('4.5') || content.includes('Liked')),
-      'fw-publish must prompt for developer feedback before pack step'
+      content.includes('4.5')
+        && /developer-feedback-rating-prompt/i.test(content)
+        && /developer-feedback-comment-prompt/i.test(content),
+      'fw-publish must reference developer feedback templates before pack step'
     );
   });
 
@@ -570,6 +572,8 @@ describe('PR#21 — fw-publish reference files', () => {
     `${FW_PUB_REF}/templates/claude-mcp-setup.json`,
     `${FW_PUB_REF}/templates/cursor-mcp-setup.json`,
     `${FW_PUB_REF}/templates/custom-app-limit-warning.txt`,
+    `${FW_PUB_REF}/templates/developer-feedback-comment-prompt.txt`,
+    `${FW_PUB_REF}/templates/developer-feedback-rating-prompt.txt`,
     `${FW_PUB_REF}/templates/downgrade-warning.txt`,
     `${FW_PUB_REF}/templates/engines-mismatch-prompt.txt`,
     `${FW_PUB_REF}/templates/stuck-version-warning.txt`,
@@ -587,6 +591,17 @@ describe('PR#21 — fw-publish reference files', () => {
       assert.equal(j.mcpServers?.['fw-dev-mcp']?.url, 'https://mcp.freshworks.dev/mcp', `${f}: wrong MCP URL`);
       assert.ok(j.mcpServers['fw-dev-mcp'].headers?.Authorization?.startsWith('Bearer '), `${f}: missing Authorization header`);
     }
+  });
+
+  test('3.x: developer-feedback-rating-prompt.txt has Liked/Skip options', async () => {
+    const txt = await readRepo(`${FW_PUB_REF}/templates/developer-feedback-rating-prompt.txt`);
+    assert.ok(txt.includes('Liked it'), 'rating prompt must include Liked option');
+    assert.ok(txt.includes('Skip'), 'rating prompt must include Skip option');
+  });
+
+  test('3.x: developer-feedback-comment-prompt.txt invites optional comment', async () => {
+    const txt = await readRepo(`${FW_PUB_REF}/templates/developer-feedback-comment-prompt.txt`);
+    assert.ok(txt.includes('press Enter to skip'), 'comment prompt must allow skip');
   });
 
   test('3.x: custom-app-limit-warning.txt mentions 25 app limit', async () => {
@@ -775,6 +790,8 @@ describe('PR#21 — internal link integrity', () => {
       'skills/fw-publish/references/templates/claude-mcp-setup.json',
       'skills/fw-publish/references/templates/engines-mismatch-prompt.txt',
       'skills/fw-publish/references/templates/custom-app-limit-warning.txt',
+      'skills/fw-publish/references/templates/developer-feedback-comment-prompt.txt',
+      'skills/fw-publish/references/templates/developer-feedback-rating-prompt.txt',
       'skills/fw-publish/references/templates/stuck-version-warning.txt',
       'skills/fw-publish/references/templates/downgrade-warning.txt',
     ];

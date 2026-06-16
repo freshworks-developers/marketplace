@@ -235,7 +235,7 @@ const results = [];
 {
   const c = await skill('fw-publish');
   results.push(
-    /feedback/i.test(c) && /meta-feedback\.sh/i.test(c) && /skip/i.test(c)
+    /feedback/i.test(c) && /meta-feedback\.sh/i.test(c) && /developer-feedback-rating-prompt/i.test(c) && /skip/i.test(c)
       ? pass('fw-publish-08', 'fw-publish', 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty')
       : fail('fw-publish-08', 'fw-publish', 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty', 'missing feedback step or meta-feedback.sh'),
   );

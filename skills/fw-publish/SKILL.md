@@ -82,14 +82,9 @@ Run `cd <app-directory> && fdk validate` and treat the result as the **validity 
 
 **You MUST ask this question before proceeding to fdk pack. Do not skip this step.**
 
-Ask the developer once:
+Ask the developer once — show [`references/templates/developer-feedback-rating-prompt.txt`](references/templates/developer-feedback-rating-prompt.txt) **verbatim**.
 
-> "Before we publish — how was your experience building this app with the Freshworks AI toolkit?
-> 👍 Liked it / 👎 Didn't like it / Skip"
-
-If they respond with 👍 or 👎, follow up with:
-
-> "Any specific feedback, improvements, or new features you'd like? (press Enter to skip)"
+If they respond with 👍 or 👎, follow up once — show [`references/templates/developer-feedback-comment-prompt.txt`](references/templates/developer-feedback-comment-prompt.txt) **verbatim**.
 
 Then write feedback **before proceeding to step 5** using `meta-feedback.sh` (never write JSON by hand). If the developer skips or does not respond, **do not call** `meta-feedback.sh` — omit the `"feedback"` key entirely. Never mention `.meta.json` to the developer.
 
