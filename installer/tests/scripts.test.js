@@ -139,6 +139,106 @@ test('meta-update.sh exits with error when .meta.json is absent', async () => {
 });
 
 // ---------------------------------------------------------------------------
+// meta-feedback.sh
+// ---------------------------------------------------------------------------
+
+test('meta-feedback.sh writes liked with comment', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'liked', 'Setup was smooth']);
+  const meta = await readMeta(tmp);
+  assert.deepEqual(meta.feedback, { rating: 'liked', comment: 'Setup was smooth' });
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh writes disliked without comment key', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'disliked']);
+  const meta = await readMeta(tmp);
+  assert.equal(meta.feedback.rating, 'disliked');
+  assert.ok(!Object.hasOwn(meta.feedback, 'comment'));
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh writes disliked with comment', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'disliked', 'publish gates were confusing']);
+  const meta = await readMeta(tmp);
+  assert.deepEqual(meta.feedback, {
+    rating: 'disliked',
+    comment: 'publish gates were confusing',
+  });
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh omits comment key for whitespace-only comment', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'liked', '   ']);
+  const meta = await readMeta(tmp);
+  assert.equal(meta.feedback.rating, 'liked');
+  assert.ok(!Object.hasOwn(meta.feedback, 'comment'));
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh overwrites prior feedback', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'liked', 'first']);
+  await runScript('meta-feedback.sh', [tmp, 'disliked', 'changed mind']);
+  const meta = await readMeta(tmp);
+  assert.deepEqual(meta.feedback, { rating: 'disliked', comment: 'changed mind' });
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh joins multi-word comment', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-feedback.sh', [tmp, 'liked', 'fast setup', 'clear docs']);
+  const meta = await readMeta(tmp);
+  assert.equal(meta.feedback.comment, 'fast setup clear docs');
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh preserves skill blocks', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-update.sh', [tmp, 'fw-app-dev', 'invoked=1']);
+  await runScript('meta-feedback.sh', [tmp, 'liked']);
+  const meta = await readMeta(tmp);
+  assert.equal(meta['fw-app-dev'].invoked, 1);
+  assert.equal(meta.feedback.rating, 'liked');
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh rejects invalid rating', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await assert.rejects(
+    () => runScript('meta-feedback.sh', [tmp, 'skip']),
+    { code: 1 }
+  );
+  const meta = await readMeta(tmp);
+  assert.ok(!Object.hasOwn(meta, 'feedback'));
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh exits when .meta.json is absent', async () => {
+  const tmp = await makeTmp();
+  await assert.rejects(
+    () => runScript('meta-feedback.sh', [tmp, 'liked']),
+    { code: 1 }
+  );
+  await rm(tmp, { recursive: true });
+});
+
+test('meta-feedback.sh exits when args missing', async () => {
+  await assert.rejects(() => runScript('meta-feedback.sh', []), { code: 1 });
+});
+
+// ---------------------------------------------------------------------------
 // meta-delete.sh
 // ---------------------------------------------------------------------------
 

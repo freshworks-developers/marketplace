@@ -91,7 +91,19 @@ If they respond with 👍 or 👎, follow up with:
 
 > "Any specific feedback, improvements, or new features you'd like? (press Enter to skip)"
 
-Then write to `.meta.json` under a `"feedback"` key **before proceeding to step 5**. If the developer skips or does not respond, omit the `"feedback"` key entirely — do not write null or empty values. Never mention `.meta.json` to the developer.
+Then write feedback **before proceeding to step 5** using `meta-feedback.sh` (never write JSON by hand). If the developer skips or does not respond, **do not call** `meta-feedback.sh` — omit the `"feedback"` key entirely. Never mention `.meta.json` to the developer.
+
+```bash
+# Developer chose 👍 or 👎 and provided a comment:
+bash ~/.fw-dev-tools/scripts/meta-feedback.sh <app-directory> liked "Setup was smooth, fw-review caught issues I missed"
+
+# Developer chose 👍 or 👎 and skipped the follow-up comment:
+bash ~/.fw-dev-tools/scripts/meta-feedback.sh <app-directory> disliked
+
+# Developer chose Skip or did not answer — do NOT run meta-feedback.sh
+```
+
+Resulting shape in `.meta.json`:
 
 ```json
 "feedback": {

@@ -31,7 +31,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
   console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
   console.log('   "Run the skill evals"');
   console.log('');
-  console.log('   The model will read all skill files and evaluate the 67 scenarios inline.');
+  console.log('   The model will read all skill files and evaluate the 68 scenarios inline.');
   process.exit(0);
 }
 
@@ -552,11 +552,12 @@ const SCENARIOS = [
     skill: 'fw-publish',
     label: 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'You are at step 4.5 (developer experience feedback). The developer says nothing and just presses Enter (skips). What do you write to .meta.json under the "feedback" key — null, an empty object, or nothing at all? Do you proceed to step 5?',
+    prompt: 'You are at step 4.5 (developer experience feedback). The developer chooses Skip (or presses Enter without 👍/👎). Should you call meta-feedback.sh? What happens to the "feedback" key in .meta.json? Do you proceed to step 5?',
     schema: {
       type: 'object',
-      required: ['writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
+      required: ['calls_meta_feedback_sh', 'writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
       properties: {
+        calls_meta_feedback_sh: { type: 'boolean' },
         writes_null_feedback: { type: 'boolean' },
         writes_empty_feedback: { type: 'boolean' },
         omits_feedback_key: { type: 'boolean' },
@@ -564,10 +565,36 @@ const SCENARIOS = [
       },
     },
     assert(output) {
+      assert.equal(output.calls_meta_feedback_sh, false, 'must NOT call meta-feedback.sh when developer skips');
       assert.equal(output.writes_null_feedback, false, 'must NOT write null for feedback');
       assert.equal(output.writes_empty_feedback, false, 'must NOT write empty object for feedback');
       assert.equal(output.omits_feedback_key, true, 'must omit feedback key entirely when developer skips');
       assert.equal(output.proceeds_to_step_5, true, 'must proceed to step 5 even when feedback is skipped');
+    },
+  },
+
+  // fw-publish-08b: feedback liked + comment — meta-feedback.sh only
+  {
+    id: 'fw-publish-08b',
+    skill: 'fw-publish',
+    label: 'feedback liked + comment → meta-feedback.sh with rating and comment before step 5',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'Step 4.5: the developer chose 👍 Liked it and said "Setup was smooth". How do you persist feedback in .meta.json before fdk pack? Name the exact script and arguments pattern.',
+    schema: {
+      type: 'object',
+      required: ['uses_meta_feedback_sh', 'rating_liked', 'includes_comment', 'manual_json_write'],
+      properties: {
+        uses_meta_feedback_sh: { type: 'boolean' },
+        rating_liked: { type: 'boolean' },
+        includes_comment: { type: 'boolean' },
+        manual_json_write: { type: 'boolean' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_meta_feedback_sh, true, 'must use meta-feedback.sh');
+      assert.equal(output.rating_liked, true, 'rating must be liked');
+      assert.equal(output.includes_comment, true, 'comment must be passed when developer provided text');
+      assert.equal(output.manual_json_write, false, 'must NOT hand-write feedback JSON');
     },
   },
 

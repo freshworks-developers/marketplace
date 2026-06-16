@@ -813,7 +813,7 @@ describe('PR#21 — internal link integrity', () => {
 // ---------------------------------------------------------------------------
 
 describe('skills/shared/scripts', () => {
-  const SCRIPTS = ['meta-init.sh', 'meta-update.sh', 'meta-delete.sh', 'check-update.sh'];
+  const SCRIPTS = ['meta-init.sh', 'meta-update.sh', 'meta-feedback.sh', 'meta-delete.sh', 'check-update.sh'];
   const SCRIPTS_DIR = join(REPO_DIR, 'skills', 'shared', 'scripts');
 
   for (const script of SCRIPTS) {
@@ -853,6 +853,14 @@ describe('fw-publish meta-delete.sh', () => {
     assert.ok(
       content.includes('meta-delete.sh'),
       'fw-publish must reference meta-delete.sh for post-publish cleanup'
+    );
+  });
+
+  test('references meta-feedback.sh for developer feedback step', async () => {
+    const content = await readSkill('fw-publish');
+    assert.ok(
+      content.includes('meta-feedback.sh'),
+      'fw-publish must reference meta-feedback.sh for step 4.5 feedback'
     );
   });
 });

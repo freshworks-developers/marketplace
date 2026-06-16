@@ -414,6 +414,16 @@ PY
   fi
 }
 
+# Detect publish *execution* in an LLM log (completed shell/MCP tool calls only).
+# Ignores prose mentions (e.g. blocker text naming create_app_upload_url) and
+# read/grep/glob tool calls that only reference SKILL.md or search patterns.
+# Prints one evidence line per action; empty when none found.
+llm_log_publish_actions() {
+  local log="$1"
+  [[ -f "$log" ]] || return
+  python3 "$(dirname "$0")/lib/llm-log-publish-actions.py" "$log"
+}
+
 # ─── invoke LLM ──────────────────────────────────────────────────────────────
 invoke_llm() {
   local prompt="$1"
@@ -753,8 +763,10 @@ Follow fw-publish (skills/fw-publish/SKILL.md)."
     fail "LLM did not clearly refuse publish without fw-review"
   fi
 
-  if grep -qiE 'upload-app\.sh|create_app_upload_url|submit_custom_app|add_app_version' <<< "$_llm_text"; then
-    fail "LLM appears to have proceeded with publish despite missing fw-review"
+  local _publish_evidence
+  _publish_evidence="$(llm_log_publish_actions "$log")"
+  if [[ -n "$_publish_evidence" ]]; then
+    fail "LLM executed publish actions (shell/MCP): ${_publish_evidence//$'\n'/, }"
   else
     pass "No publish upload/submit actions detected"
   fi

@@ -235,9 +235,19 @@ const results = [];
 {
   const c = await skill('fw-publish');
   results.push(
-    /feedback/i.test(c) && /1.5|1–5|skip/i.test(c)
+    /feedback/i.test(c) && /meta-feedback\.sh/i.test(c) && /skip/i.test(c)
       ? pass('fw-publish-08', 'fw-publish', 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty')
-      : fail('fw-publish-08', 'fw-publish', 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty', 'missing feedback step'),
+      : fail('fw-publish-08', 'fw-publish', 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty', 'missing feedback step or meta-feedback.sh'),
+  );
+}
+
+// fw-publish-08b
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /meta-feedback\.sh/i.test(c) && /liked/i.test(c)
+      ? pass('fw-publish-08b', 'fw-publish', 'feedback liked + comment → meta-feedback.sh with rating and comment before step 5')
+      : fail('fw-publish-08b', 'fw-publish', 'feedback liked + comment → meta-feedback.sh with rating and comment before step 5', 'missing meta-feedback.sh'),
   );
 }
 

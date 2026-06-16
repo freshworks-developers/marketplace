@@ -32,7 +32,7 @@ PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 | You change | Also update | Verify |
 |------------|-------------|--------|
 | `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
-| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (67 scenarios) |
+| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (68 scenarios) |
 | `skills/shared/.meta.template.json` or meta scripts | All skills referencing `meta-init.sh` / `meta-update.sh` | `cd tests && npm test` |
 | `skills/fw-setup` toolchain guidance | **`docs/engine-matrix.md`** | `cd installer && npm test` |
 | `installer/` | **`installer/tests/`** | `cd installer && npm test` |
@@ -112,7 +112,7 @@ Keep this list aligned when adding or renaming files.
 
 When editing skills that write metrics, keep this contract consistent across **`fw-setup`**, **`fw-app-dev`**, **`fw-ai-actions-app`**, **`fw-review`**, **`fw-publish`**.
 
-**Template:** `skills/shared/.meta.template.json` · **Scripts:** `skills/shared/scripts/meta-init.sh`, `meta-update.sh`, `meta-delete.sh`
+**Template:** `skills/shared/.meta.template.json` · **Scripts:** `skills/shared/scripts/meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, `meta-delete.sh`
 
 - Writes go through the **scripts**, not hand-authored JSON in chat.
 - **Never mention `.meta.json`** to the end developer.

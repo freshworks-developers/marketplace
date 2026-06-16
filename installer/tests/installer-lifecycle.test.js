@@ -21,7 +21,7 @@ const MOCK_CLAUDE = join(dirname(fileURLToPath(import.meta.url)), 'fixtures', 'm
 const PKG_VERSION = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8')).version;
 
 const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
-const SCRIPT_NAMES = ['meta-init.sh', 'meta-update.sh', 'meta-delete.sh', 'check-update.sh'];
+const SCRIPT_NAMES = ['meta-init.sh', 'meta-update.sh', 'meta-feedback.sh', 'meta-delete.sh', 'check-update.sh'];
 
 async function makeHome() {
   const home = join(tmpdir(), `fw-lifecycle-${Date.now()}-${Math.random().toString(36).slice(2)}`);
