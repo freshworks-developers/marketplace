@@ -126,7 +126,7 @@ When editing skills that write metrics, keep this contract consistent across **`
 | **fw-app-dev** | After `fdk validate` completes (0 errors / 0 warnings) | — |
 | **fw-ai-actions-app** | After `fdk validate` completes (0 errors / 0 warnings) | — |
 | **fw-review** | After all rules evaluated, **before** `## App Review Result` (including 0 failures) | — |
-| **fw-publish** | After publish attempt (success or failure); **delete** on success | — |
+| **fw-publish** | **Before `fdk pack`** (step 4.6): `invoked` + `skill_version`; `failed_validate` at step 4 STOP; **delete** local `.meta.json` after successful publish (step 13) | Auth-only stop (step 1) with no validate attempt |
 
 Field-level detail: each skill’s **`SKILL.md`**.
 

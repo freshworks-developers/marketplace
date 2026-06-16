@@ -359,9 +359,21 @@ describe('fw-publish SKILL.md', () => {
     );
   });
 
-  test('specifies all 4 publish_outcome values', async () => {
+  test('writes fw-publish metrics before fdk pack (step 4.6)', async () => {
     const content = await readSkill('fw-publish');
-    for (const outcome of ['success', 'failed_validate', 'failed_upload', 'failed_submit']) {
+    const idx46 = content.indexOf('4.6');
+    const idxPack = content.indexOf('### 5. fdk pack');
+    assert.ok(idx46 !== -1 && idxPack !== -1, 'fw-publish must have step 4.6 before step 5');
+    assert.ok(idx46 < idxPack, 'step 4.6 must appear before fdk pack');
+    assert.ok(
+      content.includes('meta-update.sh') && /before.*fdk pack|before step 5/i.test(content),
+      'fw-publish must write metrics before fdk pack'
+    );
+  });
+
+  test('specifies publish_outcome failure values', async () => {
+    const content = await readSkill('fw-publish');
+    for (const outcome of ['failed_validate', 'failed_upload', 'failed_submit']) {
       assert.ok(content.includes(outcome), `fw-publish must define publish_outcome: "${outcome}"`);
     }
   });
@@ -372,6 +384,18 @@ describe('fw-publish SKILL.md', () => {
     assert.ok(
       content.includes('keep') || content.includes('intact'),
       'fw-publish must instruct to keep .meta.json on failure'
+    );
+  });
+
+  test('zip layout gate requires .meta.json in upload package', async () => {
+    const content = await readSkill('fw-publish');
+    assert.ok(
+      /Pass — metrics/i.test(content) && /\.meta\.json/.test(content) && /unzip -l/i.test(content),
+      'fw-publish zip gate must require .meta.json in unzip -l listing'
+    );
+    assert.ok(
+      content.includes('4.6') && content.includes('step 5'),
+      'zip metrics gate must reference pre-pack metrics step 4.6'
     );
   });
 });
@@ -736,6 +760,13 @@ describe('PR#21 — repack-app-zip.sh', () => {
     );
     assert.ok(result.includes('EXIT:1') || result.includes('Usage') || result.includes('usage') || result.includes('required'),
       'script must exit non-zero or print usage when called with no args');
+  });
+
+  test('7.4: repack-app-zip.sh member list includes .meta.json', async () => {
+    const { readFile } = await import('node:fs/promises');
+    const src = await readFile(join(REPO_DIR, 'skills/fw-publish/scripts/repack-app-zip.sh'), 'utf8');
+    assert.match(src, /manifest\.json.*\.meta\.json|\.meta\.json.*manifest\.json/s,
+      'repack-app-zip.sh must pack .meta.json with manifest.json');
   });
 });
 

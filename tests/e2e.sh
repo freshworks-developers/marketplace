@@ -424,6 +424,14 @@ llm_log_publish_actions() {
   python3 "$(dirname "$0")/lib/llm-log-publish-actions.py" "$log"
 }
 
+# Publish metrics timing: meta-update fw-publish before fdk pack; meta-delete after success.
+# Prints lines: pre_pack_metrics:yes|no meta_delete:yes|no zip_lists_meta:yes|no
+llm_log_publish_metrics() {
+  local log="$1"
+  [[ -f "$log" ]] || return
+  python3 "$(dirname "$0")/lib/llm-log-publish-metrics.py" "$log"
+}
+
 # ─── invoke LLM ──────────────────────────────────────────────────────────────
 invoke_llm() {
   local prompt="$1"
@@ -814,7 +822,8 @@ phase_publish() {
     return
   fi
 
-  local publish_prompt
+  local publish_prompt pub_log
+  pub_log="$OUTPUT_DIR/e2e-publish-output.log"
   publish_prompt="Working directory: $OUTPUT_DIR
 Auth token: $AUTH_TOKEN
 
@@ -824,11 +833,40 @@ Use this as the Bearer token for the MCP server auth."
 
   local pub_out
   pub_out=$(cd "$OUTPUT_DIR" && invoke_llm "$publish_prompt" "$OUTPUT_DIR")
-  echo "$pub_out" > "$OUTPUT_DIR/e2e-publish-output.log"
+  echo "$pub_out" > "$pub_log"
   echo "$pub_out" | tail -20
+
+  local _pack_ran=false
+  if llm_log_publish_actions "$pub_log" | grep -qi 'fdk pack'; then
+    _pack_ran=true
+  fi
+
+  if [[ "$_pack_ran" == "true" ]]; then
+    local _metrics
+    _metrics=$(llm_log_publish_metrics "$pub_log")
+    if grep -q 'pre_pack_metrics:yes' <<< "$_metrics"; then
+      pass "fw-publish meta-update ran before fdk pack (log order)"
+    else
+      fail "fw-publish meta-update must run before fdk pack when pack runs"
+    fi
+    if grep -q 'zip_lists_meta:yes' <<< "$_metrics"; then
+      pass "publish log shows .meta.json in zip listing (unzip -l)"
+    else
+      warn "Could not confirm .meta.json in zip listing — check e2e-publish-output.log"
+    fi
+  else
+    warn "fdk pack not detected in publish log — skipping pre-pack metrics order check"
+  fi
 
   if echo "$pub_out" | grep -qi "successfully\|submitted\|publish.*success\|get_app_status"; then
     pass "Publish appears successful (log: e2e-publish-output.log)"
+    if grep -q 'meta_delete:yes' <<< "$(llm_log_publish_metrics "$pub_log")"; then
+      pass "meta-delete.sh ran after successful publish"
+    else
+      warn "meta-delete.sh not detected after publish success"
+    fi
+    [[ ! -f "$OUTPUT_DIR/.meta.json" ]] && pass "per-app .meta.json removed after publish" \
+      || warn "per-app .meta.json still present after publish (expected delete on success)"
   else
     warn "Could not confirm publish success — check e2e-publish-output.log"
   fi

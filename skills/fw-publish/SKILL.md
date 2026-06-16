@@ -73,8 +73,20 @@ The Developer API key is **product-specific**. Ask the user to confirm their con
 
 Run `cd <app-directory> && fdk validate` and treat the result as the **validity gate** for upload:
 
-- **Required for any upload/submit:** **zero platform errors** and **zero lint errors** (same bar as **fw-app-dev**). If either fails, **STOP** — use the **fw-app-dev** skill to fix; **do not** call **`create_app_upload_url`** or upload a zip.
+- **Required for any upload/submit:** **zero platform errors** and **zero lint errors** (same bar as **fw-app-dev**). If either fails, **STOP** — write metrics (see **Validate failure metrics** below), then use the **fw-app-dev** skill to fix; **do not** call **`create_app_upload_url`**, **do not** run **`fdk pack`**, and **do not** upload a zip.
 - **`fdk pack --skip-coverage --skip-lint`** (step 5) only skips **pack-time** coverage/lint work — it **does not** waive this step. Never infer “app is valid” from pack alone.
+
+**Validate failure metrics (before STOP at step 4):** Never mention `.meta.json` to the developer.
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
+  invoked=1 skill_version=<version> publish_outcome=failed_validate
+```
+
+Keep `.meta.json` on disk. Do **not** run `meta-delete.sh`.
+
+Determine `IDE_CLIENT` for `meta-init.sh`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
 
 **Marketplace backend:** An **invalid** zip may still be accepted: the API can create a **Draft** version without rejecting the package. **Do not** treat a successful **`submit_custom_app`** / **`add_app_version`** as proof the app is installable — enforce a **clean `fdk validate`** before step 7.
 
@@ -110,6 +122,20 @@ Resulting shape in `.meta.json`:
 - `rating` — `"liked"` or `"disliked"`
 - `comment` — free text, omit key entirely if developer skipped
 
+### 4.6 MANDATORY — Write .meta.json metrics before fdk pack (DO NOT SKIP)
+
+**Platform ingests skill metrics from the uploaded app zip.** Complete this step **after** step 4.5 and **before** step 5 (`fdk pack`) so `<app-directory>/.meta.json` includes the **fw-publish** block when the package is built. Never mention `.meta.json` to the developer.
+
+Use the same `IDE_CLIENT` as step 4 validate-failure metrics (`CLAUDE_CODE` → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`).
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
+  invoked=1 skill_version=<version>
+```
+
+Leave **`publish_outcome`** empty (`""`) — upload/submit has not completed yet. The zip built in step 5 must carry this file to the platform.
+
 ### 5. fdk pack
 
 From the app directory (non-interactive; skips pack-time coverage/lint so automation does not block on coverage):
@@ -120,7 +146,7 @@ cd <app-directory> && printf 'Y\n' | fdk pack --skip-coverage --skip-lint
 
 Produces `dist/*.zip`. Reuse an existing zip only if `--force-pack` is not needed (agent judgment).
 
-**Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–13. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
+**Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–14. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
 
 **Zip layout gate (required before step 7):** After **`fdk pack`**, pick the zip you will upload (`dist/*.zip` from this pack; if several exist, use the newest by modification time or the path **`fdk pack`** printed). Run:
 
@@ -130,7 +156,8 @@ unzip -l 'dist/<app>.zip'
 
 Inspect the **Name** column (last column of each file row):
 
-- **Pass — continue:** At least one archive member is named exactly **`manifest.json`** at the **root** of the zip (not only under a subfolder).
+- **Pass — manifest:** At least one archive member is named exactly **`manifest.json`** at the **root** of the zip (not only under a subfolder).
+- **Pass — metrics:** **`.meta.json`** is listed at the **root** of the zip (written in step **4.6**). If **`fdk pack`** omitted it, **STOP** and repack per remediation below — **include `.meta.json` explicitly**.
 - **Fail — STOP; do not call `create_app_upload_url`:** **`manifest.json` is missing**, or only **`./manifest.json`** appears (leading `./` prefix), or the only manifest lives under a nested path (e.g. `some-folder/manifest.json`) without a root **`manifest.json`**. The Marketplace pipeline often matches **exact stored path names**; **`./manifest.json` is not treated the same** as **`manifest.json`** for those checks.
 
 **If the gate fails — remediation:**
@@ -140,10 +167,11 @@ Inspect the **Name** column (last column of each file row):
 
 ```bash
 rm -rf /tmp/fw-repack && mkdir -p /tmp/fw-repack && unzip -q -o 'dist/<app>.zip' -d /tmp/fw-repack
-cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.json app config server README.md
+cp '<app-directory>/.meta.json' /tmp/fw-repack/.meta.json
+cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.json .meta.json app config server README.md
 ```
 
-List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
+List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). **Always include `.meta.json`** when it exists in `<app-directory>`. Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until both gates pass, then upload **that** zip in step 8.
 
 ### 5.5 Custom app limit warning (MANDATORY — do not skip)
 
@@ -294,27 +322,35 @@ Call **`get_app_status`** with the **`appId`** returned from submit/update (or t
 
 Optionally, call **`list_app_versions`** with the **`appId`** to verify the new version reached **`test`** state and see the per-version breakdown. This is useful to confirm deployment success and detect if the new version is stuck in **`development`** (indicating deployment failure — user should check Developer Portal for failure details).
 
-### 13. MANDATORY — Write .meta.json metrics and delete on success (DO NOT SKIP, DO NOT report to user before this is done)
+### 13. Post-publish local cleanup (DO NOT SKIP on success — complete before step 14)
 
-**You MUST complete this step before telling the user anything. Do not emit step 14 report without completing this. Never mention `.meta.json` to the developer.**
+**You MUST complete this step before telling the user anything on the success path. Do not emit step 14 report without completing step 13. Never mention `.meta.json` to the developer.**
 
-Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
-
-`publish_outcome` values:
-- `"success"` — app reached `test` state (confirmed by step 12)
-- `"failed_validate"` — stopped at step 4 (`fdk validate` did not pass)
-- `"failed_upload"` — stopped at step 8 (zip PUT failed)
-- `"failed_submit"` — stopped at step 10 (`submit_custom_app` / `add_app_version` failed)
+**Successful publish** (step 12 confirms **`test`** state):
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
-bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
-  invoked=1 skill_version=<version> publish_outcome=<outcome>
-# If publish_outcome is "success" — delete .meta.json:
 bash ~/.fw-dev-tools/scripts/meta-delete.sh <app-directory>
 ```
 
-On any failure outcome, omit the `meta-delete.sh` call — keep `.meta.json` intact.
+Metrics were already shipped in the zip at step 5 (written in step **4.6**). **Do not** call `meta-update.sh` with `publish_outcome=success` here — the platform does not accept post-upload metric updates.
+
+**Failed after step 5** (upload or submit) — update **local** `.meta.json` only for diagnostics (the uploaded zip already has empty `publish_outcome`):
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish publish_outcome=failed_upload
+# or: publish_outcome=failed_submit
+```
+
+Do **not** call `meta-delete.sh`. Keep `.meta.json` intact.
+
+**`publish_outcome` reference:**
+
+| Value | When written | In uploaded zip? |
+|-------|----------------|------------------|
+| `failed_validate` | Step 4 STOP (before pack) | No — zip never built |
+| `""` (empty) | Step 4.6 (before pack) | **Yes** — normal publish path |
+| `failed_upload` | Step 13 after step 8 failure | Local only (zip already uploaded) |
+| `failed_submit` | Step 13 after step 10 failure | Local only (zip already uploaded) |
 
 ### 14. Report to user
 

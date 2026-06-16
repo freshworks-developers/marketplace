@@ -105,9 +105,9 @@ const results = [];
 {
   const c = await skill('fw-publish');
   results.push(
-    /meta-delete\.sh/i.test(c) && /publish_outcome.*success/i.test(c)
-      ? pass('fw-publish-01', 'fw-publish', 'publish succeeded (test state) → delete .meta.json, publish_outcome = success')
-      : fail('fw-publish-01', 'fw-publish', 'publish succeeded (test state) → delete .meta.json, publish_outcome = success', 'missing success cleanup'),
+    /4\.6/i.test(c) && /meta-update\.sh/i.test(c) && /before.*fdk pack/i.test(c) && /meta-delete\.sh/i.test(c)
+      ? pass('fw-publish-01', 'fw-publish', 'metrics before fdk pack (step 4.6) → delete .meta.json after successful publish')
+      : fail('fw-publish-01', 'fw-publish', 'metrics before fdk pack (step 4.6) → delete .meta.json after successful publish', 'missing pre-pack metrics or post-success delete'),
   );
 }
 
@@ -688,6 +688,16 @@ const results = [];
     /Existing app \(update\)/i.test(c) && /supportEmail.*is \*\*not\*\* part/i.test(c)
       ? pass('fw-publish-21', 'fw-publish', 'update existing listing → supportEmail not required')
       : fail('fw-publish-21', 'fw-publish', 'update existing listing → supportEmail not required', 'missing update-path no-email rule'),
+  );
+}
+
+// fw-publish-22
+{
+  const c = await skill('fw-publish');
+  results.push(
+    /Pass — metrics/i.test(c) && /\.meta\.json/.test(c) && /unzip -l/i.test(c)
+      ? pass('fw-publish-22', 'fw-publish', 'zip layout gate requires .meta.json in upload package')
+      : fail('fw-publish-22', 'fw-publish', 'zip layout gate requires .meta.json in upload package', 'missing zip metrics gate'),
   );
 }
 

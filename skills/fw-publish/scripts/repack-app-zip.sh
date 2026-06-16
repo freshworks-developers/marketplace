@@ -13,7 +13,7 @@ unzip -q -o "$SRC_ZIP" -d "$OUT_DIR"
 
 cd "$OUT_DIR"
 MEMBERS=()
-for f in manifest.json app config server README.md; do
+for f in manifest.json .meta.json app config server README.md; do
   [ -e "$f" ] && MEMBERS+=("$f")
 done
 # Include any other top-level entries not already listed

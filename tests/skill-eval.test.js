@@ -244,25 +244,25 @@ const SCENARIOS = [
     },
   },
 
-  // fw-publish-01: publish succeeded → delete .meta.json
+  // fw-publish-01: publish succeeded → delete .meta.json (metrics were pre-pack)
   {
     id: 'fw-publish-01',
     skill: 'fw-publish',
-    label: 'publish succeeded (test state) → delete .meta.json, publish_outcome = success',
+    label: 'metrics before fdk pack (step 4.6) → delete .meta.json after successful publish',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'Step 12 (get_app_status) confirmed the app is in "test" state. The publish was successful. What file operations happen before telling the user the publish is complete?',
+    prompt: 'Step 12 confirmed the app is in "test" state. When were fw-publish metrics (invoked, skill_version) written relative to fdk pack, and what file operation happens in step 13 before telling the user?',
     schema: {
       type: 'object',
-      required: ['deletes_meta_json', 'publish_outcome'],
+      required: ['deletes_meta_json', 'metrics_before_pack'],
       properties: {
         deletes_meta_json: { type: 'boolean' },
-        publish_outcome: { type: 'string' },
+        metrics_before_pack: { type: 'boolean' },
         mentions_meta_json_to_user: { type: 'boolean' },
       },
     },
     assert(output) {
       assert.equal(output.deletes_meta_json, true, 'must delete .meta.json on successful publish');
-      assert.equal(output.publish_outcome, 'success', 'publish_outcome must be "success"');
+      assert.equal(output.metrics_before_pack, true, 'fw-publish metrics must be written before fdk pack (step 4.6)');
     },
   },
 

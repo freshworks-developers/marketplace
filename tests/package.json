@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "node --test skill-static.test.js",
+    "test": "node --test skill-static.test.js repack-app-zip.test.mjs e2e-publish-guard-parser.test.mjs e2e-publish-metrics-parser.test.mjs",
     "eval": "node --test skill-eval.test.js && node report.js",
     "eval:inline": "node run-inline-eval.mjs && node report.js"
   },
