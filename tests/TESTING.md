@@ -1,321 +1,112 @@
 # Skill Test Suite
 
-Two-layer test suite for the marketplace skills. **Layer 1** runs in CI (no LLM). **Layer 2** runs locally and produces a report to attach to your PR.
+Automated and semi-automated tests for marketplace skills. **For manual QA**, use [docs/test-plan/](../../docs/test-plan/TEST-PLANS.md) — not this file.
+
+## Layers at a glance
+
+| Layer | Command | CI? | What it checks |
+|-------|---------|-----|----------------|
+| **1 — Static** | `cd tests && npm test` | Yes | Skill file structure, gates, scripts, templates (~140 tests) |
+| **2 — Installer** | `cd installer && npm test` | Yes | `npx` install/status/update/uninstall, meta scripts |
+| **3 — LLM eval** | `npm run eval` | No | 67 behavioral scenarios → `eval-report.html` |
+| **4 — E2E** | `./tests/e2e.sh` | No | Real agent builds app; install → build → validate chain |
 
 ## GitHub Actions (CI)
 
-Runs on **pull requests** and **pushes to `main`** (no duplicate push+PR runs on feature branches). No LLM or API keys in CI.
+Runs on **pull requests** and **pushes to `main`**. No LLM or API keys in CI.
 
-| Workflow | Jobs | What it gates |
-|----------|------|----------------|
-| `ci.yml` | Static skill tests (Node 22), Installer tests (Node 24) | `tests/npm test`, `installer/npm test` |
-| `dependency-review.yml` | Block high/critical CVEs in new deps | PR dependency changes only |
-| `dependency-audit.yml` | npm audit (installer, tests) | Lockfile high/critical CVEs |
-| `secret-scan.yml` | gitleaks CLI | Leaked secrets in git history |
+| Workflow | What it gates |
+|----------|----------------|
+| `ci.yml` | `tests/npm test`, `installer/npm test` |
+| `dependency-review.yml` | High/critical CVEs on new deps |
+| `dependency-audit.yml` | Lockfile audit (installer, tests) |
+| `secret-scan.yml` | gitleaks |
 
-**Org-level (not in repo YAML):** CodeQL JS/TS, Dependabot alerts. **Not in CI:** LLM eval (`npm run eval`), agent eval (“Run skill evals”), e2e (`tests/e2e.sh`).
+**Not in CI:** LLM eval (`npm run eval`), agent eval (“Run the skill evals”), `e2e.sh`.
 
 ## Quick start
 
 ```bash
-cd tests
-npm install
+cd marketplace/tests && npm install
+npm test                                    # Layer 1 static
+cd ../installer && npm test                 # Layer 2 installer
+cd ../tests && npm run eval                 # Layer 3 (API key optional)
+./e2e.sh --from-repo --sample-app --agent cursor   # Layer 4
 ```
 
-## Layer 1 — Static tests (CI, no LLM)
+## Layer 1 — Static tests
 
 ```bash
-npm test
+cd marketplace/tests && npm test
 ```
 
-Checks structural correctness of all skill files without any API calls:
+Checks skill files without any API calls: frontmatter, gate language, `.meta.json` script patterns, shared scripts, manifest skeletons, plugin consistency, link integrity, and related structural rules.
 
-- Frontmatter fields (`name`, `version`, `description`) and valid semver
-- Gate language (`DO NOT SKIP`, output blocked until .meta.json is written)
-- Script-based .meta.json pattern: every skill references `meta-init.sh` and `meta-update.sh`
-- "Never mention .meta.json to developer" rule present in every skill
-- `skills/shared/.meta.template.json` is valid JSON with all required skill blocks and fields
-- `skills/shared/scripts/` — all 4 scripts (`meta-init.sh`, `meta-update.sh`, `meta-delete.sh`, `check-update.sh`) exist and have execute bits set
-- fw-app-dev command files (`fdk-fix.md`, `fdk-migrate.md`) use `meta-init.sh` / `meta-update.sh` pattern
-- fw-publish uses `meta-delete.sh` for post-publish cleanup and defines all 4 `publish_outcome` values
-- fw-review gates result emission behind .meta.json write
-- fw-setup excludes read-only commands from .meta.json writes
-- Manifest skeleton templates have no tracking fields, use `modules` not `product`, have `engines`
-- Line count warning (not a failure) if any SKILL.md exceeds 500 lines
-- PR#21 structural checks: fdk-review removal, reference file existence, JSON/JS validity, link integrity, plugin version consistency, script executable bits
+**Expected:** 140 pass, 0 fail. Implementation: `skill-static.test.js`.
 
-**140 tests. Expected output: 140 pass, 0 fail.**
-
-### Installer lifecycle + e2e scenarios
-
-| Area | Layer | Where |
-|------|-------|-------|
-| Install, status, update, uninstall, migrations | **Installer** | `installer/tests/installer-lifecycle.test.js` |
-| Metrics scripts | **Installer** | `installer/tests/scripts.test.js` |
-| Build, review, publish guard | **E2E** | `tests/e2e.sh` (`--from-repo`, `--sample-app`, `--workflow`) |
-| Skill behavioral gates | **LLM eval** | `tests/skill-eval.test.js` |
-
-**Local run (all four layers):**
+## Layer 2 — Installer tests
 
 ```bash
-cd tests && npm test                              # Layer 1 static
-cd installer && npm test                          # Layer 4 installer + lifecycle
-cd tests && npm run eval                          # Layer 2 eval (API key optional)
-./tests/e2e.sh --from-repo --sample-app --agent cursor
-./tests/e2e.sh --from-repo --sample-app --workflow build-review --agent cursor
-./tests/e2e.sh --from-repo --workflow publish-guard --agent cursor
+cd marketplace/installer && npm test
 ```
 
-## Layer 2 — LLM eval (local only)
+Install, status, update, uninstall, legacy migrations, and meta script behavior. Implementation: `installer/tests/`.
+
+## Layer 3 — LLM eval
 
 ```bash
-ANTHROPIC_API_KEY=sk-... npm run eval
+ANTHROPIC_API_KEY=sk-... npm run eval     # automated
+npm run eval:inline                       # regex doc-regression only (no API)
 ```
 
-Without an API key, run evals in **Cursor / Claude Code / Codex** (agent session): ask **"Run the skill evals"**. The model reads skill files and judges all 67 scenarios — behavioral eval, not CI.
+**67 scenarios** across all 5 skills + orchestration spec. Source of truth: `skill-eval.test.js` (`SCENARIOS` array). Do not duplicate the scenario list in this doc — open the report or source file for IDs and assertions.
 
-Optional doc-regression check (regex only, not behavioral):
+**Without an API key:** in Cursor, Claude Code, or Codex, ask **“Run the skill evals”**. Same scenarios; writes `eval-report.html`.
+
+**Output:** `eval-results.json`, `eval-report.html`. Retries: 2/3 pass per scenario (non-determinism).
+
+## Layer 4 — E2E (`e2e.sh`)
 
 ```bash
-npm run eval:inline
+cd marketplace/tests
+./e2e.sh --from-repo --sample-app --workflow build-review --agent cursor
 ```
 
-Uses `run-inline-eval.mjs` to verify each scenario's rules are present in skill files, then writes `eval-report.html`.
+Installs toolkit, invokes a real agent CLI, asserts install → build → validate (and optional review/publish). Requires authenticated agent CLI.
 
-Uses `claude-haiku-4-5-20251001` to evaluate whether an LLM actually follows the critical behavioral rules in each skill. Each scenario forces structured JSON output via tool use, then asserts the fields deterministically.
+| Flag | Purpose |
+|------|---------|
+| `--from-repo` | Install from local marketplace repo |
+| `--sample-app` | Serverless ticket-logger prompt |
+| `--workflow` | `build` \| `build-review` \| `publish-guard` \| `cold-build` \| `cold-build-review` |
+| `--agent` | `claude` \| `cursor` \| `codex` |
+| `--strip-fdk` / `cold-*` | FDK removed first; agent must install FDK |
+| `--publish --auth-token` | Full publish phase (optional) |
 
-**67 scenarios** across all 5 skills + orchestration spec:
+**Output:** `e2e-results.json`, `e2e-report.html`. More flags: `./e2e.sh --help`.
 
-| ID | Skill | What it tests |
-|----|-------|---------------|
-| `fw-app-dev-01` | fw-app-dev | platform-version 2.3 → must run `/fdk-migrate` before `fdk validate` |
-| `fw-app-dev-02` | fw-app-dev | validate passed → write .meta.json before reporting, never mention to user |
-| `fw-app-dev-03` | fw-app-dev | 1 lint error remaining → cannot mark app complete |
-| `fw-app-dev-04` | fw-app-dev | `/fdk-review` invoked → redirect to fw-review, not handled by fw-app-dev |
-| `fw-app-dev-05` | fw-app-dev | .meta.json write → must invoke `meta-init.sh` + `meta-update.sh`, not write JSON directly |
-| `fw-app-dev-06` | fw-app-dev | metrics: `validate_iterations` = total runs, `validation_error_categories` deduped |
-| `fw-setup-01` | fw-setup | `/fw-setup-install` succeeded → write .meta.json before REPORT |
-| `fw-setup-02` | fw-setup | `/fw-setup-status` → must NOT write .meta.json (read-only) |
-| `fw-setup-03` | fw-setup | "install FDK 9" → deprecation warning must be shown before proceeding |
-| `fw-setup-04` | fw-setup | metrics: `setup_node_changed`/`setup_fdk_changed` reflect actual change, not always true |
-| `fw-review-01` | fw-review | review failures → .meta.json written before `## App Review Result` emitted |
-| `fw-review-02` | fw-review | metrics: `review_failure_categories` populated with actual rule IDs |
-| `fw-publish-01` | fw-publish | publish succeeded → delete .meta.json, `publish_outcome = "success"` |
-| `fw-publish-02` | fw-publish | validate failed → keep .meta.json, `publish_outcome = "failed_validate"` |
-| `fw-publish-03` | fw-publish | publish succeeded → `.meta.json` deleted silently without notifying developer |
-| `fw-publish-04` | fw-publish | publish failed → manifest unchanged, `start_time` not cleared |
-| `fw-publish-05` | fw-publish | zip upload → must use `upload-app.sh`, not Python/Node/curl |
-| `fw-publish-06` | fw-publish | upload failed after 3 retries → `publish_outcome = "failed_upload"`, keep .meta.json |
-| `fw-publish-07` | fw-publish | new listing → `supportEmail` collected before `create_app_upload_url`; STOP if missing |
-| `fw-publish-08` | fw-publish | feedback step → must ask; skip gracefully; never write null or empty |
-| `fw-publish-09` | fw-publish | new vs existing → must ask user; never assume appId from `.fdk/app-info.json` |
-| `fw-publish-10` | fw-publish | fw-review prerequisite → cannot publish without running fw-review first |
-| `fw-publish-11` | fw-publish | `actions.json` → ask about `worksWith: ai_actions` before submit |
-| `fw-publish-12` | fw-publish | update without `actions.json` → downgrade warning and confirm |
-| `fw-app-dev-07` | fw-app-dev | `/fw-setup-status` before building a new app |
-| `fw-review-03` | fw-review | multi-manifest → only ask which app |
-| `fw-ai-actions-01` | fw-ai-actions-app | validate completed → write .meta.json before showing result |
-| `spec-01` | (all) | update check → `check-update.sh` on first invocation only, not every message |
-| `spec-02` | (all) | update check → do not run `check-update.sh` again on later messages in session |
-| `spec-04` | (all) | `check-update.sh` writes `update_check` to `~/.fw-dev-tools/.meta.json`, not per-app `.meta.json` |
-| **P0** | | |
-| `fw-ai-actions-02` | fw-ai-actions-app | nested vendor payload → flat `parameters`, nest in `server.js` |
-| `fw-ai-actions-03` | fw-ai-actions-app | no `api_key` in `actions.json` → secure iparams |
-| `fw-review-04` | fw-review | `fdk` missing → STOP, offer fw-setup, no silent install |
-| `fw-app-dev-08` | fw-app-dev | refuse deprecated `implement_app` MCP tool |
-| `fw-app-dev-09` | fw-app-dev | legacy manifest engines → raise engines, not downgrade toolchain |
-| **P1** | | |
-| `fw-setup-05` | fw-setup | `/fw-setup-upgrade` → write `.meta.json` before REPORT |
-| `fw-setup-06` | fw-setup | `/fw-setup-troubleshoot` without `--fix` → no metrics write |
-| `fw-setup-07` | fw-setup | `/fw-setup-troubleshoot --fix` → write `.meta.json` |
-| `fw-setup-08` | fw-setup | refuse `npm install -g @freshworks/fdk` → CDN tarball only |
-| `fw-ai-actions-04` | fw-ai-actions-app | external HTTP → `$request.invokeTemplate` only |
-| `fw-ai-actions-05` | fw-ai-actions-app | AI-only app → no `app/` folder |
-| `fw-publish-13` | fw-publish | stuck `development` version → STOP, stuck-version warning |
-| `fw-publish-14` | fw-publish | MCP 401 → STOP auth setup, no retry |
-| `fw-publish-15` | fw-publish | engines mismatch → STOP, no `fdk pack` |
-| **P2** | | |
-| `fw-app-dev-10` | fw-app-dev | LAST RESORT engines downgrade only after 6 validate iterations |
-| `fw-app-dev-11` | fw-app-dev | Platform 2.x `product` block → migrate first |
-| `fw-ai-actions-06` | fw-ai-actions-app | multi-manifest → ask which app (Q1) |
-| `fw-ai-actions-07` | fw-ai-actions-app | handler names must match case-sensitively |
-| `fw-review-05` | fw-review | script checker crash → continue review |
-| `fw-publish-16` | fw-publish | `targetState` always `"test"`, never ask user |
-| `fw-publish-17` | fw-publish | zip with only `./manifest.json` → STOP before upload URL |
-| `fw-setup-09` | fw-setup | `/fw-setup-use` → no `.meta.json` write |
-| **P3** | | |
-| `fw-setup-10` | fw-setup | `/fw-setup-downgrade` → write `.meta.json` before REPORT |
-| `fw-setup-11` | fw-setup | install success, no manifest → skip metrics |
-| `fw-app-dev-12` | fw-app-dev | `fdk` missing → offer fw-setup, no silent install |
-| `fw-app-dev-13` | fw-app-dev | Scenario A: FDK 9 + 2.x → setup then migrate |
-| `fw-app-dev-14` | fw-app-dev | Scenario E: FDK 9 + 3.0 manifest → upgrade toolchain |
-| `fw-app-dev-15` | fw-app-dev | `$request.post` → `invokeTemplate` |
-| `fw-app-dev-16` | fw-app-dev | `product` block → `modules` |
-| `fw-review-06` | fw-review | 0 failures → still write meta before result |
-| `fw-publish-18` | fw-publish | `failed_submit`, keep meta |
-| `fw-publish-19` | fw-publish | custom app limit (25) warning |
-| `fw-publish-20` | fw-publish | `fdk` missing at publish |
-| `fw-publish-21` | fw-publish | update path → no `supportEmail` required |
-| `fw-ai-actions-08` | fw-ai-actions-app | array of objects in parameters forbidden |
-| `fw-ai-actions-09` | fw-ai-actions-app | no manifest → stop |
-| `spec-03` | (all) | mandatory skill order through fw-publish |
-
-Each failing scenario retries up to 3 times; passes if 2/3 succeed (handles non-determinism).
-
-### Output
-
-After `npm run eval`, two files are written:
-
-- `tests/eval-results.json` — raw results (pass/fail per scenario, model, timestamp)
-- `tests/eval-report.html` — HTML report with results table and failure details (open in browser)
-
-### Running in Claude Code, Cursor, or Codex (no API key needed)
-
-Instead of `npm run eval`, open this repo in Claude Code, Cursor, or Codex and ask:
-
-> "Run the skill evals"
-
-The model reads all skill files and evaluates the 67 scenarios inline, then writes the report. Same result, no API key required.
-
-This is also the fallback message shown when `npm run eval` is run without `ANTHROPIC_API_KEY`.
+**Hard-fail phases:** install, build, `fdk validate` 0/0, `.meta.json` structure. `fw-review.invoked = 0` is a **warning**, not a failure.
 
 ## Fixtures
 
-`tests/fixtures/` contains minimal app directories used by eval scenarios:
+`tests/fixtures/` — minimal apps for eval/e2e:
 
 | Fixture | Purpose |
 |---------|---------|
-| `platform3-valid/` | Clean Platform 3.0 app with `"app": {}` and correct engines |
-| `platform2-legacy/` | Legacy 2.3 app with `product` block — triggers migrate-first gate |
-| `app-with-meta/` | 3.0 app with existing `.meta.json` (fw-app-dev block, `invoked: 1`) |
-
-## Layer 3 — End-to-end test (local only)
-
-```bash
-./tests/e2e.sh [options]
-```
-
-Installs from GitHub, invokes a real LLM CLI to build an app, then asserts the full chain end-to-end. **Requires the chosen LLM CLI to be installed and authenticated.**
-
-**Options:**
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--from-repo` | false | Install from this marketplace repo (local dev) |
-| `--from-tgz <path>` | _(none)_ | Install from a local `.tgz` pack |
-| `--branch <name>` | `main` | Installer branch from GitHub/npm |
-| `--agent <name>` | `claude` | LLM CLI: `claude` \| `cursor` \| `codex` |
-| Cursor streaming | — | `--agent cursor` uses `--output-format stream-json --stream-partial-output` so logs update live |
-| `--sample-app` | false | Serverless ticket-logger prompt + `~/Desktop/demo/e2e-sample-app` |
-| `--workflow <name>` | `build` | `build` \| `build-review` \| `publish-guard` \| `cold-build` \| `cold-build-review` |
-| `--strip-fdk` | false | Uninstall global FDK via nvm before LLM build (LLM must run `/fw-setup-install`) |
-| `--require-review` | false | Fail if `fw-review.invoked` is 0 after build (`build-review` sets this automatically) |
-| `--skip-build` | false | Skip LLM app generation; reuse app in `--output-dir` |
-| `--prompt <text>` | Asana sync | Custom app generation prompt |
-| `--output-dir <path>` | `~/Desktop/demo/e2e-test-app` | Directory where the app is generated |
-| `--auth-token <jwt>` | _(none)_ | JWT for fw-publish; required with `--publish` |
-| `--publish` | false | Run the fw-publish phase (requires `--auth-token`) |
-
-**Workflows:**
-
-| `--workflow` | What it does |
-|--------------|--------------|
-| `build` | Install → LLM build → validate → uninstall |
-| `build-review` | Same as `build`, plus mandatory `fw-review` gate (`--require-review`) |
-| `cold-build` | Same as `build`, but **strips FDK** first; LLM must run `/fw-setup-install` |
-| `cold-build-review` | Same as `cold-build`, plus mandatory `fw-review` |
-| `publish-guard` | Publish without review must be refused (skips LLM build) |
-
-`--strip-fdk` on `build` / `build-review` is equivalent to the `cold-*` workflows. After a cold run, e2e attempts to **restore FDK** from the CDN tarball if it was present before the strip.
-
-Legacy aliases (`--local-src`, `--preset`, `--scenario`, `--client`, `--skip-llm`, etc.) still work and print a deprecation notice.
-
-**Examples:**
-
-```bash
-# basic run — all defaults (claude, main branch, Freshdesk-Asana app, no publish)
-./tests/e2e.sh
-
-# local dev: repo installer + cursor + sample app
-./tests/e2e.sh --from-repo --sample-app --agent cursor
-
-# build + mandatory review gate
-./tests/e2e.sh --from-repo --sample-app --workflow build-review --agent cursor
-
-# publish without review must be blocked
-./tests/e2e.sh --from-repo --workflow publish-guard --agent cursor
-
-# cold start: strip FDK, LLM must fw-setup-install, then build
-./tests/e2e.sh --from-repo --sample-app --workflow cold-build --agent cursor
-
-# re-validate an existing app (skip LLM build)
-./tests/e2e.sh --from-repo --sample-app --skip-build --agent cursor
-
-# test a specific installer branch
-./tests/e2e.sh --branch feat/single-installer-cli
-
-# enable the publish phase (requires both flags)
-./tests/e2e.sh --publish --auth-token "Bearer <jwt-from-developer-portal>"
-
-# change where the generated app is written
-./tests/e2e.sh --output-dir ~/Desktop/demo/my-test-app
-
-# use a custom app generation prompt
-./tests/e2e.sh --prompt "Build a Freshservice incident notifier that posts to Slack when a high-priority incident is created"
-
-# full run: feature branch, cursor, custom app, publish enabled
-./tests/e2e.sh \
-  --branch feat/single-installer-cli \
-  --agent cursor \
-  --prompt "Build a Freshdesk-Asana sync app" \
-  --output-dir ~/Desktop/demo/asana-sync \
-  --publish \
-  --auth-token "Bearer <jwt-from-developer-portal>"
-```
-
-**Phases and what each checks:**
-
-After the run, two files are written:
-
-- `tests/e2e-results.json` — raw results (status per check, branch, client, timestamp)
-- `tests/e2e-report.html` — self-contained HTML report grouped by phase (open in browser)
-
-The reporter (`tests/e2e-report.js`) can also be run manually after a run:
-
-```bash
-node tests/e2e-report.js
-```
-
-**Phases and what each checks:**
-
-| Phase | Hard fail | Warning |
-|-------|-----------|---------|
-| Install | Installer exits 0; install paths exist | — |
-| Strip FDK (`cold-*` / `--strip-fdk`) | `fdk` not on PATH after strip | FDK was already missing before strip |
-| Build | LLM CLI invocation completes | — |
-| fw-setup verify (`cold-*`) | LLM mentions `fw-setup-install`; `fdk` back on PATH after LLM | `fw-setup.invoked` still 0 in per-app `.meta.json` |
-| Structure | `manifest.json`, `platform-version: 3.0`, `README.md`, `icon.svg` | `iparams.json` missing (may use `iparams.html`) |
-| fdk validate | Exit 0; 0 platform errors; 0 lint errors | — |
-| .meta.json | File exists; `tracking_id` 20 chars; `fw-app-dev.invoked > 0`; `skill_version` set | `fw-review.invoked = 0` (LLM skipped mandatory review) |
-| Publish | _(skipped if no token)_ | Publish outcome not confirmed |
-| Uninstall | Exits 0; install paths removed | — |
-
-`fw-review.invoked` is a **warning not a failure** — the check surfaces when the LLM skipped the mandatory review step without blocking the run, so you can investigate the skill gate separately.
+| `platform3-valid/` | Clean Platform 3.0 app |
+| `platform2-legacy/` | 2.3 `product` block — migrate-first gate |
+| `app-with-meta/` | 3.0 app with existing `.meta.json` |
 
 ## Adding tests
 
-**Static:** add assertions to `skill-static.test.js` using `node:test` + `assert/strict`.
+| Type | Where |
+|------|-------|
+| Static assertions | `skill-static.test.js` |
+| Eval scenarios | `SCENARIOS` in `skill-eval.test.js` |
+| Fixtures | `tests/fixtures/` |
 
-**Eval scenarios:** add an entry to the `SCENARIOS` array in `skill-eval.test.js` following the existing pattern — `loadContent`, `prompt`, `schema`, `assert`.
+**Cross-platform:** use `grepFiles()` helper and `join()` for paths; guard `.sh` invocations with `{ skip: process.platform === 'win32' }`. See existing tests in `skill-static.test.js`.
 
-**Fixtures:** add app directories under `tests/fixtures/` as needed.
+## Manual regression
 
-### Cross-platform rules for static tests
-
-The static test suite must run on macOS, Linux, and Windows. Follow these rules when adding new tests:
-
-- **No shell `grep`** — use the `grepFiles(dir, needle, { skipDirs })` helper already in `skill-static.test.js`. It walks the file tree with `readdir` and works everywhere.
-- **No bash/sh scripts** — if a test invokes a `.sh` script, guard it with `{ skip: process.platform === 'win32' }` so it is skipped rather than erroring on Windows.
-- **No Unix-only flags** — `grep --exclude-dir`, `find -exec`, `chmod` etc. are not available on Windows. Use Node `fs` APIs instead.
-- **`node --check`** for JS syntax validation is cross-platform and fine to use as-is.
-- **Paths** — always build paths with `join()`, never string concatenation with `/`.
+Human/agent prompt-by-prompt testing lives in **[docs/test-plan/](../../docs/test-plan/TEST-PLANS.md)** (installer + skill regression). Eval scenarios overlap in *intent* but test skill-doc compliance, not full agent runs.
