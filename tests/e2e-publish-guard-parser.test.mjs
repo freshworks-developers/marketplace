@@ -17,10 +17,7 @@ function parsePublishActions(logPath) {
 }
 
 test('cursor publish-guard log: prose MCP names are not publish actions', () => {
-  const fixture = join(
-    process.env.HOME,
-    'Desktop/demo/e2e-feedback-guard-cursor-publish-blocked/e2e-publish-blocked.log'
-  );
+  const fixture = join(__dirname, 'fixtures', 'publish-guard-cursor-prose.jsonl');
   const evidence = parsePublishActions(fixture);
   assert.equal(evidence, '', `expected no publish actions, got: ${evidence}`);
 });

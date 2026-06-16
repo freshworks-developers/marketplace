@@ -1,0 +1,4 @@
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Publish cannot proceed. `list_custom_apps` failed. Do not call `create_app_upload_url` or `submit_custom_app` until auth and validate pass."}]}}
+{"type":"tool_call","subtype":"completed","tool_call":{"grepToolCall":{"args":{"pattern":"list_custom_apps|create_app_upload_url","path":"/tmp"}}}}
+{"type":"tool_call","subtype":"completed","tool_call":{"readToolCall":{"args":{"path":"/Users/example/app/manifest.json"}}}}
+{"type":"tool_call","subtype":"completed","tool_call":{"shellToolCall":{"args":{"command":"cd /tmp/app && fdk validate 2>&1"}}}}
