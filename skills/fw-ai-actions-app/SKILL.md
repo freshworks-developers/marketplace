@@ -1,7 +1,7 @@
 ---
 name: fw-ai-actions-app
 description: Expert-level skill for AI Actions and integrations on Freshworks Platform 3.0. Use when (1) Creating actions.json and SMI functions (flat request, nested response), (2) Request templates and third-party API integration, (3) Pre-build validation (pricing, paywalls, account prerequisites), (4) Failure-case validation and test data guardrails, (5) Debugging broken endpoints, (6) Integration implementation checklist (auth, base URL, request body, trigger-friendly schema), (7) Scoping and planning new integrations (and comparing only when user asks).
-version: "1.1.5"
+version: "1.1.6"
 compatibility: Freshworks Platform 3.0, FDK 10.x, Node.js 24.x
 ---
 

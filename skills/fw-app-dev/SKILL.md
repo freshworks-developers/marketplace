@@ -1,6 +1,6 @@
 ---
 name: fw-app-dev
-version: "1.1.5"
+version: "1.1.6"
 description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup skill. Before fdk validate, follow this SKILL.md Manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 as a shortcut except LAST RESORT after six validate iterations). New apps default to FDK 10.0.1 and Node.js 24.x; FDK 9.x/Node 18.x allowed when explicitly requested with deprecation notice. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission task."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor]"

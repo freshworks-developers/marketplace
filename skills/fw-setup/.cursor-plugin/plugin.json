@@ -1,7 +1,7 @@
 {
   "name": "fw-setup",
   "displayName": "Freshworks FDK Setup",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Installs and manages Freshworks Development Kit (FDK) with Node.js 24 via nvm. Slash: /fw-setup-install (--version), /fw-setup-upgrade (--to), /fw-setup-downgrade, /fw-setup-uninstall, /fw-setup-status (--verbose), /fw-setup-troubleshoot (--fix), /fw-setup-use (workspace nvm stack). Legacy: /fdk-install, etc.",
   "author": {
     "name": "Freshworks Developers",
