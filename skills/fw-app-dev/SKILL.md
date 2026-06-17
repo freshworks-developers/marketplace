@@ -130,7 +130,7 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 4. Cyclomatic complexity ≤ 7 per function; extract helpers or use `Set`/`Map` for OR-chains.
 5. Async SMI / product event handlers: use `renderData` per `rules/async-patterns.mdc`.
 6. Every `config/requests.json` key declared under `modules.common.requests` in `manifest.json` (and reverse: no orphan manifest entries).
-7. OAuth: `integrations` wrapper in `oauth_config.json`; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
+7. OAuth: `integrations` wrapper in `oauth_config.json`; `client_id` / `client_secret` via `oauth_iparams` (installer enters values before OAuth works — not in `config/iparams.json`) if it is required at per installation level; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
 8. Frontend apps: `app/styles/images/icon.svg` + Crayons CDN in HTML (see templates).
 9. FQDN `host` only in request templates; paths start with `/`.
 10. `README.md` exists before you claim the app is ready for `fdk validate`.

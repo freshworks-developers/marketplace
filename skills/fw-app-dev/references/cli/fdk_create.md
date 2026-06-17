@@ -241,21 +241,44 @@ my-oauth-app/
 ├── config/
 │   ├── iparams.json
 │   ├── requests.json       # OAuth-enabled requests
-│   └── oauth_config.json   # OAuth configuration
+│   └── oauth_config.json   # OAuth configuration + oauth_iparams
 ├── manifest.json
 └── README.md
 ```
 
 **config/oauth_config.json:**
+
+The installing developer must register a Google OAuth app, then enter **Client ID** and **Client Secret** on the installation page (`oauth_iparams` — not `config/iparams.json`) before `fdk run` / OAuth authorization.
+
 ```json
 {
-  "client_id": "{{client_id}}",
-  "client_secret": "{{client_secret}}",
-  "authorize_url": "https://accounts.google.com/o/oauth2/v2/auth",
-  "token_url": "https://oauth2.googleapis.com/token",
-  "token_type": "account",
-  "options": {
-    "scope": "https://www.googleapis.com/auth/userinfo.email"
+  "integrations": {
+    "google": {
+      "display_name": "Google",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
+      "authorize_url": "https://accounts.google.com/o/oauth2/v2/auth",
+      "token_url": "https://oauth2.googleapis.com/token",
+      "token_type": "account",
+      "options": {
+        "scope": "https://www.googleapis.com/auth/userinfo.email"
+      },
+      "oauth_iparams": {
+        "client_id": {
+          "display_name": "Google OAuth Client ID",
+          "description": "Client ID from Google Cloud Console OAuth credentials",
+          "type": "text",
+          "required": true
+        },
+        "client_secret": {
+          "display_name": "Google OAuth Client Secret",
+          "description": "Client secret from Google Cloud Console OAuth credentials",
+          "type": "text",
+          "required": true,
+          "secure": true
+        }
+      }
+    }
   }
 }
 ```
@@ -268,8 +291,12 @@ my-oauth-app/
       "method": "GET",
       "host": "www.googleapis.com",
       "path": "/oauth2/v2/userinfo",
-      "auth_type": "oauth",
-      "oauth_provider": "google"
+      "headers": {
+        "Authorization": "Bearer <%= access_token %>"
+      }
+    },
+    "options": {
+      "oauth": "google"
     }
   }
 }
