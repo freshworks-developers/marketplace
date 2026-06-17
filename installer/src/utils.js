@@ -103,11 +103,19 @@ export async function writeInstallState({ client, method = 'npx' }) {
   const existing = existsSync(INSTALL_JSON)
     ? JSON.parse(await readFile(INSTALL_JSON, 'utf8'))
     : {};
+  let existingClients;
+  if (Array.isArray(existing.clients)) {
+    existingClients = existing.clients;
+  } else {
+    existingClients = existing.client ? [existing.client] : [];
+  }
+  const clients = existingClients.includes(client) ? existingClients : [...existingClients, client];
   const state = {
     ...existing,
     version: VERSION,
     method,
     client,
+    clients,
     installedAt: existing.installedAt ?? new Date().toISOString(),
     update_check: existing.update_check ?? await readUpdateCheckDefaults(),
   };

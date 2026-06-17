@@ -112,8 +112,40 @@ test('writeInstallState writes correct JSON shape', async () => {
 });
 
 test('writeInstallState accepts custom method', async () => {
-  const written = await writeInstallState({ client: 'claude-code', method: 'npm' });
+  const written = await writeInstallState({ client: 'claude', method: 'npm' });
   assert.equal(written.method, 'npm');
+  await rm(INSTALL_JSON, { force: true });
+});
+
+test('writeInstallState initialises clients array on first write', async () => {
+  await rm(INSTALL_JSON, { force: true });
+  const written = await writeInstallState({ client: 'cursor' });
+  assert.deepEqual(written.clients, ['cursor']);
+  await rm(INSTALL_JSON, { force: true });
+});
+
+test('writeInstallState accumulates clients array across multiple writes', async () => {
+  await rm(INSTALL_JSON, { force: true });
+  await writeInstallState({ client: 'cursor' });
+  await writeInstallState({ client: 'claude' });
+  const written = await writeInstallState({ client: 'codex' });
+  assert.deepEqual(written.clients, ['cursor', 'claude', 'codex']);
+  await rm(INSTALL_JSON, { force: true });
+});
+
+test('writeInstallState does not duplicate client in array', async () => {
+  await rm(INSTALL_JSON, { force: true });
+  await writeInstallState({ client: 'cursor' });
+  const written = await writeInstallState({ client: 'cursor' });
+  assert.deepEqual(written.clients, ['cursor']);
+  await rm(INSTALL_JSON, { force: true });
+});
+
+test('writeInstallState migrates legacy single client field to array', async () => {
+  await mkdir(dirname(INSTALL_JSON), { recursive: true });
+  await writeFile(INSTALL_JSON, JSON.stringify({ client: 'cursor', version: VERSION }), 'utf8');
+  const written = await writeInstallState({ client: 'claude' });
+  assert.deepEqual(written.clients, ['cursor', 'claude']);
   await rm(INSTALL_JSON, { force: true });
 });
 

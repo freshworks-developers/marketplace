@@ -97,7 +97,7 @@ export async function install({ yes = false } = {}) {
   await writeClaudeMdBlock();
   console.log(`  ✓ Routing spec written to ${CLAUDE_MD}`);
 
-  await writeInstallState({ client: 'claude-code', method: 'plugin' });
+  await writeInstallState({ client: 'claude', method: 'plugin' });
   console.log('✓ fw-dev-tools installed for Claude Code');
   console.log('  Restart Claude Code to activate the plugins.\n');
 }

@@ -147,7 +147,7 @@ test('Claude install — 5 plugins, scripts, install state file', async (t) => {
     const state = await readInstallState(home);
     assert.ok(state, '.meta.json should exist');
     assert.equal(state.version, PKG_VERSION);
-    assert.equal(state.client, 'claude-code');
+    assert.equal(state.client, 'claude');
     assert.ok(state.installedAt, 'installedAt should be set');
 
     const plugins = await listClaudePlugins(home);
@@ -157,6 +157,20 @@ test('Claude install — 5 plugins, scripts, install state file', async (t) => {
     }
     await assertLocalClaudeMarketplace(home);
     await assertClaudeMdRouting(home);
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('multi-client install accumulates clients array in .meta.json', async () => {
+  const home = await makeHome();
+  try {
+    await runCli(home, ['install', '--tools', 'cursor', '--yes']);
+    await runCli(home, ['install', '--tools', 'codex', '--yes']);
+    const state = await readInstallState(home);
+    assert.ok(Array.isArray(state.clients), 'clients should be an array');
+    assert.ok(state.clients.includes('cursor'), 'clients should include cursor');
+    assert.ok(state.clients.includes('codex'), 'clients should include codex');
   } finally {
     await cleanup(home);
   }
