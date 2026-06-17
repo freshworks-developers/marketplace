@@ -1,0 +1,10 @@
+═══════════════════════════════════════════════════════════
+Optional: Configure Marketplace Publishing
+
+Would you like to set up publishing tools now?
+This connects your IDE to the Freshworks Marketplace API.
+
+You can skip this and configure later.
+
+Configure MCP now? (y/N)
+═══════════════════════════════════════════════════════════

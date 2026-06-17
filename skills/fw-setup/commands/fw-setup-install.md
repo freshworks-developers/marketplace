@@ -311,8 +311,7 @@ REPORT FORMAT:
 CRITICAL: If ANY mandatory test fails, do not say "installation complete".
 
 POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
-  # Offer MCP configuration via dedicated subagent
-  # Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
+  # Offer MCP configuration for marketplace publishing
   
   echo ""
   echo "═══════════════════════════════════════════════════════════"
@@ -325,14 +324,12 @@ POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
   read -p "Configure MCP now? (y/N): " mcp_response
   
   if [[ "$mcp_response" =~ ^[yY]$ ]]; then
-    # Execute MCP configuration subagent
-    # Implementation: skills/fw-publish/subagents/mcp-config-prompt.md
-    # This handles: API key prompt, IDE detection, config file creation, verification
+    # MCP configuration handles: API key prompt, IDE detection, config file creation, verification
+    # See AGENTS.md and skills/fw-publish/SKILL.md for full setup instructions
     echo ""
     echo "Launching MCP configuration..."
-    echo "See: skills/fw-publish/subagents/mcp-config-prompt.md for full flow"
+    echo "See: AGENTS.md and skills/fw-publish/SKILL.md for setup"
     echo ""
-    # Agent should read and follow mcp-config-prompt.md from Step 3A.1 onwards
   else
     echo "Skipped. Configure MCP later:"
     echo "- Run: /fw-setup-install (choose MCP option)"

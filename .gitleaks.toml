@@ -1,0 +1,12 @@
+# Gitleaks config for fw-dev-tools.
+# Scans full git history in CI; allowlist covers doc placeholders that remain in older commits.
+
+title = "fw-dev-tools"
+
+[allowlist]
+description = "Reference docs and test guides with OAuth/JWT placeholders (not real secrets)"
+paths = [
+  '''tests/TESTING\.md''',
+  '''skills/fw-app-dev/references/errors/oauth-errors\.md''',
+  '''skills/fw-app-dev/references/architecture/oauth-configuration-latest\.md''',
+]

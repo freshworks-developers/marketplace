@@ -1,0 +1,9 @@
+[VALID] App generated successfully in <app-directory>/
+
+Validation: 0 platform errors, 0 lint errors
+
+Next steps:
+1. cd <app-directory>
+2. fdk run
+3. Test in product with ?dev=true
+4. When ready to publish: use the publish skill

@@ -86,7 +86,7 @@ Step 1/3: Upgrading toolchain to FDK 10.x + Node 24.x
    If fw-setup skill available:
      Run: /fw-setup-install
    Else:
-     Print: "Install fw-setup skill: npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup"
+     Print: "Install fw-setup skill: npx @freshworks/fw-dev-tools install"
      STOP and wait for user to install fw-setup
    ```
 

@@ -102,9 +102,19 @@ skills-lock.json
 
 # Test artifacts
 .tmp/
-*.test.js
-*.spec.js
 coverage/
+/gitleaks
+
+# Eval and e2e report outputs (generated locally, not versioned)
+tests/eval-results.json
+tests/eval-report.html
+tests/e2e-results.json
+tests/e2e-report.html
+/e2e-results.json
+/e2e-report.html
+
+# Packaged installer artifacts (local npm pack output)
+installer/*.tgz
 
 # FDK artifacts
 .fdk/
@@ -120,7 +130,9 @@ coverage/
 *~.nib
 
 # Legacy files
-*.github/
 .tmp-skillguard/
 docs/
 
+/graphify-out
+/tests/e2e-batch-results
+/tests/e2e-cursor-results

@@ -1,0 +1,28 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Block high/critical CVEs in new deps
+    runs-on: ubuntu-latest
+    # Requires the repo to have the dependency graph enabled (Settings → Security)
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/dependency-review-action@v4
+        with:
+          # Fail only on high/critical — consistent with audit threshold
+          fail-on-severity: high
+          # Post a summary comment on the PR listing any flagged deps
+          comment-summary-in-pr: always

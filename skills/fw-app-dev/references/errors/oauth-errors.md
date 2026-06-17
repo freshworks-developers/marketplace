@@ -22,8 +22,8 @@ The OAuth configurations are defined a specific configurations file in `configs/
 The `oauth_configs.json` contains attributes such as `client_id`, `client_secret`, `authorize_url`, `token_url` and `token_type`.
 ```json
 {
-  "client_id": "1aXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXc8d1",
-  "client_secret": "q8NbXXXXXXXXXXXXXXXX1p1",
+  "client_id": "<%= oauth_iparams.client_id %>",
+  "client_secret": "<%= oauth_iparams.client_secret %>",
   "authorize_url": "https://login.domain.com/authorize.srf",
   "token_url": "https://login.domain.com/token.srf",
   "options": {

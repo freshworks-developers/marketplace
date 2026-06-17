@@ -1,0 +1,2 @@
+{"type":"tool_call","subtype":"completed","tool_call":{"readToolCall":{"args":{"path":"/Users/example/.cursor/skills/fw-app-dev/SKILL.md"}}}}
+{"type":"tool_call","subtype":"completed","tool_call":{"readToolCall":{"args":{"path":"/Users/example/.cursor/skills/fw-review/rules/report.md"}}}}

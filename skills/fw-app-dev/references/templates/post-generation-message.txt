@@ -1,0 +1,12 @@
+[VALID] App generated successfully in <app-directory>/
+
+Validation: [0 platform errors, 0 lint errors]
+
+Next steps:
+1. cd <app-directory>
+2. fdk run
+3. Test in Freshworks product with ?dev=true
+
+Would you like me to review and publish this app to the Freshworks Marketplace? (yes / no)
+- yes → run fw-review now, then fw-publish
+- no  → you're done; run the above steps to test locally

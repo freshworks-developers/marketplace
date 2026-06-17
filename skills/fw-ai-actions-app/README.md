@@ -1,6 +1,6 @@
 # fw-ai-actions-app
 
-Skill id: **`fw-ai-actions-app`** (same as plugin / `npx skills add --skill` name) — Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation). Canonical routing: **[AGENTS.md](../../AGENTS.md)** → **fw-ai-actions-app**.
+Skill id: **`fw-ai-actions-app`** — Cursor / Claude skill for building **AI Actions** on Freshworks **Platform 3.0** (`actions.json`, SMI in `server/server.js`, request templates, manifest, validation). Canonical routing: **[AGENTS.md](../../AGENTS.md)** → **fw-ai-actions-app**.
 
 ## Overview
 
@@ -35,7 +35,7 @@ app-root/
 ## Installation
 
 ```bash
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-ai-actions-app
+npx @freshworks/fw-dev-tools install
 ```
 
 Or copy this folder into `.cursor/skills/fw-ai-actions-app/` (or your tool’s skills directory).
@@ -60,8 +60,7 @@ claude plugin install fw-ai-actions-app@freshworks-developers
 - **agents/** — Integration scoper, scope implementer, AI action integration validator
 - **rules/** — Scoped `.mdc` rules (platform, schemas, server, requests, validation, test data, README, API docs). Full table in repo [`AGENTS.md`](../../AGENTS.md) (*Rules and slash commands* → **fw-ai-actions-app**).
 - **references/** — `ai-actions-guide.md`, quick reference, core constraints
-- **scripts/ai-actions-skeleton/** — Minimal starter files
-- **assets/templates/ai-actions-skeleton/** — Fuller template (manifest, sample actions)
+- **assets/templates/ai-actions-skeleton/** — Fuller template (manifest, sample actions, server handlers, test data)
 
 ## Requirements
 

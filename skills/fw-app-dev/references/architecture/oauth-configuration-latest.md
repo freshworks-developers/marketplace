@@ -136,8 +136,8 @@ When OAuth requires dynamic domains (like Shopify or OneDrive), use `oauth_ipara
   "integrations": {
     "shopify": {
       "display_name": "Shopify",
-      "client_id": "1aXXX-XXXX-XXXXXXXXc8d1",
-      "client_secret": "q8NbXXXXXXXXX1p1",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
       "oauth_iparams": {
         "domain": {
           "display_name": "Shopify domain",
@@ -155,8 +155,8 @@ When OAuth requires dynamic domains (like Shopify or OneDrive), use `oauth_ipara
     },
     "onedrive": {
       "display_name": "OneDrive",
-      "client_id": "1aXXX-XXXX-XXXXXXXXc8d1",
-      "client_secret": "q8NbXXXXXXXXX1p1",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
       "oauth_iparams": {
         "domain": {
           "display_name": "OneDrive domain",

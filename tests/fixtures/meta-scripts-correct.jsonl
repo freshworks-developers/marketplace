@@ -1,0 +1,2 @@
+{"type":"tool_call","subtype":"completed","tool_call":{"shellToolCall":{"args":{"command":"bash ~/.fw-dev-tools/scripts/meta-init.sh /tmp/e2e-sample-app cursor"}}}}
+{"type":"tool_call","subtype":"completed","tool_call":{"shellToolCall":{"args":{"command":"bash ~/.fw-dev-tools/scripts/meta-update.sh /tmp/e2e-sample-app fw-app-dev invoked=1 skill_version=x.y.z validate_iterations=1"}}}}

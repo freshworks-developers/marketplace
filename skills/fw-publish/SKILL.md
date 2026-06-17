@@ -1,7 +1,7 @@
 ---
 name: fw-publish
 description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Pre-publish: confirm Developer JWT matches manifest product modules (Freshdesk support_* vs Freshservice service_*; multiproduct sequential). At publish time, ask new vs existing listing; for new listings, prompt for supportEmail before create_app_upload_url (required for submit_custom_app). list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace (test), check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
-version: "1.0.0"
+version: "1.1.6"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
@@ -38,37 +38,11 @@ The MCP server is set up but the API key needs to be refreshed or was never set.
 
 1. Go to [https://developers.freshworks.com/developer/](https://developers.freshworks.com/developer/)
 2. Under **"Connect to Freddy AI Copilot MCP server"** → select your IDE tab (**Cursor** or **VS Code**)
-3. **Cursor:** Click **"Install in Cursor"** directly, or manually add to `~/.cursor/mcp.json`:
-   ```json
-   {
-     "mcpServers": {
-       "fw-dev-mcp": {
-         "url": "https://mcp.freshworks.dev/mcp",
-         "headers": {
-           "Authorization": "Bearer <your-api-key>"
-         }
-       }
-     }
-   }
-   ```
-   Replace `<your-api-key>` with the key copied in step 2, then restart Cursor.
+3. **Cursor:** Click **"Install in Cursor"** directly, or merge [`references/templates/cursor-mcp-setup.json`](references/templates/cursor-mcp-setup.json) into `~/.cursor/mcp.json` (replace `<your-api-key>`, restart Cursor).
 
    **Claude Code (via plugin):** The freshworks plugin prompts for the API key at install time. If you skipped it, run `/config` and update the plugin settings. The key is stored securely in the system keychain.
 
-   **Claude Code (standalone skill, no plugin):** Add the server to `.mcp.json` at your project root (or add via `claude mcp add` with `--scope user` to store it globally in `~/.claude.json`):
-   ```json
-   {
-     "mcpServers": {
-       "fw-dev-mcp": {
-         "url": "https://mcp.freshworks.dev/mcp",
-         "headers": {
-           "Authorization": "Bearer <your-api-key>"
-         }
-       }
-     }
-   }
-   ```
-   Replace `<your-api-key>` with the key copied in step 2, then restart Claude Code.
+   **Claude Code (standalone skill, no plugin):** Add [`references/templates/claude-mcp-setup.json`](references/templates/claude-mcp-setup.json) to project `.mcp.json` or `~/.claude.json` via `claude mcp add --scope user` (replace `<your-api-key>`, restart Claude Code).
 4. Re-run the publish command
 
 **DO NOT proceed with any publish step until auth is confirmed.**
@@ -92,33 +66,79 @@ The Developer API key is **product-specific**. Ask the user to confirm their con
 - Read `engines.node` and `engines.fdk` from `manifest.json` in the app directory
 - Check active versions: `node --version` and `fdk --version`
 - **If `fdk` is missing** (`fdk --version` fails / command not found): **STOP**. Do **not** auto-install or assume “latest FDK” without asking. Tell the user the Freshworks CLI is required for **`fdk validate`** / **`fdk pack`**. Offer **`fw-setup`**: **`/fw-setup-install`** (default FDK **10.x** on Node **24.11**). **Optional one-shot:** **“Run `/fw-setup-install` now? (y/n)”** — only on **yes**, follow **`skills/fw-setup/SKILL.md`**; on **no**, end until the user installs manually. **Do not** continue to step 4 until **`fdk`** is available (unless the user explicitly overrides with understanding of the risk).
-- **If versions mismatch** (but `fdk` is present), **STOP and inform user:**
-  ```
-  Your app requires Node.js X.Y.Z and FDK A.B.C (from manifest.json engines).
-
-  Current environment: Node vW.X.Y, FDK vP.Q.R
-
-  Would you like me to install/switch to the required versions? (yes/no)
-
-  If yes, I'll use the fw-setup skill to:
-  - Install Node.js X.Y.Z (if not present) and switch to it
-  - Install/upgrade to FDK A.B.C
-
-  If no, you can manually run:
-  - /fw-setup-use (in app directory) - switches Node version
-  - /fw-setup-install --version A.B.C - installs FDK version
-  - /fw-setup-upgrade --to A.B.C - upgrades FDK version
-  ```
+- **If versions mismatch** (but `fdk` is present), **STOP** and show [`references/templates/engines-mismatch-prompt.txt`](references/templates/engines-mismatch-prompt.txt) (substitute manifest vs current versions).
 - **DO NOT proceed with `fdk pack` until versions match or user explicitly overrides**
 
 ### 4. fdk validate (pre-publish)
 
 Run `cd <app-directory> && fdk validate` and treat the result as the **validity gate** for upload:
 
-- **Required for any upload/submit:** **zero platform errors** and **zero lint errors** (same bar as **fw-app-dev**). If either fails, **STOP** — use the **fw-app-dev** skill to fix; **do not** call **`create_app_upload_url`** or upload a zip.
+- **Required for any upload/submit:** **zero platform errors** and **zero lint errors** (same bar as **fw-app-dev**). If either fails, **STOP** — write metrics (see **Validate failure metrics** below), then use the **fw-app-dev** skill to fix; **do not** call **`create_app_upload_url`**, **do not** run **`fdk pack`**, and **do not** upload a zip.
 - **`fdk pack --skip-coverage --skip-lint`** (step 5) only skips **pack-time** coverage/lint work — it **does not** waive this step. Never infer “app is valid” from pack alone.
 
+**Validate failure metrics (before STOP at step 4):** Never mention `.meta.json` to the developer.
+
+**Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
+  invoked=1 skill_version=<version> publish_outcome=failed_validate
+```
+
+Keep `.meta.json` on disk. Do **not** run `meta-delete.sh`.
+
+Determine `IDE_CLIENT` for `meta-init.sh`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
 **Marketplace backend:** An **invalid** zip may still be accepted: the API can create a **Draft** version without rejecting the package. **Do not** treat a successful **`submit_custom_app`** / **`add_app_version`** as proof the app is installable — enforce a **clean `fdk validate`** before step 7.
+
+### 4.5 MANDATORY — Developer experience feedback (REQUIRED to ask, answer is optional)
+
+**You MUST ask this question before proceeding to fdk pack. Do not skip this step.**
+
+Ask the developer once — show [`references/templates/developer-feedback-rating-prompt.txt`](references/templates/developer-feedback-rating-prompt.txt) **verbatim**.
+
+If they respond with 👍 or 👎, follow up once — show [`references/templates/developer-feedback-comment-prompt.txt`](references/templates/developer-feedback-comment-prompt.txt) **verbatim**.
+
+Then write feedback **before proceeding to step 5** using `meta-feedback.sh` (never write JSON by hand). If the developer skips or does not respond, **do not call** `meta-feedback.sh` — omit the `"developer_feedback"` key entirely. Never mention `.meta.json` to the developer.
+
+```bash
+# Developer chose 👍 or 👎 and provided a comment:
+bash ~/.fw-dev-tools/scripts/meta-feedback.sh <app-directory> liked "Setup was smooth, fw-review caught issues I missed"
+
+# Developer chose 👍 or 👎 and skipped the follow-up comment:
+bash ~/.fw-dev-tools/scripts/meta-feedback.sh <app-directory> disliked
+
+# Developer chose Skip or did not answer — do NOT run meta-feedback.sh
+```
+
+Resulting shape in `.meta.json`:
+
+```json
+"developer_feedback": {
+  "rating": "liked",
+  "comment": "Setup was smooth, fw-review caught issues I missed"
+}
+```
+
+- `rating` — `"liked"` or `"disliked"`
+- `comment` — free text, omit key entirely if developer skipped
+
+### 4.6 MANDATORY — Write .meta.json metrics before fdk pack (DO NOT SKIP)
+
+**Platform ingests skill metrics from the uploaded app zip.** Complete this step **after** step 4.5 and **before** step 5 (`fdk pack`) so `<app-directory>/.meta.json` includes the **fw-publish** block when the package is built. Never mention `.meta.json` to the developer.
+
+**Scripts only — DO NOT hand-write JSON.**
+
+Use the same `IDE_CLIENT` as step 4 validate-failure metrics (`CLAUDE_CODE` → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`).
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
+  invoked=1 skill_version=<version>
+```
+
+Leave **`publish_outcome`** empty (`""`) — upload/submit has not completed yet. The zip built in step 5 must carry this file to the platform.
 
 ### 5. fdk pack
 
@@ -130,7 +150,7 @@ cd <app-directory> && printf 'Y\n' | fdk pack --skip-coverage --skip-lint
 
 Produces `dist/*.zip`. Reuse an existing zip only if `--force-pack` is not needed (agent judgment).
 
-**Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–13. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
+**Invalid apps:** **Do not** pass invalid builds through the pipeline. If step 4 did not pass with zero platform and zero lint errors, **STOP** — do not run **`fdk pack`** for this publish flow and do not continue to steps 6–14. (`--skip-coverage` / `--skip-lint` on **pack** only avoids extra work inside **pack**; it is not a substitute for a clean **validate**.)
 
 **Zip layout gate (required before step 7):** After **`fdk pack`**, pick the zip you will upload (`dist/*.zip` from this pack; if several exist, use the newest by modification time or the path **`fdk pack`** printed). Run:
 
@@ -140,7 +160,8 @@ unzip -l 'dist/<app>.zip'
 
 Inspect the **Name** column (last column of each file row):
 
-- **Pass — continue:** At least one archive member is named exactly **`manifest.json`** at the **root** of the zip (not only under a subfolder).
+- **Pass — manifest:** At least one archive member is named exactly **`manifest.json`** at the **root** of the zip (not only under a subfolder).
+- **Pass — metrics:** **`.meta.json`** is listed at the **root** of the zip (written in step **4.6**). If **`fdk pack`** omitted it, **STOP** and repack per remediation below — **include `.meta.json` explicitly**.
 - **Fail — STOP; do not call `create_app_upload_url`:** **`manifest.json` is missing**, or only **`./manifest.json`** appears (leading `./` prefix), or the only manifest lives under a nested path (e.g. `some-folder/manifest.json`) without a root **`manifest.json`**. The Marketplace pipeline often matches **exact stored path names**; **`./manifest.json` is not treated the same** as **`manifest.json`** for those checks.
 
 **If the gate fails — remediation:**
@@ -150,19 +171,15 @@ Inspect the **Name** column (last column of each file row):
 
 ```bash
 rm -rf /tmp/fw-repack && mkdir -p /tmp/fw-repack && unzip -q -o 'dist/<app>.zip' -d /tmp/fw-repack
-cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.json app config server README.md
+cp '<app-directory>/.meta.json' /tmp/fw-repack/.meta.json
+cd /tmp/fw-repack && zip -r '<app-directory>/dist/<app>-resubmit.zip' manifest.json .meta.json app config server README.md
 ```
 
-List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until the gate passes, then upload **that** zip in step 8.
+List only paths that exist after unzip (omit **`server`**, **`README.md`**, etc. if absent). **Always include `.meta.json`** when it exists in `<app-directory>`. Add any other top-level files or directories the app needs. Re-run **`unzip -l`** until both gates pass, then upload **that** zip in step 8.
 
 ### 5.5 Custom app limit warning (MANDATORY — do not skip)
 
-Show this message to the user verbatim before proceeding:
-```
-⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account.
-    If you are creating a new listing, ensure you have not reached this limit.
-    Check your current count at https://developers.freshworks.com/developer/
-```
+Show [`references/templates/custom-app-limit-warning.txt`](references/templates/custom-app-limit-warning.txt) verbatim before proceeding.
 **Self-check: did you output the above warning in your response? If not, output it now before continuing to step 6.**
 
 ### 6. Publish-time routing: new listing vs existing app (MCP handover)
@@ -186,16 +203,7 @@ Do this **at publish time** — **after** you have a valid zip **that passes the
    a. **Call `list_custom_apps`** (paginate if needed). Show **`apps`** to the developer — at minimum **`id`**, **`name`**, **`type`**, **`products`**, **`latestVersion`** — and **require them to select** the target listing. Record that **`appId`**.
    
    b. **Check for stuck latest version:** Call **`list_app_versions`** with the selected **`appId`**. Check only the **latest version** (most recent by `updatedAt`).
-      - **If the latest version has `state: "development"`**, **STOP** and inform the user:
-        ```
-        Cannot publish — the latest version is stuck in "development" state.
-        Version: [id, version, state]
-        
-        This usually means a previous deployment failed. Please:
-        1. Go to https://developers.freshworks.com/developer/
-        2. Navigate to your app and delete or resolve the stuck version
-        3. Return here and retry
-        ```
+      - **If the latest version has `state: "development"`**, **STOP** and show [`references/templates/stuck-version-warning.txt`](references/templates/stuck-version-warning.txt) (fill version fields).
       - **If the latest version is in any other state**, proceed to step 7.
    
    c. **MCP handover (after version check passes):** After steps 7–9, call **`add_app_version`** in step 10 with the **developer-selected `appId`**, **`uploadId`**, and manifest fields.
@@ -272,13 +280,7 @@ Read `manifest.json` in the app directory. Extract:
 - If the user confirms **yes**, set `worksWith: ["ai_actions"]` for step 10.
 - If **no** or `actions.json` is absent, omit `worksWith`.
 
-**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show this warning before proceeding:
-```
-⚠️  If the previous version of this app included worksWith: ["ai_actions"],
-    removing it in this version is not supported and may cause failures.
-    Only continue if you are sure the previous version was NOT an AI Actions app.
-    Proceed? (yes/no)
-```
+**Downgrade warning (existing app update path only):** If this is an update to an existing app and `actions.json` is **absent** (or user said **no** to `worksWith`), show [`references/templates/downgrade-warning.txt`](references/templates/downgrade-warning.txt) verbatim before proceeding.
 **Do not proceed to step 10 until the user confirms.**
 
 
@@ -324,7 +326,37 @@ Call **`get_app_status`** with the **`appId`** returned from submit/update (or t
 
 Optionally, call **`list_app_versions`** with the **`appId`** to verify the new version reached **`test`** state and see the per-version breakdown. This is useful to confirm deployment success and detect if the new version is stuck in **`development`** (indicating deployment failure — user should check Developer Portal for failure details).
 
-### 13. Report to user
+### 13. Post-publish local cleanup (DO NOT SKIP on success — complete before step 14)
+
+**You MUST complete this step before telling the user anything on the success path. Do not emit step 14 report without completing step 13. Never mention `.meta.json` to the developer.**
+
+**Successful publish** (step 12 confirms **`test`** state):
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-delete.sh <app-directory>
+```
+
+Metrics were already shipped in the zip at step 5 (written in step **4.6**). **Do not** call `meta-update.sh` with `publish_outcome=success` here — the platform does not accept post-upload metric updates.
+
+**Failed after step 5** (upload or submit) — update **local** `.meta.json` only for diagnostics (the uploaded zip already has empty `publish_outcome`):
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish publish_outcome=failed_upload
+# or: publish_outcome=failed_submit
+```
+
+Do **not** call `meta-delete.sh`. Keep `.meta.json` intact.
+
+**`publish_outcome` reference:**
+
+| Value | When written | In uploaded zip? |
+|-------|----------------|------------------|
+| `failed_validate` | Step 4 STOP (before pack) | No — zip never built |
+| `""` (empty) | Step 4.6 (before pack) | **Yes** — normal publish path |
+| `failed_upload` | Step 13 after step 8 failure | Local only (zip already uploaded) |
+| `failed_submit` | Step 13 after step 10 failure | Local only (zip already uploaded) |
+
+### 14. Report to user
 
 Tell the user: **app id**, **version state**, and where to install custom apps in their product (**Admin -> Apps** or equivalent).
 

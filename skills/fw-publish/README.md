@@ -15,10 +15,10 @@ claude plugin marketplace add freshworks-developers/fw-dev-tools
 claude plugin install fw-publish@freshworks-dev-tools
 ```
 
-**Cursor** — Skills CLI:
+**Cursor:**
 
 ```bash
-npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-publish
+npx @freshworks/fw-dev-tools install --tools cursor
 ```
 
 **OpenAI Codex:**

@@ -8,7 +8,7 @@ alwaysApply: true
 
 **🚨 ZERO TOLERANCE: App is NEVER complete until ALL errors (platform AND lint) are fixed.**
 
-**FDK / Node are not installed by fw-app-dev.** This rule file and **fw-app-dev** edit app code and run **`fdk validate`** when the CLI exists; they do **not** install **`fdk`**, switch **Node** majors, or fix **PATH** / **nvm**. For that, use the **`fw-setup`** skill when present (`/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`). If **fw-setup** is missing, tell the user to add it (e.g. `npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup`, or copy `skills/fw-setup/` from this repo). Canonical text: **SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*.
+**FDK / Node are not installed by fw-app-dev.** This rule file and **fw-app-dev** edit app code and run **`fdk validate`** when the CLI exists; they do **not** install **`fdk`**, switch **Node** majors, or fix **PATH** / **nvm**. For that, use the **`fw-setup`** skill when present (`/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`). If **fw-setup** is missing, tell the user to add it (`npx @freshworks/fw-dev-tools install`). Canonical text: **SKILL.md** → *FDK / Node.js toolchain — not provided by fw-app-dev*.
 
 **REQUIRED FOR NEW APPS: FDK 10.0.1 + Node.js 24.x** (`"engines": { "node": "24.11.0", "fdk": "10.0.1" }`). If `fdk validate` cannot start, use **fw-setup** first. **LAST RESORT** engines downgrade to FDK 9.8.2 + Node 18.20.8 is **only** after **six** validate+fix iterations or CLI cannot run on 10.0.1+24.11.0 under the conditions in **SKILL.md** (top section).
 
@@ -18,7 +18,7 @@ alwaysApply: true
 
 ### Step 0: Gate (before any `fdk validate`)
 
-Read **`manifest.json`** and compare to **`node --version`** / **`fdk version`**. Follow **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`*. Do not skip for **`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, or generation workflows.
+Read **`manifest.json`** and compare to **`node --version`** / **`fdk version`**. Follow **SKILL.md** → *Manifest + toolchain gate before any `fdk validate`*. Do not skip for **`/fdk-fix`**, **`/fdk-refactor`**, or generation workflows. (For structured pre-submission review, use **fw-review** skill.)
 
 ### Step 1: Automatic Validation After File Creation
 

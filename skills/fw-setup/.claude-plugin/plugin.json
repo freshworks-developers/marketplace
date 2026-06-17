@@ -1,6 +1,6 @@
 {
   "name": "fw-setup",
-  "version": "1.0.0",
+  "version": "1.1.6",
   "description": "Install, upgrade, downgrade, and uninstall the Freshworks Development Kit (FDK) with Node.js via nvm (macOS, Windows, Linux).",
   "author": {
     "name": "Freshworks Developers",

@@ -1,0 +1,21 @@
+# CODEOWNERS — required reviewers for pull requests.
+#
+# GitHub uses this file when branch protection is configured with
+# "Require review from Code Owners". Every PR touching matched paths
+# will require approval from the listed owner(s) before it can merge.
+
+# Default: all changes require owner review
+*                                   @shivakumar-ashwin @rapchic
+
+# Skill content — changes to any SKILL.md or command file
+skills/*/SKILL.md                   @shivakumar-ashwin @rapchic
+skills/*/commands/                  @shivakumar-ashwin @rapchic
+skills/shared/                      @shivakumar-ashwin @rapchic
+
+# Plugin manifests
+.claude-plugin/                     @shivakumar-ashwin @rapchic
+.cursor-plugin/                     @shivakumar-ashwin @rapchic
+.codex-plugin/                      @shivakumar-ashwin @rapchic
+
+# CI/security workflows
+.github/                            @shivakumar-ashwin @rapchic

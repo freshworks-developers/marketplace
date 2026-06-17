@@ -208,6 +208,43 @@ references/
 
 ## Testing Your Changes
 
+See **[tests/TESTING.md](tests/TESTING.md)** for the full test suite guide. Summary:
+
+### Layer 1 — Static tests (required, runs in CI)
+
+```bash
+cd tests && npm install && npm test
+```
+
+122 structural assertions across all skill files — no LLM, no API key. Must pass before opening a PR.
+
+### Layer 2 — LLM behavioral evals (required for skill edits, local only)
+
+```bash
+cd tests && ANTHROPIC_API_KEY=sk-... npm run eval
+```
+
+Or, if working in **Claude Code or Cursor**, just ask: *"Run the skill evals and write eval-report.md"* — no API key needed.
+
+**Attach `tests/eval-report.html` (or `eval-report.md`) to your PR.** This is required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`.
+
+### PR checklist
+
+Every PR should satisfy the checklist in `.github/PULL_REQUEST_TEMPLATE.md` (auto-populated when you open a PR on GitHub):
+
+- [ ] `npm test` passes locally (122 static tests, no LLM)
+- [ ] For skill edits: existing eval scenarios reviewed and updated if needed, new scenarios added for new behavioral rules, evals run and passing
+- [ ] `tests/eval-report.html` attached to the PR
+
+### Writing new static tests — cross-platform rules
+
+The CI workflow runs on Linux; contributors may be on macOS or Windows. Any new test added to `skill-static.test.js` must follow these rules:
+
+- **Use `grepFiles()`** — the pure-Node helper already in the file — instead of shell `grep`. BSD `grep` (macOS) lacks `--exclude-dir`; Windows has no `grep` at all.
+- **Guard bash invocations** with `{ skip: process.platform === 'win32' }` if a test runs a `.sh` script.
+- **No Unix-only CLI flags** (`find -exec`, `chmod`, etc.) — use `node:fs` APIs.
+- **Paths via `join()`** — never string-concatenate with `/`.
+
 ### 0. Docs hygiene (optional, recommended)
 
 ```bash
@@ -215,29 +252,17 @@ python3 scripts/check-internal-links.py
 bash scripts/check-marketplace-versions.sh
 ```
 
-### 1. Validate Skill Structure
+### Smoke-test in Cursor / Claude Code / Codex (optional)
 
-Ensure your skill follows the correct structure:
+Run the installer against your branch and verify the skills load in your IDE:
+
 ```bash
-# Check that SKILL.md exists and has valid frontmatter
-head -20 skills/your-skill/SKILL.md
+npx @freshworks/fw-dev-tools install
 ```
 
-### 2. Test in Cursor
+Then type `/fw-setup-` in chat — autocomplete should list available commands. For **fw-publish**, confirm MCP is configured per **[AGENTS.md](AGENTS.md)**.
 
-1. Copy the skill to your Cursor skills directory:
-   ```bash
-   cp -r skills/fw-app-dev ~/.cursor/skills/
-   ```
-2. Open Cursor and verify the skill loads
-3. Test commands and rules work as expected
-
-### 3. Smoke-test Claude Code or OpenAI Codex (optional)
-
-- **Claude Code:** Install or copy skills per **README.md**, then verify **`~/.claude/skills/`** layouts and MCP per **AGENTS.md** when testing **fw-publish**.
-- **Codex:** From a clone of your branch at repo root, run `codex plugin marketplace add ./` (per **README.md**). Confirm **`skills/*/SKILL.md`** is visible to the assistant and (**fw-publish**) MCP auth matches **`.mcp.json`** / **AGENTS.md** guidance.
-
-### 4. Validate Rules
+### Validate Rule Files
 
 For rule files, verify:
 - `name` field matches filename
@@ -309,56 +334,6 @@ When contributing examples or documentation:
 - Use placeholders like `<%= iparam.api_key %>` or `your-api-key-here`
 - Use generic domains like `your-domain.freshdesk.com`
 - Mark sensitive iparams with `"secure": true` in examples
-
-## Submission and discovery surfaces
-
-> **Note:** Marketplace listings for Cursor and Claude Code are currently under review.
-
-| Surface | Purpose |
-|---------|---------|
-| [**Cursor — Publish to Cursor Marketplace**](https://cursor.com/marketplace/publish) | Vendor submission docs and review expectations. |
-| [**cursor.directory**](https://cursor.directory/) | Community directory of Cursor tools (optional third-party listing). |
-| [**Claude Code — Plugin marketplaces**](https://docs.anthropic.com/en/plugin-marketplaces) | `claude plugin marketplace add …` and team registries. |
-| [**OpenAI Codex — Build plugins**](https://developers.openai.com/codex/plugins/build/) | `codex plugin marketplace add …` and plugin layout. |
-| [**claudemarketplaces.com**](https://claudemarketplaces.com/) | Independent community catalog — **not** operated by Anthropic; list only if you accept their terms. |
-
-**GitHub topics** for discoverability: `freshworks`, `fdk`, `platform-3.0`, `marketplace`, `cursor-plugin`, `claude-plugin`, `codex-plugin`, `mcp`.
-
-**MCP (publish only):** server id `fw-dev-mcp`, config template `.mcp.json` — do not paste tokens into listings; see **[AGENTS.md](AGENTS.md)**.
-
----
-
-## Listing kit (maintainers)
-
-Canonical strings for marketplace submission forms. Source of truth is **`.cursor-plugin/plugin.json`**, **`.claude-plugin/plugin.json`**, and **`.codex-plugin/plugin.json`** — bump the table when you change `version` or copy (see **[`scripts/check-marketplace-versions.sh`](scripts/check-marketplace-versions.sh)**).
-
-| Field | Value |
-|-------|--------|
-| **Plugin id** | `freshworks-dev-tools` |
-| **Display name** | Freshworks Agentic Developer Toolkit |
-| **Version** | `1.0.0` |
-| **Short tagline** | FDK setup, Platform 3.0 apps, AI Actions, and marketplace publish. |
-| **Description (umbrella)** | Freshworks Platform 3.0 app development, AI Actions, publishing, and FDK management skills. For MCP: add **fw-dev-mcp** per **[AGENTS.md](AGENTS.md)** (Developer Portal JWT). |
-| **Long blurb (Cursor)** | Cursor plugin root for Freshworks skills: **fw-setup** (FDK/nvm), **fw-app-dev** (Platform 3.0 apps), **fw-ai-actions-app** (AI Actions), **fw-publish** (MCP). Copy **`.mcp.json`** from this repository into project **`.cursor/mcp.json`** and add your Developer Portal JWT. |
-| **Long blurb (Claude Code)** | Aggregate plugin for Freshworks marketplace development: install and manage FDK with **fw-setup**, build full apps with **fw-app-dev**, AI Actions integrations with **fw-ai-actions-app**, and publish with **fw-publish** via MCP. MCP template: **`.mcp.json`** at repository root; configure Marketplace API token when prompted. |
-| **Long blurb (Codex)** | Uses each skill's **`SKILL.md`** (authoritative workflows). Slash commands from Cursor/Claude marketplaces (`/fw-setup-*`, `/fdk-*`) are conventions for those clients; Codex consumes skills plus optional MCP (`.mcp.json`) for **fw-publish**. Typical chain: **fw-setup** → **fw-app-dev** and/or **fw-ai-actions-app** → **fw-review** → **fw-publish** — see **[AGENTS.md](AGENTS.md)**. |
-| **Homepage** | `https://github.com/freshworks-developers/fw-dev-tools` |
-| **License** | MIT |
-| **Category** | developer-tools |
-| **Keywords** | `freshworks`, `platform-3.0`, `marketplace`, `fdk`, `app-development`, `mcp`, `crm` |
-| **Logo (repo-relative)** | `assets/fw-logo.svg` |
-| **Logo (raw URL for forms)** | `https://raw.githubusercontent.com/freshworks-developers/fw-dev-tools/main/assets/fw-logo.svg` |
-| **Author** | Freshworks Developers · `skills@dev-assist.freshservice.com` |
-
-**Per-skill Claude plugin names** (install with `claude plugin install <name>@freshworks-developers`):
-
-| Plugin `name` | Display name | Short description |
-|---------------|--------------|-------------------|
-| `fw-setup` | Freshworks FDK Setup | FDK and Node.js toolchain install and lifecycle via nvm. |
-| `fw-app-dev` | Freshworks App Development | Platform 3.0 apps: manifest, requests, OAuth, serverless, and UI. |
-| `fw-ai-actions-app` | Freshworks AI Actions | actions.json, SMI handlers, request templates, and API integrations. |
-| `fw-review` | Freshworks App Review | Rules + scripts for structured marketplace app audits. |
-| `fw-publish` | Freshworks Marketplace Publish | MCP: validate, pack, app-upload, submit/update. |
 
 ---
 

@@ -1,0 +1,13 @@
+{
+  "name": "fw-skills-tests",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test skill-static.test.js bump-version.test.mjs repack-app-zip.test.mjs e2e-publish-guard-parser.test.mjs e2e-publish-metrics-parser.test.mjs e2e-skill-paths-parser.test.mjs e2e-meta-scripts-parser.test.mjs",
+    "eval": "node --test skill-eval.test.js && node report.js",
+    "eval:inline": "node run-inline-eval.mjs && node report.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  }
+}

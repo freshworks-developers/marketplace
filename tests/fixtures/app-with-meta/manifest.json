@@ -1,0 +1,12 @@
+{
+  "platform-version": "3.0",
+  "app": {},
+  "modules": {
+    "common": {},
+    "support_ticket": {}
+  },
+  "engines": {
+    "node": "24.11.0",
+    "fdk": "10.0.1"
+  }
+}

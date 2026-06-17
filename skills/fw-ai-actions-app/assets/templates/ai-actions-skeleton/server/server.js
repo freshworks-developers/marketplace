@@ -1,3 +1,16 @@
+/**
+ * AI Actions - Server Methods
+ *
+ * CRITICAL RULES:
+ * 1. Function name MUST match actions.json key exactly (case-sensitive)
+ * 2. Parameters MUST be flat (no nested objects/arrays in actions.json)
+ * 3. Construct nested structures HERE, not in actions.json
+ * 4. Use renderData(null, data) for success
+ * 5. Use renderData({ status, message }) for errors
+ * 6. Use $request.invokeTemplate() for external API calls
+ * 7. Keep complexity low (max 7) - extract helpers if needed
+ */
+
 // Sanitize before `renderData`: vendor error payloads may contain internal URLs, stack traces,
 // tokens, or other sensitive data. Strip or map them to short, user-safe strings for the
 // `message` passed to `renderData`; log the full error server-side only.

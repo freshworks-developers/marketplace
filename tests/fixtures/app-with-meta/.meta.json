@@ -1,0 +1,35 @@
+{
+  "tracking_id": "abc123def456ghijklmn",
+  "source": "ai_skills",
+  "ide_client": "claude-code",
+  "start_time": "2026-06-03T10:00:00.000Z",
+  "fw-setup": {
+    "invoked": 0,
+    "skill_version": "",
+    "setup_node_changed": false,
+    "setup_fdk_changed": false
+  },
+  "fw-app-dev": {
+    "invoked": 1,
+    "skill_version": "1.0.0",
+    "migrate_iterations": 0,
+    "validate_iterations": 2,
+    "validation_error_categories": ["lint-async-no-await"]
+  },
+  "fw-ai-actions-app": {
+    "invoked": 0,
+    "skill_version": "",
+    "validate_iterations": 0,
+    "validation_error_categories": []
+  },
+  "fw-review": {
+    "invoked": 0,
+    "skill_version": "",
+    "review_failure_categories": []
+  },
+  "fw-publish": {
+    "invoked": 0,
+    "skill_version": "",
+    "publish_outcome": ""
+  }
+}

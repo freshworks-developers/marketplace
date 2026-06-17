@@ -1,85 +1,68 @@
-# Agent instructions (Freshworks marketplace skills)
+# Agent instructions — marketplace repo (contributors)
 
-This repository is a **multi-IDE skill marketplace** for AI assistants working on **Freshworks Platform 3.0** marketplace apps. **This file** is the agent entry point and routing layer. For human overview, install URLs, and badges, see **`README.md`**. For contribution layout and conventions, see **`CONTRIBUTING.md`**. For FDK/skill install problems, see **`TROUBLESHOOTING.md`**. **Engine / Node / FDK authoritative pins:** **`docs/engine-matrix.md`**.
+**Repo-only document.** Not shipped by the installer. End developers receive a slim routing spec (`installer/src/specs/fw-dev-tools-spec.md`) written to always-loaded IDE locations — not this file.
 
-## OpenAI Codex
+| Audience | Read first |
+|----------|------------|
+| **Contributing to this repo** | This file → **`CONTRIBUTING.md`** → **`tests/TESTING.md`** |
+| **Building a Freshworks app** (any project) | **`skills/*/SKILL.md`** + installed **`fw-dev-tools.mdc`** / spec block |
+| **Humans (overview, install)** | **`README.md`** · **`TROUBLESHOOTING.md`** · **`docs/engine-matrix.md`** (FDK/Node pins) |
 
-The same skill content is packaged for **OpenAI Codex** via **`.codex-plugin/plugin.json`**. Slash commands listed in this file are **Cursor / Claude** affordances; Codex loads **`skills/*/SKILL.md`** and optional **MCP** from **`.mcp.json`**.
+---
 
-## Skills and MCP tools available
+## Before you open a PR
 
-### Skills (installed via this repo)
+```bash
+cd tests && npm install && npm test          # 140 static tests (CI)
+cd installer && npm install && npm test      # installer lifecycle tests (CI, Node 24)
+```
 
-| Skill | Entry point | What it does |
-|-------|-------------|--------------|
-| **fw-setup** | `skills/fw-setup/SKILL.md` | Install, upgrade, downgrade, or uninstall **FDK 10.x + Node 24.11.x** (and **deprecated** **FDK 9.x + Node 18**) via nvm / nvm-windows. Verifies persistence across shells (**Unix** and **Windows**). Slash commands: `/fw-setup-install`, … |
-| **fw-app-dev** | `skills/fw-app-dev/SKILL.md` | Build, fix, review, or migrate **Platform 3.0** apps end-to-end: idea collection, implementation planning, code generation, manifest enforcement, `fdk validate` with up to 6 auto-fix iterations, and post-generation guidance. Handles manifest structure, `requests.json`, OAuth, serverless, frontend Crayons, and tracking fields (`tracking_id`, `start_time`). **Does not install `fdk`.** If **`fdk`** is missing: **STOP**, offer **`/fw-setup-install`**, optional **y/n** — no silent install. |
-| **fw-ai-actions-app** | `skills/fw-ai-actions-app/SKILL.md` | **AI Actions** and third-party integrations: `actions.json`, SMI handlers, flat request schemas, `$request.invokeTemplate`, test data, validation, debugging endpoints, and integration scoping (no full UI app folder). Pair with **fw-app-dev** when the work is a full marketplace app with locations and Crayons. |
-| **fw-review** | `skills/fw-review/SKILL.md` | **Automated marketplace app audit**: manifest and iparams review, frontend rules, deterministic `scripts/*.js` checks for SC-* rule IDs, and structured **App Review Result** output per `rules/report.md`. If **`fdk`** is missing: **STOP**, offer **`/fw-setup-install`** (+ optional **y/n**); no silent install. See skill for output exception when toolchain is absent. |
-| **fw-publish** | `skills/fw-publish/SKILL.md` | Publish a built Platform 3.0 app via MCP (**openai-server**): `fdk validate`, `fdk pack`, **`create_app_upload_url`**, zip upload, **`submit_custom_app`** / **`add_app_version`**, **`get_app_status`**. Tool names match **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Checks auth before publish; step **2.5** confirms JWT ↔ manifest product modules (**Freshdesk** `support_*`, **Freshservice** `service_*`, multiproduct sequential). If **`fdk`** missing: **STOP**, offer **`/fw-setup-install`** (+ optional **y/n**); no silent install (step **3**). |
+**Skill / command / `.meta.template.json` edits** — also run behavioral evals locally (no API key in agent session):
 
-### MCP tools (fw-dev-mcp server)
+> "Run the skill evals"
 
-This repository **bundles MCP config at the root**: **`.mcp.json`** (`fw-dev-mcp` → `https://mcp.freshworks.dev/mcp`, `Authorization` header). In **Claude Code**, installing the marketplace plugin uses that shape and prompts for your API key (token in keychain via **`userConfig.mcp_auth_token`**, referenced as **`${user_config.mcp_auth_token}`**). In **Cursor**, copy or merge the same `mcpServers` block into **`~/.cursor/mcp.json`** or **`.cursor/mcp.json`** and replace the bearer value with your JWT (Cursor does not resolve **`user_config`** — use a literal **`Bearer <token>`** or an env placeholder your client supports). API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
+Attach **`tests/eval-report.html`** to the PR. See **`tests/TESTING.md`** for all layers (static, eval, e2e).
 
-| Tool | Purpose | Skill Handover Point |
-|------|---------|---------------------|
-| **`list_custom_apps`** | List all custom apps. Returns **`count`** and **`apps`** (each: **`id`**, **`name`**, **`type`**, **`state`**, **`products`**, **`latestVersion`**). Optional **`page`**, **`perPage`**. | **fw-publish** Step 1 (auth check), Step 6 (app selection for updates) |
-| **`list_app_versions`** | List all versions for one app. Returns array with **`id`**, **`version`**, **`platformVersion`**, **`state`**, **`updatedAt`** per version. | **fw-publish** Step 6 (**CRITICAL** - check for stuck **`development`** versions before **`add_app_version`**) |
-| **`create_app_upload_url`** | Generate presigned S3 upload URL. Returns **`uploadId`**, **`uploadUrl`**, **`httpMethod`** (`"PUT"`), **`expiresInSeconds`**. | **fw-publish** Step 7 (after `fdk pack`, before zip upload) |
-| **`submit_custom_app`** | Create new custom app + first version. Requires **`appName`**, **`appDescription`**, **`appOverview`**, **`supportEmail`**, **`platformVersion`**, **`modules`**, **`uploadId`**. Collect **`supportEmail`** before **`create_app_upload_url`** (**fw-publish** step **6.5**). | **fw-publish** Step 10 (new app path) |
-| **`add_app_version`** | Add new version to existing app. Requires **`appId`** (from **`list_custom_apps`** + user selection), **`platformVersion`**, **`modules`**, **`uploadId`**. **Cannot proceed** if any version is in **`development`** state. | **fw-publish** Step 10 (existing app path, after version check) |
-| **`get_app_status`** | Get aggregate app-level status. Returns **`state`** reflecting all versions. On failures, **`state`** often rolls back to **`development`**. | **fw-publish** Step 12 (post-publish verification) |
-| **`get_developer_docs`** | Fetch developer documentation. **FALLBACK ONLY** - use only if **fw-app-dev** skill fails or when skill explicitly delegates. | FALLBACK (use fw-app-dev skill first) |
+PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 
-**DEPRECATED MCP tools** (do NOT use - always use **fw-app-dev** skill instead): **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**. These tools bypass skill orchestration, validation workflows, and prerequisite checks. Always route app development work through **`skills/fw-app-dev/SKILL.md`**.
+---
 
-**Skills orchestrate tools.** Follow each skill’s playbook rather than inventing parallel flows; each skill documents preconditions, tool use, and error handling.
+## If you change…
 
-## Which skill to follow
+| You change | Also update | Verify |
+|------------|-------------|--------|
+| `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
+| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (68 scenarios) |
+| `skills/shared/.meta.template.json` or meta scripts | All skills referencing `meta-init.sh` / `meta-update.sh` | `cd tests && npm test` |
+| `skills/fw-setup` toolchain guidance | **`docs/engine-matrix.md`** | `cd installer && npm test` |
+| `installer/` | **`installer/tests/`** | `cd installer && npm test` |
+| Plugin manifests | Skill inventory below stays aligned | static tests (plugin version consistency) |
 
-| User goal | Open first | Notes |
-|-----------|------------|--------|
-| Build, fix, review, or migrate a **Platform 3.0 app** (manifest, requests, OAuth, serverless, UI) | `skills/fw-app-dev/SKILL.md` | **Does not** install FDK or Node |
-| **AI Actions** integrations (`actions.json`, SMI, request templates, third-party APIs, test data) | `skills/fw-ai-actions-app/SKILL.md` | **Does not** install FDK or Node; not a substitute for full **fw-app-dev** UI/marketplace app work |
-| Structured **app review** (iparams, frontend, script-backed checks, fixed report format) | `skills/fw-review/SKILL.md` | **Does not** install FDK; verify CLI with **fw-setup** (`/fw-setup-status`) or `fdk --version` before phases that need `fdk` |
-| Install, upgrade, or troubleshoot **FDK** and **Node** (nvm, PATH, versions) | `skills/fw-setup/SKILL.md` | Use before relying on `fdk validate` when the toolchain is missing or wrong |
-| Publish a built app to the marketplace, check status, list apps | `skills/fw-publish/SKILL.md` | Requires MCP tools configured (API key from https://developers.freshworks.com/developer/ - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)) |
+Prefer **small, focused diffs**. Match existing markdown and plugin patterns.
 
-If **toolchain + app + publish** apply: **fw-setup** first, then **fw-app-dev** or **fw-ai-actions-app** (by task), **MANDATORY fw-review** before submission, then **fw-publish** when publishing.
+---
 
-**End-to-end reference (cold machine → ship):** **fw-setup** (FDK/Node) → **fw-app-dev** (full UI app) and/or **fw-ai-actions-app** (`actions.json` / SMI) → **MANDATORY fw-review** (structured audit; not the same as **fw-app-dev** `/fdk-review`) → **fw-publish** (MCP upload/submit). Humans: expanded narrative under **`README.md`** *From toolchain to marketplace (lifecycle)*; agents: tables above plus per-skill `SKILL.md`.
+## Repository layout
 
-## Non-negotiables (app work)
+| Path | Purpose |
+|------|---------|
+| **`skills/{fw-setup,fw-app-dev,fw-ai-actions-app,fw-review,fw-publish}/`** | Skill packages (`SKILL.md`, `rules/`, `commands/`, `references/`, `assets/`) |
+| **`skills/fw-review/scripts/*.js`** | Deterministic rule checks (mapped in `rules/script-check-rules.md`) |
+| **`skills/shared/`** | `.meta.template.json`, `scripts/meta-*.sh`, `check-update.sh` |
+| **`installer/`** | `npx @freshworks/fw-dev-tools` CLI (install, update, status, uninstall) |
+| **`installer/src/specs/fw-dev-tools-spec.md`** | **Shipped** routing spec (~28 lines) → Cursor rule / Codex `AGENTS.md` block |
+| **`tests/`** | Static tests, LLM evals, e2e orchestration — **`tests/TESTING.md`** |
+| **`.mcp.json`** | Canonical `fw-dev-mcp` URL + `Authorization` header shape |
+| **`.cursor-plugin/`**, **`.claude-plugin/`**, **`.codex-plugin/`** | Multi-skill plugin registries (`freshworks-dev-tools`) |
+| **`assets/fw-logo.svg`** | Marketplace branding for plugin UIs |
 
-When generating or editing **Freshworks apps** (not this repo’s markdown), **`skills/fw-app-dev/SKILL.md`** is authoritative. In short:
+**Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/`; plugin JSON points there — do not duplicate trees under `.cursor/` inside skills.
 
-- **Platform version** `"3.0"`; **`modules`**, not legacy `product`
-- **External HTTP** only via **`$request.invokeTemplate` / `client.request.invokeTemplate`** and **`config/requests.json`** templates (no `$request.post|get|put|delete`)
-- **OAuth** uses the **`integrations`** wrapper in `oauth_config.json`
-- **`fdk validate`**: **zero** platform errors and **zero** lint errors before calling an app complete; **`README.md`** and **`app/styles/images/icon.svg`** (frontend) where the skill requires them
-- **Before `fdk validate`:** follow **`skills/fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*): **`fw-setup`** if **FDK 10 + Node 24** is missing; **`/fdk-migrate`** for legacy **2.x** or old **`engines`**; then validate. **Do not** downgrade toolchain or **`engines`** to **FDK 9 / Node 18** as a shortcut (except **LAST RESORT** in that `SKILL.md` after six validate iterations when only the toolchain blocks validation).
-- **New app engines**: **`fdk` `10.0.1`** and **`node` `24.11.0`** unless **fw-app-dev** `SKILL.md` **LAST RESORT** rules apply
-
-## Repository layout (skills)
-
-- **`skills/{fw-app-dev|fw-ai-actions-app|fw-review|fw-setup|fw-publish}/SKILL.md`** — skill entry and frontmatter
-- **`skills/*/rules/*.{mdc,md}`** — editor rules (`.mdc`) or **fw-review** audit rules (`.md`); loaded via each plugin’s `rulesDirectory` / `rulesPath`
-- **`skills/*/commands/*.md`** — slash-command bodies where the skill defines them (**fw-app-dev**, **fw-setup** only); stem of filename → `/command-name` in the IDE
-- **`skills/fw-review/scripts/*.js`** — deterministic SC-* checks (not slash commands); mapped from `skills/fw-review/rules/script-check-rules.md`
-- **`skills/*/references/**`** — load **on demand** (API, errors, events, playbooks); index: `skills/fw-app-dev/references/skill-advanced-topics.md`
-- **`skills/*/assets/templates/**`** — app skeletons
-- **`skills/fw-publish/subagents/**`** — optional deep-dive prompts (no `rules/` or `commands/` trees in that skill)
-- **`.mcp.json`** (repository root) — canonical **`fw-dev-mcp`** MCP server URL + `Authorization` header shape; see **`skills/fw-publish/SKILL.md`** for Cursor vs Claude setup notes
-- **`.claude/`** (repository root) — **not versioned**; create local Claude Code project settings if needed (MCP server id should match **`.mcp.json`** when configuring publish)
-- **`.claude-plugin/marketplace.json`**, **`.cursor-plugin/marketplace.json`** — multi-skill registries (`name`: **`freshworks-dev-tools`**; **`displayName`**: **Freshworks Agentic Developer Toolkit**; optional **`logo`** → **`assets/fw-logo.svg`**); each plugin lists `author`, `license`, `category`, `strict`, `version`, optional `interface` (same pattern as [Salesforce B2C marketplace.json](https://github.com/SalesforceCommerceCloud/b2c-developer-tooling/blob/main/.claude-plugin/marketplace.json)).
-- **`assets/fw-logo.svg`** — Umbrella branding for Plugins / marketplace UIs (referenced from **`.cursor-plugin`**, **`.claude-plugin`**, **`.codex-plugin`**, **`.agents/plugins`**).
-
-**Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/` where present; IDE plugin JSON points there—do not duplicate command/rule trees under `.cursor/` inside skills.
+---
 
 ## Rules and slash commands (inventory)
 
-Use this list when adding or renaming files so **`.cursor-plugin/marketplace.json`** `rulesPath` / `commandsPath` and plugin `plugin.json` entries stay aligned.
+Keep this list aligned when adding or renaming files.
 
 ### fw-setup — `skills/fw-setup/`
 
@@ -95,7 +78,7 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 
 **Rules (`.mdc`):** `rules/fdk-enforcement.mdc`
 
-*(Legacy `/fdk-*` names may still appear in some environments if the client registered aliases; prefer `/fw-setup-*`.)*
+*(Legacy `/fdk-*` aliases may exist in some environments; prefer `/fw-setup-*`.)*
 
 ### fw-app-dev — `skills/fw-app-dev/`
 
@@ -104,33 +87,83 @@ Use this list when adding or renaming files so **`.cursor-plugin/marketplace.jso
 | `/fdk-fix` | `commands/fdk-fix.md` |
 | `/fdk-migrate` | `commands/fdk-migrate.md` |
 | `/fdk-refactor` | `commands/fdk-refactor.md` |
-| `/fdk-review` | `commands/fdk-review.md` |
 
 **Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `smart-prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
 
 ### fw-ai-actions-app — `skills/fw-ai-actions-app/`
 
-**Commands:** none (orchestration in `SKILL.md`, optional prompts under `agents/`).
+**Commands:** none (orchestration in `SKILL.md`; optional prompts under `agents/`).
 
 **Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
 
 ### fw-review — `skills/fw-review/`
 
-**Commands:** none (silent pipeline in `SKILL.md`; checks via `scripts/*.js` per `rules/script-check-rules.md`).
+**Commands:** none (pipeline in `SKILL.md`; checks via `scripts/*.js` per `rules/script-check-rules.md`).
 
 **Rules (`.md`):** `frontend-files-rules.md`, `iparam-rules.md`, `report.md`, `script-check-rules.md`
 
 ### fw-publish — `skills/fw-publish/`
 
-**Commands:** none. **Rules:** none. Playbooks in `SKILL.md`, `references/`, and `subagents/`; MCP in repo root **`.mcp.json`**.
+**Commands:** none. **Rules:** none. Playbooks in `SKILL.md` and `references/`; MCP in repo root **`.mcp.json`**.
 
-## Editing this repo (maintenance)
+---
 
-- Prefer **small, focused diffs**; match existing markdown and plugin patterns
-- **`CONTRIBUTING.md`** — contribution and structure expectations
-- **`docs/engine-matrix.md`** — FDK / Node pin source of truth when changing toolchain guidance
-- **Skill evaluation tooling** (optional): `.agents/skills/skill-creator/scripts/` (for example `quick_validate.py`, `package_skill.py`)
+## `.meta.json` — cross-skill metrics contract
 
-## Human-facing install
+When editing skills that write metrics, keep this contract consistent across **`fw-setup`**, **`fw-app-dev`**, **`fw-ai-actions-app`**, **`fw-review`**, **`fw-publish`**.
 
-See **[README.md](README.md#contents)** (human **Installation**) for Skills CLI (`npx skills add`), **Cursor** / **Claude** / **Codex** umbrella manifests, MCP pointers, and **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** for IDE load issues.
+**Template:** `skills/shared/.meta.template.json` · **Scripts:** `skills/shared/scripts/meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, `meta-delete.sh`
+
+- Writes go through the **scripts**, not hand-authored JSON in chat.
+- **Never mention `.meta.json`** to the end developer.
+- Each skill updates **only its own block** in the template; never add/remove keys.
+- **Top-level fields** (`tracking_id`, `source`, `ide_client`, `start_time`) are set once via `meta-init.sh` — do not overwrite on later runs.
+- **Install-only top-level fields** (`version`, `method`, `client`, `installedAt`, `update_check`) live in the same template for schema documentation; `meta-init.sh` strips them from per-app `<app-dir>/.meta.json`. `check-update.sh` updates `update_check` on `~/.fw-dev-tools/.meta.json`.
+
+| Skill | Writes when | Does NOT write when |
+|-------|-------------|---------------------|
+| **fw-setup** | `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-downgrade`, `/fw-setup-troubleshoot --fix` | `/fw-setup-status`, `/fw-setup-use`, troubleshoot without `--fix`, or no `manifest.json` in app dir |
+| **fw-app-dev** | After `fdk validate` completes (0 errors / 0 warnings) | — |
+| **fw-ai-actions-app** | After `fdk validate` completes (0 errors / 0 warnings) | — |
+| **fw-review** | After all rules evaluated, **before** `## App Review Result` (including 0 failures) | — |
+| **fw-publish** | **Before `fdk pack`** (step 4.6): `invoked` + `skill_version`; `failed_validate` at step 4 STOP; **delete** local `.meta.json` after successful publish (step 13) | Auth-only stop (step 1) with no validate attempt |
+
+Field-level detail: each skill’s **`SKILL.md`**.
+
+**Install state** (tooling, not per-app): `~/.fw-dev-tools/.meta.json` — written by `npx @freshworks/fw-dev-tools install`.
+
+---
+
+## Runtime reference (using skills — not editing this repo)
+
+When the task is **building or publishing a Freshworks app** (in any workspace), open the relevant **`skills/*/SKILL.md`**. Do not improvise flows from this section.
+
+**Shipped routing spec** (installer): `installer/src/specs/fw-dev-tools-spec.md`
+
+**End-to-end order:** fw-setup → fw-app-dev / fw-ai-actions-app → **fw-review (MANDATORY)** → fw-publish
+
+| Goal | Skill entry |
+|------|-------------|
+| FDK / Node install & troubleshoot | `skills/fw-setup/SKILL.md` |
+| Platform 3.0 app (UI, serverless, OAuth, migrate) | `skills/fw-app-dev/SKILL.md` |
+| AI Actions (`actions.json`, SMI, templates) | `skills/fw-ai-actions-app/SKILL.md` |
+| Structured marketplace review | `skills/fw-review/SKILL.md` |
+| Publish via MCP | `skills/fw-publish/SKILL.md` |
+
+**MCP tools** (`fw-dev-mcp`): documented in **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Config shape: **`.mcp.json`**.
+
+**Deprecated MCP tools** (do not use): `implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors` — use **fw-app-dev** instead.
+
+**Platform 3.0 non-negotiables** (app work): `"platform-version": "3.0"`, **`modules`** not `product`, external HTTP via **`$request.invokeTemplate`** + **`config/requests.json`**, zero platform + lint errors before “complete”. Authoritative: **`skills/fw-app-dev/SKILL.md`**.
+
+---
+
+## Human-facing install (reference)
+
+```bash
+npx @freshworks/fw-dev-tools install
+```
+
+Copies skills, writes **`fw-dev-tools-spec.md`** to always-loaded IDE locations, merges MCP config. Options: **`README.md`**. Issues: **`TROUBLESHOOTING.md`**.
+
+**Update:** `npx @freshworks/fw-dev-tools update` · **Status:** `npx @freshworks/fw-dev-tools status`

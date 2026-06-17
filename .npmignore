@@ -1,0 +1,2 @@
+# Explicit files field in package.json controls what's published.
+# This file exists only to suppress the gitignore-fallback warning.

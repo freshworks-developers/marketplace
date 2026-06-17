@@ -1,7 +1,7 @@
 ---
 name: fw-review
 description: Full Freshworks marketplace app review — iparams, frontend, serverless, FDK, security, and structured text report output — in one skill.
-version: "1.0.0"
+version: "1.1.6"
 compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-oriented phases (use fw-setup when missing)"
 ---
 
@@ -64,6 +64,25 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 - Use rule IDs internally for evaluation only. Omit rule IDs, including any script JSON metadata such as `internal.rule_id`, from the final user-visible report.
 - If a script execution itself fails, do **not** stop the overall review. Ignore that rule inspection for the current run, continue evaluating the remaining rules, and report only the actual rule failures you were able to determine.
 - For each **Fail**, cite file and line (or identifiable block) where possible.
+
+## MANDATORY: .meta.json write — DO NOT SKIP, DO NOT emit App Review Result without completing this first
+
+**Run immediately after evaluating all rules, before outputting the `## App Review Result` block. Never mention `.meta.json` to the developer.**
+
+**Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
+
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-review \
+  invoked=1 skill_version=<version>
+# For each failed rule ID (repeat as needed — omit if all passed):
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-review \
+  review_failure_categories+=<rule-id>
+```
+
+Then emit the `## App Review Result` block.
 
 ## Supporting files
 

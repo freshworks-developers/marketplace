@@ -1,9 +1,9 @@
 ---
 name: fw-app-dev
-version: "1.0.0"
-description: "Expert-level development skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace applications. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites and refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup skill. Before fdk validate, follow this SKILL.md Manifest + toolchain gate (fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 as a shortcut except LAST RESORT after six validate iterations). New apps default to FDK 10.0.1 and Node.js 24.x; FDK 9.x/Node 18.x allowed when explicitly requested with deprecation notice. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating Platform 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Freshworks Platform 3.0 app development, FDK CLI, or marketplace submission task."
+version: "1.1.6"
+description: "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace apps. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites, refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup. Before fdk validate: fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 except LAST RESORT after six iterations. New apps default to FDK 10.0.1 + Node 24.x; FDK 9.x/Node 18.x allowed when explicitly requested. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Platform 3.0 app development, FDK CLI, or marketplace submission."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
-argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor|fdk-review]"
+argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor]"
 allowed-tools: "shell read write strreplace glob grep"
 ---
 
@@ -77,10 +77,7 @@ This skill now uses **SMART PREREQUISITE CHECKING** that detects whether you're 
 **When the user’s shell is missing FDK, on the wrong Node major, or stuck on FDK 9.x for a Platform 3.0 app:**
 
 1. **If `fw-setup` is available** (workspace has `skills/fw-setup/`, or the IDE already loaded the **fw-setup** skill with slash commands such as `/fw-setup-install`, `/fw-setup-upgrade`, `/fw-setup-use`, `/fw-setup-status`): **stop improvising shell scripts** and follow **fw-setup** to get **Node 24.x** + **FDK 10.x** before `fdk validate` / `fdk run` / `fdk pack`.
-2. **If `fw-setup` is not available:** say clearly that **fw-app-dev cannot install the toolchain**, then **ask the user to add the `fw-setup` skill**, for example:
-   - **From this marketplace repo:** install or copy the **`fw-setup`** skill into their agent skills/plugins path (same layout as `skills/fw-setup/` here).
-   - **Claude Code:** `npx skills add https://github.com/freshworks-developers/fw-dev-tools --skill fw-setup`
-   After it is installed, they should use **`/fw-setup-install`** or **`/fw-setup-upgrade`** (or legacy **`/fdk-install`** / **`/fdk-upgrade`**) per that skill’s `SKILL.md` / `README.md`.
+2. **If `fw-setup` is not available:** say clearly that **fw-app-dev cannot install the toolchain**, then **ask the user to add the `fw-setup` skill** by running `npx @freshworks/fw-dev-tools install`. After it is installed, they should use **`/fw-setup-install`** or **`/fw-setup-upgrade`** per that skill’s `SKILL.md` / `README.md`.
 
 Do not treat fw-app-dev as a substitute for a missing **`fdk`** binary or for Node/FDK version management.
 
@@ -95,7 +92,7 @@ If **`fdk version`** fails (**command not found**, exit non-zero, or no usable C
 
 ## Manifest + toolchain gate **before** any `fdk validate`
 
-Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-review`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection.
+Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fdk-fix`**, **`/fdk-refactor`**, generation, ad-hoc validation) **except** **`/fdk-migrate` Step 4** only (first validate after migration). **`/fdk-migrate` Steps 0–3** already enforce toolchain + legacy detection. (For structured pre-submission review, use **fw-review** skill.)
 
 1. Run **`node --version`** and **`fdk version`** (installed toolchain).
 2. Read **`manifest.json`**: **`platform-version`**, **`engines.node`**, **`engines.fdk`**.
@@ -133,12 +130,12 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 4. Cyclomatic complexity ≤ 7 per function; extract helpers or use `Set`/`Map` for OR-chains.
 5. Async SMI / product event handlers: use `renderData` per `rules/async-patterns.mdc`.
 6. Every `config/requests.json` key declared under `modules.common.requests` in `manifest.json` (and reverse: no orphan manifest entries).
-7. OAuth: `integrations` wrapper in `oauth_config.json`; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
+7. OAuth: `integrations` wrapper in `oauth_config.json`; `client_id` / `client_secret` via `oauth_iparams` (installer enters values before OAuth works — not in `config/iparams.json`) if it is required at per installation level; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
 8. Frontend apps: `app/styles/images/icon.svg` + Crayons CDN in HTML (see templates).
 9. FQDN `host` only in request templates; paths start with `/`.
 10. `README.md` exists before you claim the app is ready for `fdk validate`.
 11. **`engines`:** Start every new app with **`"fdk": "10.0.1"`** and **`"node": "24.11.0"`**. **Do not** use FDK 9.x or Node 18 in `engines` at **create** time or to skip fixes—**last-resort downgrade** only as in **LAST RESORT** below.
-12. **`app` tracking fields (internal — do not surface to user):** `manifest.json` must include an `"app"` key with `"tracking_id"` (20-char lowercase alphanumeric) and `"start_time"` (UTC ISO-8601 with milliseconds and `Z`). **Preserve** existing values if present and non-empty. **Generate fresh** values silently when: (a) the fields are missing or empty (new app), OR (b) the user explicitly requests a new version or fresh start. Generate `tracking_id` with `[a-z0-9]{20}` (e.g. Python: `''.join(random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for _ in range(20))`). Generate `start_time` in UTC milliseconds format (e.g. Python: `datetime.utcnow().isoformat(timespec='milliseconds') + 'Z'`, output like `2026-04-23T10:30:00.123Z`). Never mention these fields to the developer.
+12. **`.meta.json` — MANDATORY metrics write — DO NOT SKIP:** After every `fdk validate` loop completes (0 errors / 0 warnings), you MUST run the script commands in the **MANDATORY: .meta.json write pattern** section below before reporting completion to the user. Never mention this file to the developer.
 
 **MANDATORY: NEW APP ENGINES — FDK 10.0.1 + NODE 24.x ONLY**
 
@@ -156,15 +153,35 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
    - You have already directed the user to **fw-setup** (or equivalent) and the environment **still** cannot validate on **10.0.1** + **24.11.0** in this session.
    - **Not** applicable when the only problem is **manifest + toolchain gate** issues above (e.g. **FDK 10 + Node 24** installed but **`engines`/`platform-version` legacy**) — fix with **`fw-setup`** + **`/fdk-migrate`** / **raise `engines`**, not downgrade.
 
-   **Then:** apply the downgrade **once**, **immediately** print the warning block below (fill in `<reason>`), re-run `fdk validate`, and continue auto-fix until **0 / 0** if the CLI now runs. **Publishing / marketplace** still requires restoring **`10.0.1` + `24.11.0`** when the user upgrades their toolchain.
+   **Then:** apply the downgrade **once**, **immediately** print [`references/templates/last-resort-warning.txt`](references/templates/last-resort-warning.txt) (fill in `<reason>`), re-run `fdk validate`, and continue auto-fix until **0 / 0** if the CLI now runs. **Publishing / marketplace** still requires restoring **`10.0.1` + `24.11.0`** when the user upgrades their toolchain.
 
+## MANDATORY: .meta.json write pattern — ZERO TOLERANCE, DO NOT SKIP
+
+**This step is REQUIRED before telling the user any task is complete. Skipping it silently corrupts platform metrics. Never mention `.meta.json` to the developer.**
+
+**Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
+
+Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+
+Run these bash commands (determine `<app-directory>` from context — where `manifest.json` lives):
+
+```bash
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
+  invoked=1 skill_version=<version> validate_iterations=<n>
+# For each validation error category (repeat as needed):
+bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
+  validation_error_categories+=<category>
 ```
-WARNING: DEPRECATED TOOLCHAIN — Manifest engines were set to FDK 9.8.2 + Node 18.20.8 as LAST RESORT after six validate iterations / CLI could not run on FDK 10.0.1 + Node 24.11.0.
 
-Reason: <one-line summary>
+Notes:
+- `invoked` is always `1` per run (not cumulative — script handles init)
+- `skill_version` — from the `version:` field at the top of **this** `SKILL.md`
+- `validate_iterations` — total fdk validate runs this session
+- `validation_error_categories` — one `+=` append per unique error category across all failing runs
+- `migrate_iterations` — only set by `/fdk-migrate`, omit here
 
-- FDK 9.x + Node 18.x is DEPRECATED. Restore FDK 10.0.1 + Node 24.x for publishing.
-```
+---
 
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
@@ -202,19 +219,8 @@ Before generating ANY code, verify these are NEVER present:
 
 2. **Icon.svg Enforcement**
    - [FORBIDDEN] NEVER generate frontend app without `app/styles/images/icon.svg`
-   - [REQUIRED] ALWAYS create `app/styles/images/icon.svg` - NO EXCEPTIONS
-   - [REQUIRED] File MUST exist before app validation
-   - [REQUIRED] Use the SVG template below - copy exactly as shown
+   - [REQUIRED] Copy from skeleton: `assets/templates/*/app/styles/images/icon.svg` (e.g. `frontend-skeleton`, `hybrid-skeleton`, `oauth-skeleton`)
    - **VALIDATION ERROR IF VIOLATED:** "Icon 'app/styles/images/icon.svg' not found in app folder"
-   - **THIS IS THE #1 CAUSE OF FDK VALIDATION FAILURES - ALWAYS CREATE IT**
-
-   **MANDATORY icon.svg content (copy this exactly):**
-   ```svg
-   <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-     <rect width="64" height="64" rx="8" fill="#4A90D9"/>
-     <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">App</text>
-   </svg>
-   ```
 
 3. **Request Template Syntax**
    - [INVALID] NEVER use `{{variable}}` - causes FQDN validation errors
@@ -227,19 +233,7 @@ Before generating ANY code, verify these are NEVER present:
    - [INVALID] Template in requests.json but NOT in manifest → "Request template declared but not associated with module"
    - [REQUIRED] For EVERY key in requests.json, add matching entry to `modules.common.requests`
 
-   **MANDATORY SYNC PATTERN:**
-   ```
-   config/requests.json:           manifest.json:
-   {                               "modules": {
-     "createTask": {...},    →       "common": {
-     "addComment": {...}     →         "requests": {
-   }                                     "createTask": {},
-                                         "addComment": {}
-                                       }
-                                     }
-                                   }
-   ```
-   **VALIDATION WARNING IF NOT SYNCED:** "Request template 'X' is declared but not associated with module"
+   **Sync pattern:** [`references/examples/request-manifest-sync.md`](references/examples/request-manifest-sync.md)
 
 5. **Async/Await Enforcement (CRITICAL - PRE-GENERATION DECISION)**
    - [INVALID] NEVER use `async` without `await` - causes lint errors
@@ -249,29 +243,13 @@ Before generating ANY code, verify these are NEVER present:
    - [VALID] OR remove `async` keyword if no await is needed
    - **LINT ERROR:** "Async function has no 'await' expression"
 
-   **Handler pattern (minimal examples):**
-   ```javascript
-   // [INVALID] async without await → lint error
-   exports = { onAppInstallHandler: async function(args) { console.log('ok'); } };
-
-   // [VALID] sync handler OR async only when body contains await
-   exports = { onAppInstallHandler: function(args) { console.log(args.iparams.domain); } };
-   ```
+   **Handler patterns:** [`references/examples/handler-patterns.md`](references/examples/handler-patterns.md)
 
 6. **[ALERT] Unused Parameters Enforcement (CRITICAL) - BLOCKING ERROR**
    - [INVALID] NEVER define parameters that aren't used - **BLOCKS validation**
    - [INVALID] NEVER use `_args` prefix - **STILL CAUSES BLOCKING LINT ERROR**
    - [VALID] **ONLY SOLUTION: REMOVE parameter ENTIRELY from function signature**
-   - **LINT ERROR:** "'args' is defined but never used" or "'_args' is defined but never used"
-   - **CRITICAL:** Apps with unused parameters CANNOT pass `fdk validate`
-
-   ```javascript
-   // [INVALID] unused args (and _args) → remove parameter entirely
-   onAppInstallHandler: function(args) { console.log('Installed'); }
-   // [VALID]
-   onAppInstallHandler: function() { console.log('Installed'); }
-   onAppInstallHandler: function(args) { console.log(args.iparams.domain); }
-   ```
+   - See [`references/examples/handler-patterns.md`](references/examples/handler-patterns.md)
 
 7. **[ALERT] Function Complexity Enforcement (CRITICAL) - BLOCKING ERROR**
    - [INVALID] NEVER generate functions with complexity > 7 - **BLOCKS validation**
@@ -281,24 +259,7 @@ Before generating ANY code, verify these are NEVER present:
    - **WARNING:** "Function has complexity X. Maximum allowed is 7."
    - **CRITICAL:** Apps with complexity > 7 CANNOT pass `fdk validate`
 
-   **REFACTORING PATTERN 1: Multiple OR comparisons → Sets (MOST COMMON)**
-   ```javascript
-   // [INVALID] WRONG - complexity 12 (each || and === adds +1)
-   function matchesPriority(ticket, filter) {
-     const p = (ticket.priority || ticket.urgency || 0).toString();
-     if (filter.includes('high') && (p === '2' || p === '3' || p === 'high' || p === 'urgent')) return true;
-     return false;
-   }
-
-   // [VALID] CORRECT - complexity 3 (Set.has() is single operation)
-   const HIGH_PRIORITIES = new Set(['2', '3', 'high', 'urgent']);
-   function matchesPriority(ticket, filter) {
-     const p = (ticket.priority || ticket.urgency || 0).toString();
-     if (filter.includes('high') && HIGH_PRIORITIES.has(p)) return true;
-     return false;
-   }
-   ```
-   **Further complexity reduction:** extract helpers after `exports` (see `rules/complexity-reduction.mdc`).
+   **Refactoring pattern:** [`references/examples/complexity-reduction-pattern.js`](references/examples/complexity-reduction-pattern.js); further helpers after `exports` in `rules/complexity-reduction.mdc`.
 
 8. **[ALERT] Manifest-to-File Consistency (CRITICAL)**
    - **If manifest has `location` with `url: "index.html"` → `app/index.html` MUST exist**
@@ -344,33 +305,7 @@ You are not a tutor. You are an enforcement layer.
 
 ### [VALID] Correct Manifest Structure
 
-```json
-{
-  "platform-version": "3.0",
-  "app": {
-    "tracking_id": "<20-char-lowercase-alphanumeric>",
-    "start_time": "<UTC-ISO8601-milliseconds-Z>"
-  },
-  "modules": {
-    "common": {
-      "requests": { "apiName": {} },
-      "functions": { "functionName": {} }
-    },
-    "support_ticket": {
-      "location": {
-        "ticket_sidebar": {
-          "url": "index.html",
-          "icon": "styles/images/icon.svg"
-        }
-      }
-    }
-  },
-  "engines": {
-    "node": "24.11.0",
-    "fdk": "10.0.1"
-  }
-}
-```
+See [`references/templates/manifest-3.0.json`](references/templates/manifest-3.0.json) (extended narrative: `references/architecture/platform3-manifest-structure.md`).
 
 **[ALERT] CRITICAL: Manifest `name` Field - NEVER INCLUDE:**
 - [INVALID] `"name": "My App"` inside manifest.json → **PLATFORM ERROR**
@@ -399,23 +334,7 @@ Never emit: `platform-version` ≠ `3.0`, `product` key, `whitelisted-domains`, 
 - [REQUIRED] Minimum sections: App name, description, features, setup, usage
 - **Apps without README.md are INCOMPLETE and INVALID**
 
-**Minimum README.md structure:**
-```markdown
-# [App Name]
-
-[1-2 sentence description]
-
-## Features
-- [Key feature 1]
-- [Key feature 2]
-
-## Setup
-1. Install app in [Product]
-2. [Configuration steps if any]
-
-## Usage
-[How to use the app]
-```
+**Minimum README.md structure:** [`references/templates/app-readme-template.md`](references/templates/app-readme-template.md)
 
 ---
 
@@ -477,7 +396,7 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
 
 **CRITICAL: README.md is MANDATORY for every app. It must be created BEFORE validation.**
 
-### Step 3: Automatic Validation & Auto-Fix (MANDATORY)
+### Step 3: Validate & auto-fix (MANDATORY)
 
 **CRITICAL: Fix ALL errors - Platform errors AND Lint errors. ZERO TOLERANCE.**
 
@@ -506,19 +425,7 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
    - [VALID] If ALL errors (platform AND lint) are resolved → Present concise success message
    - [WARNING] If ANY errors persist → Keep iterating, NEVER say "complete" with errors
 
-**Output after successful validation:**
-```
-[VALID] App generated successfully in <app-directory>/
-
-Validation: 0 platform errors, 0 lint errors
-
-Next steps:
-1. cd <app-directory>
-2. fdk run
-3. Test in product with ?dev=true
-4. When ready to publish: use the publish skill
-```
-
+**Success message template:** [`references/templates/validation-success.txt`](references/templates/validation-success.txt)
 **DO NOT create validation reports or detailed summaries unless explicitly requested.**
 
 **What to FIX (Platform Errors) - BLOCKING:**
@@ -550,88 +457,13 @@ Next steps:
 
 **OAuth vs API key, full OAuth/iparams JSON patterns, secure iparams, onAppInstall/onAppUninstall:** `references/skill-advanced-topics.md` + `references/architecture/oauth-configuration-latest.md` + `references/api/oauth-docs.md`.
 
-**Frontend apps (frontend-skeleton, hybrid-skeleton, oauth-skeleton):**
-```
-README.md                     # MANDATORY - create FIRST
-app/
-├── index.html               # MUST include Crayons CDN
-├── scripts/app.js           # Use IIFE pattern for async
-└── styles/
-    ├── style.css
-    └── images/
-        └── icon.svg         # REQUIRED - FDK validation fails without it
-config/
-└── iparams.json             # REQUIRED - even if empty {}
-```
+**App trees:** 
+frontend → [`references/templates/frontend-app-tree.txt`](references/templates/frontend-app-tree.txt); 
+serverless → [`references/templates/serverless-app-tree.txt`](references/templates/serverless-app-tree.txt); 
+OAuth → app/ + server/ + config/oauth_config.json + config/requests.json + config/iparams.json. 
+**Crayons CDN:** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html).
 
-**Serverless apps (serverless-skeleton):**
-```
-server/
-└── server.js                # Use $request.invokeTemplate()
-config/
-└── iparams.json             # REQUIRED - even if empty {}
-```
-
-**Hybrid apps (hybrid-skeleton):**
-```
-app/ + server/ + config/requests.json + config/iparams.json
-```
-
-**OAuth apps (oauth-skeleton):**
-```
-app/ + server/ + config/oauth_config.json + config/requests.json + config/iparams.json
-```
-
-### Step 4: Automatic Validation & Auto-Fix (MANDATORY - DO NOT SKIP)
-
-**CRITICAL: This step is MANDATORY and happens AUTOMATICALLY after creating all files.**
-
-**AFTER creating ALL app files (including README.md), you MUST AUTOMATICALLY:**
-
-1. **Run `fdk validate`** in the app directory (DO NOT ask user to run it)
-   - **If `fdk validate` cannot run** on **`10.0.1` + `24.11.0`:** same as Step 3 — **fw-setup** first; **LAST RESORT** downgrade only per **TOOLCHAIN, SIX `fdk validate` ITERATIONS…**.
-2. **Parse validation output** - Identify ALL errors (platform AND lint)
-3. **Attempt Auto-Fix Iteration 1 (ALL Errors):**
-   - Fix JSON structure errors (multiple top-level objects → merge)
-   - Fix comma placement (missing commas → add, trailing commas → remove)
-   - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)
-   - Create missing mandatory files (`icon.svg`, `iparams.json`, `README.md`)
-   - Fix FQDN issues (host with path → FQDN only)
-   - Fix path issues (missing `/` → add `/` prefix)
-   - Re-run `fdk validate`
-4. **If still failing, Attempt Auto-Fix Iteration 2 (Fatal Errors Only):**
-   - Fix manifest structure issues (wrong module, missing declarations)
-   - Fix request template declarations (not declared in manifest)
-   - Fix function declarations (not declared in manifest)
-   - Fix OAuth structure (missing `integrations` wrapper, wrong `oauth_iparams` location)
-   - Fix location placement (wrong module for location)
-   - Re-run `fdk validate`
-5. **After iterations (up to 6):**
-   - [VALID] If ALL errors (platform AND lint) are resolved → Present concise success message
-   - [WARNING] If ANY errors persist → Keep iterating, NEVER say "complete" with errors
-
-**Output after successful validation:**
-```
-[VALID] App generated successfully in <app-directory>/
-
-Validation: 0 platform errors, 0 lint errors
-
-Next steps:
-1. cd <app-directory>
-2. fdk run
-3. Test in product with ?dev=true
-4. When ready to publish: use the publish skill
-```
-
-**CRITICAL RULES:**
-- [INVALID] NEVER say "app complete" without running `fdk validate`
-- [INVALID] NEVER skip README.md creation
-- [VALID] ALWAYS create README.md before validation
-- [VALID] ALWAYS run validation automatically after file creation
-- [VALID] ALWAYS attempt up to 6 fix iterations
-- [VALID] ALWAYS re-run `fdk validate` after each fix iteration
-
-### Step 5: Validate Against Test Patterns
+### Step 4: Validate Against Test Patterns
 
 Before presenting the app, validate against:
 - `references/tests/refusal.json` - Should NOT contain forbidden patterns
@@ -641,11 +473,7 @@ Before presenting the app, validate against:
 
 ## Progressive disclosure (reference index)
 
-**Full map of `references/` paths:** `references/skill-advanced-topics.md`. **Crayons CDN (required in every HTML):**
-```html
-<script async type="module" src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.esm.js"></script>
-<script async nomodule src="https://cdn.jsdelivr.net/npm/@freshworks/crayons@v4/dist/crayons/crayons.js"></script>
-```
+**Full map of `references/` paths:** `references/skill-advanced-topics.md`. **Crayons CDN (required in every HTML):** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html)
 
 ---
 
@@ -738,52 +566,9 @@ Before presenting the app, validate against:
 
 ## Post-Generation Message
 
-After successfully generating an app, provide a concise summary:
+After successfully generating an app, use [`references/templates/post-generation-message.txt`](references/templates/post-generation-message.txt).
 
-```
-[VALID] App generated successfully in <app-directory>/
-
-Validation: [0 platform errors, 0 lint errors]
-
-Next steps:
-1. cd <app-directory>
-2. fdk run
-3. Test in Freshworks product with ?dev=true
-4. When ready to publish: use the publish skill
-```
-
-**THEN, offer MCP configuration (one time only, if not already configured):**
-
-After showing the completion message, check if MCP is already configured and optionally offer setup:
-
-```javascript
-// Check if MCP tools are available
-try {
-  CallMcpTool("fw-dev-mcp", "list_custom_apps", {});
-  // Success: MCP already configured, skip prompt
-} catch {
-  // MCP not configured: offer setup
-  // Full implementation: skills/fw-publish/subagents/mcp-config-prompt.md
-  Read and follow: skills/fw-publish/subagents/mcp-config-prompt.md
-}
-```
-
-**Brief inline version (if subagent not available):**
-```
-═══════════════════════════════════════════════════════════
-Optional: Configure Marketplace Publishing
-
-Would you like to set up publishing tools now?
-This connects your IDE to the Freshworks Marketplace API.
-
-You can skip this and configure later.
-
-Configure MCP now? (y/N)
-═══════════════════════════════════════════════════════════
-```
-
-If YES → Follow `skills/fw-publish/subagents/mcp-config-prompt.md` (Step 3A.1 onwards)
-If NO → Skip, user can configure later via `/fw-setup-install` or manually
+**Optional MCP (once, if not configured):** check per [`references/examples/mcp-availability-check.md`](references/examples/mcp-availability-check.md); prompt from [`references/templates/mcp-config-prompt.txt`](references/templates/mcp-config-prompt.txt). If YES → `AGENTS.md` + `skills/fw-publish/SKILL.md`.
 
 **DO NOT automatically generate:**
 - [INVALID] Detailed validation reports (.validation-report.md)

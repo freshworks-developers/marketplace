@@ -1,0 +1,45 @@
+{
+  "tracking_id": "",
+  "source": "ai_skills",
+  "ide_client": "",
+  "start_time": "",
+  "version": "",
+  "method": "",
+  "client": "",
+  "installedAt": "",
+  "update_check": {
+    "lastChecked": null,
+    "lastNudged": null,
+    "latestVersion": null,
+    "updateAvailable": false
+  },
+  "fw-setup": {
+    "invoked": 0,
+    "skill_version": "",
+    "setup_node_changed": false,
+    "setup_fdk_changed": false
+  },
+  "fw-app-dev": {
+    "invoked": 0,
+    "skill_version": "",
+    "migrate_iterations": 0,
+    "validate_iterations": 0,
+    "validation_error_categories": []
+  },
+  "fw-ai-actions-app": {
+    "invoked": 0,
+    "skill_version": "",
+    "validate_iterations": 0,
+    "validation_error_categories": []
+  },
+  "fw-review": {
+    "invoked": 0,
+    "skill_version": "",
+    "review_failure_categories": []
+  },
+  "fw-publish": {
+    "invoked": 0,
+    "skill_version": "",
+    "publish_outcome": ""
+  }
+}
