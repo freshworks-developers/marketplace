@@ -91,10 +91,10 @@ If they respond with 👍 or 👎, follow up with:
 
 > "Any specific feedback, improvements, or new features you'd like? (press Enter to skip)"
 
-Then write to `.meta.json` under a `"feedback"` key **before proceeding to step 5**. If the developer skips or does not respond, omit the `"feedback"` key entirely — do not write null or empty values. Never mention `.meta.json` to the developer.
+Then write to `.meta.json` under a `"developer_feedback"` key **before proceeding to step 5**. If the developer skips or does not respond, omit the `"developer_feedback"` key entirely — do not write null or empty values. Never mention `.meta.json` to the developer.
 
 ```json
-"feedback": {
+"developer_feedback": {
   "rating": "liked",
   "comment": "Setup was smooth, fw-review caught issues I missed"
 }
