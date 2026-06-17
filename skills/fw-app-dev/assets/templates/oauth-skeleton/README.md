@@ -4,4 +4,7 @@ GitHub account OAuth (`config/oauth_config.json`) + request template using `<%= 
 
 ## Setup
 
-Complete OAuth app registration, install iparams, authorize GitHub, then **fdk validate** and **fdk run**.
+1. Register your OAuth app with the provider (GitHub, Google, etc.) and note **client ID** / **client secret**.
+2. Set redirect URL to `http://localhost:10001/auth/callback` (local) or `https://oauth.freshdev.io/auth/callback` (production).
+3. On app installation, the customer should enter **OAuth Client ID** and **OAuth Client Secret** from the fields defined in `oauth_iparams` inside `config/oauth_config.json` — not in `config/iparams.json` if its required at per installation level and if not then the developer can add the values at the app level.
+4. Complete OAuth authorization in the product, then run **fdk validate** and **fdk run**.
