@@ -85,6 +85,15 @@ test('meta-update.sh sets string and number fields', async () => {
   await rm(tmp, { recursive: true });
 });
 
+test('meta-update.sh strips quotes from skill_version', async () => {
+  const tmp = await makeTmp();
+  await runScript('meta-init.sh', [tmp, 'cursor']);
+  await runScript('meta-update.sh', [tmp, 'fw-app-dev', 'invoked=1', 'skill_version="1.1.5"']);
+  const meta = await readMeta(tmp);
+  assert.equal(meta['fw-app-dev'].skill_version, '1.1.5');
+  await rm(tmp, { recursive: true });
+});
+
 test('meta-update.sh sets boolean fields', async () => {
   const tmp = await makeTmp();
   await runScript('meta-init.sh', [tmp, 'cursor']);
@@ -147,7 +156,7 @@ test('meta-feedback.sh writes liked with comment', async () => {
   await runScript('meta-init.sh', [tmp, 'cursor']);
   await runScript('meta-feedback.sh', [tmp, 'liked', 'Setup was smooth']);
   const meta = await readMeta(tmp);
-  assert.deepEqual(meta.feedback, { rating: 'liked', comment: 'Setup was smooth' });
+  assert.deepEqual(meta.developer_feedback, { rating: 'liked', comment: 'Setup was smooth' });
   await rm(tmp, { recursive: true });
 });
 
@@ -156,8 +165,8 @@ test('meta-feedback.sh writes disliked without comment key', async () => {
   await runScript('meta-init.sh', [tmp, 'cursor']);
   await runScript('meta-feedback.sh', [tmp, 'disliked']);
   const meta = await readMeta(tmp);
-  assert.equal(meta.feedback.rating, 'disliked');
-  assert.ok(!Object.hasOwn(meta.feedback, 'comment'));
+  assert.equal(meta.developer_feedback.rating, 'disliked');
+  assert.ok(!Object.hasOwn(meta.developer_feedback, 'comment'));
   await rm(tmp, { recursive: true });
 });
 
@@ -166,7 +175,7 @@ test('meta-feedback.sh writes disliked with comment', async () => {
   await runScript('meta-init.sh', [tmp, 'cursor']);
   await runScript('meta-feedback.sh', [tmp, 'disliked', 'publish gates were confusing']);
   const meta = await readMeta(tmp);
-  assert.deepEqual(meta.feedback, {
+  assert.deepEqual(meta.developer_feedback, {
     rating: 'disliked',
     comment: 'publish gates were confusing',
   });
@@ -178,8 +187,8 @@ test('meta-feedback.sh omits comment key for whitespace-only comment', async () 
   await runScript('meta-init.sh', [tmp, 'cursor']);
   await runScript('meta-feedback.sh', [tmp, 'liked', '   ']);
   const meta = await readMeta(tmp);
-  assert.equal(meta.feedback.rating, 'liked');
-  assert.ok(!Object.hasOwn(meta.feedback, 'comment'));
+  assert.equal(meta.developer_feedback.rating, 'liked');
+  assert.ok(!Object.hasOwn(meta.developer_feedback, 'comment'));
   await rm(tmp, { recursive: true });
 });
 
@@ -189,7 +198,7 @@ test('meta-feedback.sh overwrites prior feedback', async () => {
   await runScript('meta-feedback.sh', [tmp, 'liked', 'first']);
   await runScript('meta-feedback.sh', [tmp, 'disliked', 'changed mind']);
   const meta = await readMeta(tmp);
-  assert.deepEqual(meta.feedback, { rating: 'disliked', comment: 'changed mind' });
+  assert.deepEqual(meta.developer_feedback, { rating: 'disliked', comment: 'changed mind' });
   await rm(tmp, { recursive: true });
 });
 
@@ -198,7 +207,7 @@ test('meta-feedback.sh joins multi-word comment', async () => {
   await runScript('meta-init.sh', [tmp, 'cursor']);
   await runScript('meta-feedback.sh', [tmp, 'liked', 'fast setup', 'clear docs']);
   const meta = await readMeta(tmp);
-  assert.equal(meta.feedback.comment, 'fast setup clear docs');
+  assert.equal(meta.developer_feedback.comment, 'fast setup clear docs');
   await rm(tmp, { recursive: true });
 });
 
@@ -209,7 +218,7 @@ test('meta-feedback.sh preserves skill blocks', async () => {
   await runScript('meta-feedback.sh', [tmp, 'liked']);
   const meta = await readMeta(tmp);
   assert.equal(meta['fw-app-dev'].invoked, 1);
-  assert.equal(meta.feedback.rating, 'liked');
+  assert.equal(meta.developer_feedback.rating, 'liked');
   await rm(tmp, { recursive: true });
 });
 
@@ -221,7 +230,7 @@ test('meta-feedback.sh rejects invalid rating', async () => {
     { code: 1 }
   );
   const meta = await readMeta(tmp);
-  assert.ok(!Object.hasOwn(meta, 'feedback'));
+  assert.ok(!Object.hasOwn(meta, 'developer_feedback'));
   await rm(tmp, { recursive: true });
 });
 

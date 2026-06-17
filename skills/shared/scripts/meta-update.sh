@@ -27,6 +27,10 @@ for arg in "${@:3}"; do
   else
     key="${arg%%=*}"
     val="${arg#*=}"
+    if [[ "$key" == "skill_version" ]]; then
+      val="${val#\"}"; val="${val%\"}"
+      val="${val#\'}"; val="${val%\'}"
+    fi
     ASSIGNMENTS="$ASSIGNMENTS\"$key\":$(node -e "
       const v = '$val';
       if (v === 'true') process.stdout.write('true');

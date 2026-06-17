@@ -432,6 +432,145 @@ llm_log_publish_metrics() {
   python3 "$(dirname "$0")/lib/llm-log-publish-metrics.py" "$log"
 }
 
+# IDE skill path reads in stream-json logs (claude_reads:N cursor_reads:N codex_reads:N).
+llm_log_skill_paths() {
+  local log="$1"
+  [[ -f "$log" ]] || return
+  python3 "$(dirname "$0")/lib/llm-log-skill-paths.py" "$log"
+}
+
+# Per-app .meta.json script usage vs hand-written edits (meta_init/update, hand_write).
+llm_log_meta_scripts() {
+  local log="$1"
+  [[ -f "$log" ]] || return
+  python3 "$(dirname "$0")/lib/llm-log-meta-scripts.py" "$log"
+}
+
+# Expected skill version from repo SKILL.md frontmatter (matches installed copy on --from-repo).
+e2e_skill_version() {
+  local skill="$1"
+  local repo; repo="$(cd "$(dirname "$0")/.." && pwd)"
+  sed -n 's/^version:[[:space:]]*"\{0,1\}\([^"]*\)"\{0,1\}/\1/p' "$repo/skills/$skill/SKILL.md" | head -1
+}
+
+# Fail E2E when agent hand-writes .meta.json or skips meta-update.sh.
+phase_meta_script_guard() {
+  local phase_label="$1"
+  local log="$2"
+  [[ "$SKIP_BUILD" == "true" ]] && return
+  [[ -f "$log" ]] || return
+
+  local metrics meta_update hand_write
+  metrics=$(llm_log_meta_scripts "$log" || true)
+  meta_update=$(grep -E '^meta_update:' <<< "$metrics" | cut -d: -f2)
+  hand_write=$(grep -E '^hand_write:' <<< "$metrics" | cut -d: -f2)
+
+  if [[ "$hand_write" == "yes" ]]; then
+    fail "$phase_label: agent hand-wrote .meta.json (use meta-init.sh / meta-update.sh only)"
+  else
+    pass "$phase_label: no hand-written .meta.json detected"
+  fi
+
+  if [[ "$meta_update" == "yes" ]]; then
+    pass "$phase_label: meta-update.sh invoked in agent log"
+  else
+    fail "$phase_label: meta-update.sh not found in agent log"
+  fi
+}
+
+# Absolute skill reference for E2E prompts — avoids ambiguous skills/fw-* paths.
+e2e_fw_skill_ref() {
+  local skill="$1"
+  case "$CLIENT" in
+    cursor) echo "${HOME}/.cursor/skills/${skill}/SKILL.md" ;;
+    codex)  echo "${HOME}/.codex/skills/${skill}/SKILL.md" ;;
+    claude) echo "the ${skill} Claude Code plugin (Skill tool or /${skill} — never read ~/.cursor/skills or ~/.codex/skills)" ;;
+  esac
+}
+
+# Fail Cursor E2E when the agent reads fw skills from another IDE's install tree.
+phase_skill_path_guard() {
+  local phase_label="$1"
+  local log="$2"
+  [[ "$CLIENT" != "cursor" ]] && return
+  [[ -f "$log" ]] || return
+
+  local metrics claude_reads codex_reads
+  metrics=$(llm_log_skill_paths "$log" || true)
+  claude_reads=$(grep -E '^claude_reads:' <<< "$metrics" | cut -d: -f2)
+  codex_reads=$(grep -E '^codex_reads:' <<< "$metrics" | cut -d: -f2)
+  claude_reads=${claude_reads:-0}
+  codex_reads=${codex_reads:-0}
+
+  if [[ "$claude_reads" -gt 0 ]]; then
+    fail "$phase_label: Cursor agent read fw skills from ~/.claude/skills ($claude_reads read(s))"
+  else
+    pass "$phase_label: no reads from ~/.claude/skills"
+  fi
+  if [[ "$codex_reads" -gt 0 ]]; then
+    fail "$phase_label: Cursor agent read fw skills from ~/.codex/skills ($codex_reads read(s))"
+  else
+    pass "$phase_label: no reads from ~/.codex/skills"
+  fi
+}
+
+# Claude install: local marketplace under ~/.fw-dev-tools/ and routing block in CLAUDE.md.
+verify_claude_install_artifacts() {
+  local expected_ver
+  expected_ver="$(e2e_skill_version fw-app-dev)"
+
+  [[ -f "$HOME/.fw-dev-tools/skills/fw-app-dev/SKILL.md" ]] \
+    && pass "local marketplace skills copied to ~/.fw-dev-tools/skills" \
+    || fail "~/.fw-dev-tools/skills/fw-app-dev/SKILL.md missing"
+
+  [[ -f "$HOME/.fw-dev-tools/.claude-plugin/marketplace.json" ]] \
+    && pass "local .claude-plugin manifest copied" \
+    || fail "~/.fw-dev-tools/.claude-plugin/marketplace.json missing"
+
+  if node -e "
+    const fs = require('fs');
+    const expected = process.argv[1];
+    const skill = fs.readFileSync(process.env.HOME + '/.fw-dev-tools/skills/fw-app-dev/SKILL.md', 'utf8');
+    const m = skill.match(/^version:\\s*\"?([^\"\\n]+)\"?/m);
+    process.exit(m && m[1] === expected ? 0 : 1);
+  " "$expected_ver"; then
+    pass "local marketplace SKILL.md version matches fleet ($expected_ver)"
+  else
+    fail "local marketplace SKILL.md version mismatch (expected $expected_ver)"
+  fi
+
+  if node -e "
+    const fs = require('fs');
+    const expected = process.argv[1];
+    const mp = JSON.parse(fs.readFileSync(process.env.HOME + '/.fw-dev-tools/.claude-plugin/marketplace.json', 'utf8'));
+    process.exit(mp.version === expected ? 0 : 1);
+  " "$expected_ver"; then
+    pass "local marketplace.json version matches fleet ($expected_ver)"
+  else
+    fail "local marketplace.json version mismatch (expected $expected_ver)"
+  fi
+
+  if [[ ! -f "$HOME/.claude/CLAUDE.md" ]]; then
+    fail "~/.claude/CLAUDE.md missing after Claude install"
+    return
+  fi
+  if grep -q '<!-- fw-dev-tools start -->' "$HOME/.claude/CLAUDE.md" \
+    && grep -q 'IDE skill paths' "$HOME/.claude/CLAUDE.md"; then
+    pass "CLAUDE.md has fw-dev-tools routing block"
+  else
+    fail "CLAUDE.md missing fw-dev-tools routing block"
+  fi
+}
+
+verify_claude_uninstall_artifacts() {
+  if [[ -f "$HOME/.claude/CLAUDE.md" ]] \
+    && grep -q '<!-- fw-dev-tools start -->' "$HOME/.claude/CLAUDE.md"; then
+    fail "CLAUDE.md still contains fw-dev-tools routing block after uninstall"
+  else
+    pass "CLAUDE.md routing block removed (or CLAUDE.md absent)"
+  fi
+}
+
 # ─── invoke LLM ──────────────────────────────────────────────────────────────
 invoke_llm() {
   local prompt="$1"
@@ -501,6 +640,7 @@ phase_install() {
       [[ -f "$HOME/.fw-dev-tools/scripts/meta-update.sh" ]]  && pass "meta-update.sh installed"  || fail "meta-update.sh missing"
       [[ -f "$HOME/.fw-dev-tools/scripts/meta-delete.sh" ]]  && pass "meta-delete.sh installed"  || fail "meta-delete.sh missing"
       [[ -f "$HOME/.fw-dev-tools/scripts/check-update.sh" ]] && pass "check-update.sh installed" || fail "check-update.sh missing"
+      verify_claude_install_artifacts
       ;;
     cursor)
       [[ -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules installed" || fail "Cursor rules missing"
@@ -569,11 +709,11 @@ phase_build() {
 
 $APP_PROMPT
 
-Use the fw-app-dev skill (skills/fw-app-dev/SKILL.md). Follow the mandatory skill order:
+Read and follow $(e2e_fw_skill_ref fw-app-dev). Mandatory skill order:
 ${setup_step}
 2. fw-app-dev (build the app, run fdk validate until 0 errors)
-3. fw-review (MANDATORY before publish)
-Create all app files inside $OUTPUT_DIR. Write .meta.json per skill instructions."
+3. fw-review (MANDATORY before publish) — use $(e2e_fw_skill_ref fw-review)
+Create all app files inside $OUTPUT_DIR. Record metrics with meta-init.sh and meta-update.sh only — never hand-write .meta.json."
 
   local log="$OUTPUT_DIR/e2e-llm-output.log"
   local llm_exit=0
@@ -585,6 +725,8 @@ Create all app files inside $OUTPUT_DIR. Write .meta.json per skill instructions
   else
     pass "LLM invocation complete"
   fi
+  phase_skill_path_guard "Build" "$log"
+  phase_meta_script_guard "Build" "$log"
 }
 
 # ─── phase: structural checks ─────────────────────────────────────────────────
@@ -660,6 +802,10 @@ phase_appinfo() {
   fi
   pass ".meta.json exists"
 
+  local expected_app_dev_ver expected_review_ver
+  expected_app_dev_ver=$(e2e_skill_version fw-app-dev)
+  expected_review_ver=$(e2e_skill_version fw-review)
+
   # parse with node — write script to a temp file to avoid process.argv[1] = '-' issue
   local _script
   _script=$(mktemp "${TMPDIR:-/tmp}/e2e-appinfo.XXXXXX") && _script="${_script}.js"
@@ -685,6 +831,10 @@ if (!ad) { console.log('  FAIL: fw-app-dev block missing'); f++; }
 else {
   check('fw-app-dev.invoked > 0',       ad.invoked > 0);
   check('fw-app-dev.skill_version set', ad.skill_version && ad.skill_version !== '');
+  if (process.argv[4]) {
+    check('fw-app-dev.skill_version matches installed SKILL.md',
+      ad.skill_version === process.argv[4]);
+  }
   check('fw-app-dev.validate_iterations >= 0', typeof ad.validate_iterations === 'number');
   if (ad.invoked === 0) warn('fw-app-dev.invoked is 0 — LLM may not have followed skill order');
 }
@@ -698,11 +848,15 @@ else {
   else if (strictReview) { console.log('  FAIL: fw-review.invoked is 0 — mandatory review skipped'); f++; }
   else { console.log('  WARN: fw-review.invoked is 0 — LLM may have skipped mandatory review'); }
   check('fw-review.skill_version set', rv.skill_version && rv.skill_version !== '');
+  if (process.argv[5]) {
+    check('fw-review.skill_version matches installed SKILL.md',
+      rv.skill_version === process.argv[5]);
+  }
 }
 
 process.exit(f > 0 ? 1 : 0);
 EOF
-  node "$_script" "$ai" $([[ "$REQUIRE_REVIEW" == "true" ]] && echo strict); local node_exit=$?
+  node "$_script" "$ai" $([[ "$REQUIRE_REVIEW" == "true" ]] && echo strict) "$expected_app_dev_ver" "$expected_review_ver"; local node_exit=$?
   rm -f "$_script"
   [[ $node_exit -eq 0 ]] && PASS=$((PASS+1)) || FAIL=$((FAIL+1))
 }
@@ -715,7 +869,7 @@ phase_review() {
   review_prompt="Working directory: $OUTPUT_DIR
 
 Review this app for marketplace submission.
-Follow fw-review (skills/fw-review/SKILL.md). Write .meta.json per skill instructions."
+Read and follow $(e2e_fw_skill_ref fw-review). Record metrics with meta-init.sh and meta-update.sh only — never hand-write .meta.json."
 
   local log="$OUTPUT_DIR/e2e-review-output.log"
   local llm_exit=0
@@ -725,6 +879,9 @@ Follow fw-review (skills/fw-review/SKILL.md). Write .meta.json per skill instruc
     return
   fi
   pass "Review LLM invocation complete"
+
+  phase_skill_path_guard "Review" "$log"
+  phase_meta_script_guard "Review" "$log"
 
   if grep -qiE 'App Review Result|## .*[Pp]ass|## .*[Ww]arn|## .*[Ff]ail|PASS|WARN|FAIL' <<< "$(llm_log_text "$log")"; then
     pass "Structured review report detected in output"
@@ -887,6 +1044,7 @@ phase_uninstall() {
   case "$CLIENT" in
     claude)
       [[ ! -d "$HOME/.fw-dev-tools/scripts" ]] && pass "~/.fw-dev-tools/scripts removed" || fail "~/.fw-dev-tools/scripts still present"
+      verify_claude_uninstall_artifacts
       ;;
     cursor)
       [[ ! -f "$HOME/.cursor/rules/fw-dev-tools.mdc" ]] && pass "Cursor rules removed" || fail "Cursor rules still present"

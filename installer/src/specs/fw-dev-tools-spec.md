@@ -8,6 +8,16 @@ On the first skill invocation of each session: run `bash ~/.fw-dev-tools/scripts
 
 `check-update.sh` writes `update_check` fields (`lastChecked`, `lastNudged`, `latestVersion`, `updateAvailable`) to **`~/.fw-dev-tools/.meta.json`** (install state). Do **not** write `update_check` to per-app `<app-dir>/.meta.json` — that file is for skill metrics only (`meta-init.sh` / `meta-update.sh`).
 
+## IDE skill paths (MANDATORY)
+
+Read fw-dev-tools skills **only** from the install path for your IDE. Never mix paths across IDEs.
+
+| IDE | Skill path |
+|---|---|
+| **Cursor** | `~/.cursor/skills/fw-<name>/SKILL.md` |
+| **Codex** | `~/.codex/skills/fw-<name>/SKILL.md` |
+| **Claude Code** | `~/.fw-dev-tools/skills/fw-<name>/SKILL.md` — loaded via installed plugin (`/fw-<name>`); |
+
 ## Which skill to use
 
 | Goal | Skill |
@@ -26,4 +36,5 @@ On the first skill invocation of each session: run `bash ~/.fw-dev-tools/scripts
 - External HTTP only via `$request.invokeTemplate` and `config/requests.json` templates
 - `fdk validate`: zero platform errors and zero lint errors before complete
 - fw-review is MANDATORY before fw-publish — never skip it
+- Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` (and `meta-feedback.sh` / `meta-delete.sh` for publish) — **never** hand-write or Edit/Write the file; `skill_version` from the active skill's `SKILL.md` `version:` field, not `plugin.json`
 - DEPRECATED MCP tools (do NOT use): `implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`

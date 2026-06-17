@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -33,6 +33,47 @@ async function readUpdateCheckDefaults() {
 
 const _pkg = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8'));
 export const VERSION = _pkg.version;
+
+/** Skill directory names installed by fw-dev-tools (current + legacy). */
+export const FW_SKILLS = [
+  'fw-setup',
+  'fw-app-dev',
+  'fw-ai-actions-app',
+  'fw-review',
+  'fw-publish',
+];
+
+export const FW_SKILLS_LEGACY = ['fw-marketplace-app-dev'];
+
+/**
+ * Remove prior fw-dev-tools skill trees under a skills root (Cursor/Codex copy targets).
+ */
+export async function removeFwSkillDirs(skillsDir, { includeLegacy = true } = {}) {
+  const names = includeLegacy ? [...FW_SKILLS, ...FW_SKILLS_LEGACY] : [...FW_SKILLS];
+  let removed = 0;
+  for (const skill of names) {
+    const p = join(skillsDir, skill);
+    if (existsSync(p)) {
+      await rm(p, { recursive: true, force: true });
+      removed++;
+    }
+  }
+  return removed;
+}
+
+/** Claude Code plugin cache for a marketplace (e.g. freshworks-dev-tools). */
+export function claudePluginCacheDir(marketplaceName = 'freshworks-dev-tools') {
+  return join(homedir(), '.claude', 'plugins', 'cache', marketplaceName);
+}
+
+/** Remove stale Claude plugin cache so reinstall does not leave old version dirs (e.g. 1.0.0). */
+export async function removeClaudePluginCache(
+  cacheRoot = claudePluginCacheDir('freshworks-dev-tools'),
+) {
+  if (!existsSync(cacheRoot)) return false;
+  await rm(cacheRoot, { recursive: true, force: true });
+  return true;
+}
 
 /**
  * Copy all skill subdirectories from the repo's skills/ into targetDir.

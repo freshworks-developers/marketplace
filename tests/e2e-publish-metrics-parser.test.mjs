@@ -32,7 +32,7 @@ test('detects meta-update fw-publish before fdk pack in shell tool order', () =>
       subtype: 'completed',
       tool_call: {
         shellToolCall: {
-          args: { command: 'bash ~/.fw-dev-tools/scripts/meta-update.sh ./app fw-publish invoked=1 skill_version=1.1.4' },
+          args: { command: 'bash ~/.fw-dev-tools/scripts/meta-update.sh ./app fw-publish invoked=1 skill_version=x.y.z' },
         },
       },
     },

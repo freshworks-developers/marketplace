@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC } from '../utils.js';
+import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
@@ -44,6 +44,10 @@ export async function install({ yes = false } = {}) {
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
   const skillsDir = await resolveSkillsDir();
+  const removed = await removeFwSkillDirs(skillsDir);
+  if (removed > 0) {
+    console.log(`  ✓ Removed ${removed} previous fw-dev-tools skill(s) from ${skillsDir}`);
+  }
   await copySkills(skillsDir);
   console.log(`  ✓ Skills copied to ${skillsDir}`);
 
@@ -89,16 +93,9 @@ export async function uninstall({ yes = false } = {}) {
     return;
   }
 
-  const { rm } = await import('node:fs/promises');
   const skillsDir = await resolveSkillsDir();
-  const skills = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
-  for (const skill of skills) {
-    const p = join(skillsDir, skill);
-    if (existsSync(p)) {
-      await rm(p, { recursive: true });
-      console.log(`  ✓ Removed ${p}`);
-    }
-  }
+  const removed = await removeFwSkillDirs(skillsDir);
+  if (removed > 0) console.log(`  ✓ Removed ${removed} fw-dev-tools skill(s) from ${skillsDir}`);
 
   const cwdAgents = join(process.cwd(), 'AGENTS.md');
   const fallbackAgents = join(homedir(), '.codex', 'AGENTS.md');

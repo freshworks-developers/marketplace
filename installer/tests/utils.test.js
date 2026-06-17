@@ -4,7 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { copySkills, INSTALL_JSON, readInstallState, VERSION, writeInstallState } from '../src/utils.js';
+import { copySkills, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState } from '../src/utils.js';
 
 async function makeTmp() {
   const dir = join(tmpdir(), `utils-test-${Date.now()}-${Math.floor(Math.random() * 10000)}`);
@@ -61,6 +61,33 @@ test('copySkills overwrites existing skills on re-run', async () => {
   await copySkills(dest);
   const content = await readFile(target, 'utf8');
   assert.notEqual(content, 'corrupted', 'SKILL.md should be restored on re-run');
+  await rm(tmp, { recursive: true });
+});
+
+test('removeFwSkillDirs removes fw-dev-tools skills but not unrelated dirs', async () => {
+  const tmp = await makeTmp();
+  const skillsRoot = join(tmp, 'skills');
+  await mkdir(join(skillsRoot, 'fw-app-dev'), { recursive: true });
+  await mkdir(join(skillsRoot, 'fw-marketplace-app-dev'), { recursive: true });
+  await mkdir(join(skillsRoot, 'other-skill'), { recursive: true });
+  const removed = await removeFwSkillDirs(skillsRoot);
+  assert.equal(removed, 2);
+  assert.ok(!existsSync(join(skillsRoot, 'fw-app-dev')));
+  assert.ok(!existsSync(join(skillsRoot, 'fw-marketplace-app-dev')));
+  assert.ok(existsSync(join(skillsRoot, 'other-skill')));
+  await rm(tmp, { recursive: true });
+});
+
+test('removeClaudePluginCache removes marketplace cache tree', async () => {
+  const tmp = await makeTmp();
+  const cacheRoot = join(tmp, 'freshworks-dev-tools');
+  const staleSkill = join(cacheRoot, 'fw-review', '1.0.0');
+  await mkdir(staleSkill, { recursive: true });
+  await writeFile(join(staleSkill, 'SKILL.md'), 'version: "1.0.0"\n', 'utf8');
+
+  assert.equal(await removeClaudePluginCache(cacheRoot), true);
+  assert.equal(existsSync(cacheRoot), false);
+  assert.equal(await removeClaudePluginCache(cacheRoot), false);
   await rm(tmp, { recursive: true });
 });
 

@@ -156,7 +156,112 @@ describe('.meta.json write pattern', () => {
         `${skill}: must contain 'Never mention ... .meta.json' instruction`
       );
     });
+
+    test(`${skill}: forbids hand-writing .meta.json`, async () => {
+      const content = await readSkill(skill);
+      assert.ok(
+        content.includes('DO NOT hand-write JSON'),
+        `${skill}: must forbid hand-writing .meta.json`
+      );
+      assert.ok(
+        content.includes('meta-init.sh') && content.includes('meta-update.sh'),
+        `${skill}: must require meta scripts`
+      );
+    });
+
+    test(`${skill}: skill_version from this SKILL.md`, async () => {
+      const content = await readSkill(skill);
+      assert.ok(
+        /skill_version.*SKILL\.md|SKILL\.md.*skill_version/s.test(content),
+        `${skill}: must source skill_version from SKILL.md frontmatter`
+      );
+    });
   }
+});
+
+// ---------------------------------------------------------------------------
+// SKILL.md version vs plugin.json
+// ---------------------------------------------------------------------------
+
+describe('SKILL.md version matches plugin.json', () => {
+  async function skillFrontmatterVersion(skill) {
+    const raw = await readSkill(skill);
+    const m = raw.match(/^version:\s*"?([^"\n]+)"?/m);
+    assert.ok(m, `${skill}: SKILL.md missing version frontmatter`);
+    return m[1];
+  }
+
+  for (const skill of SKILLS) {
+    test(`${skill}: SKILL.md version matches .claude-plugin/plugin.json`, async () => {
+      const skillVer = await skillFrontmatterVersion(skill);
+      const plugin = await readJson(`skills/${skill}/.claude-plugin/plugin.json`);
+      assert.equal(skillVer, plugin.version, `${skill}: SKILL.md and claude plugin.json versions must match`);
+    });
+
+    test(`${skill}: SKILL.md version matches .cursor-plugin/plugin.json`, async () => {
+      const skillVer = await skillFrontmatterVersion(skill);
+      const plugin = await readJson(`skills/${skill}/.cursor-plugin/plugin.json`);
+      assert.equal(skillVer, plugin.version, `${skill}: SKILL.md and cursor plugin.json versions must match`);
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Release hygiene — single fleet version across all release artifacts
+// ---------------------------------------------------------------------------
+
+describe('Release hygiene — fleet version lock', () => {
+  async function skillFrontmatterVersion(skill) {
+    const raw = await readSkill(skill);
+    const m = raw.match(/^version:\s*"?([^"\n]+)"?/m);
+    assert.ok(m, `${skill}: SKILL.md missing version frontmatter`);
+    return m[1];
+  }
+
+  test('marketplace/package.json version propagates to installer, SKILL.md, and plugin manifests', async () => {
+    const rootPkg = JSON.parse(
+      await readFile(join(__dirname, '..', 'package.json'), 'utf8')
+    );
+    const canonical = rootPkg.version;
+    assert.ok(canonical, 'marketplace/package.json must define version');
+
+    const installerPkg = JSON.parse(
+      await readFile(join(__dirname, '..', 'installer', 'package.json'), 'utf8')
+    );
+    assert.equal(
+      installerPkg.version,
+      canonical,
+      'installer/package.json must match marketplace/package.json (run scripts/bump-version.mjs)'
+    );
+
+    for (const skill of SKILLS) {
+      assert.equal(
+        await skillFrontmatterVersion(skill),
+        canonical,
+        `${skill}/SKILL.md version must match fleet release`
+      );
+      for (const pluginDir of ['.claude-plugin', '.cursor-plugin']) {
+        const plugin = await readJson(`skills/${skill}/${pluginDir}/plugin.json`);
+        assert.equal(
+          plugin.version,
+          canonical,
+          `${skill}/${pluginDir}/plugin.json must match fleet release`
+        );
+      }
+    }
+
+    for (const manifest of ['.claude-plugin/marketplace.json', '.cursor-plugin/marketplace.json']) {
+      const mp = await readJson(manifest);
+      assert.equal(mp.version, canonical, `${manifest} top-level version`);
+      for (const plugin of mp.plugins) {
+        assert.equal(
+          plugin.version,
+          canonical,
+          `${manifest} plugins[].${plugin.name} version`
+        );
+      }
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -339,6 +444,17 @@ describe('fw-app-dev command files', () => {
       assert.ok(
         content.includes('meta-update.sh'),
         `${cmd}.md must reference meta-update.sh`
+      );
+    });
+
+    test(`${cmd}.md: forbids hand-writing .meta.json`, async () => {
+      const content = await readFile(
+        join(SKILLS_DIR, 'fw-app-dev', 'commands', `${cmd}.md`),
+        'utf8'
+      );
+      assert.ok(
+        content.includes('DO NOT hand-write JSON'),
+        `${cmd}.md must forbid hand-writing .meta.json`
       );
     });
   }
@@ -907,8 +1023,8 @@ describe('fw-publish meta-delete.sh', () => {
   test('references meta-feedback.sh for developer feedback step', async () => {
     const content = await readSkill('fw-publish');
     assert.ok(
-      content.includes('meta-feedback.sh'),
-      'fw-publish must reference meta-feedback.sh for step 4.5 feedback'
+      content.includes('meta-feedback.sh') && content.includes('developer_feedback'),
+      'fw-publish must reference meta-feedback.sh and developer_feedback key for step 4.5'
     );
   });
 });

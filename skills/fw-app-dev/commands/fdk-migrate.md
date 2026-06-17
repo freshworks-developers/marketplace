@@ -110,6 +110,8 @@ Run `fdk validate` in the app directory. Fix any fatal errors (and lint per fw-a
 
 **You MUST complete this step before telling the user migration is complete. Do not present the migrated app until these scripts succeed.**
 
+**Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh` and `meta-update.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **fw-app-dev** `SKILL.md` frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
+
 ```bash
 bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \

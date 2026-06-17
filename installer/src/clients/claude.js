@@ -1,15 +1,25 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { writeInstallState, prompt, copyScripts } from '../utils.js';
+import { join } from 'node:path';
+import { writeInstallState, prompt, copyScripts, copySkills, removeFwSkillDirs, removeClaudePluginCache, claudePluginCacheDir, FW_DEV_TOOLS_DIR, FW_SKILLS, REPO_ROOT } from '../utils.js';
+import { upsertBlock, removeBlock } from '../fenced-block.js';
 
 const execFileAsync = promisify(execFile);
 
-const MARKETPLACE_SOURCE = 'freshworks-developers/fw-dev-tools';
 const PLUGIN_NAME = 'freshworks-dev-tools';
-const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
+const CLAUDE_MD = join(homedir(), '.claude', 'CLAUDE.md');
+const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
+
+export async function writeClaudeMdBlock(targetPath = CLAUDE_MD) {
+  const specContent = await readFile(SPEC_SRC, 'utf8');
+  const block = `\n<!-- fw-dev-tools start -->\n${specContent}\n<!-- fw-dev-tools end -->\n`;
+  await mkdir(join(homedir(), '.claude'), { recursive: true });
+  const existing = existsSync(targetPath) ? await readFile(targetPath, 'utf8') : '';
+  await writeFile(targetPath, upsertBlock(existing, block), 'utf8');
+}
 
 const CLAUDE_CMD = process.env.FW_CLAUDE_CMD || 'claude';
 
@@ -28,17 +38,28 @@ export async function install({ yes = false } = {}) {
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
+  const claudeSkillsDir = join(homedir(), '.claude', 'skills');
+  const removedStale = await removeFwSkillDirs(claudeSkillsDir);
+  if (removedStale > 0) {
+    console.log(`  ✓ Removed ${removedStale} stale fw-dev-tools skill(s) from ${claudeSkillsDir}`);
+  }
+
+  await copySkills(join(FW_DEV_TOOLS_DIR, 'skills'));
+  const { cp: cpAsync } = await import('node:fs/promises');
+  await cpAsync(join(REPO_ROOT, '.claude-plugin'), join(FW_DEV_TOOLS_DIR, '.claude-plugin'), { recursive: true });
+  console.log('  ✓ Skills and plugin manifest copied to ~/.fw-dev-tools/');
+
   // Remove legacy install.json left by old manual install method
-  const legacyInstallJson = join(homedir(), '.fw-dev-tools', 'install.json');
+  const legacyInstallJson = join(FW_DEV_TOOLS_DIR, 'install.json');
   if (existsSync(legacyInstallJson)) {
     const { rm } = await import('node:fs/promises');
     await rm(legacyInstallJson);
     console.log('  ✓ Removed legacy install.json (replaced by .meta.json)');
   }
 
-  const addResult = await runClaude(['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE]);
+  const addResult = await runClaude(['plugin', 'marketplace', 'add', FW_DEV_TOOLS_DIR]);
   if (addResult.ok) {
-    console.log(`  ✓ Marketplace registered (${MARKETPLACE_SOURCE})`);
+    console.log(`  ✓ Marketplace registered from ~/.fw-dev-tools/`);
   } else {
     console.log(`  ℹ  Marketplace already registered or unavailable: ${addResult.output}`);
   }
@@ -48,7 +69,16 @@ export async function install({ yes = false } = {}) {
     { yes }
   );
 
-  for (const skill of SKILLS) {
+  // Replace existing plugins so marketplace files refresh (install alone is a no-op when present).
+  for (const skill of FW_SKILLS) {
+    await runClaude(['plugin', 'uninstall', `${skill}@${PLUGIN_NAME}`]);
+  }
+
+  if (await removeClaudePluginCache(claudePluginCacheDir(PLUGIN_NAME))) {
+    console.log(`  ✓ Removed stale plugin cache from ~/.claude/plugins/cache/${PLUGIN_NAME}`);
+  }
+
+  for (const skill of FW_SKILLS) {
     const installArgs = ['plugin', 'install', `${skill}@${PLUGIN_NAME}`];
     if (token) installArgs.push('--config', `mcp_auth_token=${token}`);
     const result = await runClaude(installArgs);
@@ -64,6 +94,9 @@ export async function install({ yes = false } = {}) {
     console.log(`    claude mcp add fw-dev-mcp https://mcp.freshworks.dev/mcp \\\n      --header "Authorization: Bearer YOUR_API_KEY"\n`);
   }
 
+  await writeClaudeMdBlock();
+  console.log(`  ✓ Routing spec written to ${CLAUDE_MD}`);
+
   await writeInstallState({ client: 'claude-code', method: 'plugin' });
   console.log('✓ fw-dev-tools installed for Claude Code');
   console.log('  Restart Claude Code to activate the plugins.\n');
@@ -78,12 +111,25 @@ export async function uninstall({ yes = false } = {}) {
     return;
   }
 
-  for (const skill of SKILLS) {
+  for (const skill of FW_SKILLS) {
     const result = await runClaude(['plugin', 'uninstall', `${skill}@${PLUGIN_NAME}`]);
     if (result.ok) {
       console.log(`  ✓ Uninstalled ${skill}`);
     } else {
       console.log(`  ℹ  ${skill}: ${result.output || 'already removed'}`);
+    }
+  }
+
+  if (await removeClaudePluginCache(claudePluginCacheDir(PLUGIN_NAME))) {
+    console.log(`  ✓ Removed plugin cache from ~/.claude/plugins/cache/${PLUGIN_NAME}`);
+  }
+
+  if (existsSync(CLAUDE_MD)) {
+    const content = await readFile(CLAUDE_MD, 'utf8');
+    const updated = removeBlock(content);
+    if (updated !== content) {
+      await writeFile(CLAUDE_MD, updated, 'utf8');
+      console.log(`  ✓ Routing block removed from ${CLAUDE_MD}`);
     }
   }
 

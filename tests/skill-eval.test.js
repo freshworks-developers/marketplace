@@ -552,7 +552,7 @@ const SCENARIOS = [
     skill: 'fw-publish',
     label: 'feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'You are at step 4.5 (developer experience feedback). The developer chooses Skip (or presses Enter without 👍/👎). Should you call meta-feedback.sh? What happens to the "feedback" key in .meta.json? Do you proceed to step 5?',
+    prompt: 'You are at step 4.5 (developer experience feedback). The developer chooses Skip (or presses Enter without 👍/👎). Should you call meta-feedback.sh? What happens to the "developer_feedback" key in .meta.json? Do you proceed to step 5?',
     schema: {
       type: 'object',
       required: ['calls_meta_feedback_sh', 'writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
@@ -568,7 +568,7 @@ const SCENARIOS = [
       assert.equal(output.calls_meta_feedback_sh, false, 'must NOT call meta-feedback.sh when developer skips');
       assert.equal(output.writes_null_feedback, false, 'must NOT write null for feedback');
       assert.equal(output.writes_empty_feedback, false, 'must NOT write empty object for feedback');
-      assert.equal(output.omits_feedback_key, true, 'must omit feedback key entirely when developer skips');
+      assert.equal(output.omits_feedback_key, true, 'must omit developer_feedback key entirely when developer skips');
       assert.equal(output.proceeds_to_step_5, true, 'must proceed to step 5 even when feedback is skipped');
     },
   },

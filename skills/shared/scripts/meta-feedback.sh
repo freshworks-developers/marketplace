@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Writes developer publish feedback to root-level "feedback" in <app-dir>/.meta.json.
+# Writes developer publish feedback to root-level "developer_feedback" in <app-dir>/.meta.json.
 # Usage: meta-feedback.sh <app-dir> <rating> [comment...]
 #   rating: liked | disliked
 #   comment: optional; remaining args joined as free text (omit JSON "comment" key when empty)
-# Do NOT call when the developer skips feedback — omit the "feedback" key entirely.
+# Do NOT call when the developer skips feedback — omit the "developer_feedback" key entirely.
 
 set -euo pipefail
 
@@ -34,6 +34,6 @@ node -e "
   const feedback = { rating };
   const trimmed = (comment || '').trim();
   if (trimmed) feedback.comment = trimmed;
-  m.feedback = feedback;
+  m.developer_feedback = feedback;
   fs.writeFileSync(metaPath, JSON.stringify(m, null, 2) + '\n');
 " "$RATING" "$COMMENT" "$META"

@@ -42,6 +42,22 @@ test('spec file includes update command hint', async () => {
   assert.ok(content.includes('npx @freshworks/fw-dev-tools update'), 'should mention update command');
 });
 
+test('spec file mandates IDE-specific skill paths', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  assert.ok(content.includes('IDE skill paths'), 'should document IDE skill paths');
+  assert.ok(content.includes('~/.cursor/skills/fw-'), 'should specify Cursor skill path');
+  assert.ok(content.includes('~/.codex/skills/fw-'), 'should specify Codex skill path');
+  assert.ok(content.includes('~/.fw-dev-tools/skills/fw-'), 'should specify Claude local skill path');
+  assert.ok(content.includes('Never mix paths'), 'should forbid mixing IDE skill paths');
+});
+
+test('spec file forbids hand-writing per-app .meta.json', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  assert.ok(content.includes('meta-init.sh'), 'should reference meta-init.sh');
+  assert.ok(content.includes('never') && content.includes('hand-write'), 'should forbid hand-writing .meta.json');
+  assert.ok(content.includes('skill_version'), 'should document skill_version sourcing');
+});
+
 test('spec file instructs check-update.sh on first skill invocation', async () => {
   const content = await readFile(SPEC_FILE, 'utf8');
   assert.ok(content.includes('check-update.sh'), 'should reference check-update.sh');

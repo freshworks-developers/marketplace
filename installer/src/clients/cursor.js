@@ -1,8 +1,8 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT } from '../utils.js';
+import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
@@ -26,16 +26,20 @@ export async function install({ yes = false } = {}) {
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
 
-  // Remove stale skill from old naming (fw-marketplace-app-dev → fw-app-dev)
-  const { rm: rmStale } = await import('node:fs/promises');
-  const staleSkill = join(SKILLS_DIR, 'fw-marketplace-app-dev');
-  if (existsSync(staleSkill)) {
-    await rmStale(staleSkill, { recursive: true });
-    console.log('  ✓ Removed stale skill fw-marketplace-app-dev (replaced by fw-app-dev)');
+  const removed = await removeFwSkillDirs(SKILLS_DIR);
+  if (removed > 0) {
+    console.log(`  ✓ Removed ${removed} previous fw-dev-tools skill(s) from ${SKILLS_DIR}`);
   }
 
   await copySkills(SKILLS_DIR);
   console.log(`  ✓ Skills copied to ${SKILLS_DIR}`);
+
+  const claudeSkillsDir = join(homedir(), '.claude', 'skills');
+  const foundClaude = FW_SKILLS.filter((s) => existsSync(join(claudeSkillsDir, s)));
+  if (foundClaude.length > 0) {
+    console.log(`  ⚠  Found fw-dev-tools skills in ${claudeSkillsDir}: ${foundClaude.join(', ')}`);
+    console.log('     Cursor reads skills from ~/.cursor/skills/ only — remove stale Claude copies if you are not using Claude Code.');
+  }
 
   // Warn if old npx-skills-add workspace installs exist
   const workspaceSkillsDir = join(process.cwd(), '.agents', 'skills');
@@ -90,15 +94,8 @@ export async function uninstall({ yes = false } = {}) {
     console.log('Uninstall cancelled.');
     return;
   }
-  const { rm } = await import('node:fs/promises');
-  const skills = ['fw-setup', 'fw-app-dev', 'fw-marketplace-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
-  for (const skill of skills) {
-    const p = join(SKILLS_DIR, skill);
-    if (existsSync(p)) {
-      await rm(p, { recursive: true });
-      console.log(`  ✓ Removed ${p}`);
-    }
-  }
+  const removed = await removeFwSkillDirs(SKILLS_DIR);
+  if (removed > 0) console.log(`  ✓ Removed ${removed} fw-dev-tools skill(s) from ${SKILLS_DIR}`);
   if (existsSync(SPEC_FILE)) {
     await rm(SPEC_FILE);
     console.log(`  ✓ Removed ${SPEC_FILE}`);
