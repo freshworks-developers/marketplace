@@ -44,6 +44,9 @@ const SKILLS = [
   'fw-publish',
 ];
 
+/** OpenAI Codex rejects SKILL.md when YAML description exceeds this length. */
+const CODEX_MAX_DESCRIPTION_LENGTH = 1024;
+
 const SKELETON_MANIFESTS = [
   join(TEMPLATES_DIR, 'frontend-skeleton', 'manifest.json'),
   join(TEMPLATES_DIR, 'serverless-skeleton', 'manifest.json'),
@@ -95,6 +98,16 @@ describe('Skill frontmatter', () => {
       const content = await readSkill(skill);
       const fm = parseFrontmatter(content);
       assert.match(fm.version, /^\d+\.\d+\.\d+$/, `${skill}: version must be semver (e.g. 1.0.0)`);
+    });
+
+    test(`${skill}: description ≤ ${CODEX_MAX_DESCRIPTION_LENGTH} chars (Codex limit)`, async () => {
+      const content = await readSkill(skill);
+      const fm = parseFrontmatter(content);
+      assert.ok(fm.description, `${skill}: description required`);
+      assert.ok(
+        fm.description.length <= CODEX_MAX_DESCRIPTION_LENGTH,
+        `${skill}: description is ${fm.description.length} chars (max ${CODEX_MAX_DESCRIPTION_LENGTH} for Codex)`
+      );
     });
   }
 });

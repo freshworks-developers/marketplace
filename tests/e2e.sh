@@ -587,8 +587,8 @@ invoke_llm() {
         --workspace "$workdir" "$prompt" 2>&1
       ;;
     codex)
-      codex --dangerously-auto-approve-everything \
-        --full-auto \
+      codex exec --dangerously-bypass-approvals-and-sandbox \
+        -C "$workdir" \
         "$prompt" 2>&1
       ;;
   esac
