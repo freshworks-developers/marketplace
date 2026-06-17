@@ -2,7 +2,7 @@
 
 **Fix issues with Freshworks skills in Cursor, Claude Code, and OpenAI Codex**
 
-This guide covers **real problems you'll actually encounter** when installing and using these skills, not generic advice. **Codex** uses **`.codex-plugin/plugin.json`** and **`skills/*/SKILL.md`**; many slash-command and Cursor-rule checks below do not apply there—see [OpenAI Codex](#openai-codex).
+This guide covers **real problems you'll actually encounter** when installing and using these skills, not generic advice. **Codex** loads **`~/.codex/skills/*/SKILL.md`** after installer setup; many slash-command and Cursor-rule checks below do not apply there—see [Codex-specific problems](#codex-specific-problems).
 
 **Before GitHub Issues:** use **[ISSUES.md](ISSUES.md)** — **mandatory** issue-body template + checklists (issues without the template may be closed).
 
@@ -24,6 +24,18 @@ ls ~/.cursor/skills/
 ```bash
 claude plugin list
 # Should show entries for fw-setup, fw-app-dev, fw-ai-actions-app, fw-review, fw-publish
+
+ls ~/.fw-dev-tools/skills/fw-app-dev/SKILL.md
+# Authoritative skill copy for plugins (version in YAML frontmatter should match your install)
+
+# Stale flat copies here shadow the plugin — see Issue #11 if versions look wrong:
+ls ~/.claude/skills/fw-* 2>/dev/null || true
+```
+
+**OpenAI Codex:**
+```bash
+ls ~/.codex/skills/fw-app-dev/SKILL.md
+grep -q 'fw-dev-tools' ~/.codex/AGENTS.md && echo "routing OK"
 ```
 
 **If missing:** Run `npx @freshworks/fw-dev-tools install` or see [Installation](#installation-from-scratch).
@@ -58,43 +70,34 @@ const result = await $request.post('https://api.example.com', {});
 
 ---
 
-### Test 4: OpenAI Codex plugin (optional)
-
-**If you use Codex** with the bundled plugin (**[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)**):
-
-1. **Repo root matters:** Run `codex plugin marketplace add ./` only from the directory that contains `.codex-plugin/plugin.json` (after `git clone`).
-2. Restart Codex so it picks up **`skills/`** and **`.mcp.json`** references.
-3. **Slash commands** (`/fdk-fix`, `/fw-setup-install`) are **Cursor / Claude Code** conventions. In Codex, rely on each skill’s **`SKILL.md`** workflows.
-4. **Publish MCP:** If Marketplace tools fail with auth errors, set the Portal JWT per **[AGENTS.md](AGENTS.md)** and **`skills/fw-publish/SKILL.md`**.
-
-More detail: **[README.md](README.md)** (Quick Start → OpenAI Codex); see **[Codex-specific problems](#codex-specific-problems)** below.
-
 ---
 
 ## How Skills Actually Work
 
 **Claude Code:**
-- Everything is in the `SKILL.md` file
-- Agent reads SKILL.md and follows instructions
-- Commands are just markdown files
-- No separate "rules" system
+- Skills ship via **local marketplace** at `~/.fw-dev-tools/` (plugins + `skills/`)
+- Routing block in `~/.claude/CLAUDE.md` points agents to `~/.fw-dev-tools/skills/fw-<name>/SKILL.md`
+- **Do not** rely on flat copies in `~/.claude/skills/fw-*` — they can be stale (Issue #11)
+- Commands are plugin slash commands; enforcement is in **SKILL.md** (no separate `.mdc` rules layer)
 
 **Cursor:**
 - Needs THREE things to work:
   1. `SKILL.md` - The main skill
   2. `.cursor-plugin/plugin.json` - Config file
   3. `rules/*.mdc` - Rule files that enforce patterns
-- If ANY of these are broken, parts of the skill won't work
+- If ANY of these are broken, parts of the skill won’t work
 
 **OpenAI Codex:**
-- Uses **`.codex-plugin/plugin.json`** at repo root (**`skills`**, **`mcpServers`** → **`.mcp.json`**)
-- Loads **`skills/*/SKILL.md`** as the source of truth; no separate bundled **`.mdc`** rules layer in the Codex UI
+- Installer copies skills to **`~/.codex/skills/fw-<name>/SKILL.md`**
+- Routing spec in **`~/.codex/AGENTS.md`** (from `fw-dev-tools-spec.md`)
+- **`SKILL.md`** is the source of truth; no slash-command autocomplete
+- YAML **`description`** in frontmatter must be **≤ 1024 characters** or Codex refuses to load the skill (Issue #12)
 - Optional **MCP** for **fw-publish**; token setup is client-specific—see **AGENTS.md**
 
 **Key Difference:**
-- Claude Code: Install and it works (usually)
-- Cursor: Install and it might be broken (often needs fixing)
-- Codex: Plugin path + repo layout must be correct; behavior follows **SKILL.md**, not slash autocomplete
+- Claude Code: Plugin + `~/.fw-dev-tools/skills/`; stale flat copies break routing (Issue #11)
+- Cursor: Install and it might need rule/plugin fixes (Issues #1–#4)
+- Codex: Installer paths + `AGENTS.md`; auth and description limits matter (Issues #12–#13)
 
 ---
 
@@ -129,37 +132,51 @@ cd fw-dev-tools
 
 # 2. For Cursor:
 mkdir -p ~/.cursor/skills
-cp -r skills/fw-app-dev ~/.cursor/skills/
-cp -r skills/fw-setup ~/.cursor/skills/
+cp -r skills/fw-* ~/.cursor/skills/
 
 # 2. For Claude Code:
-mkdir -p ~/.claude/skills
-cp -r skills/fw-app-dev ~/.claude/skills/
-cp -r skills/fw-setup ~/.claude/skills/
+mkdir -p ~/.fw-dev-tools
+cp -r skills ~/.fw-dev-tools/
+cp -r .claude-plugin ~/.fw-dev-tools/
+claude plugin marketplace add ~/.fw-dev-tools
+claude plugin install fw-setup@freshworks-dev-tools
+claude plugin install fw-app-dev@freshworks-dev-tools
+claude plugin install fw-ai-actions-app@freshworks-dev-tools
+claude plugin install fw-review@freshworks-dev-tools
+claude plugin install fw-publish@freshworks-dev-tools
+
+# 2. For Codex:
+mkdir -p ~/.codex/skills
+cp -r skills/fw-* ~/.codex/skills/
 
 # 3. Verify installation
-ls ~/.cursor/skills/fw-app-dev/SKILL.md  # Should exist
-ls ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json  # Should exist
+ls ~/.cursor/skills/fw-app-dev/SKILL.md   # Cursor
+claude plugin list                         # Claude Code — should list all 5 skills
+ls ~/.codex/skills/fw-app-dev/SKILL.md    # Codex
 
 # 4. Restart your IDE completely (close ALL windows)
 ```
 
-**Note:** Manual installs don't get the orchestration spec or MCP merge — you'll need to copy `.mcp.json` manually for `fw-publish`. Prefer Method 1 when possible.
+**Note:** Manual installs don't get the routing spec or MCP merge. For Claude Code, also add the routing block to `~/.claude/CLAUDE.md` manually (copy contents of `installer/src/specs/fw-dev-tools-spec.md`). For Codex, append it to `~/.codex/AGENTS.md`. Prefer Method 1 when possible.
 
 **Verify it worked:**
 - Type `/fdk` and see if commands autocomplete
 - For Cursor: Test rules with the Platform 2.x code test above
-- **For Codex:** From repo root after `codex plugin marketplace add ./`, open a conversation and confirm the assistant can summarize **`skills/fw-app-dev/SKILL.md`** (proves **`skills`** path resolves). For MCP publish failures, jump to **[Codex-specific problems](#codex-specific-problems)**.
+- **For Codex:** `ls ~/.codex/skills/fw-app-dev/SKILL.md` and confirm `~/.codex/AGENTS.md` has fw-dev-tools routing. For MCP publish failures, see **[Codex-specific problems](#codex-specific-problems)**.
 
 ---
 
 ## Codex-specific problems
 
-**Plugin path / “plugin not found”:** You must register the marketplace from the **cloned repository root** (same folder as **`.codex-plugin/plugin.json`**). If you moved only **`skills/`** without the umbrella manifest, Codex cannot load the bundled plugin correctly.
+**Skills missing after install:** Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes`, then **restart Codex**. Verify `~/.codex/skills/fw-app-dev/SKILL.md` and `~/.codex/AGENTS.md`.
 
-**“Slash commands don't work” on Codex:** Expected. Prefer natural-language prompts that reference **`SKILL.md`** sections (same rules as **`AGENTS.md`**: **`SKILL.md` is authoritative**).
+**”Slash commands don't work” on Codex:** Expected. Prefer natural-language prompts that reference **`SKILL.md`** sections (same rules as **`AGENTS.md`**: **`SKILL.md` is authoritative**).
 
-**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. **Codex** reads **`mcpServers`** from **[.mcp.json](.mcp.json)** via the plugin manifest; put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`).
+**`failed to load skill` — description exceeds 1024 characters:** Codex enforces a **1024-character limit** on the YAML `description:` field in `SKILL.md`. Run `npx @freshworks/fw-dev-tools update` to get a release within the limit.
+
+**`token_revoked` / HTTP 401 on Codex:** Your ChatGPT login expired. Run `codex logout && codex login`, then restart Codex.
+
+**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. **Codex** reads **`mcpServers`** from **[.mcp.json](.mcp.json)**; put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`). This is separate from Codex CLI login.
 
 ---
 
@@ -560,8 +577,8 @@ Are you enforcing Platform 3.0 rules? What should I use instead of $request.post
 ```
 
 **If Claude says "I don't have Platform 3.0 rules":**
-- The skill isn't loaded
-- Reinstall it
+- The skill isn't loaded, **or** Claude is reading a **stale copy** (Issue #11)
+- Reinstall: `npx @freshworks/fw-dev-tools install --tools claude --yes`
 
 **If Claude says "Yes, use $request.invokeTemplate()":**
 - Skill IS working
@@ -647,9 +664,8 @@ cd fw-dev-tools/
 cp -r skills/fw-app-dev ~/.cursor/skills/
 cp -r skills/fw-setup ~/.cursor/skills/
 
-# 3. For Claude Code:
-cp -r skills/fw-app-dev ~/.claude/skills/
-cp -r skills/fw-setup ~/.claude/skills/
+# 3. For Claude Code — use installer, not flat copy:
+npx @freshworks/fw-dev-tools install --tools claude --yes
 
 # 4. Restart IDE
 ```
