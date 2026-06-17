@@ -172,7 +172,7 @@ describe('.meta.json write pattern', () => {
     test(`${skill}: skill_version from this SKILL.md`, async () => {
       const content = await readSkill(skill);
       assert.ok(
-        /skill_version.*SKILL\.md|SKILL\.md.*skill_version/s.test(content),
+        /skill_version.*(?:SKILL\.md|YAML frontmatter)|(?:SKILL\.md|YAML frontmatter).*skill_version/s.test(content),
         `${skill}: must source skill_version from SKILL.md frontmatter`
       );
     });
