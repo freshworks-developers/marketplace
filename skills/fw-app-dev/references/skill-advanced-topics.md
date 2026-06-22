@@ -164,10 +164,10 @@ Multiple top-level `{ } { }` → merge into one object with commas (see error-ca
 ## Skill installation (optional)
 
 ```bash
-npx @anthropic-ai/add-skill https://github.com/freshworks-developers/freshworks-platform3/tree/main/skills/fw-app-dev
+npx @freshworks/fw-dev-tools install
 ```
 
-Cursor / Claude Code variants – see marketplace README for current install URLs.
+See the [marketplace README](https://github.com/freshworks-developers/fw-dev-tools#readme) for full install options (`--tools cursor|claude|codex`).
 
 ---
 

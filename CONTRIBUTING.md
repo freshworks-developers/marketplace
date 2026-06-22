@@ -232,7 +232,7 @@ Or, if working in **Claude Code or Cursor**, just ask: *"Run the skill evals and
 
 Every PR should satisfy the checklist in `.github/PULL_REQUEST_TEMPLATE.md` (auto-populated when you open a PR on GitHub):
 
-- [ ] `npm test` passes locally (122 static tests, no LLM)
+- [ ] `npm test` passes locally (no LLM)
 - [ ] For skill edits: existing eval scenarios reviewed and updated if needed, new scenarios added for new behavioral rules, evals run and passing
 - [ ] `tests/eval-report.html` attached to the PR
 
