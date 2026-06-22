@@ -9,6 +9,11 @@ META="$HOME/.fw-dev-tools/.meta.json"
 
 [ -f "$META" ] || exit 0
 
+# macOS Tahoe+: npx-created files may have com.apple.provenance that blocks writes.
+if [[ "$(uname -s)" == "Darwin" ]] && command -v xattr &>/dev/null; then
+  xattr -d com.apple.provenance "$META" 2>/dev/null || true
+fi
+
 TODAY=$(date -u +"%Y-%m-%d")
 
 # Read fields from .meta.json using node (already required by fw-dev-tools)
@@ -37,9 +42,13 @@ LAST_NUDGED=$(read_field "m.update_check && m.update_check.lastNudged")
     echo "⚠ fw-dev-tools v${CURRENT} → v${LATEST} available. Run: npx @freshworks/fw-dev-tools update"
     node -e "
       const fs = require('fs');
-      const m = JSON.parse(fs.readFileSync('$META','utf8'));
-      m.update_check.lastNudged = '$TODAY';
-      fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
+      try {
+        const m = JSON.parse(fs.readFileSync('$META','utf8'));
+        m.update_check.lastNudged = '$TODAY';
+        fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
+      } catch (e) {
+        process.stderr.write('[fw-dev-tools] check-update: failed to write meta: ' + e.message + '\n');
+      }
     "
   fi
   exit 0
@@ -72,9 +81,11 @@ node -e "
   };
   if (updateAvailable && m.update_check.lastNudged !== today) {
     m.update_check.lastNudged = today;
-    fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
     process.stdout.write('⚠ fw-dev-tools v' + current + ' → v' + latest + ' available. Run: npx @freshworks/fw-dev-tools update\n');
-  } else {
+  }
+  try {
     fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
+  } catch (e) {
+    process.stderr.write('[fw-dev-tools] check-update: failed to write meta: ' + e.message + '\n');
   }
 "

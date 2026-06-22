@@ -13,7 +13,7 @@
 ## Before you open a PR
 
 ```bash
-cd tests && npm install && npm test          # 140 static tests (CI)
+cd tests && npm install && npm test          # static tests (CI, no LLM)
 cd installer && npm install && npm test      # installer lifecycle tests (CI, Node 24)
 ```
 

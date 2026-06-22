@@ -68,14 +68,16 @@ In Platform 3.0, OAuth configurations **MUST** be wrapped in an `integrations` o
 
 ## Example: GitHub OAuth
 
+`client_id` and `client_secret` are your app's registered OAuth credentials — set them as literal values. Do **not** store them in `config/iparams.json`; that is the Platform 2.x pattern.
+
 ### config/oauth_config.json
 ```json
 {
   "integrations": {
     "github": {
       "display_name": "GitHub",
-      "client_id": "{{client_id}}",
-      "client_secret": "{{client_secret}}",
+      "client_id": "<your-github-client-id>",
+      "client_secret": "<your-github-client-secret>",
       "authorize_url": "https://github.com/login/oauth/authorize",
       "token_url": "https://github.com/login/oauth/access_token",
       "options": {
@@ -103,25 +105,6 @@ In Platform 3.0, OAuth configurations **MUST** be wrapped in an `integrations` o
     "options": {
       "oauth": "github"
     }
-  }
-}
-```
-
-### config/iparams.json
-```json
-{
-  "client_id": {
-    "display_name": "GitHub Client ID",
-    "description": "Enter your GitHub OAuth App Client ID",
-    "type": "text",
-    "required": true
-  },
-  "client_secret": {
-    "display_name": "GitHub Client Secret",
-    "description": "Enter your GitHub OAuth App Client Secret",
-    "type": "text",
-    "required": true,
-    "secure": true
   }
 }
 ```
@@ -212,8 +195,8 @@ You can have up to 3 OAuth integrations:
   "integrations": {
     "github": {
       "display_name": "GitHub",
-      "client_id": "{{github_client_id}}",
-      "client_secret": "{{github_client_secret}}",
+      "client_id": "<your-github-client-id>",
+      "client_secret": "<your-github-client-secret>",
       "authorize_url": "https://github.com/login/oauth/authorize",
       "token_url": "https://github.com/login/oauth/access_token",
       "options": {
@@ -223,8 +206,8 @@ You can have up to 3 OAuth integrations:
     },
     "slack": {
       "display_name": "Slack",
-      "client_id": "{{slack_client_id}}",
-      "client_secret": "{{slack_client_secret}}",
+      "client_id": "<your-slack-client-id>",
+      "client_secret": "<your-slack-client-secret>",
       "authorize_url": "https://slack.com/oauth/authorize",
       "token_url": "https://slack.com/api/oauth.access",
       "options": {
@@ -234,8 +217,8 @@ You can have up to 3 OAuth integrations:
     },
     "jira": {
       "display_name": "Jira",
-      "client_id": "{{jira_client_id}}",
-      "client_secret": "{{jira_client_secret}}",
+      "client_id": "<your-jira-client-id>",
+      "client_secret": "<your-jira-client-secret>",
       "authorize_url": "https://auth.atlassian.com/authorize",
       "token_url": "https://auth.atlassian.com/oauth/token",
       "options": {

@@ -120,6 +120,14 @@ export async function writeInstallState({ client, method = 'npx' }) {
     update_check: existing.update_check ?? await readUpdateCheckDefaults(),
   };
   await writeFile(INSTALL_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');
+  // macOS Tahoe+: npx-created files get com.apple.provenance which blocks writes
+  // from shell-spawned processes (e.g. check-update.sh). Strip it immediately.
+  if (process.platform === 'darwin') {
+    const { execFile } = await import('node:child_process');
+    await new Promise((resolve) =>
+      execFile('xattr', ['-d', 'com.apple.provenance', INSTALL_JSON], () => resolve()),
+    );
+  }
   return state;
 }
 
