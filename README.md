@@ -28,6 +28,7 @@
 | [Resources](#resources) | Docs, links, runbooks |
 | [Support](#support) | Issues and community |
 | [Contributing](#contributing) | Plugin layout, PR hygiene |
+| [Changelog](CHANGELOG.md) | Release history |
 | [License](#license) | MIT |
 
 ## What You Can Do
