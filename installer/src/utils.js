@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -119,15 +119,10 @@ export async function writeInstallState({ client, method = 'npx' }) {
     installedAt: existing.installedAt ?? new Date().toISOString(),
     update_check: existing.update_check ?? await readUpdateCheckDefaults(),
   };
-  await writeFile(INSTALL_JSON, JSON.stringify(state, null, 2) + '\n', 'utf8');
-  // macOS Tahoe+: npx-created files get com.apple.provenance which blocks writes
-  // from shell-spawned processes (e.g. check-update.sh). Strip it immediately.
-  if (process.platform === 'darwin') {
-    const { execFile } = await import('node:child_process');
-    await new Promise((resolve) =>
-      execFile('xattr', ['-d', 'com.apple.provenance', INSTALL_JSON], () => resolve()),
-    );
-  }
+  // Atomic write: avoids macOS TCC/provenance EPERM on files created by npx
+  const tmp = INSTALL_JSON + '.tmp';
+  await writeFile(tmp, JSON.stringify(state, null, 2) + '\n', 'utf8');
+  await rename(tmp, INSTALL_JSON);
   return state;
 }
 

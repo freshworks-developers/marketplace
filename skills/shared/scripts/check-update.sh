@@ -9,11 +9,6 @@ META="$HOME/.fw-dev-tools/.meta.json"
 
 [ -f "$META" ] || exit 0
 
-# macOS Tahoe+: npx-created files may have com.apple.provenance that blocks writes.
-if [[ "$(uname -s)" == "Darwin" ]] && command -v xattr &>/dev/null; then
-  xattr -d com.apple.provenance "$META" 2>/dev/null || true
-fi
-
 TODAY=$(date -u +"%Y-%m-%d")
 
 # Read fields from .meta.json using node (already required by fw-dev-tools)
