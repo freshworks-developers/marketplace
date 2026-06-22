@@ -12,7 +12,8 @@ async function collectFiles(dir, exts) {
   for (const entry of await readdir(dir, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile()) continue;
     if (!exts.some((e) => entry.name.endsWith(e))) continue;
-    results.push(join(entry.parentPath ?? entry.path, entry.name));
+    const parent = entry.parentPath ?? entry.path ?? dir;
+    results.push(join(parent, entry.name));
   }
   return results;
 }
