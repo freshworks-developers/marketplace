@@ -23,7 +23,7 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 - `check-update.sh` runs on first skill invocation per session and nudges once per day if a newer version is available
 
 ### Bug Fixes
-- **macOS Tahoe (Darwin 25+):** fixed EPERM when `check-update.sh` writes `.meta.json` due to `com.apple.provenance` xattr set by npx
+- **macOS Tahoe (Darwin 25+):** fixed EPERM when writing `.meta.json` — switched to atomic write (`.tmp` → rename) in `writeInstallState()` to avoid macOS TCC/provenance restrictions on files created by npx
 - **Cursor uninstall** only ran for the last-installed client — now correctly removes all installed clients
 - **Codex** `ERR_FS_CP_EINVAL` on install when plugin path matched skills source
 
