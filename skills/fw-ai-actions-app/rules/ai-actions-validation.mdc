@@ -53,6 +53,13 @@ fdk validate
 - [ ] Function names match actions.json
 
 ### test_data
-- [ ] One JSON file per action: server/test_data/actionName.json
+- [ ] `server/test_data/` directory exists (missing = blocking issue)
+- [ ] One JSON file per action: server/test_data/actionName.json (missing fixture = blocking issue)
 - [ ] Keys match parameter names
 - [ ] Valid sample values
+
+### README.md
+- [ ] `README.md` exists at app root (missing = blocking issue)
+- [ ] Documents all available actions and their parameters
+- [ ] Includes authentication setup instructions
+- [ ] Explains how to run the test fixtures in `server/test_data/`

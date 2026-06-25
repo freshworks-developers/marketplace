@@ -449,7 +449,7 @@ llm_log_meta_scripts() {
 # Expected skill version from repo SKILL.md frontmatter (matches installed copy on --from-repo).
 e2e_skill_version() {
   local skill="$1"
-  local repo; repo="$(cd "$(dirname "$0")/.." && pwd)"
+  local repo; repo="$(cd "$(dirname "$0")/../.." && pwd)"
   sed -n 's/^version:[[:space:]]*"\{0,1\}\([^"]*\)"\{0,1\}/\1/p' "$repo/skills/$skill/SKILL.md" | head -1
 }
 
@@ -606,7 +606,7 @@ installer_npx_spec() {
 # install | uninstall — from repo, local .tgz, or npm (never github: URL).
 installer_cli_cmd() {
   local subcmd="$1"
-  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+  local REPO_ROOT; REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
   if [[ "$INSTALL_FROM_REPO" == "true" ]]; then
     echo "node $REPO_ROOT/installer/bin/cli.js $subcmd --tools $CLIENT --yes"
   elif [[ -n "$INSTALL_TGZ" ]]; then
@@ -752,6 +752,15 @@ phase_structure() {
     [[ -f "$OUTPUT_DIR/app/styles/images/icon.svg" ]] && pass "app/styles/images/icon.svg exists" || fail "app/styles/images/icon.svg missing (fdk validate will fail)"
   else
     pass "serverless app — icon.svg not required"
+  fi
+
+  # 8.12 — no extra markdown docs beyond README.md
+  local _extra_md
+  _extra_md=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.md" ! -name "README.md" 2>/dev/null | head -5)
+  if [[ -z "$_extra_md" ]]; then
+    pass "no extra .md files in app root (only README.md allowed)"
+  else
+    warn "extra .md file(s) found in app root: ${_extra_md//$'\n'/, }"
   fi
 }
 
@@ -1054,6 +1063,19 @@ phase_uninstall() {
       [[ ! -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev removed" || fail "~/.codex/skills/fw-app-dev still present"
       ;;
   esac
+
+  # 5.4 — uninstall must NOT remove Node or nvm
+  if command -v node &>/dev/null; then
+    pass "Node.js still on PATH after uninstall (not removed)"
+  else
+    fail "Node.js missing after uninstall — uninstall must not touch Node"
+  fi
+  local _nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+  if [[ -d "$_nvm_dir" ]]; then
+    pass "nvm directory still present after uninstall (not removed)"
+  else
+    warn "nvm directory missing after uninstall — verify nvm was not touched"
+  fi
 
   [[ ! -f "$HOME/.fw-dev-tools/.meta.json" ]] && pass "~/.fw-dev-tools/.meta.json removed" || fail "~/.fw-dev-tools/.meta.json still present"
 }

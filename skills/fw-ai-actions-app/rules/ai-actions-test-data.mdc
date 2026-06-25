@@ -5,6 +5,8 @@ globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/ipar
 
 # AI Actions Test Data
 
+Each action defined in `actions.json` must have a corresponding `server/test_data/<functionName>.json` test fixture. A missing `server/test_data/` directory or any missing fixture is a blocking issue.
+
 ## Location
 
 `server/test_data/actionName.json` — one file per action, filename matches function name.

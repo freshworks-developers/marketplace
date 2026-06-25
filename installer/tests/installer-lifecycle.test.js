@@ -131,7 +131,7 @@ async function assertClaudeMdRouting(home, { present = true } = {}) {
   );
 }
 
-test('Claude install — 5 plugins, scripts, install state file', async (t) => {
+test('Claude install copies all plugins, scripts, and writes install state', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -286,7 +286,7 @@ test('second Claude install refreshes local marketplace skill copy', async (t) =
   }
 });
 
-test('second install is idempotent — no duplicate plugins, installedAt stable', async (t) => {
+test('second install does not duplicate plugins or change installedAt', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -349,7 +349,7 @@ test('second Cursor install removes stale skill trees before copy', async () => 
   }
 });
 
-test('Cursor install — skills, rules, shared scripts dir', async () => {
+test('Cursor install copies skill trees, rules, and shared scripts', async () => {
   const home = await makeHome();
   try {
     await runCli(home, ['install', '--tools', 'cursor', '--yes']);

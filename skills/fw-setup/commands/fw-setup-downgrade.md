@@ -15,6 +15,8 @@ argument-hint: "[version|latest]"
 
 ## Agent pre-step
 
+If the user gave no version argument (bare `/fw-setup-downgrade` with no semver), set `__FDK_DOWNGRADE_TARGET__` to `latest` — do not ask the developer for a target version.
+
 Replace **`__FDK_DOWNGRADE_TARGET__`** in the Task prompts:
 
 - **`latest`** — user did not pass a semver (use latest FDK 9.x on Node 18)

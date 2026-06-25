@@ -23,10 +23,10 @@ Parse user request and execute the appropriate operation:
 
 | Trigger | Operation |
 |---------|-----------|
-| "install fdk", "setup fdk", `/fw-setup-install`, `/fdk-install` (legacy); optional version **`X.Y.Z`** or **`--version X.Y.Z`** | Install FDK 10.x (default) or 9.x with deprecation notice (see `commands/fw-setup-install.md`) |
+| "install fdk", "setup fdk", `/fw-setup-install`, `/fdk-install` (legacy); optional version **`X.Y.Z`** or **`--version X.Y.Z`** | Install FDK 10.x (default) or 9.x with deprecation notice (see `commands/fw-setup-install.md`). Append `--both` to install both FDK 10 + FDK 9 stacks; idempotent (skips if both already installed). |
 | "upgrade fdk", "update fdk", `/fw-setup-upgrade`, `/fdk-upgrade` (legacy); optional **`--to X.Y.Z`** | Upgrade to latest FDK 10.x line or pinned semver (see `commands/fw-setup-upgrade.md`) |
 | "migrate fdk 9 to 10", "fdk 9 to 10" | Use `/fw-setup-install` (installs FDK 10.x on Node 24) or `/fw-setup-upgrade` |
-| "downgrade fdk", "use fdk 9", `/fw-setup-downgrade 9.6.0`, `/fdk-downgrade` (legacy) | Downgrade FDK 10.x → 10.0.y or 10.x → 9.x (see `commands/fw-setup-downgrade.md`) |
+| "downgrade fdk", "use fdk 9", `/fw-setup-downgrade 9.6.0`, `/fdk-downgrade` (legacy) | Downgrade FDK 10.x → 10.0.y or 10.x → 9.x (see `commands/fw-setup-downgrade.md`). Bare "downgrade fdk" with no version → defaults to latest FDK 9.x on Node 18; no need to ask the developer for a target version. |
 | "uninstall fdk", "remove fdk", `/fw-setup-uninstall`, `/fdk-uninstall` (legacy) | Uninstall FDK only (keeps Node/nvm; no `--all`) |
 | "check fdk", "fdk status", `/fw-setup-status`, `/fdk-status` (legacy); optional **`--verbose`** | Status (inline; verbose adds PATH/nvm/rc diagnostics) |
 | "fdk broken", "fdk not found", `/fw-setup-troubleshoot`; **`--fix`** only if user asks | Diagnose inline; **`--fix`** spawns shell Task (see `commands/fw-setup-troubleshoot.md`) |
