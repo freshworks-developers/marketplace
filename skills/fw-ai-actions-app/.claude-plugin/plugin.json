@@ -1,6 +1,6 @@
 {
   "name": "fw-ai-actions-app",
-  "version": "1.1.6",
+  "version": "1.2.0",
   "description": "AI Actions and third-party integrations on Platform 3.0: actions.json, SMI, request templates, schemas, validation, and integration workflows.",
   "author": {
     "name": "Freshworks Developers",
