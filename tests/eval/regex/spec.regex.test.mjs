@@ -65,4 +65,20 @@ describe('Skill Regex Evals — spec', { concurrency: true }, () => {
     assert.ok(ok, 'fw-setup/SKILL.md must document PowerShell 5.1 && limitation');
   });
 
+  // spec-07: legacy /fdk-* alias commands are listed alongside their /fw-setup-* targets in fw-setup SKILL.md (CSV 1.15, 2.6, 3.7, 4.9, 5.6)
+  test('spec-07 legacy alias commands (/fdk-install, /fdk-status, /fdk-upgrade, /fdk-downgrade, /fdk-uninstall) mapped in fw-setup SKILL.md', async () => {
+    const c = await readSkill('fw-setup');
+    const aliases = [
+      { alias: 'fdk-install',   target: 'fw-setup-install' },
+      { alias: 'fdk-status',    target: 'fw-setup-status' },
+      { alias: 'fdk-upgrade',   target: 'fw-setup-upgrade' },
+      { alias: 'fdk-downgrade', target: 'fw-setup-downgrade' },
+      { alias: 'fdk-uninstall', target: 'fw-setup-uninstall' },
+    ];
+    for (const { alias, target } of aliases) {
+      const ok = new RegExp(alias, 'i').test(c) && new RegExp(target, 'i').test(c);
+      assert.ok(ok, `fw-setup/SKILL.md must reference both legacy alias /${alias} and its canonical target /${target}`);
+    }
+  });
+
 });

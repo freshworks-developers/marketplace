@@ -5,6 +5,11 @@
   "scripts": {
     "test": "node --test static/skill-static.test.js static/bump-version.test.mjs static/repack-app-zip.test.mjs e2e/e2e-publish-guard-parser.test.mjs e2e/e2e-publish-metrics-parser.test.mjs e2e/e2e-skill-paths-parser.test.mjs e2e/e2e-meta-scripts-parser.test.mjs eval/regex/fw-app-dev.regex.test.mjs eval/regex/fw-setup.regex.test.mjs eval/regex/fw-review.regex.test.mjs eval/regex/fw-publish.regex.test.mjs eval/regex/fw-ai-actions.regex.test.mjs eval/regex/spec.regex.test.mjs",
     "eval": "node --test eval/skill-eval-cli.js && node all-tests-report.js",
-    "eval:cursor": "FW_EVAL_CLI=cursor node --test eval/skill-eval-cli.js && node all-tests-report.js"
+    "eval:cursor": "FW_EVAL_CLI=cursor node --test eval/skill-eval-cli.js && node all-tests-report.js",
+    "eval:setup": "npm test && FW_EVAL_SKILL=fw-setup node --test eval/skill-eval-cli.js",
+    "eval:app-dev": "npm test && FW_EVAL_SKILL=fw-app-dev node --test eval/skill-eval-cli.js",
+    "eval:review": "npm test && FW_EVAL_SKILL=fw-review node --test eval/skill-eval-cli.js",
+    "eval:publish": "npm test && FW_EVAL_SKILL=fw-publish node --test eval/skill-eval-cli.js",
+    "eval:ai-actions": "npm test && FW_EVAL_SKILL=fw-ai-actions-app node --test eval/skill-eval-cli.js"
   }
 }

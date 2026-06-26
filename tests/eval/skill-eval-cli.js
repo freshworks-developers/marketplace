@@ -19,7 +19,8 @@ import { writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp } from 'node:fs/promises';
+import { rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { SCENARIOS } from './skill-eval-scenarios.js';
 
@@ -30,17 +31,23 @@ const CLI = USE_CURSOR ? 'cursor' : 'claude';
 
 const skillFilter = (() => {
   const i = process.argv.indexOf('--skill');
-  return i !== -1 ? process.argv[i + 1] : null;
+  if (i !== -1) return process.argv[i + 1];
+  if (process.env.FW_EVAL_SKILL) return process.env.FW_EVAL_SKILL;
+  return null;
 })();
 
 const limitFilter = (() => {
   const i = process.argv.indexOf('--limit');
-  return i !== -1 ? parseInt(process.argv[i + 1], 10) : null;
+  if (i !== -1) return parseInt(process.argv[i + 1], 10);
+  if (process.env.FW_EVAL_LIMIT) return parseInt(process.env.FW_EVAL_LIMIT, 10);
+  return null;
 })();
 
 const idFilter = (() => {
   const i = process.argv.indexOf('--id');
-  return i !== -1 ? process.argv[i + 1].split(',') : null;
+  if (i !== -1) return process.argv[i + 1].split(',');
+  if (process.env.FW_EVAL_IDS) return process.env.FW_EVAL_IDS.split(',');
+  return null;
 })();
 
 async function checkCLI() {
@@ -60,10 +67,14 @@ if (!cliAvailable) {
 async function runCLI(prompt, workdir) {
   return new Promise((resolve, reject) => {
     let args;
+    // For claude, disable all built-in tools so the model cannot execute
+    // commands — it is forced to answer the eval question instead of acting
+    // as an agent. The variadic --tools flag would swallow a positional
+    // prompt, so the prompt is piped via stdin.
     if (USE_CURSOR) {
       args = ['agent', '--print', '--force', '--approve-mcps', '--workspace', workdir, prompt];
     } else {
-      args = ['--print', prompt];
+      args = ['--print', '--model', 'claude-sonnet-4-6', '--tools', ''];
     }
 
     // Strip vars injected by Claude Code desktop that force API-key auth
@@ -74,6 +85,10 @@ async function runCLI(prompt, workdir) {
     delete env.CLAUDE_CODE_CHILD_SESSION;
 
     const proc = spawn(CLI, args, { cwd: workdir, env });
+    if (!USE_CURSOR) {
+      proc.stdin.write(prompt);
+      proc.stdin.end();
+    }
     let stdout = '';
     let stderr = '';
     proc.stdout.on('data', (d) => { stdout += d; });
@@ -197,7 +212,7 @@ if (limitFilter && limitFilter > 0) {
 }
 
 const workdir = await mkdtemp(join(tmpdir(), 'fw-eval-cli-'));
-process.on('exit', () => { rm(workdir, { recursive: true, force: true }).catch(() => {}); });
+process.on('exit', () => { rmSync(workdir, { recursive: true, force: true }); });
 
 const results = [];
 

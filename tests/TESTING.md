@@ -9,7 +9,7 @@ Automated and semi-automated tests for marketplace skills.
 | 1 | **Installer** | `cd installer && npm test` | Yes | Install/update/uninstall lifecycle, MCP merge, meta scripts |
 | 2 | **Static** | `cd tests && npm test` | Yes | Skill structure, gates, scripts, manifests, version lock |
 | 3 | **Regex Evals** | `cd tests && npm test` | Yes | Scenario outcomes via regex on skill content (no LLM) |
-| 4 | **LLM Evals** | `bash tests/run-all-tests.sh --llm-eval` | No | Behavioral scenarios via claude/cursor CLI (~15 min) |
+| 4 | **LLM Evals** | `bash tests/run-all-tests.sh --llm-eval` | No | Behavioral scenarios via claude/cursor CLI (~25 min, Sonnet 4.6) |
 | 5 | **E2E** | `bash tests/run-all-tests.sh --e2e` | No | Real agent: install → build → validate → (optional publish) |
 
 Run all layers at once:
@@ -102,7 +102,7 @@ No API calls. Covers skill file structure, plugin manifests, shared scripts, lin
 cd marketplace/tests && npm test
 ```
 
-Runs as part of `npm test` — no separate command needed. Reads each SKILL.md and checks that required content, rules, and keywords are present. 131 scenarios, ~80ms. No LLM calls.
+Runs as part of `npm test` — no separate command needed. Reads each SKILL.md and checks that required content, rules, and keywords are present. 190 scenarios, ~80ms. No LLM calls.
 
 Scenarios are defined in `eval/skill-eval-scenarios.js` (shared with Layer 4). The regex runner checks the skill file directly instead of asking an LLM to reason about it.
 
@@ -122,9 +122,9 @@ Or via the unified runner:
 bash tests/run-all-tests.sh --llm-eval
 ```
 
-Requires `claude` or `cursor` on PATH with an active subscription. No `ANTHROPIC_API_KEY` needed. Uses `claude-haiku-4-5-20251001` for speed. Runs up to 6 scenarios concurrently.
+Requires `claude` or `cursor` on PATH with an active subscription. No `ANTHROPIC_API_KEY` needed. Passes `--model claude-sonnet-4-6` to the claude CLI. Runs up to 6 scenarios concurrently.
 
-Each scenario retries up to 3 times and passes if ≥ 2 attempts pass. Takes ~15 min for all 131 scenarios.
+Each scenario retries up to 3 times and passes if ≥ 2 attempts pass. Takes ~25 min for all 190 scenarios.
 
 **Output:** `eval/eval-cli-results.json` (machine-readable), `all-tests-report.html` (Evals tab).
 

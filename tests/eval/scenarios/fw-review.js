@@ -216,7 +216,7 @@ export const FW_REVIEW_SCENARIOS = [
     skill: 'fw-review',
     label: 'zero failures → emit "successful" word only, no numbered list',
     loadContent: () => loadSkill('fw-review'),
-    prompt: "All review rules passed. Zero failures. The report.md says: emit 'successful' alone on its own line when there are zero failures. What exactly should appear below the ## App Review Result heading?",
+    prompt: "According to the fw-review skill: all review rules passed — zero failures. What exactly should appear below the ## App Review Result heading? Should the skill emit only the word 'successful' (emits_successful_word = true), or also a numbered list of what passed (emits_numbered_list = true)?",
     schema: {
       type: 'object',
       required: ['emits_successful_word', 'emits_numbered_list', 'includes_pass_rationale'],
@@ -262,7 +262,9 @@ export const FW_REVIEW_SCENARIOS = [
     skill: 'fw-review',
     label: 'IP-05A: iparams field missing required:true on a clearly required field',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The app has the following config/iparams.json:
+    prompt: `Rule IP-05A states: "Every install-time field is required when it should be, constrained by type or pattern where needed. A clearly required field missing required:true is a fail."
+
+Given rule IP-05A, review this app. config/iparams.json contains:
 \`\`\`json
 {
   "api_key": {
@@ -279,7 +281,7 @@ export const FW_REVIEW_SCENARIOS = [
   }
 }
 \`\`\`
-The api_key field is used in every API call and is clearly mandatory. Does the review flag a missing required:true on the api_key field?`,
+The api_key field is used in every API call and is clearly mandatory but is missing required:true. Does the review flag this as a violation of IP-05A — flags_missing_required = true and identifies_api_key_field = true?`,
     schema: {
       type: 'object',
       required: ['flags_missing_required', 'identifies_api_key_field'],
@@ -296,14 +298,14 @@ The api_key field is used in every API call and is clearly mandatory. Does the r
   },
 
   // fw-review-13: IP-06A — regex present but error message is generic
-  // TODO: flaky — model may try to read rules/iparams-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-13',
     skill: 'fw-review',
     label: 'IP-06A: iparams regex has generic error message instead of descriptive one',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The app has the following config/iparams.json:
+    prompt: `Rule IP-06A states: "When validation fails, the admin sees what went wrong and how to fix it — not generic errors. Error strings next to regex and validation metadata must be descriptive of what is valid, not single-word messages like 'Invalid'."
+
+Given rule IP-06A, review this app. config/iparams.json contains:
 \`\`\`json
 {
   "subdomain": {
@@ -316,7 +318,7 @@ The api_key field is used in every API call and is clearly mandatory. Does the r
   }
 }
 \`\`\`
-Does the review flag the generic error message "Invalid" as a violation of IP-06A?`,
+Does the review flag the generic error message "Invalid" as a violation of IP-06A (flags_generic_error_message = true) and recommend a descriptive message (recommends_descriptive_message = true)?`,
     schema: {
       type: 'object',
       required: ['flags_generic_error_message', 'recommends_descriptive_message'],
@@ -331,17 +333,14 @@ Does the review flag the generic error message "Invalid" as a violation of IP-06
       assert.equal(output.recommends_descriptive_message, true, 'should recommend a descriptive error message with expected format');
     },
   },
-  */
 
   // fw-review-14: FF-01L — client-side code uses fetch() instead of request templates
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-14',
     skill: 'fw-review',
     label: 'FF-01L: app/scripts/app.js uses fetch() for API calls instead of request templates',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/scripts/app.js contains:
+    prompt: `Based solely on the fw-review skill content provided above — do not read or access any external files. Review this Freshworks app. The file app/scripts/app.js contains:
 \`\`\`javascript
 function getTickets() {
   fetch('https://mycompany.freshdesk.com/api/v2/tickets', {
@@ -368,7 +367,6 @@ Does the review flag the use of fetch() in client-side code as a violation (shou
       assert.equal(output.recommends_request_templates, true, 'should recommend using request templates instead');
     },
   },
-  */
 
   // fw-review-15: FF-02M — SMI function is a pass-through to invokeTemplate
   {
@@ -393,14 +391,14 @@ Does the review flag the use of fetch() in client-side code as a violation (shou
   },
 
   // fw-review-16: FF-03A — API key passed in URL query param instead of headers
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-16',
     skill: 'fw-review',
     label: 'FF-03A: requests.json passes API key as URL query parameter instead of in headers',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file config/requests.json contains:
+    prompt: `Rule FF-03A states: "In requests.json, credentials must be in headers, never in URL query params like ?api_key=<%=iparam.api_key%>."
+
+Given rule FF-03A, review this app. config/requests.json contains:
 \`\`\`json
 {
   "getContacts": {
@@ -414,7 +412,7 @@ Does the review flag the use of fetch() in client-side code as a violation (shou
   }
 }
 \`\`\`
-Does the review flag the API key being passed in the URL query parameter as a violation of FF-03A?`,
+Does the review flag the API key in the URL query param as a violation of FF-03A — flags_credential_in_url = true and recommends_headers = true?`,
     schema: {
       type: 'object',
       required: ['flags_credential_in_url', 'recommends_headers'],
@@ -429,17 +427,16 @@ Does the review flag the API key being passed in the URL query parameter as a vi
       assert.equal(output.recommends_headers, true, 'should recommend moving credentials to headers');
     },
   },
-  */
 
   // fw-review-17: FF-04A — API call missing .catch() error handling
-  // TODO: flaky — model tries to read rules/frontend-files-rules.mdc; confirmed failing 2/3
-  /* DISABLED
   {
     id: 'fw-review-17',
     skill: 'fw-review',
     label: 'FF-04A: client.request.invokeTemplate call has no .catch() and no user-facing error notification',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/scripts/app.js contains:
+    prompt: `Rule FF-04A states: "Every client.request.invoke(), client.request.invokeTemplate(), client.db.get(), client.db.set() and other FDK interfaces must have .catch() or error callback with a user-facing notification. Empty catch blocks or console.error only are not acceptable."
+
+Given rule FF-04A, review this app. app/scripts/app.js contains:
 \`\`\`javascript
 function loadAgents() {
   client.request.invokeTemplate('getAgents', { context: {} })
@@ -448,7 +445,7 @@ function loadAgents() {
     });
 }
 \`\`\`
-There is no .catch() block and no error notification shown to the user. Does the review flag this as a violation of FF-04A?`,
+There is no .catch() block and no error notification shown to the user. Does the review flag this as a violation of FF-04A — flags_missing_error_handling = true and flags_missing_user_notification = true?`,
     schema: {
       type: 'object',
       required: ['flags_missing_error_handling', 'flags_missing_user_notification'],
@@ -463,17 +460,16 @@ There is no .catch() block and no error notification shown to the user. Does the
       assert.equal(output.flags_missing_user_notification, true, 'should note that no user-visible error message is shown');
     },
   },
-  */
 
   // fw-review-18: FF-05A — list API called without pagination
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-18',
     skill: 'fw-review',
     label: 'FF-05A: list API call fetches all records with no pagination implementation',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/scripts/app.js contains:
+    prompt: `Rule FF-05A states: "List API calls must implement pagination. A single unbounded request to fetch all records is a fail."
+
+Given rule FF-05A, review this app. app/scripts/app.js contains:
 \`\`\`javascript
 function getAllTickets() {
   client.request.invokeTemplate('listAllTickets', { context: {} })
@@ -486,7 +482,7 @@ function getAllTickets() {
     });
 }
 \`\`\`
-The request template fetches /api/v2/tickets with no page or per_page parameters. Does the review flag this unbounded list call as a violation of FF-05A?`,
+The request template fetches /api/v2/tickets with no page or per_page parameters. Does the review flag this unbounded list call as a violation of FF-05A — flags_missing_pagination = true and identifies_unbounded_request = true?`,
     schema: {
       type: 'object',
       required: ['flags_missing_pagination', 'identifies_unbounded_request'],
@@ -501,17 +497,16 @@ The request template fetches /api/v2/tickets with no page or per_page parameters
       assert.equal(output.identifies_unbounded_request, true, 'should identify the call fetches all records without pagination');
     },
   },
-  */
 
   // fw-review-19: FF-06A — hardcoded API key in source code
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-19',
     skill: 'fw-review',
     label: 'FF-06A: app/scripts/app.js contains a hardcoded API key string',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/scripts/app.js contains:
+    prompt: `Rule FF-06A states: "No API keys, passwords, or tokens hardcoded in source files. All secrets must come from client.iparams.get() or request template iparams."
+
+Given rule FF-06A, review this app. app/scripts/app.js contains:
 \`\`\`javascript
 var API_KEY = 'sk-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
 
@@ -528,7 +523,7 @@ function loadData() {
   });
 }
 \`\`\`
-Does the review flag the hardcoded API key as a violation of FF-06A?`,
+Does the review flag the hardcoded API key as a violation of FF-06A — flags_hardcoded_secret = true and recommends_iparams = true?`,
     schema: {
       type: 'object',
       required: ['flags_hardcoded_secret', 'recommends_iparams'],
@@ -543,17 +538,16 @@ Does the review flag the hardcoded API key as a violation of FF-06A?`,
       assert.equal(output.recommends_iparams, true, 'should recommend using client.iparams.get() or request template iparams');
     },
   },
-  */
 
   // fw-review-20: FF-07L — OAuth client secret in app JS
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-20',
     skill: 'fw-review',
     label: 'FF-07L: app/scripts/auth.js contains OAuth client_secret outside config files',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/scripts/auth.js contains:
+    prompt: `Rule FF-07L states: "OAuth client ID, client secret, and long-lived OAuth tokens must appear only in intended secure configuration (e.g. config/oauth_config.json, iparams, encrypted fields, or request template iparam bindings) — not in general app JS/HTML."
+
+Given rule FF-07L, review this app. app/scripts/auth.js contains:
 \`\`\`javascript
 var oauthConfig = {
   client_id: '1234567890.apps.googleusercontent.com',
@@ -565,7 +559,7 @@ function initiateOAuth() {
   window.location.href = buildAuthUrl(oauthConfig);
 }
 \`\`\`
-Does the review flag the OAuth client_secret in app/scripts/auth.js as a violation of FF-07L?`,
+Does the review flag the OAuth client_secret in app/scripts/auth.js as a violation of FF-07L — flags_oauth_secret_in_source = true and recommends_oauth_config_file = true?`,
     schema: {
       type: 'object',
       required: ['flags_oauth_secret_in_source', 'recommends_oauth_config_file'],
@@ -580,24 +574,23 @@ Does the review flag the OAuth client_secret in app/scripts/auth.js as a violati
       assert.equal(output.recommends_oauth_config_file, true, 'should recommend moving to oauth_config.json or secure config');
     },
   },
-  */
 
   // fw-review-21: FF-08A — app_settings.json exists but server.js lacks onSettingsUpdate
-  // TODO: flaky — model may try to read rules/frontend-files-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-21',
     skill: 'fw-review',
     label: 'FF-08A: config/app_settings.json exists but server/server.js does not define onSettingsUpdate',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file config/app_settings.json contains:
+    prompt: `Rule FF-08A states: "If app settings are enabled via config/app_settings.json, the app must implement a valid settings-update contract in server/server.js. Fail condition: config/app_settings.json exists but server/server.js is missing or lacks onSettingsUpdate."
+
+Given rule FF-08A, review this app. config/app_settings.json contains:
 \`\`\`json
 {
   "notification_email": {},
   "alert_threshold": {}
 }
 \`\`\`
-The file server/server.js exists but contains only:
+server/server.js exists but contains only:
 \`\`\`javascript
 exports = {
   events: [{ event: 'onTicketCreate', callback: 'onTicketCreateHandler' }],
@@ -606,7 +599,7 @@ exports = {
   }
 };
 \`\`\`
-There is no onSettingsUpdate defined. Does the review flag this as a violation of FF-08A?`,
+There is no onSettingsUpdate defined. Does the review flag this as a violation of FF-08A — flags_missing_onSettingsUpdate = true and identifies_app_settings_contract = true?`,
     schema: {
       type: 'object',
       required: ['flags_missing_onSettingsUpdate', 'identifies_app_settings_contract'],
@@ -621,22 +614,21 @@ There is no onSettingsUpdate defined. Does the review flag this as a violation o
       assert.equal(output.identifies_app_settings_contract, true, 'should identify the app_settings.json contract requires onSettingsUpdate');
     },
   },
-  */
 
   // fw-review-22: FFS-02L — external import from non-allowlisted CDN host
-  // TODO: flaky — model may try to read rules/frontend-files-source-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-22',
     skill: 'fw-review',
-    label: 'FFS-02L: app/index.html imports jQuery from unpkg.com which is not an allowlisted host',
+    label: 'FFS-02L: app/index.html imports jQuery from rawgit.com which is not an allowlisted host',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/index.html contains:
+    prompt: `Rule FFS-02L states: "External script and style imports must come only from allowlisted hosts. Allowlisted hosts: ajax.googleapis.com, cdn.freshdev.io, cdn.jsdelivr.net, cdnjs.cloudflare.com, code.jquery.com, esm.sh, fonts.googleapis.com, fonts.gstatic.com, ga.jspm.io, maxcdn.bootstrapcdn.com, npm.jspm.io, registry.npmjs.org, stackpath.bootstrapcdn.com, static.freshdev.io, unpkg.com. Any import from a host not on this list is a fail."
+
+Given rule FFS-02L, review this app. app/index.html contains:
 \`\`\`html
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://rawgit.com/jquery/jquery/3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.freshdesk.com/widget/freshworks-crayons.js"></script>
   </head>
   <body>
@@ -645,22 +637,21 @@ There is no onSettingsUpdate defined. Does the review flag this as a violation o
   </body>
 </html>
 \`\`\`
-Does the review flag the unpkg.com import as a non-allowlisted external source (FFS-02L)?`,
+Does the review flag the rawgit.com import as a non-allowlisted external source — flags_non_allowlisted_host = true and identifies_rawgit_source = true?`,
     schema: {
       type: 'object',
-      required: ['flags_non_allowlisted_host', 'identifies_unpkg_source'],
+      required: ['flags_non_allowlisted_host', 'identifies_rawgit_source'],
       properties: {
         flags_non_allowlisted_host: { type: 'boolean' },
-        identifies_unpkg_source: { type: 'boolean' },
+        identifies_rawgit_source: { type: 'boolean' },
         explanation: { type: 'string' },
       },
     },
     assert(output) {
       assert.equal(output.flags_non_allowlisted_host, true, 'should flag external import from non-allowlisted host (FFS-02L)');
-      assert.equal(output.identifies_unpkg_source, true, 'should specifically identify unpkg.com as the offending source');
+      assert.equal(output.identifies_rawgit_source, true, 'should specifically identify rawgit.com as the offending source');
     },
   },
-  */
 
   // fw-review-23: FFS-04L — external script imported over HTTP instead of HTTPS
   {
@@ -668,7 +659,9 @@ Does the review flag the unpkg.com import as a non-allowlisted external source (
     skill: 'fw-review',
     label: 'FFS-04L: app/index.html imports an external script using http:// instead of https://',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/index.html contains:
+    prompt: `Rule FFS-04L states: "External script and style imports must use https://, not http://."
+
+Given rule FFS-04L, review this app. app/index.html contains:
 \`\`\`html
 <!DOCTYPE html>
 <html>
@@ -681,7 +674,7 @@ Does the review flag the unpkg.com import as a non-allowlisted external source (
   </body>
 </html>
 \`\`\`
-Does the review flag the HTTP (non-HTTPS) external import as a violation of FFS-04L?`,
+Does the review flag the http:// import as a violation of FFS-04L — flags_http_import = true and recommends_https = true?`,
     schema: {
       type: 'object',
       required: ['flags_http_import', 'recommends_https'],
@@ -726,23 +719,20 @@ Given rule FFS-05L, does the review flag this icon as having the wrong dimension
   },
 
   // fw-review-25: CR-05L — unused third-party library imported in source file
-  // TODO: fails 2/3 — model sees `var _ = window._;` and treats lodash as "used" (variable assigned).
-  //       Assertion expects no-lodash-calls = unused, but model disagrees. Revisit prompt or assertion.
-  /* DISABLED
   {
     id: 'fw-review-25',
     skill: 'fw-review',
     label: 'CR-05L: app/scripts/app.js imports lodash but never uses any lodash functions',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/index.html includes:
+    prompt: `Rule CR-05L states: "Imported third-party libraries should be used in the file that imports them. If a library is imported via CDN but no functions or properties from that library are called in the code, it is considered unused and must be flagged."
+
+Given rule CR-05L, review this app. app/index.html includes:
 \`\`\`html
 <script src="https://cdn.freshdesk.com/widget/lodash.min.js"></script>
 <script src="scripts/app.js"></script>
 \`\`\`
 And app/scripts/app.js contains:
 \`\`\`javascript
-var _ = window._;
-
 function renderTickets(tickets) {
   var container = document.getElementById('ticket-list');
   tickets.forEach(function(ticket) {
@@ -752,7 +742,7 @@ function renderTickets(tickets) {
   });
 }
 \`\`\`
-The lodash library is imported but _ is never actually called. Does the review flag the unused lodash import as a violation of CR-05L?`,
+Lodash is included via CDN but no lodash function (e.g. _.map, _.filter, _.get) is called anywhere in app.js. Does the review flag the unused lodash import as a violation of CR-05L — flags_unused_import = true and identifies_lodash_as_unused = true?`,
     schema: {
       type: 'object',
       required: ['flags_unused_import', 'identifies_lodash_as_unused'],
@@ -767,7 +757,6 @@ The lodash library is imported but _ is never actually called. Does the review f
       assert.equal(output.identifies_lodash_as_unused, true, 'should identify lodash as the unused imported dependency');
     },
   },
-  */
 
   // fw-review-26: GN-02L — fdk validate reports an error
   {
@@ -798,14 +787,14 @@ Given rule GN-02L, does the review flag these fdk validate errors as a GN-02L vi
   },
 
   // fw-review-27: GN-08L — product-specific CSS bundle referenced in app HTML
-  // TODO: flaky — model may try to read rules/general-rules.mdc instead of answering from skill content
-  /* DISABLED
   {
     id: 'fw-review-27',
     skill: 'fw-review',
     label: 'GN-08L: app/index.html references freshdesk.css product-specific bundle instead of Freshworks CSS',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Review this Freshworks app. The file app/index.html contains:
+    prompt: `Rule GN-08L states: "Product-specific CSS bundles should not be referenced; only Freshworks CSS should be used. freshdesk.css is a product-specific bundle and must not appear in app HTML."
+
+Given rule GN-08L, review this app. app/index.html contains:
 \`\`\`html
 <!DOCTYPE html>
 <html>
@@ -818,7 +807,7 @@ Given rule GN-02L, does the review flag these fdk validate errors as a GN-02L vi
   </body>
 </html>
 \`\`\`
-Does the review flag the reference to freshdesk.css as a violation of GN-08L (should use Freshworks CSS, not product-specific CSS)?`,
+Does the review flag the reference to freshdesk.css as a violation of GN-08L — flags_product_specific_css = true and identifies_freshdesk_css = true?`,
     schema: {
       type: 'object',
       required: ['flags_product_specific_css', 'identifies_freshdesk_css'],
@@ -833,7 +822,6 @@ Does the review flag the reference to freshdesk.css as a violation of GN-08L (sh
       assert.equal(output.identifies_freshdesk_css, true, 'should identify freshdesk.css as the non-compliant CSS reference');
     },
   },
-  */
 
   // fw-review-28: no manifest.json present — review must stop immediately
   {
@@ -855,13 +843,35 @@ Does the review flag the reference to freshdesk.css as a violation of GN-08L (sh
     },
   },
 
+  // fw-review-30: full 5-category sort order — Iparams → Structure → Frontend → Readability → Misc (CSV 14.10)
+  {
+    id: 'fw-review-30',
+    skill: 'fw-review',
+    label: 'App Review Result full sort order: Iparams → Structure → Frontend → Readability → Miscellaneous',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: 'According to the fw-review skill: what is the required sort order for reported failures in the App Review Result? Does the skill define a 5-category ordering where Structure failures appear after Iparams but before Frontend (structure_before_frontend=true), and Readability failures appear before Miscellaneous (readability_before_misc=true)?',
+    schema: {
+      type: 'object',
+      required: ['structure_before_frontend', 'readability_before_misc'],
+      properties: {
+        structure_before_frontend: { type: 'boolean' },
+        readability_before_misc: { type: 'boolean' },
+        reported_order: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.structure_before_frontend, true, 'Structure failures must appear before Frontend failures');
+      assert.equal(output.readability_before_misc, true, 'Readability failures must appear before Miscellaneous failures');
+    },
+  },
+
   // fw-review-29: report section sort order — Iparams → Frontend → Misc
   {
     id: 'fw-review-29',
     skill: 'fw-review',
     label: 'App Review Result failures sorted Iparams → Frontend → Misc',
     loadContent: () => loadSkill('fw-review'),
-    prompt: 'You have completed reviewing a Freshworks app and found exactly three issues: one violation of GN-12L (a miscellaneous rule), one violation of IP-04A (an iparams rule), and one violation of FF-03A (a frontend rule). Produce the App Review Result block. Does your output list the IP-04A failure before the FF-03A failure, and the FF-03A failure before the GN-12L failure?',
+    prompt: 'According to the fw-review skill: a review found exactly three failures — GN-12L (miscellaneous), IP-04A (iparams), and FF-03A (frontend). When sorting failures in the App Review Result, does the skill list IP-04A before FF-03A (sorts_iparams_first = true) and GN-12L last after both (sorts_misc_last = true)?',
     schema: {
       type: 'object',
       required: ['sorts_iparams_first', 'sorts_misc_last'],

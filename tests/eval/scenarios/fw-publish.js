@@ -68,25 +68,25 @@ export const FW_PUBLISH_SCENARIOS = [
     },
   },
 
-  // fw-publish-04: publish failed → manifest start_time NOT cleared, tracking_id preserved
+  // fw-publish-04: publish failed → .meta.json kept intact, start_time not cleared
   {
     id: 'fw-publish-04',
     skill: 'fw-publish',
-    label: 'publish failed (step 4) → manifest unchanged, start_time not cleared',
+    label: 'publish failed (step 4) → .meta.json kept intact, start_time not cleared',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'The publish failed at step 4 (fdk validate error). The manifest.json has "tracking_id": "abc123" and "start_time": "2026-06-01T10:00:00Z". Should start_time be cleared to null since the publish failed?',
+    prompt: 'The publish failed at step 4 (fdk validate error). The app has a .meta.json with "start_time": "2026-06-01T10:00:00Z". Should start_time be cleared to null since the publish failed?',
     schema: {
       type: 'object',
-      required: ['clears_start_time_on_failure', 'preserves_tracking_id'],
+      required: ['clears_start_time_on_failure', 'keeps_meta_json_on_disk'],
       properties: {
         clears_start_time_on_failure: { type: 'boolean' },
-        preserves_tracking_id: { type: 'boolean' },
+        keeps_meta_json_on_disk: { type: 'boolean' },
         reasoning: { type: 'string' },
       },
     },
     assert(output) {
       assert.equal(output.clears_start_time_on_failure, false, 'must NOT clear start_time on publish failure — next attempt needs it');
-      assert.equal(output.preserves_tracking_id, true, 'must preserve tracking_id on failure');
+      assert.equal(output.keeps_meta_json_on_disk, true, 'must keep .meta.json intact on failure');
     },
   },
 
@@ -140,11 +140,12 @@ export const FW_PUBLISH_SCENARIOS = [
     skill: 'fw-publish',
     label: 'no feedback response → skip gracefully before step 5, never write null or empty string',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'You are at step 4.5 (developer experience feedback). The developer chooses Skip (or presses Enter without 👍/👎). Should you call meta-feedback.sh? What happens to the "developer_feedback" key in .meta.json? Do you proceed to step 5?',
+    prompt: 'According to the fw-publish skill: at step 4.5 (developer experience feedback), if the developer chooses Skip, does the skill skip gracefully without writing anything (skips_gracefully = true), omit the "developer_feedback" key entirely from .meta.json (omits_feedback_key = true), and proceed to step 5 (proceeds_to_step_5 = true)?',
     schema: {
       type: 'object',
-      required: ['calls_meta_feedback_sh', 'writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
+      required: ['skips_gracefully', 'calls_meta_feedback_sh', 'writes_null_feedback', 'writes_empty_feedback', 'omits_feedback_key', 'proceeds_to_step_5'],
       properties: {
+        skips_gracefully: { type: 'boolean' },
         calls_meta_feedback_sh: { type: 'boolean' },
         writes_null_feedback: { type: 'boolean' },
         writes_empty_feedback: { type: 'boolean' },
@@ -153,6 +154,7 @@ export const FW_PUBLISH_SCENARIOS = [
       },
     },
     assert(output) {
+      assert.equal(output.skips_gracefully, true, 'must skip gracefully with no write when developer skips feedback');
       assert.equal(output.calls_meta_feedback_sh, false, 'must NOT call meta-feedback.sh when developer skips');
       assert.equal(output.writes_null_feedback, false, 'must NOT write null for feedback');
       assert.equal(output.writes_empty_feedback, false, 'must NOT write empty object for feedback');
@@ -303,7 +305,7 @@ export const FW_PUBLISH_SCENARIOS = [
     skill: 'fw-publish',
     label: 'latest version in development state → STOP, stuck-version warning',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'list_app_versions shows the latest version is stuck in "development" state. Should you proceed to create_app_upload_url anyway?',
+    prompt: 'According to the fw-publish skill: if list_app_versions shows the latest version is stuck in "development" state, should the skill stop and show a stuck-version warning (stops_for_stuck_version = true, shows_stuck_version_warning = true) rather than proceeding to create_app_upload_url?',
     schema: {
       type: 'object',
       required: ['stops_for_stuck_version', 'shows_stuck_version_warning'],
@@ -615,6 +617,52 @@ export const FW_PUBLISH_SCENARIOS = [
       assert.equal(output.includes_app_id, true, 'final message must include the app id');
       assert.equal(output.includes_version_state, true, 'final message must include the version state');
       assert.equal(output.includes_install_location, true, 'final message must include where to install the app');
+    },
+  },
+
+  // fw-publish-30: 25 custom apps limit warning (CSV 15.10)
+  // Note: content-only scenario — MCP not configured in test environment
+  {
+    id: 'fw-publish-30',
+    skill: 'fw-publish',
+    label: '25 custom apps limit — skill must warn developer when list_custom_apps returns 25 apps',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'The fw-publish skill section 5.5 states: "Custom app limit warning (MANDATORY — do not skip): Show the following verbatim before proceeding: \'⚠️  The Freshworks Marketplace has a limit of 25 custom apps per developer account. If you are creating a new listing, ensure you have not reached this limit.\'" Given this rule: if list_custom_apps returns exactly 25 apps, should the skill warn the developer (warns_about_limit=true), must that warning include the specific figure "25" (includes_limit_figure=true), and should it NOT proceed silently without the warning (proceeds_silently=false)?',
+    schema: {
+      type: 'object',
+      required: ['warns_about_limit', 'includes_limit_figure', 'proceeds_silently'],
+      properties: {
+        warns_about_limit: { type: 'boolean' },
+        includes_limit_figure: { type: 'boolean' },
+        proceeds_silently: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.warns_about_limit, true, 'must warn developer when the 25-app limit is reached');
+      assert.equal(output.includes_limit_figure, true, 'warning must reference the 25-app limit figure');
+      assert.equal(output.proceeds_silently, false, 'must not proceed without warning when limit is reached');
+    },
+  },
+
+  // fw-publish-31: upload returns 403 → direct user to run locally, do not retry from agent (CSV 15.21)
+  // Note: content-only scenario — MCP not configured in test environment
+  {
+    id: 'fw-publish-31',
+    skill: 'fw-publish',
+    label: 'upload-app.sh returns 403 → direct developer to run upload locally, not retry from agent',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'According to the fw-publish skill: if the upload-app.sh script returns HTTP 403 during the zip upload step, should the skill direct the developer to run the upload script on their local machine (directs_to_local_run = true)?',
+    schema: {
+      type: 'object',
+      required: ['directs_to_local_run'],
+      properties: {
+        directs_to_local_run: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.directs_to_local_run, true, 'on 403, must direct developer to run upload locally (CSV 15.21)');
     },
   },
 
