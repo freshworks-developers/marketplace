@@ -887,4 +887,44 @@ Does the review flag the reference to freshdesk.css as a violation of GN-08L —
     },
   },
 
+  // fw-review-31: CSV GN-12L — manifest missing or below expected platform-version → must fail
+  {
+    id: 'fw-review-31',
+    skill: 'fw-review',
+    label: 'GN-12L: manifest.json platform-version below expected → must fail',
+    loadContent: () => loadSkill('fw-review'),
+    prompt: `Rule GN-12L states: "The app must declare and target the expected marketplace platform version. Fail condition: the app is missing a platform version or is below the expected version."
+
+Given rule GN-12L, review this app. manifest.json contains:
+\`\`\`json
+{
+  "platform-version": "2.3",
+  "product": {
+    "freshdesk": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "app/index.html",
+          "icon": "app/styles/images/icon.svg"
+        }
+      }
+    }
+  }
+}
+\`\`\`
+Does the review flag this as a GN-12L violation (flags_wrong_platform_version = true) and identify that version 2.3 is below the expected version (identifies_below_expected_version = true)?`,
+    schema: {
+      type: 'object',
+      required: ['flags_wrong_platform_version', 'identifies_below_expected_version'],
+      properties: {
+        flags_wrong_platform_version: { type: 'boolean' },
+        identifies_below_expected_version: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.flags_wrong_platform_version, true, 'should flag platform-version 2.3 as a GN-12L violation');
+      assert.equal(output.identifies_below_expected_version, true, 'should identify that version 2.3 is below the expected platform version');
+    },
+  },
+
 ];

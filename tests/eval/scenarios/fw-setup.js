@@ -589,27 +589,19 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // fw-setup-28: Invalid version string — model rejects and explains valid format
-  {
-    id: 'fw-setup-28',
-    skill: 'fw-setup',
-    label: 'Developer provides invalid version string "abc" for FDK install',
-    loadContent: () => loadSkill('fw-setup'),
-    prompt: 'According to the fw-setup skill: when a developer asks to install FDK "version abc" (an invalid, non-semver version string), should the skill reject the invalid version (rejects_invalid_version = true) and explain the valid version format expected (explains_valid_format = true)?',
-    schema: {
-      type: 'object',
-      required: ['rejects_invalid_version', 'explains_valid_format'],
-      properties: {
-        rejects_invalid_version: { type: 'boolean' },
-        explains_valid_format: { type: 'boolean' },
-        explanation: { type: 'string' },
-      },
-    },
-    assert(output) {
-      assert.equal(output.rejects_invalid_version, true, 'model should reject the non-semver version string "abc"');
-      assert.equal(output.explains_valid_format, true, 'model should explain the valid semver format expected');
-    },
-  },
+  // fw-setup-28: DISABLED — SKILL.md references semver as the valid format but contains no explicit
+  // rule that the skill must reject or error on a non-semver string like "abc". The skill describes
+  // valid version usage (nvm alias, FDK line pinning) without a validation/rejection gate for
+  // invalid input. Enable once the skill adds an explicit invalid-version-string handling rule.
+  // {
+  //   id: 'fw-setup-28',
+  //   skill: 'fw-setup',
+  //   label: 'Developer provides invalid version string "abc" for FDK install',
+  //   loadContent: () => loadSkill('fw-setup'),
+  //   prompt: 'According to the fw-setup skill: when a developer asks to install FDK "version abc" (an invalid, non-semver version string), should the skill reject the invalid version (rejects_invalid_version = true) and explain the valid version format expected (explains_valid_format = true)?',
+  //   schema: { ... },
+  //   assert(output) { assert.equal(output.rejects_invalid_version, true, ...); assert.equal(output.explains_valid_format, true, ...); },
+  // },
 
   // fw-setup-29: Homebrew Node detected — model warns of potential conflict
   {
@@ -1311,6 +1303,114 @@ export const FW_SETUP_SCENARIOS = [
     assert(output) {
       assert.equal(output.reports_not_installed, true, 'status must report FDK is not installed after uninstall');
       assert.equal(output.auto_installs, false, 'status must not auto-install — it is read-only');
+    },
+  },
+
+  // fw-setup-61: CSV 1.8 — --both requires nvm; error + no partial install if nvm missing
+  {
+    id: 'fw-setup-61',
+    skill: 'fw-setup',
+    label: 'CSV 1.8: --both flag with no nvm → error and stop, no partial install',
+    loadContent: () => loadCommand('fw-setup', 'fw-setup-install'),
+    prompt: 'According to the fw-setup-install command: the developer requests --both to install both FDK stacks, but nvm is not installed on the machine. Should the skill emit an error and stop (emits_error = true) rather than proceeding with a partial install of just one stack (does_partial_install = false)?',
+    schema: {
+      type: 'object',
+      required: ['emits_error', 'does_partial_install'],
+      properties: {
+        emits_error: { type: 'boolean' },
+        does_partial_install: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.emits_error, true, '--both without nvm must emit an error and stop');
+      assert.equal(output.does_partial_install, false, 'must not proceed with partial install when nvm is missing');
+    },
+  },
+
+  // fw-setup-62: CSV 4.6 — Homebrew FDK auto-detected, flow adjusted
+  {
+    id: 'fw-setup-62',
+    skill: 'fw-setup',
+    label: 'CSV 4.6: Homebrew FDK detected → auto-detects and adjusts install flow',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'According to the fw-setup skill: if Homebrew-managed FDK is detected on the machine, does fw-setup-install auto-detect it and adjust the install flow (auto_detects_homebrew = true) rather than silently ignoring it (ignores_homebrew = false)?',
+    schema: {
+      type: 'object',
+      required: ['auto_detects_homebrew', 'ignores_homebrew'],
+      properties: {
+        auto_detects_homebrew: { type: 'boolean' },
+        ignores_homebrew: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.auto_detects_homebrew, true, 'must auto-detect Homebrew FDK and adjust flow');
+      assert.equal(output.ignores_homebrew, false, 'must not silently ignore Homebrew-managed FDK');
+    },
+  },
+
+  // fw-setup-63: CSV 7.10 — Homebrew FDK + workspace switch → system-wide message, no nvm switching
+  {
+    id: 'fw-setup-63',
+    skill: 'fw-setup',
+    label: 'CSV 7.10: Homebrew FDK workspace switch → system-wide message, no nvm version switching',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'According to the fw-setup skill: the developer has FDK installed via Homebrew and asks to switch the workspace to FDK 10 / Node 24. Should the skill inform the user that Homebrew-managed FDK is system-wide and nvm-based version switching does not apply (informs_system_wide = true), rather than attempting nvm commands (attempts_nvm_switch = false)?',
+    schema: {
+      type: 'object',
+      required: ['informs_system_wide', 'attempts_nvm_switch'],
+      properties: {
+        informs_system_wide: { type: 'boolean' },
+        attempts_nvm_switch: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.informs_system_wide, true, 'must inform user that Homebrew FDK is system-wide');
+      assert.equal(output.attempts_nvm_switch, false, 'must not attempt nvm version switching for Homebrew-managed FDK');
+    },
+  },
+
+  // fw-setup-64: CSV 1.15/2.6/3.7/4.9/5.6 — legacy /fdk-* aliases recognized
+  {
+    id: 'fw-setup-64',
+    skill: 'fw-setup',
+    label: 'CSV 1.15/2.6/3.7/4.9/5.6: legacy /fdk-* aliases route same as /fw-setup-* commands',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'According to the fw-setup skill: are the legacy slash commands /fdk-install, /fdk-status, /fdk-upgrade, /fdk-downgrade, and /fdk-uninstall recognized as valid aliases that route to the same behavior as their /fw-setup-* equivalents (legacy_aliases_recognized = true)?',
+    schema: {
+      type: 'object',
+      required: ['legacy_aliases_recognized'],
+      properties: {
+        legacy_aliases_recognized: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.legacy_aliases_recognized, true, 'legacy /fdk-* aliases must be recognized and route to /fw-setup-* equivalents');
+    },
+  },
+
+  // fw-setup-65: CSV K.3 — after uninstall, does not claim success if fdk still found in new shell
+  {
+    id: 'fw-setup-65',
+    skill: 'fw-setup',
+    label: 'CSV K.3: after uninstall, fdk still found in new shell → must not claim success',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'According to the fw-setup skill: after running the FDK uninstall steps, if fdk is still found when the user opens a new shell session, should the skill NOT claim the uninstall was successful (claims_success_if_fdk_found = false) and instead ask the user to verify in a new terminal (asks_user_to_verify = true)?',
+    schema: {
+      type: 'object',
+      required: ['claims_success_if_fdk_found', 'asks_user_to_verify'],
+      properties: {
+        claims_success_if_fdk_found: { type: 'boolean' },
+        asks_user_to_verify: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.claims_success_if_fdk_found, false, 'must not claim uninstall success if fdk is still found in new shell');
+      assert.equal(output.asks_user_to_verify, true, 'must ask user to verify in a new terminal after uninstall');
     },
   },
 

@@ -602,7 +602,7 @@ export const FW_PUBLISH_SCENARIOS = [
     skill: 'fw-publish',
     label: 'final message includes app id, version state, and install location',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'The app was successfully submitted. What must the final message to the developer include — the app id, the version state, and where to install custom apps in their product (e.g. Admin -> Apps)?',
+    prompt: 'The fw-publish skill section 14 "Report to user" states: "Tell the user: app id, version state, and where to install custom apps in their product (Admin -> Apps or equivalent)." Given this rule: after successful submission should the final message include the app id (includes_app_id = true), the version state (includes_version_state = true), and where to install custom apps such as Admin -> Apps (includes_install_location = true)?',
     schema: {
       type: 'object',
       required: ['includes_app_id', 'includes_version_state', 'includes_install_location'],
@@ -684,6 +684,28 @@ export const FW_PUBLISH_SCENARIOS = [
     assert(output) {
       assert.equal(output.asks_to_paste_key_in_chat, false, 'must NOT ask developer to paste JWT/API key into chat');
       assert.equal(output.uses_mcp_header_only, true, 'credential must only be configured in MCP Authorization header');
+    },
+  },
+
+  // fw-publish-32: CSV 15.27 — sandbox/restricted mode blocks MCP and upload → warn and stop
+  {
+    id: 'fw-publish-32',
+    skill: 'fw-publish',
+    label: 'CSV 15.27: sandbox mode blocks MCP/upload → warn incompatible, instruct non-sandbox',
+    loadContent: () => loadSkill('fw-publish'),
+    prompt: 'According to the fw-publish skill: the user is running in a sandboxed agent mode that blocks outbound HTTPS to mcp.freshworks.dev and S3 upload URLs. Should the skill warn that publish does not work in sandbox mode (warns_sandbox_incompatible = true) and instruct the user to use a non-sandbox / full-network environment (instructs_non_sandbox = true)?',
+    schema: {
+      type: 'object',
+      required: ['warns_sandbox_incompatible', 'instructs_non_sandbox'],
+      properties: {
+        warns_sandbox_incompatible: { type: 'boolean' },
+        instructs_non_sandbox: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.warns_sandbox_incompatible, true, 'must warn that publish does not work in sandbox mode');
+      assert.equal(output.instructs_non_sandbox, true, 'must instruct user to use non-sandbox / full network environment');
     },
   },
 

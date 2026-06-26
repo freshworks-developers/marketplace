@@ -1127,4 +1127,26 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
+  // fw-app-dev-48: CSV 8.7 — fdk missing → STOP, offer y/n, no files if developer declines
+  {
+    id: 'fw-app-dev-48',
+    skill: 'fw-app-dev',
+    label: 'CSV 8.7: fdk missing → STOP, offer /fw-setup-install y/n, no app files created if declined',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'According to the fw-app-dev skill: fdk is missing and the developer asks to build a new app. The skill offers to run /fw-setup-install and the developer answers "n" (declines). Should the skill create no app files (creates_no_files_on_decline = true) and never silently install fdk without consent (no_silent_install = true)?',
+    schema: {
+      type: 'object',
+      required: ['creates_no_files_on_decline', 'no_silent_install'],
+      properties: {
+        creates_no_files_on_decline: { type: 'boolean' },
+        no_silent_install: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.creates_no_files_on_decline, true, 'must not create any app files when developer declines fdk install');
+      assert.equal(output.no_silent_install, true, 'must never silently install fdk without explicit developer consent');
+    },
+  },
+
 ];
