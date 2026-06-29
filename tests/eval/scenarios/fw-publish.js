@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { loadSkill, loadCommand, loadSpec, loadSkillWithSpec } from '../scenario-helpers.js';
+import { loadSkill, loadCommand } from '../scenario-helpers.js';
 export const FW_PUBLISH_SCENARIOS = [
   // fw-publish-01: publish succeeded → delete .meta.json (metrics were pre-pack)
   {

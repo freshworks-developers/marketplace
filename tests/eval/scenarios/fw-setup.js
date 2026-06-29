@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { loadSkill, loadCommand, loadSpec, loadSkillWithSpec, loadRef } from '../scenario-helpers.js';
+import { loadSkill, loadCommand, loadRef } from '../scenario-helpers.js';
 export const FW_SETUP_SCENARIOS = [
   // fw-setup-01: install succeeded with manifest.json present → write .meta.json
   {
