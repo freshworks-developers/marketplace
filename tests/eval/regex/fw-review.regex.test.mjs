@@ -6,18 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SKILLS_DIR = join(__dirname, '..', '..', '..', 'skills');
-const SPEC_PATH = join(__dirname, '..', '..', '..', 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
-
 async function readSkill(name) {
   return readFile(join(SKILLS_DIR, name, 'SKILL.md'), 'utf8');
-}
-
-async function readCmd(skillName, command) {
-  return readFile(join(SKILLS_DIR, skillName, 'commands', `${command}.md`), 'utf8');
-}
-
-async function readSpec() {
-  return readFile(SPEC_PATH, 'utf8');
 }
 
 describe('Skill Regex Evals — fw-review', { concurrency: true }, () => {

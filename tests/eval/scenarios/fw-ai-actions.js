@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { loadSkill, loadCommand, loadSpec, loadSkillWithSpec, loadRule, loadRef } from '../scenario-helpers.js';
+import { loadSkill, loadRule, loadRef } from '../scenario-helpers.js';
 export const FW_AI_ACTIONS_SCENARIOS = [
   // fw-ai-actions-01: after fdk validate → write .meta.json before showing result
   {

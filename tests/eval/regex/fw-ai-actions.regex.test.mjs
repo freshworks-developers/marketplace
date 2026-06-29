@@ -12,10 +12,6 @@ async function readSkill(name) {
   return readFile(join(SKILLS_DIR, name, 'SKILL.md'), 'utf8');
 }
 
-async function readCmd(skillName, command) {
-  return readFile(join(SKILLS_DIR, skillName, 'commands', `${command}.md`), 'utf8');
-}
-
 async function readSpec() {
   return readFile(SPEC_PATH, 'utf8');
 }

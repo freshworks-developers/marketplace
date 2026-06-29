@@ -515,8 +515,6 @@ function tabCount(tests) {
   return fail ? ` <span class="tab-badge fail">${fail}</span>` : ` <span class="tab-badge pass">${tests.length}</span>`;
 }
 
-const installerFail = installerTests.filter(t => !t.pass).length;
-const staticFail = staticTests.filter(t => !t.pass).length;
 const regexEvalFail = regexEvalTests.filter(t => !t.pass).length;
 const evalStats = evalBundle ? evalBundleStats(evalBundle) : null;
 const e2eStats = e2eBundle ? e2eBundleStats(e2eBundle) : null;
