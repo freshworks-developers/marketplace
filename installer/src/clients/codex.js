@@ -8,6 +8,11 @@ import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
 const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
+const MCP_JSON = join(homedir(), '.codex', 'mcp.json');
+
+export function resolveMcpJsonPath() {
+  return MCP_JSON;
+}
 
 export async function resolveSkillsDir() {
   const pluginJson = join(REPO_ROOT, '.codex-plugin', 'plugin.json');
@@ -54,7 +59,8 @@ export async function install({ yes = false } = {}) {
   const agentsPath = await writeAgentsMdBlock();
   console.log(`  ✓ Routing spec written to ${agentsPath}`);
 
-  const mcpJson = join(process.cwd(), '.mcp.json');
+  await mkdir(join(homedir(), '.codex'), { recursive: true });
+  const mcpJson = resolveMcpJsonPath();
   const { action, backupPath } = await mergeMcpServer(mcpJson, CURSOR_MCP_ENTRY);
   if (action === 'unchanged') {
     console.log(`  ✓ MCP config already up to date`);
@@ -73,7 +79,7 @@ export async function install({ yes = false } = {}) {
     );
     if (token) {
       await patchMcpToken(mcpJson, token);
-      console.log('  ✓ API key saved to .mcp.json');
+      console.log('  ✓ API key saved to MCP config');
     } else {
       console.log('  ℹ  API key skipped — add it later to enable fw-publish');
     }
