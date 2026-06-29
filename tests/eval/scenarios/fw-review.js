@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { loadSkill, loadCommand, loadRef } from '../scenario-helpers.js';
+import { loadSkill, loadRef } from '../scenario-helpers.js';
 export const FW_REVIEW_SCENARIOS = [
   // fw-review-01: review complete with failures → write .meta.json BEFORE emitting result
   {
