@@ -405,6 +405,13 @@ test('uninstall claude,cursor removes all global install paths', async (t) => {
     assert.equal((await listClaudePlugins(home)).length, 0, 'claude plugins should be removed');
     assert.equal(existsSync(join(home, '.cursor', 'skills', 'fw-app-dev')), false);
     assert.equal(existsSync(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc')), false);
+
+    const mcpJson = join(home, '.cursor', 'mcp.json');
+    if (existsSync(mcpJson)) {
+      const mcpConfig = JSON.parse(await readFile(mcpJson, 'utf8'));
+      assert.equal(mcpConfig.mcpServers?.['fw-dev-mcp'], undefined, 'fw-dev-mcp should be removed from mcp.json');
+    }
+
     assert.equal(existsSync(join(home, '.fw-dev-tools', 'scripts')), false);
     assert.equal(existsSync(join(home, '.fw-dev-tools', '.meta.json')), false);
     await assertClaudeMdRouting(home, { present: false });
@@ -470,6 +477,31 @@ test('Cursor install warns about old .agents/skills, does not delete them', asyn
     assert.equal(existsSync(join(agentsSkills, 'SKILL.md')), true, 'legacy workspace skills must not be auto-deleted');
     await access(join(home, '.cursor', 'skills', 'fw-setup', 'SKILL.md'));
     await access(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc'));
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('Cursor uninstall removes fw-dev-mcp from mcp.json while preserving other servers', async () => {
+  const home = await makeHome();
+  try {
+    await runCli(home, ['install', '--tools', 'cursor', '--yes']);
+
+    const mcpJson = join(home, '.cursor', 'mcp.json');
+    const withOther = {
+      mcpServers: {
+        'fw-dev-mcp': JSON.parse(await readFile(mcpJson, 'utf8')).mcpServers['fw-dev-mcp'],
+        'other-server': { url: 'https://other.example.com/mcp' },
+      },
+    };
+    await writeFile(mcpJson, JSON.stringify(withOther, null, 2), 'utf8');
+
+    await runCli(home, ['uninstall', '--tools', 'cursor', '--yes']);
+
+    assert.equal(existsSync(mcpJson), true, 'mcp.json should remain when other servers exist');
+    const remaining = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.equal(remaining.mcpServers['fw-dev-mcp'], undefined);
+    assert.deepEqual(remaining.mcpServers['other-server'], withOther.mcpServers['other-server']);
   } finally {
     await cleanup(home);
   }
