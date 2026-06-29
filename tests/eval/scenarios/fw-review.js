@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { loadSkill, loadCommand, loadSpec, loadSkillWithSpec } from '../scenario-helpers.js';
+import { loadSkill, loadCommand, loadSpec, loadSkillWithSpec, loadRef } from '../scenario-helpers.js';
 export const FW_REVIEW_SCENARIOS = [
   // fw-review-01: review complete with failures → write .meta.json BEFORE emitting result
   {
@@ -339,7 +339,13 @@ Does the review flag the generic error message "Invalid" as a violation of IP-06
     id: 'fw-review-14',
     skill: 'fw-review',
     label: 'FF-01L: app/scripts/app.js uses fetch() for API calls instead of request templates',
-    loadContent: () => loadSkill('fw-review'),
+    // FF-01L's definition (fetch forbidden → use request templates) lives in
+    // rules/frontend-files-rules.md, NOT SKILL.md (which only lists the bare code).
+    // Load the rules file FIRST so it survives buildPrompt's 25k-char truncation.
+    loadContent: () => Promise.all([
+      loadRef('fw-review', 'rules/frontend-files-rules'),
+      loadSkill('fw-review'),
+    ]).then(parts => parts.join('\n\n---\n\n')),
     prompt: `Based solely on the fw-review skill content provided above — do not read or access any external files. Review this Freshworks app. The file app/scripts/app.js contains:
 \`\`\`javascript
 function getTickets() {
