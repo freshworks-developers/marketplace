@@ -142,7 +142,7 @@ async function buildPrompt(scenario) {
   try {
     const raw = await scenario.loadContent();
     skillContent = raw.length > MAX_SKILL_CHARS ? raw.slice(0, MAX_SKILL_CHARS) + '\n...(truncated)' : raw;
-  } catch { /* proceed without it */ }
+  } catch (err) { console.warn(`[skill-eval] loadContent failed for scenario "${scenario.id}" — running without reference doc (${err.message})`); }
 
   const fields = Object.entries(scenario.schema.properties)
     .map(([k, v]) => {
