@@ -72,6 +72,13 @@ run_layer() {
 
 # ── Layer 1: Installer tests ──────────────────────────────────────────────────
 # spec reporter streams directly to stdout; NDJSON captured to file for counts
+# Test file list is read from installer/package.json so new tests auto-pick up.
+INSTALLER_TEST_FILES=$(node -e "
+  const pkg = require('./installer/package.json');
+  const files = pkg.scripts.test.match(/tests\/[\\w.-]+/g);
+  if (!files?.length) { console.error('installer/package.json test script has no test files'); process.exit(1); }
+  process.stdout.write(files.join(' '));
+")
 echo "──────────────────────────────────────────"
 echo "  Installer Tests"
 echo "──────────────────────────────────────────"
@@ -80,11 +87,7 @@ INST_EXIT=0
   --test-reporter=spec --test-reporter-destination=stdout \
   --test-reporter=../tests/ndjson-reporter.mjs \
   --test-reporter-destination=../tests/installer-results.ndjson \
-  tests/mcp-merge.test.js tests/fenced-block.test.js tests/utils.test.js \
-  tests/orchestration-spec.test.js tests/version-check.test.js tests/claude.test.js \
-  tests/codex.test.js tests/integration.test.js tests/scripts.test.js \
-  tests/status-update.test.js tests/installer-lifecycle.test.js tests/skill-static.test.js \
-  tests/regression-uninstall.test.js) || INST_EXIT=$?
+  $INSTALLER_TEST_FILES) || INST_EXIT=$?
 read -r INST_PASS INST_FAIL <<< "$(ndjson_counts tests/installer-results.ndjson)"
 LAYERS+=("Installer Tests"); PASS_COUNTS+=("$INST_PASS"); FAIL_COUNTS+=("$INST_FAIL"); LAYER_STATUS+=("$INST_EXIT")
 
@@ -99,7 +102,11 @@ node --test \
   --test-reporter-destination=tests/static-results.ndjson \
   tests/static/skill-static.test.js \
   tests/static/bump-version.test.mjs \
-  tests/static/repack-app-zip.test.mjs || STAT_EXIT=$?
+  tests/static/repack-app-zip.test.mjs \
+  tests/e2e/e2e-publish-guard-parser.test.mjs \
+  tests/e2e/e2e-publish-metrics-parser.test.mjs \
+  tests/e2e/e2e-skill-paths-parser.test.mjs \
+  tests/e2e/e2e-meta-scripts-parser.test.mjs || STAT_EXIT=$?
 read -r STAT_PASS STAT_FAIL <<< "$(ndjson_counts tests/static-results.ndjson)"
 LAYERS+=("Static Skill Tests"); PASS_COUNTS+=("$STAT_PASS"); FAIL_COUNTS+=("$STAT_FAIL"); LAYER_STATUS+=("$STAT_EXIT")
 
