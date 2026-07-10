@@ -105,13 +105,20 @@ skills-lock.json
 coverage/
 /gitleaks
 
-# Eval and e2e report outputs (generated locally, not versioned)
-tests/eval-results.json
-tests/eval-report.html
-tests/e2e-results.json
-tests/e2e-report.html
-/e2e-results.json
-/e2e-report.html
+# All-tests report outputs (generated locally, not versioned)
+tests/all-tests-report.html
+tests/all-tests-results.json
+tests/installer-results.ndjson
+tests/static-results.ndjson
+tests/eval-regex-results.ndjson
+tests/eval-cli-results.ndjson
+tests/eval/eval-cli-results.json
+tests/eval/eval-cli-results.ndjson
+tests/eval/eval-regex-results.json
+tests/eval/eval-batch-results/
+tests/e2e/e2e-results.json
+tests/e2e/e2e-report.html
+tests/e2e/*.log
 
 # Packaged installer artifacts (local npm pack output)
 installer/*.tgz
@@ -134,5 +141,5 @@ installer/*.tgz
 docs/
 
 /graphify-out
-/tests/e2e-batch-results
-/tests/e2e-cursor-results
+/tests/e2e/e2e-batch-results
+/tests/e2e/e2e-cursor-results

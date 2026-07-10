@@ -70,4 +70,6 @@ echo " Summary: $summary_file"
 echo "════════════════════════════════════════════════════════"
 column -t -s $'\t' "$summary_file" 2>/dev/null || cat "$summary_file"
 
+node "$SCRIPT_DIR/../lib/write-agent-bundle.mjs" e2e
+
 exit $failed_runs

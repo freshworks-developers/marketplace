@@ -37,7 +37,7 @@ function captureConsole() {
 // status.js
 // ---------------------------------------------------------------------------
 
-test('status: prints not-installed message when no .meta.json', async () => {
+test('status prints not-installed when .meta.json is absent', async () => {
   await removeState();
   const { status } = await import('../src/status.js');
   const { lines, restore } = captureConsole();
@@ -52,7 +52,7 @@ test('status: prints not-installed message when no .meta.json', async () => {
   );
 });
 
-test('status: prints version and client when .meta.json exists', async () => {
+test('status prints installed version and client when .meta.json exists', async () => {
   await writeState({
     version: '1.1.2',
     client: 'cursor',
@@ -76,7 +76,7 @@ test('status: prints version and client when .meta.json exists', async () => {
 // update.js
 // ---------------------------------------------------------------------------
 
-test('update: exits when no .meta.json is present', async () => {
+test('update exits early when .meta.json is absent', async () => {
   await removeState();
   const { update } = await import('../src/update.js');
   const { lines, restore } = captureConsole();
@@ -95,7 +95,7 @@ test('update: exits when no .meta.json is present', async () => {
   assert.ok(lines.some(l => l.includes('install')), `expected install hint in output, got: ${lines.join(' | ')}`);
 });
 
-test('update: prints up-to-date message when versions match (offline or same version)', async () => {
+test('update prints up-to-date when installed version matches latest', async () => {
   await writeState({
     version: '99.99.99',
     client: 'cursor',
