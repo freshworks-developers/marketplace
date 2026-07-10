@@ -176,6 +176,26 @@ test('multi-client install accumulates clients array in .meta.json', async () =>
   }
 });
 
+test('Codex install writes MCP config to ~/.codex/mcp.json regardless of cwd', async () => {
+  const home = await makeHome();
+  const unrelatedCwd = join(home, 'unrelated-cwd');
+  try {
+    await mkdir(unrelatedCwd, { recursive: true });
+
+    await runCli(home, ['install', '--tools', 'codex', '--yes'], { cwd: unrelatedCwd });
+
+    const mcpJson = join(home, '.codex', 'mcp.json');
+    assert.equal(existsSync(mcpJson), true, 'expected ~/.codex/mcp.json to be created');
+    assert.equal(existsSync(join(unrelatedCwd, '.mcp.json')), false, 'should not write MCP config to shell cwd');
+
+    const config = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.ok(config.mcpServers?.['fw-dev-mcp']?.url, 'fw-dev-mcp entry should be merged');
+    await access(join(home, '.codex', 'skills', 'fw-app-dev', 'SKILL.md'));
+  } finally {
+    await cleanup(home);
+  }
+});
+
 test('status prints version and client after install', async () => {
   const home = await makeHome();
   try {
