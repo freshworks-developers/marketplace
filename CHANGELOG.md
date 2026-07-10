@@ -4,6 +4,13 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 
 ---
 
+## [Unreleased]
+
+### Bug Fixes
+- **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
+
+---
+
 ## [1.2.0] — 2026-06-22
 
 ### Unified Installer CLI
