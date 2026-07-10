@@ -79,3 +79,44 @@ export async function readMcpToken(targetPath) {
     return null;
   }
 }
+
+/**
+ * Remove a server entry from an existing MCP JSON config file.
+ * Preserves other server entries. Backs up before writing.
+ *
+ * @param {string} targetPath - Absolute path to the mcp.json
+ * @param {string} [serverName='fw-dev-mcp'] - The mcpServers key to remove
+ * @returns {Promise<{action: 'absent'|'unchanged'|'removed'|'skipped', backupPath: string|null}>}
+ */
+export async function removeMcpServer(targetPath, serverName = 'fw-dev-mcp') {
+  if (!existsSync(targetPath)) {
+    return { action: 'absent', backupPath: null };
+  }
+
+  const raw = await readFile(targetPath, 'utf8');
+  let config;
+  try {
+    config = JSON.parse(raw);
+  } catch {
+    return { action: 'skipped', backupPath: null };
+  }
+
+  if (!config.mcpServers || typeof config.mcpServers !== 'object') {
+    return { action: 'unchanged', backupPath: null };
+  }
+
+  if (!(serverName in config.mcpServers)) {
+    return { action: 'unchanged', backupPath: null };
+  }
+
+  const backupPath = `${targetPath}.bak.${Date.now()}`;
+  await rename(targetPath, backupPath);
+
+  delete config.mcpServers[serverName];
+
+  if (Object.keys(config.mcpServers).length > 0) {
+    await writeFile(targetPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
+  }
+
+  return { action: 'removed', backupPath };
+}

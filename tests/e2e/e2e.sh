@@ -649,7 +649,7 @@ phase_install() {
       ;;
     codex)
       [[ -d "$HOME/.codex/skills/fw-app-dev" ]] && pass "~/.codex/skills/fw-app-dev exists" || fail "~/.codex/skills/fw-app-dev missing"
-      [[ -f ".mcp.json" ]] && pass ".mcp.json written in cwd" || fail ".mcp.json missing in cwd"
+      [[ -f "$HOME/.codex/mcp.json" ]] && pass "~/.codex/mcp.json written" || fail "~/.codex/mcp.json missing"
       [[ -d "$HOME/.fw-dev-tools/scripts" ]] && pass "~/.fw-dev-tools/scripts exists" || fail "~/.fw-dev-tools/scripts missing"
       ;;
   esac

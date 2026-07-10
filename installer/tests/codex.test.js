@@ -4,7 +4,7 @@ import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir, homedir } from 'node:os';
-import { resolveSkillsDir, writeAgentsMdBlock } from '../src/clients/codex.js';
+import { resolveSkillsDir, resolveMcpJsonPath, writeAgentsMdBlock } from '../src/clients/codex.js';
 import { removeBlock } from '../src/fenced-block.js';
 
 async function makeTmp() {
@@ -39,6 +39,12 @@ test('resolveSkillsDir returns ~/.codex/skills when plugin.json is absent', asyn
 
 test('resolveSkillsDir fallback is an absolute path', async () => {
   const result = await resolveSkillsDir();
+  assert.ok(result.startsWith('/') || /^[A-Za-z]:\\/.test(result), 'should be absolute');
+});
+
+test('resolveMcpJsonPath returns ~/.codex/mcp.json', () => {
+  const result = resolveMcpJsonPath();
+  assert.equal(result, join(homedir(), '.codex', 'mcp.json'));
   assert.ok(result.startsWith('/') || /^[A-Za-z]:\\/.test(result), 'should be absolute');
 });
 
