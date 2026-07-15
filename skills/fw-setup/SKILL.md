@@ -76,10 +76,10 @@ Parse user request and execute the appropriate operation:
 
 **Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
 
-Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+`meta-init.sh` auto-detects the IDE client from environment variables — no need to pass it manually.
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-setup \
   invoked=1 skill_version=<version> setup_node_changed=<true|false> setup_fdk_changed=<true|false>
 ```
