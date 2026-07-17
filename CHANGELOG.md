@@ -6,6 +6,9 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- **Testing:** add **When to run which layer** policy table; document manual **`eval-manual.yml`** workflow for on-demand eval reports ([#39](https://github.com/freshworks-developers/fw-dev-tools/issues/39))
+
 ### Bug Fixes
 - **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
 

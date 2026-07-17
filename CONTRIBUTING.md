@@ -208,7 +208,7 @@ references/
 
 ## Testing Your Changes
 
-See **[tests/TESTING.md](tests/TESTING.md)** for the full test suite guide. Summary:
+See **[tests/TESTING.md](tests/TESTING.md)** for the full test suite guide — especially **When to run which layer** (change-type → required layers). Summary:
 
 ### Layer 1 — Installer tests (required when `installer/` changes, runs in CI)
 
@@ -240,7 +240,7 @@ bash tests/run-all-tests.sh --llm-eval
 
 Requires `claude` or `cursor` on PATH (subscription auth — no `ANTHROPIC_API_KEY` needed). Or, in **Claude Code or Cursor**, ask: *"Run the skill evals"*.
 
-**Attach `tests/all-tests-report.html` to your PR.** Required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`.
+**Attach `tests/all-tests-report.html` to your PR.** Required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`. Maintainers may also run the **[Manual skill evals](https://github.com/freshworks-developers/fw-dev-tools/actions/workflows/eval-manual.yml)** workflow (`workflow_dispatch`) for on-demand reports — supplemental to local runs, not a PR gate.
 
 ### PR checklist
 
