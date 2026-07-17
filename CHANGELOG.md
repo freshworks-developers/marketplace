@@ -6,6 +6,11 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- **fw-app-dev:** fix stale OAuth checklist in `fdk_create.md` — Platform 3.0 `options.oauth` pattern instead of `auth_type` ([#32](https://github.com/freshworks-developers/fw-dev-tools/issues/32))
+- **fw-app-dev:** fix Best Practices #4 in `oauth-configuration-latest.md` — `client_secret` belongs in `oauth_config.json`, not `iparams.json` ([#31](https://github.com/freshworks-developers/fw-dev-tools/issues/31))
+- **fw-setup:** document dual-stack FDK coexistence via nvm; clarify same-Node-only uninstall; broaden CDN tarball warnings against any registry install ([#45](https://github.com/freshworks-developers/fw-dev-tools/issues/45))
+
 ### Bug Fixes
 - **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
 

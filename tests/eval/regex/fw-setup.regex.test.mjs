@@ -114,14 +114,13 @@ describe('Skill Regex Evals — fw-setup', { concurrency: true }, () => {
   });
 
 
-  // fw-setup-17 and fw-setup-18: skill content pending — https://github.com/freshworks-developers/fw-dev-tools/issues/45
-  test.skip('fw-setup-17 dual-stack FDK 10 + FDK 9 can coexist on same machine via nvm', async () => {
+  test('fw-setup-17 dual-stack FDK 10 + FDK 9 can coexist on same machine via nvm', async () => {
     const c = await readSkill('fw-setup');
     const ok = /coexist|dual.stack|Both.*FDK.*can/i.test(c);
     assert.ok(ok, 'fw-setup/SKILL.md must document dual-stack coexistence via nvm');
   });
 
-  test.skip('fw-setup-18 nvm required for dual-stack — must install nvm first if missing', async () => {
+  test('fw-setup-18 nvm required for dual-stack — must install nvm first if missing', async () => {
     const c = await readSkill('fw-setup');
     const ok = /nvm is required|nvm.*required.*install.*nvm first|install nvm first/i.test(c);
     assert.ok(ok, 'fw-setup/SKILL.md must require nvm installation before dual-stack setup');
