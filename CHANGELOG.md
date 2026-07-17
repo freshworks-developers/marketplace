@@ -8,6 +8,10 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 
 ### Bug Fixes
 - **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
+- **Installer:** `copySkills()` copies only installable skill dirs (`fw-*`), not `skills/shared/` ([#29](https://github.com/freshworks-developers/fw-dev-tools/issues/29))
+
+### Documentation
+- **SECURITY.md:** disclose that `.meta.json` skill metrics are included in marketplace publish zips by design ([#43](https://github.com/freshworks-developers/fw-dev-tools/issues/43))
 
 ---
 

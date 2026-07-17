@@ -110,6 +110,10 @@ We accept contributions for:
 
 ## Development Guidelines
 
+### Security and publish telemetry
+
+See **[SECURITY.md](SECURITY.md)** for vulnerability reporting and for disclosure that `.meta.json` skill metrics are included in marketplace publish zips by design (platform ingestion; local file deleted after successful publish).
+
 ### Skill Structure
 
 Each skill follows the Agent Skills Specification. In **this repo**, editor rules live under **`skills/<name>/rules/`** (not nested under **`skills/<name>/.cursor/rules`**). The Cursor skill bundle uses **`skills/<name>/.cursor-plugin/plugin.json`** with **`rulesDirectory`** / **`commandsDirectory`** pointing at **`./rules`** and **`./commands`** beside **`SKILL.md`**.
