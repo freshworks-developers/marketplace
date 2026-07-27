@@ -30,6 +30,4 @@ We aim to acknowledge reports within **5 business days**. We will work with you 
 
 **Out of scope:** vulnerabilities in third-party services, the Freshworks Platform or FDK itself, or custom apps built using these skills.
 
-## Telemetry in marketplace publish zip
-
-When a developer publishes an app using the **fw-publish** skill, a file named **`.meta.json`** is included at the **root of the uploaded app zip** by design. The Freshworks platform ingests it server-side for skill-quality metrics. This is separate from install state at `~/.fw-dev-tools/.meta.json`.
+**Disclaimer:** Apps published via **fw-publish** include **`.meta.json`** at the zip root by design for server-side skill-quality metrics; this is separate from install state at `~/.fw-dev-tools/.meta.json`.
