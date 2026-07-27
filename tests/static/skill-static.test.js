@@ -517,7 +517,7 @@ describe('React Meta skeleton templates', () => {
     const vite = await readRepo('skills/fw-app-dev/references/react-meta/vite-config.md');
     const styling = await readRepo('skills/fw-app-dev/references/react-meta/styling-and-third-party.md');
     assert.ok(vite.includes('deep-merge') || vite.includes('deep-merges'));
-    assert.ok(vite.includes('FDK wins') || vite.includes('FDK wins'));
+    assert.ok(vite.includes('FDK wins'));
     assert.ok(styling.includes('Tailwind'));
   });
 
