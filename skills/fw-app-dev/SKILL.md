@@ -1,9 +1,9 @@
 ---
 name: fw-app-dev
 version: "1.2.0"
-description: "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace apps. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites, refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup. Before fdk validate: fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 except LAST RESORT after six iterations. New apps default to FDK 10.0.1 + Node 24.x; FDK 9.x/Node 18.x allowed when explicitly requested. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Platform 3.0 app development, FDK CLI, or marketplace submission."
-compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
-argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor]"
+description: "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace apps. REQUIRES Node.js 24.x + FDK 10.x. New UI apps default to React Meta (DEW, metaConfig.framework react); vanilla Crayons is opt-in. Commands: /fdk-react-create, /fdk-react-migrate, /fdk-fix, /fdk-migrate, /fdk-refactor. Does NOT install FDK/Node—use fw-setup."
+compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0; Meta apps: FDK 10.1.0 minimum. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
+argument-hint: "[fdk-react-create|fdk-react-migrate|fdk-fix|fdk-migrate|fdk-refactor]"
 allowed-tools: "shell read write strreplace glob grep"
 ---
 
@@ -22,7 +22,7 @@ This skill provides:
 - Manifest validation and enforcement
 - `fdk validate` orchestration with up to 6 auto-fix iterations
 - OAuth config, requests.json, and serverless validation
-- Crayons UI and Platform 3.0 API guidance
+- React Meta (DEW) and vanilla Crayons UI guidance
 
 **If you receive a request to build, fix, review, or migrate a Freshworks app, open THIS file first and follow its workflows.**
 
@@ -131,7 +131,7 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 5. Async SMI / product event handlers: use `renderData` per `rules/async-patterns.mdc`.
 6. Every `config/requests.json` key declared under `modules.common.requests` in `manifest.json` (and reverse: no orphan manifest entries).
 7. OAuth: `integrations` wrapper in `oauth_config.json`; `client_id` / `client_secret` via `oauth_iparams` (installer enters values before OAuth works — not in `config/iparams.json`) if it is required at per installation level; templates use `<%= access_token %>` + template-level `"options": { "oauth": "..." }` where applicable — not raw `Bearer <%= iparam.user_token %>` for OAuth providers.
-8. Frontend apps: `app/styles/images/icon.svg` + Crayons CDN in HTML (see templates).
+8. **React Meta** frontend: `metaConfig.framework: "react"`, DEW packages, `app/index.html` + `app/index.jsx`, Router `path="*"`. **Vanilla opt-in:** `app/styles/images/icon.svg` + Crayons CDN (see templates).
 9. FQDN `host` only in request templates; paths start with `/`.
 10. `README.md` exists before you claim the app is ready for `fdk validate`.
 11. **`engines`:** Start every new app with **`"fdk": "10.0.1"`** and **`"node": "24.11.0"`**. **Do not** use FDK 9.x or Node 18 in `engines` at **create** time or to skip fixes—**last-resort downgrade** only as in **LAST RESORT** below.
@@ -369,6 +369,26 @@ Use this process for every app request so the right features are generated.
 - **Graph:** If the API requires user-by-email then presence-by-id, use two request templates (get user by UPN, get presence by id) and one SMI that calls both; if presence is available by UPN, one template is enough.
 - **Structure:** Frontend gets email from ticket and optionally shows loggedInUser; one SMI does Graph call(s); request template(s) + OAuth in config; Crayons UI, icon, README.
 
+## React Meta framework (default UI)
+
+**Default for new UI apps** unless the user explicitly requests vanilla JS + Crayons.
+
+| Topic | Rule |
+|-------|------|
+| Scaffold | **`/fdk-react-create`** or `fdk create --template react-starter-template`; fallback `assets/templates/react-meta-*-skeleton/` |
+| Migrate vanilla → Meta | **`/fdk-react-migrate`** (Platform **3.0** only; **`/fdk-migrate`** first for **2.x**) |
+| Manifest | **`metaConfig.framework: "react"`** in **`manifest.json` only** |
+| UI | **`@freshworks/dew-components`** + **`@freshworks/dew-styles`** (**required**) |
+| Forbidden (Meta) | **`@freshworks/crayons`**, Crayons CDN, `<fw-*>` — **no Crayons in Meta workflow** |
+| Router | Home/fallback **`path="*"`**; feature routes **`/app/...`** |
+| TypeScript | **Supported** — `.tsx` / `.ts`, optional `tsconfig.json`; React **19+** preferred |
+| Tailwind / third-party | **Allowed alongside DEW** when user asks (MUI, Redux, etc.); do **not** strip during validate/fix |
+| Vite | Optional **`vite.config.js`** at project root (**FDK 10.1.5+**); FDK **deep-merge** — **FDK wins** on entry points and `app`/`config` aliases |
+
+Full patterns: **`rules/react-meta-patterns.mdc`**, **`references/react-meta/dew-components.md`**.
+
+---
+
 ### Step 1: Determine App Type
 
 | Prefer **Hybrid / Frontend** | Prefer **Serverless only** |
@@ -378,19 +398,27 @@ Use this process for every app request so the right features are generated.
 **Default:** Hybrid when unsure. **Do not ask** "Do you need UI?"—apply the table. **Disambiguation:** `rules/confusion.mdc`.
 
 ```
-UI? → yes → backend/events/API? → yes = Hybrid, no = Frontend-only
+UI? → yes → user asked vanilla JS? → yes = vanilla Frontend/Hybrid/OAuth skeletons
+UI? → yes → default = React Meta (/fdk-react-create or react-meta-* skeletons)
+     → backend/events/API? → yes = react-meta-hybrid or react-meta-oauth
+     → no  = react-meta-frontend
 UI? → no  → backend/events?      → yes = Serverless, no = invalid
 ```
-External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
+External API → React Meta Hybrid + `requests.json`; OAuth → `react-meta-oauth-skeleton`. Vanilla equivalents remain under `*-skeleton/` when explicitly requested.
 
 ### Step 2: Select Template & Generate Files
 
+**Default (React Meta):** `/fdk-react-create` or `fdk create --template react-starter-template`. See `rules/react-meta-patterns.mdc` and `references/react-meta/`.
+
 | Template folder | When | Main artifacts |
 |-----------------|------|----------------|
-| `assets/templates/frontend-skeleton/` | UI only | `app/`, `manifest.json`, `config/iparams.json`, `icon.svg`, **`README.md`** |
-| `assets/templates/serverless-skeleton/` | No UI, events/automation | `server/server.js`, `manifest.json`, `config/iparams.json`, **`README.md`** |
-| `assets/templates/hybrid-skeleton/` | UI + SMI + external API | `app/`, `server/`, `config/requests.json`, `config/iparams.json`, `icon.svg`, **`README.md`** |
-| `assets/templates/oauth-skeleton/` | UI + OAuth service | above + `config/oauth_config.json` + **`README.md`** (`oauth_iparams` only there; see `references/api/oauth-docs.md`) |
+| `assets/templates/react-meta-frontend-skeleton/` | **Default** UI only | `metaConfig`, `package.json`, DEW, `app/index.jsx`, **`README.md`** |
+| `assets/templates/react-meta-hybrid-skeleton/` | **Default** UI + SMI + API | above + `server/`, `config/requests.json` |
+| `assets/templates/react-meta-oauth-skeleton/` | **Default** UI + OAuth | above + `config/oauth_config.json` |
+| `assets/templates/serverless-skeleton/` | No UI, events/automation | `server/server.js`, `manifest.json`, **`README.md`** |
+| `assets/templates/frontend-skeleton/` | Vanilla JS opt-in | Crayons CDN, `app/scripts/app.js` |
+| `assets/templates/hybrid-skeleton/` | Vanilla hybrid opt-in | Crayons + server |
+| `assets/templates/oauth-skeleton/` | Vanilla OAuth opt-in | Crayons + oauth config |
 
 **Golden-path recipes (Slack webhook, Microsoft Graph OAuth):** `references/playbooks/README.md` — load **one** playbook instead of hopping across many docs.
 
@@ -458,10 +486,11 @@ External API → Hybrid + `requests.json`; OAuth → `oauth-skeleton`.
 **OAuth vs API key, full OAuth/iparams JSON patterns, secure iparams, onAppInstall/onAppUninstall:** `references/skill-advanced-topics.md` + `references/architecture/oauth-configuration-latest.md` + `references/api/oauth-docs.md`.
 
 **App trees:** 
-frontend → [`references/templates/frontend-app-tree.txt`](references/templates/frontend-app-tree.txt); 
+React Meta → `references/react-meta/react-meta-fdk-standards.md`; 
+vanilla frontend → [`references/templates/frontend-app-tree.txt`](references/templates/frontend-app-tree.txt); 
 serverless → [`references/templates/serverless-app-tree.txt`](references/templates/serverless-app-tree.txt); 
 OAuth → app/ + server/ + config/oauth_config.json + config/requests.json + config/iparams.json. 
-**Crayons CDN:** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html).
+**Crayons CDN (vanilla JS only):** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html).
 
 ### Step 4: Validate Against Test Patterns
 
@@ -473,7 +502,7 @@ Before presenting the app, validate against:
 
 ## Progressive disclosure (reference index)
 
-**Full map of `references/` paths:** `references/skill-advanced-topics.md`. **Crayons CDN (required in every HTML):** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html)
+**Full map of `references/` paths:** `references/skill-advanced-topics.md`. **React Meta index:** [`references/react-meta/README.md`](references/react-meta/README.md). **Crayons CDN (vanilla JS only):** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html)
 
 ---
 
@@ -483,8 +512,10 @@ Before presenting the app, validate against:
 
 | Check | Requirement |
 |-------|-------------|
-| Icon | `app/styles/images/icon.svg` exists for frontend apps |
-| Crayons | All frontend HTML includes CDN (above) |
+| Icon | Exists at manifest-declared path (Meta: often `app/icon.svg`; vanilla: `app/styles/images/icon.svg`) |
+| UI stack | Meta → DEW, no Crayons; Vanilla → Crayons CDN in HTML |
+| metaConfig | Meta apps: `framework: "react"` in manifest.json |
+| Router | Meta apps: `path="*"` fallback route |
 | Engines | Default **`fdk` `10.0.1`** + **`node` `24.11.0`**; deprecated **9.8.2 + 18.20.8** only after **LAST RESORT** rules at top of **SKILL.md** |
 | Product module | At least one product module (may be `{}`) |
 | Iparams | Exactly one of: `config/iparams.json` OR custom `iparams.html` + assets — not both |
@@ -641,7 +672,7 @@ If the task is still unclear after step 1, load `rules/confusion.mdc`.
 - **SKILL.md** — core enforcement, workflow, validation tables, gates.
 - **rules/** — always-on Platform 3.0, security, validation, SMI/events, templates, gates.
 - **references/** — 140+ files; load by topic as needed (including `references/skill-advanced-topics.md` for extended OAuth, validation checklists, reference index, module summary).
-- **assets/templates/** — frontend, serverless, hybrid, OAuth skeletons (validate-ready file sets).
+- **assets/templates/** — react-meta (default UI), vanilla frontend/hybrid/oauth, serverless skeletons.
 - **references/playbooks/** — Slack webhook + Microsoft Graph golden paths.
 
 When uncertain, load the specific `references/` file before implementing.

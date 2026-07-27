@@ -1,0 +1,124 @@
+---
+name: react-meta-patterns
+description: React Meta framework defaults for Platform 3.0 UI apps — metaConfig, DEW components, React Router, optional Tailwind/vite, custom HTML placement. Use when creating or migrating Meta apps.
+alwaysApply: false
+globs: ["**/manifest.json", "**/app/**/*.{jsx,tsx,js,ts,html}", "**/vite.config.js", "**/package.json"]
+---
+
+# React Meta Framework Patterns
+
+**Authoritative doc:** [Create an app with the meta framework](https://developers.freshworks.com/docs/app-sdk/v3.0/common/app-development-process/create-an-app-with-the-meta-framework/)
+
+**When to use:** Any new UI app (default) or vanilla JS → React migration. Vanilla JS + Crayons is **opt-in only** when the user explicitly requests it.
+
+## Default stack
+
+| Layer | Default | Notes |
+|-------|---------|-------|
+| Framework | **Meta (`metaConfig.framework: "react"`)** | In `manifest.json`, not a separate file |
+| UI | **`@freshworks/dew-components`** + **`@freshworks/dew-styles`** | **Required** — see `dew-components.md` and [Storybook](https://dew.freshworkscorp.com/dew-3.0/) |
+| React | **19+** preferred | Functional and class components both supported |
+| Routing | **React Router** — `path="*"` home, `/app/...` feature routes | Official Meta sample pattern |
+| TypeScript | Optional `.tsx` / `tsconfig.json` | Supported |
+
+## Forbidden in Meta workflow
+
+- `@freshworks/crayons`, Crayons CDN, `<fw-*>` web components
+- Plain HTML form controls as primary UI (use DEW React components)
+- `metaConfig` outside `manifest.json`
+
+## Allowed alongside DEW
+
+Tailwind CSS, PostCSS, MUI, Redux, React Router extras, date-fns, axios (manifest-pinned), and other third-party packages **when the user asks or reference patterns apply**. Do **not** remove these during validate/fix unless they break Platform 3.0 rules.
+
+## manifest.json (Meta)
+
+```json
+{
+  "platform-version": "3.0",
+  "modules": { ... },
+  "metaConfig": {
+    "framework": "react",
+    "packageManager": "npm"
+  },
+  "engines": { "node": "24.11.0", "fdk": "10.1.0" }
+}
+```
+
+- **`metaConfig.framework`**: required `"react"`
+- **`metaConfig.packageManager`**: optional (`npm` default)
+- Meta apps: minimum **FDK 10.1.0** in `engines.fdk`
+
+## Directory layout
+
+```
+app/
+├── index.html              # At app root (name configurable in manifest location.url)
+├── icon.svg                # Or path declared in manifest
+├── index.jsx               # Entry (bundled by FDK Vite)
+├── components/
+├── public/
+└── styles/
+config/
+test/
+manifest.json
+package.json
+vite.config.js              # Optional (FDK 10.1.5+)
+```
+
+HTML entry files may also live at **`config/` root** (e.g. `config/iparams.html`). Do **not** nest manifest-referenced HTML under `app/components/` or `app/scripts/`.
+
+## Custom HTML
+
+- **`#root`** mount point in shell HTML
+- **`{{{appclient}}}`** when app uses Data method, Request method, Installation settings, Data store, or SMI — see `references/react-meta/custom-html.md`
+- Multi-placeholder: one HTML shell per surface (e.g. `index.html`, `ticketSidebar.html`)
+
+## React Router
+
+```jsx
+<Route path="*" element={<Home />} />
+<Route path="/app/demo" element={<DemoPage />} />
+```
+
+Home/fallback **must** use `path="*"`. Feature routes use **`/app/...`** prefix.
+
+## vite.config.js (optional)
+
+- Location: **project root**
+- FDK **deep-merges** developer config with internal Vite config
+- **FDK wins** on conflict: entry points, `app` / `config` resolve aliases, FDK-required plugins
+- Safe extensions: extra aliases, PostCSS/Tailwind, `define`, `server.proxy`, `manualChunks`
+- See `references/react-meta/vite-config.md`
+
+## Scaffold commands
+
+| Action | Command / template |
+|--------|-------------------|
+| Create (default UI) | `/fdk-react-create` or `fdk create --template react-starter-template` |
+| Migrate vanilla → Meta | `/fdk-react-migrate` |
+| Vanilla opt-in | `assets/templates/frontend-skeleton/` (Crayons) |
+
+## Skeleton templates
+
+| Template | Path |
+|----------|------|
+| React Meta frontend | `assets/templates/react-meta-frontend-skeleton/` |
+| React Meta hybrid | `assets/templates/react-meta-hybrid-skeleton/` |
+| React Meta OAuth | `assets/templates/react-meta-oauth-skeleton/` |
+
+## Reference docs
+
+- `references/react-meta/react-meta-fdk-standards.md`
+- `references/react-meta/dew-components.md`
+- `references/react-meta/styling-and-third-party.md`
+- `references/react-meta/vite-config.md`
+- `references/react-meta/custom-html.md`
+- `references/react-meta/js-to-react-migration-checklist.md`
+
+## Related rules
+
+- **app-templates.mdc** — template selection (Meta default)
+- **app-building-blocking-gates.mdc** — Meta-specific structure gates
+- **freshworks-platform3.mdc** — Meta → DEW; vanilla → Crayons
+- **validation-workflow.mdc** — do not strip third-party Meta deps

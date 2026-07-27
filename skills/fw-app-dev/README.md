@@ -21,7 +21,7 @@
 
 ## Overview
 
-**fw-app-dev** is the **primary skill** for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, and Crayons UI, with progressive disclosure under `references/`.
+**fw-app-dev** is the **primary skill** for building, fixing, reviewing, and migrating **Freshworks Platform 3.0** marketplace apps: manifest (`modules`), `requests.json`, OAuth, serverless, React Meta (default UI), and Crayons (vanilla opt-in), with progressive disclosure under `references/`.
 
 ### Execution Order (MANDATORY)
 
@@ -40,8 +40,8 @@ For **AI Actions**–centric integrations (`actions.json`, SMI, flat request sch
 ## Features
 
 - ✅ Platform 3.0 enforcement with zero tolerance for legacy patterns
-- ✅ Complete app templates (Frontend, Serverless, Hybrid, OAuth)
-- ✅ Crayons v4.x component library integration
+- ✅ Complete app templates (Frontend, Serverless, Hybrid, OAuth, React Meta)
+- ✅ Crayons v4.x (vanilla) and DEW (React Meta default)
 - ✅ Automatic validation and error fixing
 - ✅ Request template patterns
 - ✅ Module and location reference for all products
@@ -87,8 +87,11 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - `prerequisites-check.mdc` — Toolchain / app prerequisites
 - `security.mdc` — Security enforcement
 - `validation-workflow.mdc` — Auto-validation and fixes
+- `react-meta-patterns.mdc` — React Meta framework (default UI)
 
 **Commands (all under `commands/`; same inventory in [`AGENTS.md`](../../AGENTS.md)):**
+- `/fdk-react-create` — `commands/fdk-react-create.md` — Create React Meta app (default UI)
+- `/fdk-react-migrate` — `commands/fdk-react-migrate.md` — Migrate vanilla JS → React Meta
 - `/fdk-fix` — `commands/fdk-fix.md` — Fix platform and lint errors
 - `/fdk-migrate` — `commands/fdk-migrate.md` — Migrate **Platform 2.3** (2.x), **FDK 9.x**, **Node 18** → **Platform 3.0**, **FDK 10.0.1**, **Node 24**
 - `/fdk-refactor` — `commands/fdk-refactor.md` — Reduce function complexity (≤ 7)
@@ -97,7 +100,7 @@ The plugin should appear in Cursor Settings → Plugins → Installed Plugins.
 - Progressive disclosure documentation (140+ files)
 
 **Assets:**
-- App skeleton templates (Frontend, Serverless, Hybrid, OAuth)
+- App skeleton templates (Frontend, Serverless, Hybrid, OAuth, React Meta)
 
 ## Usage
 
@@ -105,7 +108,7 @@ Invoke with `@fw-app-dev` in chat, or it activates automatically when working on
 - Enforces Platform 3.0 patterns
 - Generates correct manifest structure
 - Uses proper request templates
-- Implements Crayons components
+- Implements Crayons or DEW components per template
 - Validates and autofixes errors
 
 ## Requirements

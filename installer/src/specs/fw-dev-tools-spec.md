@@ -33,6 +33,7 @@ Read fw-dev-tools skills **only** from the install path for your IDE. Never mix 
 ## Non-negotiables
 
 - Platform version `"3.0"`; use `modules` not legacy `product`
+- New UI apps: React Meta default (`metaConfig.framework: "react"`, DEW); vanilla Crayons only when explicitly requested
 - External HTTP only via `$request.invokeTemplate` and `config/requests.json` templates
 - `fdk validate`: zero platform errors and zero lint errors before complete
 - fw-review is MANDATORY before fw-publish — never skip it

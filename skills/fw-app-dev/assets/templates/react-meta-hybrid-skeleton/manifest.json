@@ -1,0 +1,30 @@
+{
+  "platform-version": "3.0",
+  "app": {},
+  "modules": {
+    "common": {
+      "requests": {
+        "externalApiCall": {}
+      },
+      "functions": {
+        "fetchExternalData": {}
+      }
+    },
+    "support_ticket": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "icon.svg"
+        }
+      }
+    }
+  },
+  "metaConfig": {
+    "framework": "react",
+    "packageManager": "npm"
+  },
+  "engines": {
+    "node": "24.11.0",
+    "fdk": "10.1.0"
+  }
+}

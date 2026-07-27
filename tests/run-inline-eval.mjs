@@ -641,6 +641,106 @@ const results = [];
   );
 }
 
+// fw-app-dev-17
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /fdk-react-create|react-meta-frontend/i.test(c) && /dew-components/i.test(c) && /metaConfig/i.test(c)
+      ? pass('fw-app-dev-17', 'fw-app-dev', 'Create sidebar app → React Meta + DEW, metaConfig in manifest')
+      : fail('fw-app-dev-17', 'fw-app-dev', 'Create sidebar app → React Meta + DEW, metaConfig in manifest', 'missing Meta default + DEW'),
+  );
+}
+
+// fw-app-dev-18
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /fdk-react-migrate/i.test(c)
+      ? pass('fw-app-dev-18', 'fw-app-dev', 'Migrate JS → /fdk-react-migrate')
+      : fail('fw-app-dev-18', 'fw-app-dev', 'Migrate JS → /fdk-react-migrate', 'missing fdk-react-migrate'),
+  );
+}
+
+// fw-app-dev-19
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    ((/Forbidden in Meta workflow/i.test(c) || /never.*Crayons/i.test(c) || /no Crayons/i.test(c)) && /dew-components/i.test(c))
+      ? pass('fw-app-dev-19', 'fw-app-dev', 'Meta app: no Crayons; DEW packages present')
+      : fail('fw-app-dev-19', 'fw-app-dev', 'Meta app: no Crayons; DEW packages present', 'missing Meta no-Crayons + DEW rule'),
+  );
+}
+
+// fw-app-dev-20
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /fdk-migrate/i.test(c) && (/Platform 2\.x/i.test(c) || /platform-version.*2/i.test(c))
+      ? pass('fw-app-dev-20', 'fw-app-dev', 'Platform 2.x → /fdk-migrate first')
+      : fail('fw-app-dev-20', 'fw-app-dev', 'Platform 2.x → /fdk-migrate first', 'missing 2.x migrate before react migrate'),
+  );
+}
+
+// fw-app-dev-21
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /frontend-skeleton/i.test(c) && (/vanilla/i.test(c) || /opt-in/i.test(c))
+      ? pass('fw-app-dev-21', 'fw-app-dev', '"Vanilla JS" → vanilla skeleton')
+      : fail('fw-app-dev-21', 'fw-app-dev', '"Vanilla JS" → vanilla skeleton', 'missing vanilla opt-in skeleton'),
+  );
+}
+
+// fw-app-dev-22
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /path="\*"/i.test(c) || /path=\{\"\*\"\}/i.test(c)
+      ? pass('fw-app-dev-22', 'fw-app-dev', 'Router includes path="*"')
+      : fail('fw-app-dev-22', 'fw-app-dev', 'Router includes path="*"', 'missing path="*" route rule'),
+  );
+}
+
+// fw-app-dev-23
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /metaConfig.*manifest\.json/i.test(c)
+      ? pass('fw-app-dev-23', 'fw-app-dev', 'metaConfig in manifest.json only')
+      : fail('fw-app-dev-23', 'fw-app-dev', 'metaConfig in manifest.json only', 'metaConfig location unclear'),
+  );
+}
+
+// fw-app-dev-24
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /TypeScript/i.test(c) && (/\.tsx/i.test(c) || /tsconfig/i.test(c))
+      ? pass('fw-app-dev-24', 'fw-app-dev', 'TypeScript .tsx valid')
+      : fail('fw-app-dev-24', 'fw-app-dev', 'TypeScript .tsx valid', 'missing TypeScript support'),
+  );
+}
+
+// fw-app-dev-25
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    /Tailwind/i.test(c) && (/Allowed alongside DEW/i.test(c) || /allowed/i.test(c))
+      ? pass('fw-app-dev-25', 'fw-app-dev', 'User asks for Tailwind → allowed')
+      : fail('fw-app-dev-25', 'fw-app-dev', 'User asks for Tailwind → allowed', 'missing Tailwind allowed rule'),
+  );
+}
+
+// fw-app-dev-26
+{
+  const c = await skill('fw-app-dev');
+  results.push(
+    (/FDK wins/i.test(c) || /FDK takes precedence/i.test(c)) && /vite\.config/i.test(c)
+      ? pass('fw-app-dev-26', 'fw-app-dev', 'Custom vite.config.js — FDK merge precedence')
+      : fail('fw-app-dev-26', 'fw-app-dev', 'Custom vite.config.js — FDK merge precedence', 'missing vite merge precedence'),
+  );
+}
+
 // fw-review-06
 {
   const c = await skill('fw-review');

@@ -46,7 +46,10 @@ Identify ALL errors:
 **Iteration 1-2: Common Fixes**
 
 **Platform errors:**
-- ✅ Missing `icon.svg` → Create `app/styles/images/icon.svg`
+- ✅ Missing `icon.svg` → Create at manifest-declared path (Meta: often `app/icon.svg`; vanilla: `app/styles/images/icon.svg`)
+- ✅ Missing `metaConfig.framework` on Meta app → Add `"metaConfig": { "framework": "react" }` to manifest.json
+- ✅ Meta HTML nested wrong → Move HTML to `app/` or `config/` root per `react-meta-patterns.mdc`
+- ✅ Missing `path="*"` route → Add React Router fallback route
 - ✅ Missing `app/` folder → Create full app structure
 - ✅ JSON syntax errors → Fix multiple top-level objects, commas
 - ✅ FQDN issues → Separate host and path
@@ -103,6 +106,11 @@ Next steps:
 - ❌ Summary documents (APPS-SUMMARY.md)
 - ❌ Detailed feature lists
 - ❌ Long documentation files
+
+**React Meta — do NOT remove during autofix:**
+- ❌ Tailwind, MUI, Redux, or other third-party deps that do not violate Platform 3.0
+- ❌ Optional `vite.config.js` (unless it overrides FDK entry/alias keys — trim those keys only)
+- ❌ `@freshworks/dew-components` / `@freshworks/dew-styles`
 
 **Only create these when user explicitly requests them.**
 

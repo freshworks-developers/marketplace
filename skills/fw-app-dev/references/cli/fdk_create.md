@@ -4,7 +4,21 @@
 
 The `fdk create` command generates the initial app structure based on the app type you select. Understanding this structure helps ensure proper app architecture from the start.
 
-**App-dev default `engines`:** **`node` `24.11.0`**, **`fdk` `10.0.1`** in `manifest.json` for new Platform 3.0 apps (matches skill templates). If `fdk validate` will not run, use **fw-setup** first; **LAST RESORT** engines to **9.8.2 / 18.20.8** only per **SKILL.md** after six validate iterations or CLI blocked on 10.0.1+24.11.0.
+**App-dev default `engines`:** **`node` `24.11.0`**, **`fdk` `10.0.1`** (Meta apps: **`10.1.0`** minimum) in `manifest.json` for new Platform 3.0 apps. If `fdk validate` will not run, use **fw-setup** first; **LAST RESORT** engines to **9.8.2 / 18.20.8** only per **SKILL.md** after six validate iterations or CLI blocked on 10.0.1+24.11.0.
+
+**Default UI stack (fw-app-dev):** React Meta framework — see **React Meta app** section below and **`/fdk-react-create`**. Vanilla JS + Crayons is explicit opt-in only.
+
+---
+
+## React Meta app (default UI)
+
+```bash
+fdk create --template react-starter-template <app-name>
+```
+
+Generates a Meta framework app with `metaConfig.framework: "react"`. Prefer this template for new UI apps. See also `references/react-meta/README.md`.
+
+Fallback skeletons: `assets/templates/react-meta-frontend-skeleton/`, `react-meta-hybrid-skeleton/`, `react-meta-oauth-skeleton/`.
 
 ---
 

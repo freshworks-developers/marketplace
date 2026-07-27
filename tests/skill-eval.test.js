@@ -31,7 +31,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
   console.log('   To run evals without an API key, open this repo in Claude Code, Cursor, or Codex and ask:');
   console.log('   "Run the skill evals"');
   console.log('');
-  console.log('   The model will read all skill files and evaluate the 68 scenarios inline.');
+  console.log('   The model will read all skill files and evaluate the 78 scenarios inline.');
   process.exit(0);
 }
 
@@ -1403,6 +1403,208 @@ const SCENARIOS = [
     assert(output) {
       assert.equal(output.is_valid_platform3, false, 'product block is forbidden on Platform 3.0');
       assert.equal(output.must_use_modules, true, 'must use modules not product');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-17',
+    skill: 'fw-app-dev',
+    label: 'Create sidebar app → React Meta + DEW, metaConfig in manifest',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'User asks: "Create a Freshdesk ticket sidebar app to show ticket info." No stack preference stated. Which scaffold and UI stack should you use?',
+    schema: {
+      type: 'object',
+      required: ['uses_react_meta', 'uses_dew', 'meta_config_in_manifest'],
+      properties: {
+        uses_react_meta: { type: 'boolean' },
+        uses_dew: { type: 'boolean' },
+        meta_config_in_manifest: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_react_meta, true, 'default UI must be React Meta');
+      assert.equal(output.uses_dew, true, 'must recommend DEW');
+      assert.equal(output.meta_config_in_manifest, true, 'metaConfig must be in manifest.json');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-18',
+    skill: 'fw-app-dev',
+    label: 'Migrate JS → /fdk-react-migrate',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'User has a Platform 3.0 vanilla JS app with app/scripts/app.js and Crayons CDN. They want to move to React Meta. Which command/workflow should you use?',
+    schema: {
+      type: 'object',
+      required: ['uses_fdk_react_migrate'],
+      properties: {
+        uses_fdk_react_migrate: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_fdk_react_migrate, true, 'must use /fdk-react-migrate for vanilla→Meta');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-19',
+    skill: 'fw-app-dev',
+    label: 'Meta app: no Crayons; DEW packages present',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'You are creating a new React Meta app. Can you add @freshworks/crayons and the Crayons CDN script to index.html?',
+    schema: {
+      type: 'object',
+      required: ['allows_crayons', 'requires_dew'],
+      properties: {
+        allows_crayons: { type: 'boolean' },
+        requires_dew: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_crayons, false, 'Crayons forbidden in Meta workflow');
+      assert.equal(output.requires_dew, true, 'DEW recommended/required for Meta default');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-20',
+    skill: 'fw-app-dev',
+    label: 'Platform 2.x → /fdk-migrate first',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'User asks to convert a Platform 2.3 app to React Meta. manifest has platform-version "2.3". What is the first migration command before /fdk-react-migrate?',
+    schema: {
+      type: 'object',
+      required: ['runs_fdk_migrate_first'],
+      properties: {
+        runs_fdk_migrate_first: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.runs_fdk_migrate_first, true, 'must /fdk-migrate 2.x to 3.0 first');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-21',
+    skill: 'fw-app-dev',
+    label: '"Vanilla JS" → vanilla skeleton',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'User explicitly says: "Create a vanilla JS sidebar app with Crayons, no React." Which template should you use?',
+    schema: {
+      type: 'object',
+      required: ['uses_vanilla_skeleton', 'uses_react_meta'],
+      properties: {
+        uses_vanilla_skeleton: { type: 'boolean' },
+        uses_react_meta: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_vanilla_skeleton, true, 'explicit vanilla → frontend-skeleton');
+      assert.equal(output.uses_react_meta, false, 'must not default to Meta when vanilla requested');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-22',
+    skill: 'fw-app-dev',
+    label: 'Router includes path="*"',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'In a React Meta app, what React Router path should the home/fallback route use?',
+    schema: {
+      type: 'object',
+      required: ['home_route_path'],
+      properties: {
+        home_route_path: { type: 'string' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.home_route_path, '*', 'home route must be path="*"');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-23',
+    skill: 'fw-app-dev',
+    label: 'metaConfig in manifest.json only',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Where must metaConfig.framework "react" be declared for a Meta app?',
+    schema: {
+      type: 'object',
+      required: ['location'],
+      properties: {
+        location: { type: 'string' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.match(output.location, /manifest\.json/i, 'metaConfig must be in manifest.json');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-24',
+    skill: 'fw-app-dev',
+    label: 'TypeScript .tsx valid',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Can a React Meta app use TypeScript .tsx components and tsconfig.json?',
+    schema: {
+      type: 'object',
+      required: ['typescript_supported'],
+      properties: {
+        typescript_supported: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.typescript_supported, true, 'TypeScript must be supported for Meta apps');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-25',
+    skill: 'fw-app-dev',
+    label: 'User asks for Tailwind → allowed',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'User asks to add Tailwind CSS to their React Meta app. Should you refuse because DEW is the default, or allow Tailwind alongside DEW?',
+    schema: {
+      type: 'object',
+      required: ['allows_tailwind', 'documents_config'],
+      properties: {
+        allows_tailwind: { type: 'boolean' },
+        documents_config: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_tailwind, true, 'Tailwind must be allowed');
+      assert.equal(output.documents_config, true, 'should document vite/postcss/tailwind config');
+    },
+  },
+
+  {
+    id: 'fw-app-dev-26',
+    skill: 'fw-app-dev',
+    label: 'Custom vite.config.js — FDK merge precedence',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Developer adds vite.config.js at project root for aliases. On conflict with FDK internal Vite config (entry points, app/config aliases), who wins?',
+    schema: {
+      type: 'object',
+      required: ['fdk_wins_on_conflict', 'allows_custom_vite'],
+      properties: {
+        fdk_wins_on_conflict: { type: 'boolean' },
+        allows_custom_vite: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.allows_custom_vite, true, 'custom vite.config.js is allowed');
+      assert.equal(output.fdk_wins_on_conflict, true, 'FDK must win on entry/alias conflicts');
     },
   },
 
