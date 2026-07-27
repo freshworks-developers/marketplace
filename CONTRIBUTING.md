@@ -244,7 +244,7 @@ bash tests/run-all-tests.sh --llm-eval
 
 Requires `claude` or `cursor` on PATH (subscription auth — no `ANTHROPIC_API_KEY` needed). Or, in **Claude Code or Cursor**, ask: *"Run the skill evals"*.
 
-**Attach `tests/all-tests-report.html` to your PR.** Required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`. Maintainers may also run the **[Manual skill evals](https://github.com/freshworks-developers/fw-dev-tools/actions/workflows/eval-manual.yml)** workflow (`workflow_dispatch`) for on-demand reports — supplemental to local runs, not a PR gate.
+**Attach `tests/all-tests-report.html` to your PR.** Required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`. Maintainers may also trigger **[CI](https://github.com/freshworks-developers/fw-dev-tools/actions/workflows/ci.yml)** with **Run skill evals** checked (`workflow_dispatch`) for on-demand reports — supplemental to local runs, not a PR gate.
 
 ### PR checklist
 

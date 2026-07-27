@@ -18,6 +18,7 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 - **SECURITY.md:** disclose that `.meta.json` skill metrics are included in marketplace publish zips by design ([#43](https://github.com/freshworks-developers/fw-dev-tools/issues/43))
 
 ### Changed
+- **CI:** fold manual skill evals into `ci.yml` (`workflow_dispatch` + **Run skill evals**); remove `eval-manual.yml`
 - **meta-init.sh:** auto-detect IDE client from environment variables; optional second argument; skills updated to call `meta-init.sh <app-dir>` only (supersedes PR #53)
 
 ---
