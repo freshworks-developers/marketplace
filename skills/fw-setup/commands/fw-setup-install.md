@@ -22,7 +22,7 @@ argument-hint: “[X.Y.Z|--version X.Y.Z|--both]”
 
 **FDK 9.x deprecation:** Shows warning and requires user confirmation. Support ends May 31, 2026. See: https://developers.freshworks.com/docs/app-sdk/v3/freshworks-app-sdk/
 
-**`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10.x as primary).
+**`--both` flag:** Installs both latest FDK 10.x on Node 24.11 AND latest FDK 9.x on Node 18.20 in one command. Sets `nvm alias default 24.11` (FDK 10.x as primary). **Idempotent:** if both stacks are already verified as installed, report `Both stacks already installed — nothing to do.` and exit without reinstalling.
 
 ## Agent pre-step
 

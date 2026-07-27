@@ -67,8 +67,9 @@ The project may supply a CSV/spec listing **Modules Supported** per app. Use it 
 3. **Server** — `renderData`, `$request.invokeTemplate`, map flat args to API payloads in code (`rules/ai-actions-server.mdc`).
 4. **Config** — `requests.json`, `iparams.json`, manifest (`rules/ai-actions-requests.mdc`, `rules/ai-actions-platform.mdc`).
 5. **Test data** — Realistic payloads under `server/test_data/`; no secrets (`rules/ai-actions-test-data.mdc`).
-6. **Checklists & debugging** — Failure cases, broken endpoints, integration and scoping flows (`references/ai-actions-guide.md`).
-7. **Concepts** — Short primer (`references/ai-actions-core.md`).
+6. **README.md** (**MANDATORY**) — Every AI actions app must include one. Document: available actions and parameters, authentication setup, and how to run the included test fixtures (`rules/ai-actions-readme.mdc`).
+7. **Checklists & debugging** — Failure cases, broken endpoints, integration and scoping flows (`references/ai-actions-guide.md`).
+8. **Concepts** — Short primer (`references/ai-actions-core.md`).
 
 ---
 
@@ -84,7 +85,7 @@ app-root/
 ├── server/test_data/<functionName>.json
 ├── config/requests.json
 ├── config/iparams.json
-└── README.md   (when documenting the app — `rules/ai-actions-readme.mdc`)
+└── README.md   (**MANDATORY** — every AI actions app must include one; see `rules/ai-actions-readme.mdc`)
 ```
 
 **Flat request excerpt:**

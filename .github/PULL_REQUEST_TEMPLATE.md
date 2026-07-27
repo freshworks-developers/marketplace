@@ -15,41 +15,43 @@
 
 ## Test checklist
 
-### Static tests (required for all PRs)
+### Installer tests (required when `installer/` changed)
 
 ```bash
-cd tests && npm install && npm test        # 140 static tests — runs in CI
-```
-
-- [ ] All **140** static tests pass locally
-
-**If `installer/` changed:**
-
-```bash
-cd installer && npm install && npm test    # installer lifecycle tests — CI uses Node 24
+cd installer && npm install && npm test    # installer lifecycle tests
 ```
 
 - [ ] Installer tests pass locally
 
+### Static + regex evals (required for all PRs)
+
+```bash
+cd tests && npm install && npm test        # static + parser + regex evals — runs in CI
+```
+
+- [ ] All tests pass locally
+
 ### LLM evals (required when `SKILL.md`, a command file, or `.meta.template.json` is modified)
 
-67 behavioral scenarios in `tests/skill-eval.test.js`. Run in an **agent session** (recommended, no API key):
+Behavioral scenarios in `tests/eval/scenarios/*.js` (with matching regex checks in `tests/eval/regex/`). Run via:
 
-> "Run the skill evals"
+```bash
+cd tests && npm run eval                   # static + regex + LLM evals + HTML report
+# or
+bash tests/run-all-tests.sh --llm-eval
+```
 
-Or with API key: `cd tests && ANTHROPIC_API_KEY=sk-... npm run eval`
+Requires `claude` or `cursor` on PATH. In an **agent session** (recommended, no API key): *"Run the skill evals"*.
 
-- [ ] Reviewed / updated scenarios in `tests/skill-eval.test.js` (and `tests/run-inline-eval.mjs` if adding doc-regression checks)
+- [ ] Reviewed / updated scenarios in `tests/eval/scenarios/` (and matching `tests/eval/regex/fw-*.regex.test.mjs` for doc-regression checks)
 - [ ] Added new scenario(s) for any new behavioral rule or gate
-- [ ] **67/67** scenarios pass (or explained in summary why a failure is acceptable)
-- [ ] Attached **`tests/eval-report.html`** below (or linked in PR description)
-
-`npm run eval:inline` is optional doc-regression only — **not** a substitute for agent/API eval.
+- [ ] LLM eval scenarios pass (or explained in summary why a failure is acceptable)
+- [ ] Attached **`tests/all-tests-report.html`** below (or linked in PR description)
 
 ### Repo hygiene (when applicable)
 
 - [ ] **`AGENTS.md`** rules/commands inventory updated (if `skills/*/rules/` or `skills/*/commands/` changed)
-- [ ] **`tests/TESTING.md`** scenario table updated (if eval scenarios added/renamed)
+- [ ] **`tests/TESTING.md`** updated (if eval scenarios added/renamed or layer layout changed)
 - [ ] **`docs/engine-matrix.md`** updated (if `fw-setup` toolchain pins changed)
 - [ ] **`node scripts/bump-version.mjs`** run after root `package.json` version bump (syncs plugin manifests + `SKILL.md`)
 
@@ -70,17 +72,17 @@ Or with API key: `cd tests && ANTHROPIC_API_KEY=sk-... npm run eval`
 
 | Check | What |
 |-------|------|
-| Static skill tests | `tests/npm test` |
+| Static + regex eval tests | `tests/npm test` |
 | Installer tests | `installer/npm test` (Node 24) |
 | Dependency review | New deps — high/critical CVEs blocked |
 | npm audit | `installer/` + `tests/` lockfiles |
 | Secret scan | gitleaks (full git history) |
 | CodeQL | Org-level (if enabled) |
 
-LLM evals and `tests/e2e.sh` are **local / agent session only** — not in CI.
+LLM evals and `tests/e2e/e2e.sh` are **local / agent session only** — not in CI.
 
 ---
 
 ## Eval report
 
-<!-- Paste or attach tests/eval-report.html. Required for skill/command/template gate changes. -->
+<!-- Paste or attach tests/all-tests-report.html. Required for skill/command/template gate changes. -->

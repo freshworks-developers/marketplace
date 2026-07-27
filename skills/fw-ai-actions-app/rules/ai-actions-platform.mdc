@@ -293,27 +293,6 @@ For OAuth-based APIs (e.g., Monday, GitHub):
 
 ---
 
-## README Template
+## README
 
-```markdown
-# [App Name] AI Actions App
-
-A Freshworks marketplace app that provides AI actions for [integration].
-
-## Features
-- **Action 1** - Description
-- **Action 2** - Description
-
-## Setup
-1. Install the app in your Freshworks product
-2. Configure credentials in app settings
-
-## Actions Available
-- `actionName1` - Description
-- `actionName2` - Description
-
-## Testing
-cd <app-directory>
-fdk run
-# Open https://localhost:10001/web/test, select "actions"
-```
+See `rules/ai-actions-readme.mdc` for the authoritative README template and requirements.

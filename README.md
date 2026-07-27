@@ -150,7 +150,7 @@ Having issues with skills installation or usage?
 - Skills not appearing after install → Restart your IDE; for Claude Code check `~/.claude/CLAUDE.md` has the routing block
 - Commands not working in Cursor → Check `~/.cursor/rules/fw-dev-tools.mdc` exists
 - `fdk` or `node` not found → Run `/fw-setup-troubleshoot`
-- Codex `.mcp.json` not written → Re-run `npx @freshworks/fw-dev-tools install --tools codex` from your project root
+- Codex MCP config missing → Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes`; installer writes `~/.codex/mcp.json`
 
 ---
 

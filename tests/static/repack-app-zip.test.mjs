@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
-const REPO_DIR = join(dirname(fileURLToPath(import.meta.url)), '..');
+const REPO_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const REPACK = join(REPO_DIR, 'skills/fw-publish/scripts/repack-app-zip.sh');
 
 test('repack-app-zip.sh includes .meta.json at zip root when present', { skip: process.platform === 'win32' }, () => {

@@ -210,31 +210,45 @@ references/
 
 See **[tests/TESTING.md](tests/TESTING.md)** for the full test suite guide. Summary:
 
-### Layer 1 — Static tests (required, runs in CI)
+### Layer 1 — Installer tests (required when `installer/` changes, runs in CI)
+
+```bash
+cd installer && npm install && npm test
+```
+
+Install/update/uninstall lifecycle, MCP merge, meta scripts, and IDE-specific installers.
+
+### Layer 2 + 3 — Static + regex evals (required, runs in CI)
 
 ```bash
 cd tests && npm install && npm test
 ```
 
-122 structural assertions across all skill files — no LLM, no API key. Must pass before opening a PR.
+215 static/parser assertions plus 141 regex eval scenarios across all skill files — no LLM, no API key. Must pass before opening a PR.
 
-### Layer 2 — LLM behavioral evals (required for skill edits, local only)
+### Layer 4 — LLM behavioral evals (required for skill edits, local only)
 
 ```bash
-cd tests && ANTHROPIC_API_KEY=sk-... npm run eval
+cd tests && npm run eval
 ```
 
-Or, if working in **Claude Code or Cursor**, just ask: *"Run the skill evals and write eval-report.md"* — no API key needed.
+Or via the unified runner:
 
-**Attach `tests/eval-report.html` (or `eval-report.md`) to your PR.** This is required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`.
+```bash
+bash tests/run-all-tests.sh --llm-eval
+```
+
+Requires `claude` or `cursor` on PATH (subscription auth — no `ANTHROPIC_API_KEY` needed). Or, in **Claude Code or Cursor**, ask: *"Run the skill evals"*.
+
+**Attach `tests/all-tests-report.html` to your PR.** Required for any PR that modifies a `SKILL.md`, command file, or `.meta.template.json`.
 
 ### PR checklist
 
 Every PR should satisfy the checklist in `.github/PULL_REQUEST_TEMPLATE.md` (auto-populated when you open a PR on GitHub):
 
-- [ ] `npm test` passes locally (no LLM)
+- [ ] `cd tests && npm test` passes locally (no LLM)
 - [ ] For skill edits: existing eval scenarios reviewed and updated if needed, new scenarios added for new behavioral rules, evals run and passing
-- [ ] `tests/eval-report.html` attached to the PR
+- [ ] `tests/all-tests-report.html` attached to the PR
 
 ### Writing new static tests — cross-platform rules
 

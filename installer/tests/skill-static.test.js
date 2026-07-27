@@ -24,7 +24,7 @@ const DEPRECATED_PATTERNS = [
   { re: /github\.com\/freshworks-developers\/freshworks-platform3/, label: 'old repo URL "freshworks-platform3"' },
 ];
 
-test('no deprecated install references in skills/', async () => {
+test('skills dir contains no deprecated install references', async () => {
   const files = await collectFiles(SKILLS_DIR, ['.md', '.mdc']);
   const hits = [];
 

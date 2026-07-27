@@ -176,7 +176,7 @@ ls ~/.codex/skills/fw-app-dev/SKILL.md    # Codex
 
 **`token_revoked` / HTTP 401 on Codex:** Your ChatGPT login expired. Run `codex logout && codex login`, then restart Codex.
 
-**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. **Codex** reads **`mcpServers`** from **[.mcp.json](.mcp.json)**; put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`). This is separate from Codex CLI login.
+**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. The installer writes MCP config to **`~/.codex/mcp.json`** (same `mcpServers` shape as the repo **[.mcp.json](.mcp.json)**); put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`). Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes` from any directory — MCP path does not depend on your shell cwd. This is separate from Codex CLI login.
 
 ---
 

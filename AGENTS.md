@@ -21,7 +21,7 @@ cd installer && npm install && npm test      # installer lifecycle tests (CI, No
 
 > "Run the skill evals"
 
-Attach **`tests/eval-report.html`** to the PR. See **`tests/TESTING.md`** for all layers (static, eval, e2e).
+Attach **`tests/all-tests-report.html`** to the PR. See **`tests/TESTING.md`** for all layers (static, eval, e2e).
 
 PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 
@@ -32,7 +32,7 @@ PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 | You change | Also update | Verify |
 |------------|-------------|--------|
 | `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
-| `skills/*/SKILL.md` behavioral gates | `tests/skill-eval.test.js` + `tests/run-inline-eval.mjs` + **`tests/TESTING.md`** scenario table | Agent eval session (68 scenarios) |
+| `skills/*/SKILL.md` behavioral gates | `tests/eval/skill-eval-scenarios.js` + **`tests/TESTING.md`** scenario table | `cd tests && npm run eval` |
 | `skills/shared/.meta.template.json` or meta scripts | All skills referencing `meta-init.sh` / `meta-update.sh` | `cd tests && npm test` |
 | `skills/fw-setup` toolchain guidance | **`docs/engine-matrix.md`** | `cd installer && npm test` |
 | `installer/` | **`installer/tests/`** | `cd installer && npm test` |

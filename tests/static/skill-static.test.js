@@ -33,7 +33,7 @@ async function grepFiles(dir, needle, { skipDirs = [] } = {}) {
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const SKILLS_DIR = join(__dirname, '..', 'skills');
+const SKILLS_DIR = join(__dirname, '..', '..', 'skills');
 const TEMPLATES_DIR = join(SKILLS_DIR, 'fw-app-dev', 'assets', 'templates');
 
 const SKILLS = [
@@ -236,13 +236,13 @@ describe('Release hygiene — fleet version lock', () => {
 
   test('marketplace/package.json version propagates to installer, SKILL.md, and plugin manifests', async () => {
     const rootPkg = JSON.parse(
-      await readFile(join(__dirname, '..', 'package.json'), 'utf8')
+      await readFile(join(__dirname, '..', '..', 'package.json'), 'utf8')
     );
     const canonical = rootPkg.version;
     assert.ok(canonical, 'marketplace/package.json must define version');
 
     const installerPkg = JSON.parse(
-      await readFile(join(__dirname, '..', 'installer', 'package.json'), 'utf8')
+      await readFile(join(__dirname, '..', '..', 'installer', 'package.json'), 'utf8')
     );
     assert.equal(
       installerPkg.version,
@@ -638,7 +638,7 @@ describe('fw-setup read-only gate', () => {
 // PR #21 — structural tests derived from the PR test plan
 // ===========================================================================
 
-const REPO_DIR = join(__dirname, '..');
+const REPO_DIR = join(__dirname, '..', '..');
 
 async function fileExists(p) {
   try { await stat(p); return true; } catch { return false; }
@@ -1112,5 +1112,243 @@ describe('fw-publish meta-delete.sh', () => {
       content.includes('meta-feedback.sh') && content.includes('developer_feedback'),
       'fw-publish must reference meta-feedback.sh and developer_feedback key for step 4.5'
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-review rules directory
+// ---------------------------------------------------------------------------
+
+describe('fw-review rules directory', () => {
+  const RULES_DIR = join(SKILLS_DIR, 'fw-review', 'rules');
+  const RULE_FILES = [
+    'iparam-rules.md',
+    'frontend-files-rules.md',
+    'script-check-rules.md',
+    'report.md',
+  ];
+
+  for (const f of RULE_FILES) {
+    test(`rules/${f} exists`, async () => {
+      assert.ok(
+        await fileExists(join(RULES_DIR, f)),
+        `missing: skills/fw-review/rules/${f}`
+      );
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// fw-review scripts exist
+// ---------------------------------------------------------------------------
+
+describe('fw-review scripts exist', () => {
+  const FW_REVIEW_SCRIPTS = join(SKILLS_DIR, 'fw-review', 'scripts');
+
+  test('skills/fw-review/scripts/ directory exists', async () => {
+    assert.ok(
+      await fileExists(FW_REVIEW_SCRIPTS),
+      'missing: skills/fw-review/scripts/'
+    );
+  });
+
+  test('skills/fw-review/scripts/ contains at least one .js file', async () => {
+    let entries;
+    try {
+      entries = await readdir(FW_REVIEW_SCRIPTS, { withFileTypes: true });
+    } catch {
+      assert.fail('skills/fw-review/scripts/ directory could not be read');
+    }
+    const jsFiles = entries.filter(e => e.isFile() && extname(e.name) === '.js');
+    assert.ok(jsFiles.length >= 1, 'skills/fw-review/scripts/ must contain at least one .js file');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-setup commands exist
+// ---------------------------------------------------------------------------
+
+describe('fw-setup commands exist', () => {
+  const FW_SETUP_COMMANDS = join(SKILLS_DIR, 'fw-setup', 'commands');
+
+  test('skills/fw-setup/commands/ directory exists', async () => {
+    assert.ok(
+      await fileExists(FW_SETUP_COMMANDS),
+      'missing: skills/fw-setup/commands/'
+    );
+  });
+
+  test('skills/fw-setup/commands/ contains at least one .md file', async () => {
+    let entries;
+    try {
+      entries = await readdir(FW_SETUP_COMMANDS, { withFileTypes: true });
+    } catch {
+      assert.fail('skills/fw-setup/commands/ directory could not be read');
+    }
+    const mdFiles = entries.filter(e => e.isFile() && extname(e.name) === '.md');
+    assert.ok(mdFiles.length >= 1, 'skills/fw-setup/commands/ must contain at least one .md file');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-setup docs/engine-matrix.md
+// ---------------------------------------------------------------------------
+
+describe('fw-setup docs/engine-matrix.md', () => {
+  const ENGINE_MATRIX = join(SKILLS_DIR, 'fw-setup', 'docs', 'engine-matrix.md');
+
+  test('engine-matrix.md exists and contains FDK 10 and 24.11 (or is optional)', async () => {
+    const exists = await fileExists(ENGINE_MATRIX);
+    if (!exists) {
+      assert.ok(true, 'engine-matrix.md not present (optional)');
+      return;
+    }
+    const content = await readFile(ENGINE_MATRIX, 'utf8');
+    assert.ok(content.includes('FDK 10'), 'engine-matrix.md must contain "FDK 10"');
+    assert.ok(content.includes('24.11'), 'engine-matrix.md must contain "24.11"');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-ai-actions-app actions.json template
+// ---------------------------------------------------------------------------
+
+describe('fw-ai-actions-app actions.json template', () => {
+  const ACTIONS_JSON = join(
+    SKILLS_DIR,
+    'fw-ai-actions-app',
+    'assets',
+    'templates',
+    'ai-actions-skeleton',
+    'actions.json'
+  );
+
+  test('actions.json exists', async () => {
+    assert.ok(await fileExists(ACTIONS_JSON), 'missing: skills/fw-ai-actions-app/assets/templates/ai-actions-skeleton/config/actions.json');
+  });
+
+  test('actions.json is valid JSON', async () => {
+    const raw = await readFile(ACTIONS_JSON, 'utf8');
+    const parsed = JSON.parse(raw);
+    assert.ok(parsed !== null && parsed !== undefined, 'actions.json must parse as valid JSON');
+  });
+
+  test('actions.json has at least 1 action or non-empty object structure', async () => {
+    const raw = await readFile(ACTIONS_JSON, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      assert.ok(parsed.length >= 1, 'actions.json array must have at least 1 action');
+    } else {
+      assert.ok(Object.keys(parsed).length >= 1, 'actions.json object must have at least 1 key');
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-ai-actions-app forbidden patterns in skeleton
+// ---------------------------------------------------------------------------
+
+describe('fw-ai-actions-app forbidden patterns in skeleton', () => {
+  const SKELETON_DIR = join(
+    SKILLS_DIR,
+    'fw-ai-actions-app',
+    'assets',
+    'templates',
+    'ai-actions-skeleton'
+  );
+
+  test('skeleton does not use $request.post( (must use $request.invokeTemplate)', async () => {
+    const hits = await grepFiles(SKELETON_DIR, '$request.post(');
+    assert.deepEqual(
+      hits,
+      [],
+      `$request.post( found in skeleton files (must use $request.invokeTemplate):\n${hits.join('\n')}`
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-review SKILL.md rule IDs match rule files
+// ---------------------------------------------------------------------------
+
+describe('fw-review SKILL.md rule IDs match rule files', () => {
+  test('SKILL.md contains required rule categories', async () => {
+    const content = await readSkill('fw-review');
+    for (const category of ['iparams', 'File and folder structure', 'Frontend', 'Code readability', 'Miscellaneous']) {
+      assert.ok(content.includes(category), `fw-review SKILL.md must contain category: "${category}"`);
+    }
+  });
+
+  test('SKILL.md contains all required rule IDs', async () => {
+    const content = await readSkill('fw-review');
+    for (const ruleId of ['IP-04A', 'IP-05A', 'IP-06A', 'FF-01L', 'FF-03A', 'FF-08A', 'FFS-02L', 'GN-02L']) {
+      assert.ok(content.includes(ruleId), `fw-review SKILL.md must contain rule ID: ${ruleId}`);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fw-publish SKILL.md CDN tarball references
+// ---------------------------------------------------------------------------
+
+describe('fw-publish SKILL.md CDN tarball references', () => {
+  test('fw-setup SKILL.md contains latest-v24.tgz (FDK 10 CDN)', async () => {
+    const content = await readSkill('fw-setup');
+    assert.ok(content.includes('latest-v24.tgz'), 'fw-setup SKILL.md must reference latest-v24.tgz for FDK 10 CDN');
+  });
+
+  test('fw-setup SKILL.md contains latest.tgz (FDK 9 CDN)', async () => {
+    const content = await readSkill('fw-setup');
+    assert.ok(content.includes('latest.tgz'), 'fw-setup SKILL.md must reference latest.tgz for FDK 9 CDN');
+  });
+
+});
+
+describe('fw-ai-actions-app skeleton has test_data directory', async () => {
+  const skeletonDir = join(SKILLS_DIR, 'fw-ai-actions-app', 'skeleton');
+  let skeletonExists = false;
+  try {
+    await readFile(join(skeletonDir, 'manifest.json'), 'utf8');
+    skeletonExists = true;
+  } catch {
+    // skip if no skeleton
+  }
+  if (!skeletonExists) return;
+
+  test('test_data directory exists in skeleton', async () => {
+    const dirs = await readdir(skeletonDir, { withFileTypes: true });
+    const hasTestData = dirs.some(d => d.isDirectory() && d.name === 'test_data');
+    assert.ok(hasTestData, 'fw-ai-actions-app skeleton must include test_data/ directory');
+  });
+});
+
+describe('fw-setup SKILL.md workspace commands', async () => {
+  const skillPath = join(SKILLS_DIR, 'fw-setup', 'SKILL.md');
+  let content = '';
+  try { content = await readFile(skillPath, 'utf8'); } catch { return; }
+
+  test('SKILL.md documents workspace command or .nvmrc creation', async () => {
+    const mentionsWorkspace = /workspace|.nvmrc/i.test(content);
+    assert.ok(mentionsWorkspace, 'fw-setup SKILL.md must document workspace/.nvmrc usage');
+  });
+});
+
+describe('fw-ai-actions-app SKILL.md documents test_data requirement', async () => {
+  const skillPath = join(SKILLS_DIR, 'fw-ai-actions-app', 'SKILL.md');
+  let content = '';
+  try { content = await readFile(skillPath, 'utf8'); } catch { return; }
+
+  test('SKILL.md mentions test_data', async () => {
+    assert.ok(/test_data/i.test(content), 'fw-ai-actions SKILL.md must mention test_data directory');
+  });
+});
+
+describe('fw-review SKILL.md documents GN-12L test data rule', async () => {
+  const skillPath = join(SKILLS_DIR, 'fw-review', 'SKILL.md');
+  let content = '';
+  try { content = await readFile(skillPath, 'utf8'); } catch { return; }
+
+  test('SKILL.md references GN-12L', async () => {
+    assert.ok(/GN-12L/.test(content), 'fw-review SKILL.md must reference GN-12L (test data rule)');
   });
 });

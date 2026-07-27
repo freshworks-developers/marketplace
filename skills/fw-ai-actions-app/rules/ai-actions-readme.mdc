@@ -5,6 +5,8 @@ globs: "**/actions.json,**/server/**/*.js,**/config/requests.json,**/config/ipar
 
 # AI Actions README Template
 
+**REQUIRED — every AI actions app must include a `README.md` at the app root. Absence of `README.md` is a blocking issue. Do not mark the app as complete without it.**
+
 ## Structure (Platform 3.0 AI Actions app)
 
 ```markdown

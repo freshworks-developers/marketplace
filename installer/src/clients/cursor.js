@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
-import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
+import { mergeMcpServer, patchMcpToken, readMcpToken, removeMcpServer } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
 const SKILLS_DIR = join(homedir(), '.cursor', 'skills');
@@ -100,5 +100,12 @@ export async function uninstall({ yes = false } = {}) {
     await rm(SPEC_FILE);
     console.log(`  ✓ Removed ${SPEC_FILE}`);
   }
+
+  const { action, backupPath } = await removeMcpServer(MCP_JSON);
+  if (action === 'removed') {
+    console.log(`  ✓ MCP server removed from ${MCP_JSON}`);
+    if (backupPath) console.log(`    (backup: ${backupPath})`);
+  }
+
   console.log('\n✓ Cursor uninstall complete. Restart Cursor to apply.');
 }

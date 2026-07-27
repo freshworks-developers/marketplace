@@ -131,7 +131,7 @@ async function assertClaudeMdRouting(home, { present = true } = {}) {
   );
 }
 
-test('Claude install — 5 plugins, scripts, install state file', async (t) => {
+test('Claude install copies all plugins, scripts, and writes install state', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -171,6 +171,26 @@ test('multi-client install accumulates clients array in .meta.json', async () =>
     assert.ok(Array.isArray(state.clients), 'clients should be an array');
     assert.ok(state.clients.includes('cursor'), 'clients should include cursor');
     assert.ok(state.clients.includes('codex'), 'clients should include codex');
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('Codex install writes MCP config to ~/.codex/mcp.json regardless of cwd', async () => {
+  const home = await makeHome();
+  const unrelatedCwd = join(home, 'unrelated-cwd');
+  try {
+    await mkdir(unrelatedCwd, { recursive: true });
+
+    await runCli(home, ['install', '--tools', 'codex', '--yes'], { cwd: unrelatedCwd });
+
+    const mcpJson = join(home, '.codex', 'mcp.json');
+    assert.equal(existsSync(mcpJson), true, 'expected ~/.codex/mcp.json to be created');
+    assert.equal(existsSync(join(unrelatedCwd, '.mcp.json')), false, 'should not write MCP config to shell cwd');
+
+    const config = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.ok(config.mcpServers?.['fw-dev-mcp']?.url, 'fw-dev-mcp entry should be merged');
+    await access(join(home, '.codex', 'skills', 'fw-app-dev', 'SKILL.md'));
   } finally {
     await cleanup(home);
   }
@@ -286,7 +306,7 @@ test('second Claude install refreshes local marketplace skill copy', async (t) =
   }
 });
 
-test('second install is idempotent — no duplicate plugins, installedAt stable', async (t) => {
+test('second install does not duplicate plugins or change installedAt', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -349,7 +369,7 @@ test('second Cursor install removes stale skill trees before copy', async () => 
   }
 });
 
-test('Cursor install — skills, rules, shared scripts dir', async () => {
+test('Cursor install copies skill trees, rules, and shared scripts', async () => {
   const home = await makeHome();
   try {
     await runCli(home, ['install', '--tools', 'cursor', '--yes']);
@@ -405,6 +425,13 @@ test('uninstall claude,cursor removes all global install paths', async (t) => {
     assert.equal((await listClaudePlugins(home)).length, 0, 'claude plugins should be removed');
     assert.equal(existsSync(join(home, '.cursor', 'skills', 'fw-app-dev')), false);
     assert.equal(existsSync(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc')), false);
+
+    const mcpJson = join(home, '.cursor', 'mcp.json');
+    if (existsSync(mcpJson)) {
+      const mcpConfig = JSON.parse(await readFile(mcpJson, 'utf8'));
+      assert.equal(mcpConfig.mcpServers?.['fw-dev-mcp'], undefined, 'fw-dev-mcp should be removed from mcp.json');
+    }
+
     assert.equal(existsSync(join(home, '.fw-dev-tools', 'scripts')), false);
     assert.equal(existsSync(join(home, '.fw-dev-tools', '.meta.json')), false);
     await assertClaudeMdRouting(home, { present: false });
@@ -470,6 +497,31 @@ test('Cursor install warns about old .agents/skills, does not delete them', asyn
     assert.equal(existsSync(join(agentsSkills, 'SKILL.md')), true, 'legacy workspace skills must not be auto-deleted');
     await access(join(home, '.cursor', 'skills', 'fw-setup', 'SKILL.md'));
     await access(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc'));
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('Cursor uninstall removes fw-dev-mcp from mcp.json while preserving other servers', async () => {
+  const home = await makeHome();
+  try {
+    await runCli(home, ['install', '--tools', 'cursor', '--yes']);
+
+    const mcpJson = join(home, '.cursor', 'mcp.json');
+    const withOther = {
+      mcpServers: {
+        'fw-dev-mcp': JSON.parse(await readFile(mcpJson, 'utf8')).mcpServers['fw-dev-mcp'],
+        'other-server': { url: 'https://other.example.com/mcp' },
+      },
+    };
+    await writeFile(mcpJson, JSON.stringify(withOther, null, 2), 'utf8');
+
+    await runCli(home, ['uninstall', '--tools', 'cursor', '--yes']);
+
+    assert.equal(existsSync(mcpJson), true, 'mcp.json should remain when other servers exist');
+    const remaining = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.equal(remaining.mcpServers['fw-dev-mcp'], undefined);
+    assert.deepEqual(remaining.mcpServers['other-server'], withOther.mcpServers['other-server']);
   } finally {
     await cleanup(home);
   }
