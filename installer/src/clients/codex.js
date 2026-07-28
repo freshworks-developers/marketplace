@@ -8,7 +8,8 @@ import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
 const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
-const MCP_JSON = join(homedir(), '.codex', 'mcp.json');
+const CODEX_ROOT = process.env.FW_TEST_CODEX_ROOT ?? join(homedir(), '.codex');
+const MCP_JSON = join(CODEX_ROOT, 'mcp.json');
 
 export function resolveMcpJsonPath() {
   return MCP_JSON;
@@ -25,18 +26,18 @@ export async function resolveSkillsDir() {
       }
     } catch { /* fall through */ }
   }
-  return join(homedir(), '.codex', 'skills');
+  return join(CODEX_ROOT, 'skills');
 }
 
 export async function writeAgentsMdBlock(cwd = process.cwd()) {
   const cwdAgents = join(cwd, 'AGENTS.md');
-  const fallbackAgents = join(homedir(), '.codex', 'AGENTS.md');
+  const fallbackAgents = join(CODEX_ROOT, 'AGENTS.md');
   const target = existsSync(cwdAgents) ? cwdAgents : fallbackAgents;
 
   const specContent = await readFile(SPEC_SRC, 'utf8');
   const block = `\n<!-- fw-dev-tools start -->\n${specContent}\n<!-- fw-dev-tools end -->\n`;
 
-  await mkdir(join(homedir(), '.codex'), { recursive: true });
+  await mkdir(CODEX_ROOT, { recursive: true });
   const existing = existsSync(target) ? await readFile(target, 'utf8') : '';
   await writeFile(target, upsertBlock(existing, block), 'utf8');
   return target;
@@ -59,7 +60,7 @@ export async function install({ yes = false } = {}) {
   const agentsPath = await writeAgentsMdBlock();
   console.log(`  ✓ Routing spec written to ${agentsPath}`);
 
-  await mkdir(join(homedir(), '.codex'), { recursive: true });
+  await mkdir(CODEX_ROOT, { recursive: true });
   const mcpJson = resolveMcpJsonPath();
   const { action, backupPath } = await mergeMcpServer(mcpJson, CURSOR_MCP_ENTRY);
   if (action === 'unchanged') {
@@ -104,7 +105,7 @@ export async function uninstall({ yes = false } = {}) {
   if (removed > 0) console.log(`  ✓ Removed ${removed} fw-dev-tools skill(s) from ${skillsDir}`);
 
   const cwdAgents = join(process.cwd(), 'AGENTS.md');
-  const fallbackAgents = join(homedir(), '.codex', 'AGENTS.md');
+  const fallbackAgents = join(CODEX_ROOT, 'AGENTS.md');
   for (const target of [cwdAgents, fallbackAgents]) {
     if (existsSync(target)) {
       const content = await readFile(target, 'utf8');

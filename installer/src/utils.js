@@ -9,7 +9,9 @@ export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
 export const SCRIPTS_SRC = join(REPO_ROOT, 'skills', 'shared', 'scripts');
 export const META_TEMPLATE = join(REPO_ROOT, 'skills', 'shared', '.meta.template.json');
-export const FW_DEV_TOOLS_DIR = join(homedir(), '.fw-dev-tools');
+export const FW_DEV_TOOLS_DIR = process.env.FW_DEV_TOOLS_HOME
+  ? process.env.FW_DEV_TOOLS_HOME
+  : join(homedir(), '.fw-dev-tools');
 export const INSTALL_JSON = join(FW_DEV_TOOLS_DIR, '.meta.json');
 
 const DEFAULT_UPDATE_CHECK = {

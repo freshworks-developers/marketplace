@@ -11,9 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFile, rm, mkdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
-import { homedir } from 'node:os';
-
-const INSTALL_JSON = join(homedir(), '.fw-dev-tools', '.meta.json');
+import { INSTALL_JSON } from '../src/utils.js';
 
 async function writeState(data) {
   await mkdir(dirname(INSTALL_JSON), { recursive: true });
