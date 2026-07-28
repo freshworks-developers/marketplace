@@ -1,6 +1,6 @@
 ---
 name: fw-app-dev
-version: "1.1.6"
+version: "1.2.0"
 description: "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace apps. REQUIRES Node.js 24.x + FDK 10.x installed BEFORE use—checks prerequisites, refuses to proceed without them. Does NOT install or manage FDK/Node—use fw-setup. Before fdk validate: fw-setup if CLI wrong, /fdk-migrate on 2.x or legacy engines, then validate—never downgrade to FDK 9/Node 18 except LAST RESORT after six iterations. New apps default to FDK 10.0.1 + Node 24.x; FDK 9.x/Node 18.x allowed when explicitly requested. Use for: (1) Creating Platform 3.0 apps (frontend, serverless, hybrid, OAuth), (2) Debugging validation errors, (3) Migrating 2.x apps to 3.0, (4) Reviewing manifest.json, requests.json, oauth_config.json, (5) Implementing Crayons UI, (6) Integrating external APIs or OAuth providers, (7) Any Platform 3.0 app development, FDK CLI, or marketplace submission."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-fix|fdk-migrate|fdk-refactor]"
@@ -161,12 +161,12 @@ Use this gate for **every** fw-app-dev flow that runs **`fdk validate`** (**`/fd
 
 **Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
 
-Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+`meta-init.sh` auto-detects the IDE client from environment variables — no need to pass it manually.
 
 Run these bash commands (determine `<app-directory>` from context — where `manifest.json` lives):
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
   invoked=1 skill_version=<version> validate_iterations=<n>
 # For each validation error category (repeat as needed):

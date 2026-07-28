@@ -150,7 +150,7 @@ Having issues with skills installation or usage?
 - Skills not appearing after install → Restart your IDE; for Claude Code check `~/.claude/CLAUDE.md` has the routing block
 - Commands not working in Cursor → Check `~/.cursor/rules/fw-dev-tools.mdc` exists
 - `fdk` or `node` not found → Run `/fw-setup-troubleshoot`
-- Codex `.mcp.json` not written → Re-run `npx @freshworks/fw-dev-tools install --tools codex` from your project root
+- Codex MCP config missing → Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes`; installer writes `~/.codex/mcp.json`
 
 ---
 
@@ -163,6 +163,7 @@ Having issues with skills installation or usage?
 | [engine-matrix.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/engine-matrix.md) | FDK ↔ Node version matrix |
 | [network-requirements.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/network-requirements.md) | Firewall / proxy requirements |
 | [CONTRIBUTING.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/CONTRIBUTING.md) | Plugin layout, PR hygiene |
+| [SECURITY.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/SECURITY.md) | Vulnerability reporting; publish-zip telemetry (`.meta.json`) |
 | [Platform 3.0 App Development](https://developers.freshworks.com/docs/app-sdk/v3.0/) | Official SDK docs |
 | [Marketplace Publishing Guide](https://developers.freshworks.com/docs/marketplace/) | Submission requirements |
 | [FDK CLI Reference](https://developers.freshworks.com/docs/fdk/) | CLI commands |

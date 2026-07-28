@@ -13,7 +13,7 @@ import { test } from 'node:test';
 
 const execFileAsync = promisify(execFile);
 
-const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
 /** Isolated fixture version only — not the published fleet version. */
 const TEST_VERSION = '9.8.7';

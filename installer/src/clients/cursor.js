@@ -3,12 +3,13 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
-import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
+import { mergeMcpServer, patchMcpToken, readMcpToken, removeMcpServer } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
-const SKILLS_DIR = join(homedir(), '.cursor', 'skills');
-const RULES_DIR = join(homedir(), '.cursor', 'rules');
-const MCP_JSON = join(homedir(), '.cursor', 'mcp.json');
+const CURSOR_ROOT = process.env.FW_TEST_CURSOR_ROOT ?? join(homedir(), '.cursor');
+const SKILLS_DIR = join(CURSOR_ROOT, 'skills');
+const RULES_DIR = join(CURSOR_ROOT, 'rules');
+const MCP_JSON = join(CURSOR_ROOT, 'mcp.json');
 const SPEC_FILE = join(RULES_DIR, 'fw-dev-tools.mdc');
 const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
 
@@ -100,5 +101,12 @@ export async function uninstall({ yes = false } = {}) {
     await rm(SPEC_FILE);
     console.log(`  ✓ Removed ${SPEC_FILE}`);
   }
+
+  const { action, backupPath } = await removeMcpServer(MCP_JSON);
+  if (action === 'removed') {
+    console.log(`  ✓ MCP server removed from ${MCP_JSON}`);
+    if (backupPath) console.log(`    (backup: ${backupPath})`);
+  }
+
   console.log('\n✓ Cursor uninstall complete. Restart Cursor to apply.');
 }

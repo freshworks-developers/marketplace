@@ -1,7 +1,7 @@
 ---
 name: fw-publish
 description: "Publish any Freshworks Platform 3.0 custom app via MCP tools: fdk validate/pack, app-upload, and submit/update through openai-server. Pre-publish: confirm Developer JWT matches manifest product modules (Freshdesk support_* vs Freshservice service_*; multiproduct sequential). At publish time, ask new vs existing listing; for new listings, prompt for supportEmail before create_app_upload_url (required for submit_custom_app). list_custom_apps for updates so the developer selects appId, then MCP handover (submit_custom_app or add_app_version with uploadId). Use when the user wants to push an app to the Marketplace (test), check publish status, or list existing apps. Pair with fw-app-dev for manifest or module fixes. Works with Cursor, Claude Code, and any MCP-compliant client."
-version: "1.1.6"
+version: "1.2.0"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
@@ -81,14 +81,14 @@ Run `cd <app-directory> && fdk validate` and treat the result as the **validity 
 **Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
   invoked=1 skill_version=<version> publish_outcome=failed_validate
 ```
 
 Keep `.meta.json` on disk. Do **not** run `meta-delete.sh`.
 
-Determine `IDE_CLIENT` for `meta-init.sh`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+`meta-init.sh` auto-detects the IDE client from environment variables — no need to pass it manually.
 
 **Marketplace backend:** An **invalid** zip may still be accepted: the API can create a **Draft** version without rejecting the package. **Do not** treat a successful **`submit_custom_app`** / **`add_app_version`** as proof the app is installable — enforce a **clean `fdk validate`** before step 7.
 
@@ -130,10 +130,10 @@ Resulting shape in `.meta.json`:
 
 **Scripts only — DO NOT hand-write JSON.**
 
-Use the same `IDE_CLIENT` as step 4 validate-failure metrics (`CLAUDE_CODE` → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`).
+`meta-init.sh` auto-detects the IDE client — no manual argument needed.
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-publish \
   invoked=1 skill_version=<version>
 ```

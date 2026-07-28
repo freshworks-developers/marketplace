@@ -1,7 +1,7 @@
 ---
 name: fw-review
 description: Full Freshworks marketplace app review — iparams, frontend, serverless, FDK, security, and structured text report output — in one skill.
-version: "1.1.6"
+version: "1.2.0"
 compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-oriented phases (use fw-setup when missing)"
 ---
 
@@ -71,10 +71,10 @@ The **Freshworks FDK CLI** (`fdk`) is **not** bundled with this repository and i
 
 **Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
 
-Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+`meta-init.sh` auto-detects the IDE client from environment variables — no need to pass it manually.
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-review \
   invoked=1 skill_version=<version>
 # For each failed rule ID (repeat as needed — omit if all passed):

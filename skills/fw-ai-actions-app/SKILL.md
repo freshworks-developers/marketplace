@@ -1,7 +1,7 @@
 ---
 name: fw-ai-actions-app
 description: Expert-level skill for AI Actions and integrations on Freshworks Platform 3.0. Use when (1) Creating actions.json and SMI functions (flat request, nested response), (2) Request templates and third-party API integration, (3) Pre-build validation (pricing, paywalls, account prerequisites), (4) Failure-case validation and test data guardrails, (5) Debugging broken endpoints, (6) Integration implementation checklist (auth, base URL, request body, trigger-friendly schema), (7) Scoping and planning new integrations (and comparing only when user asks).
-version: "1.1.6"
+version: "1.2.0"
 compatibility: Freshworks Platform 3.0, FDK 10.x, Node.js 24.x
 ---
 
@@ -67,8 +67,9 @@ The project may supply a CSV/spec listing **Modules Supported** per app. Use it 
 3. **Server** — `renderData`, `$request.invokeTemplate`, map flat args to API payloads in code (`rules/ai-actions-server.mdc`).
 4. **Config** — `requests.json`, `iparams.json`, manifest (`rules/ai-actions-requests.mdc`, `rules/ai-actions-platform.mdc`).
 5. **Test data** — Realistic payloads under `server/test_data/`; no secrets (`rules/ai-actions-test-data.mdc`).
-6. **Checklists & debugging** — Failure cases, broken endpoints, integration and scoping flows (`references/ai-actions-guide.md`).
-7. **Concepts** — Short primer (`references/ai-actions-core.md`).
+6. **README.md** (**MANDATORY**) — Every AI actions app must include one. Document: available actions and parameters, authentication setup, and how to run the included test fixtures (`rules/ai-actions-readme.mdc`).
+7. **Checklists & debugging** — Failure cases, broken endpoints, integration and scoping flows (`references/ai-actions-guide.md`).
+8. **Concepts** — Short primer (`references/ai-actions-core.md`).
 
 ---
 
@@ -84,7 +85,7 @@ app-root/
 ├── server/test_data/<functionName>.json
 ├── config/requests.json
 ├── config/iparams.json
-└── README.md   (when documenting the app — `rules/ai-actions-readme.mdc`)
+└── README.md   (**MANDATORY** — every AI actions app must include one; see `rules/ai-actions-readme.mdc`)
 ```
 
 **Flat request excerpt:**
@@ -139,10 +140,10 @@ app-root/
 
 **Scripts only — DO NOT hand-write JSON.** Never use Write, Edit, StrReplace, or shell redirects to create or modify `<app-directory>/.meta.json`. Use only `meta-init.sh`, `meta-update.sh`, `meta-feedback.sh`, and `meta-delete.sh` from `~/.fw-dev-tools/scripts/`. Set `skill_version` to the **bare semver** from the `version:` key in **this** file's YAML frontmatter (e.g. `version: "1.1.5"` → `skill_version=1.1.5`; no quotes).
 
-Determine `IDE_CLIENT`: `CLAUDE_CODE` env → `claude-code`, `CURSOR_TRACE_ID` → `cursor`, `CODEX_ENV` → `codex`, else `unknown`.
+`meta-init.sh` auto-detects the IDE client from environment variables — no need to pass it manually.
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-ai-actions-app \
   invoked=1 skill_version=<version> validate_iterations=<n>
 # For each validation error category (repeat as needed — omit if none):

@@ -24,6 +24,22 @@ const PKG_VERSION = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), '
 const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
 const SCRIPT_NAMES = ['meta-init.sh', 'meta-update.sh', 'meta-feedback.sh', 'meta-delete.sh', 'check-update.sh'];
 
+/** Test-only Cursor/Codex roots (no leading dot — safe in restricted sandboxes). */
+function devToolsHome(home) { return join(home, '.fw-dev-tools'); }
+function cursorHome(home) { return join(home, 'cursor-test'); }
+function codexHome(home) { return join(home, 'codex-test'); }
+
+function cliTestEnv(home, extra = {}) {
+  return {
+    ...process.env,
+    HOME: home,
+    FW_DEV_TOOLS_HOME: devToolsHome(home),
+    FW_TEST_CURSOR_ROOT: cursorHome(home),
+    FW_TEST_CODEX_ROOT: codexHome(home),
+    ...extra,
+  };
+}
+
 let claudeCliAvailable = null;
 
 async function isClaudeAvailable() {
@@ -51,11 +67,7 @@ async function makeHome() {
 
 async function runCli(home, args, { cwd = home, env = {} } = {}) {
   const { stdout, stderr } = await execFileAsync('node', [CLI, ...args], {
-    env: {
-      ...process.env,
-      HOME: home,
-      ...env,
-    },
+    env: cliTestEnv(home, env),
     cwd,
     timeout: 180_000,
   });
@@ -63,14 +75,14 @@ async function runCli(home, args, { cwd = home, env = {} } = {}) {
 }
 
 async function readInstallState(home) {
-  const p = join(home, '.fw-dev-tools', '.meta.json');
+  const p = join(devToolsHome(home), '.meta.json');
   if (!existsSync(p)) return null;
   return JSON.parse(await readFile(p, 'utf8'));
 }
 
 async function listClaudePlugins(home) {
   const { stdout, stderr } = await execFileAsync('claude', ['plugin', 'list'], {
-    env: { ...process.env, HOME: home },
+    env: cliTestEnv(home),
     timeout: 60_000,
   });
   const out = stdout + stderr;
@@ -98,8 +110,8 @@ function skillFrontmatterVersion(skillMd) {
 }
 
 async function assertLocalClaudeMarketplace(home) {
-  const skillPath = join(home, '.fw-dev-tools', 'skills', 'fw-app-dev', 'SKILL.md');
-  const marketplacePath = join(home, '.fw-dev-tools', '.claude-plugin', 'marketplace.json');
+  const skillPath = join(devToolsHome(home), 'skills', 'fw-app-dev', 'SKILL.md');
+  const marketplacePath = join(devToolsHome(home), '.claude-plugin', 'marketplace.json');
   await access(skillPath);
   await access(marketplacePath);
   const skillVer = skillFrontmatterVersion(await readFile(skillPath, 'utf8'));
@@ -107,7 +119,7 @@ async function assertLocalClaudeMarketplace(home) {
   assert.equal(skillVer, PKG_VERSION, 'local skills copy should match package version');
   assert.equal(marketplace.version, PKG_VERSION, 'local marketplace.json should match package version');
   for (const skill of SKILLS) {
-    await access(join(home, '.fw-dev-tools', 'skills', skill, 'SKILL.md'));
+    await access(join(devToolsHome(home), 'skills', skill, 'SKILL.md'));
   }
 }
 
@@ -131,7 +143,7 @@ async function assertClaudeMdRouting(home, { present = true } = {}) {
   );
 }
 
-test('Claude install — 5 plugins, scripts, install state file', async (t) => {
+test('Claude install copies all plugins, scripts, and writes install state', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -142,7 +154,7 @@ test('Claude install — 5 plugins, scripts, install state file', async (t) => {
       assert.match(out, new RegExp(`Installed ${skill}|✓ Installed ${skill}`), `stdout should confirm ${skill}`);
     }
     for (const script of SCRIPT_NAMES) {
-      await access(join(home, '.fw-dev-tools', 'scripts', script));
+      await access(join(devToolsHome(home), 'scripts', script));
     }
     const state = await readInstallState(home);
     assert.ok(state, '.meta.json should exist');
@@ -171,6 +183,26 @@ test('multi-client install accumulates clients array in .meta.json', async () =>
     assert.ok(Array.isArray(state.clients), 'clients should be an array');
     assert.ok(state.clients.includes('cursor'), 'clients should include cursor');
     assert.ok(state.clients.includes('codex'), 'clients should include codex');
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('Codex install writes MCP config to ~/.codex/mcp.json regardless of cwd', async () => {
+  const home = await makeHome();
+  const unrelatedCwd = join(home, 'unrelated-cwd');
+  try {
+    await mkdir(unrelatedCwd, { recursive: true });
+
+    await runCli(home, ['install', '--tools', 'codex', '--yes'], { cwd: unrelatedCwd });
+
+    const mcpJson = join(codexHome(home), 'mcp.json');
+    assert.equal(existsSync(mcpJson), true, 'expected ~/.codex/mcp.json to be created');
+    assert.equal(existsSync(join(unrelatedCwd, '.mcp.json')), false, 'should not write MCP config to shell cwd');
+
+    const config = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.ok(config.mcpServers?.['fw-dev-mcp']?.url, 'fw-dev-mcp entry should be merged');
+    await access(join(codexHome(home), 'skills', 'fw-app-dev', 'SKILL.md'));
   } finally {
     await cleanup(home);
   }
@@ -272,7 +304,7 @@ test('second Claude install refreshes local marketplace skill copy', async (t) =
   const home = await makeHome();
   try {
     await runCli(home, ['install', '--tools', 'claude', '--yes']);
-    const skillPath = join(home, '.fw-dev-tools', 'skills', 'fw-app-dev', 'SKILL.md');
+    const skillPath = join(devToolsHome(home), 'skills', 'fw-app-dev', 'SKILL.md');
     await writeFile(skillPath, 'stale-local-marketplace-copy', 'utf8');
 
     await runCli(home, ['install', '--tools', 'claude', '--yes']);
@@ -286,7 +318,7 @@ test('second Claude install refreshes local marketplace skill copy', async (t) =
   }
 });
 
-test('second install is idempotent — no duplicate plugins, installedAt stable', async (t) => {
+test('second install does not duplicate plugins or change installedAt', async (t) => {
   await isClaudeAvailable();
   skipWithoutClaude(t);
 
@@ -337,7 +369,7 @@ test('second Cursor install removes stale skill trees before copy', async () => 
   const home = await makeHome();
   try {
     await runCli(home, ['install', '--tools', 'cursor', '--yes']);
-    const skillPath = join(home, '.cursor', 'skills', 'fw-app-dev', 'SKILL.md');
+    const skillPath = join(cursorHome(home), 'skills', 'fw-app-dev', 'SKILL.md');
     await writeFile(skillPath, 'stale-content', 'utf8');
 
     await runCli(home, ['install', '--tools', 'cursor', '--yes']);
@@ -349,14 +381,14 @@ test('second Cursor install removes stale skill trees before copy', async () => 
   }
 });
 
-test('Cursor install — skills, rules, shared scripts dir', async () => {
+test('Cursor install copies skill trees, rules, and shared scripts', async () => {
   const home = await makeHome();
   try {
     await runCli(home, ['install', '--tools', 'cursor', '--yes']);
-    await access(join(home, '.cursor', 'skills', 'fw-app-dev', 'SKILL.md'));
-    await access(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc'));
+    await access(join(cursorHome(home), 'skills', 'fw-app-dev', 'SKILL.md'));
+    await access(join(cursorHome(home), 'rules', 'fw-dev-tools.mdc'));
     for (const script of SCRIPT_NAMES) {
-      await access(join(home, '.fw-dev-tools', 'scripts', script));
+      await access(join(devToolsHome(home), 'scripts', script));
     }
     const state = await readInstallState(home);
     assert.equal(state.client, 'cursor');
@@ -387,7 +419,7 @@ test('update skips when user declines newer version', async () => {
     });
     assert.match(out, /Update available/i);
     assert.match(out, /Update skipped/i);
-    assert.equal(existsSync(join(home, '.cursor', 'skills', 'fw-app-dev')), true);
+    assert.equal(existsSync(join(cursorHome(home), 'skills', 'fw-app-dev')), true);
   } finally {
     await cleanup(home);
   }
@@ -403,10 +435,17 @@ test('uninstall claude,cursor removes all global install paths', async (t) => {
     await runCli(home, ['uninstall', '--tools', 'claude,cursor', '--yes']);
 
     assert.equal((await listClaudePlugins(home)).length, 0, 'claude plugins should be removed');
-    assert.equal(existsSync(join(home, '.cursor', 'skills', 'fw-app-dev')), false);
-    assert.equal(existsSync(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc')), false);
-    assert.equal(existsSync(join(home, '.fw-dev-tools', 'scripts')), false);
-    assert.equal(existsSync(join(home, '.fw-dev-tools', '.meta.json')), false);
+    assert.equal(existsSync(join(cursorHome(home), 'skills', 'fw-app-dev')), false);
+    assert.equal(existsSync(join(cursorHome(home), 'rules', 'fw-dev-tools.mdc')), false);
+
+    const mcpJson = join(cursorHome(home), 'mcp.json');
+    if (existsSync(mcpJson)) {
+      const mcpConfig = JSON.parse(await readFile(mcpJson, 'utf8'));
+      assert.equal(mcpConfig.mcpServers?.['fw-dev-mcp'], undefined, 'fw-dev-mcp should be removed from mcp.json');
+    }
+
+    assert.equal(existsSync(join(devToolsHome(home), 'scripts')), false);
+    assert.equal(existsSync(join(devToolsHome(home), '.meta.json')), false);
     await assertClaudeMdRouting(home, { present: false });
   } finally {
     await cleanup(home);
@@ -437,18 +476,18 @@ test('legacy install.json removed on Claude install', async (t) => {
 
   const home = await makeHome();
   try {
-    await mkdir(join(home, '.fw-dev-tools'), { recursive: true });
+    await mkdir(join(devToolsHome(home)), { recursive: true });
     await writeFile(
-      join(home, '.fw-dev-tools', 'install.json'),
+      join(devToolsHome(home), 'install.json'),
       JSON.stringify({ version: '1.0.0', client: 'claude' }, null, 2),
     );
 
     const out = await runCli(home, ['install', '--tools', 'claude', '--yes']);
     assert.match(out, /Removed legacy install\.json/i);
-    assert.equal(existsSync(join(home, '.fw-dev-tools', 'install.json')), false);
-    assert.equal(existsSync(join(home, '.fw-dev-tools', '.meta.json')), true);
+    assert.equal(existsSync(join(devToolsHome(home), 'install.json')), false);
+    assert.equal(existsSync(join(devToolsHome(home), '.meta.json')), true);
     for (const script of SCRIPT_NAMES) {
-      await access(join(home, '.fw-dev-tools', 'scripts', script));
+      await access(join(devToolsHome(home), 'scripts', script));
     }
     assert.equal((await listClaudePlugins(home)).length, 5);
   } finally {
@@ -468,8 +507,33 @@ test('Cursor install warns about old .agents/skills, does not delete them', asyn
     assert.match(out, /Found old workspace skills/i);
     assert.match(out, /rm -rf .+\/fw-\*/);
     assert.equal(existsSync(join(agentsSkills, 'SKILL.md')), true, 'legacy workspace skills must not be auto-deleted');
-    await access(join(home, '.cursor', 'skills', 'fw-setup', 'SKILL.md'));
-    await access(join(home, '.cursor', 'rules', 'fw-dev-tools.mdc'));
+    await access(join(cursorHome(home), 'skills', 'fw-setup', 'SKILL.md'));
+    await access(join(cursorHome(home), 'rules', 'fw-dev-tools.mdc'));
+  } finally {
+    await cleanup(home);
+  }
+});
+
+test('Cursor uninstall removes fw-dev-mcp from mcp.json while preserving other servers', async () => {
+  const home = await makeHome();
+  try {
+    await runCli(home, ['install', '--tools', 'cursor', '--yes']);
+
+    const mcpJson = join(cursorHome(home), 'mcp.json');
+    const withOther = {
+      mcpServers: {
+        'fw-dev-mcp': JSON.parse(await readFile(mcpJson, 'utf8')).mcpServers['fw-dev-mcp'],
+        'other-server': { url: 'https://other.example.com/mcp' },
+      },
+    };
+    await writeFile(mcpJson, JSON.stringify(withOther, null, 2), 'utf8');
+
+    await runCli(home, ['uninstall', '--tools', 'cursor', '--yes']);
+
+    assert.equal(existsSync(mcpJson), true, 'mcp.json should remain when other servers exist');
+    const remaining = JSON.parse(await readFile(mcpJson, 'utf8'));
+    assert.equal(remaining.mcpServers['fw-dev-mcp'], undefined);
+    assert.deepEqual(remaining.mcpServers['other-server'], withOther.mcpServers['other-server']);
   } finally {
     await cleanup(home);
   }
@@ -477,7 +541,7 @@ test('Cursor install warns about old .agents/skills, does not delete them', asyn
 
 test('stale fw-marketplace-app-dev removed on Cursor install', async () => {
   const home = await makeHome();
-  const staleDir = join(home, '.cursor', 'skills', 'fw-marketplace-app-dev');
+  const staleDir = join(cursorHome(home), 'skills', 'fw-marketplace-app-dev');
   try {
     await mkdir(staleDir, { recursive: true });
     await writeFile(join(staleDir, 'SKILL.md'), '# stale\n');
@@ -485,7 +549,7 @@ test('stale fw-marketplace-app-dev removed on Cursor install', async () => {
     const out = await runCli(home, ['install', '--tools', 'cursor', '--yes']);
     assert.match(out, /Removed \d+ previous fw-dev-tools skill\(s\)/i);
     assert.equal(existsSync(staleDir), false);
-    await access(join(home, '.cursor', 'skills', 'fw-app-dev', 'SKILL.md'));
+    await access(join(cursorHome(home), 'skills', 'fw-app-dev', 'SKILL.md'));
   } finally {
     await cleanup(home);
   }

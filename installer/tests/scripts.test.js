@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { homedir, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { INSTALL_JSON } from '../src/utils.js';
 
 const execFileAsync = promisify(execFile);
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -276,7 +277,7 @@ test('check-update.sh exits silently when .meta.json is absent', async () => {
 });
 
 test('check-update.sh writes lastChecked to .meta.json', async () => {
-  const META = join(homedir(), '.fw-dev-tools', '.meta.json');
+  const META = INSTALL_JSON;
   const metaDir = dirname(META);
   await mkdir(metaDir, { recursive: true });
 
