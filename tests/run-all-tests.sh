@@ -73,6 +73,11 @@ run_layer() {
 # ── Layer 1: Installer tests ──────────────────────────────────────────────────
 # spec reporter streams directly to stdout; NDJSON captured to file for counts
 # Test file list is read from installer/package.json so new tests auto-pick up.
+# Use an isolated $HOME so installer tests never write the developer's real ~/.fw-dev-tools.
+ORIG_HOME="${HOME}"
+INSTALLER_TEST_HOME="$(mktemp -d "${TMPDIR:-/tmp}/fw-installer-test.XXXXXX")"
+export HOME="${INSTALLER_TEST_HOME}"
+export FW_DEV_TOOLS_HOME="${INSTALLER_TEST_HOME}/.fw-dev-tools"
 INSTALLER_TEST_FILES=$(node -e "
   const pkg = require('./installer/package.json');
   const files = pkg.scripts.test.match(/tests\/[\\w.-]+/g);
@@ -90,6 +95,9 @@ INST_EXIT=0
   $INSTALLER_TEST_FILES) || INST_EXIT=$?
 read -r INST_PASS INST_FAIL <<< "$(ndjson_counts tests/installer-results.ndjson)"
 LAYERS+=("Installer Tests"); PASS_COUNTS+=("$INST_PASS"); FAIL_COUNTS+=("$INST_FAIL"); LAYER_STATUS+=("$INST_EXIT")
+export HOME="${ORIG_HOME}"
+unset FW_DEV_TOOLS_HOME
+rm -rf "${INSTALLER_TEST_HOME}"
 
 # ── Layer 2: Static skill tests ───────────────────────────────────────────────
 echo "──────────────────────────────────────────"

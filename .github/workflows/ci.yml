@@ -6,6 +6,17 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to evaluate (branch, tag, or SHA)
+        required: false
+        default: main
+        type: string
+      run_eval:
+        description: Run skill evals (layers 2–4) and upload report
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -53,3 +64,35 @@ jobs:
       - name: Run installer tests
         run: npm test
         working-directory: installer
+
+  eval:
+    name: Skill evals (layers 2–4)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_eval == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Install test dependencies
+        run: npm install
+        working-directory: tests
+
+      - name: Run eval suite (static + regex + LLM when CLI available)
+        run: npm run eval
+        working-directory: tests
+
+      - name: Upload eval report
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-tests-report-${{ github.run_id }}
+          path: tests/all-tests-report.html
+          if-no-files-found: error
+          retention-days: 30

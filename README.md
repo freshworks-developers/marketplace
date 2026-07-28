@@ -163,6 +163,7 @@ Having issues with skills installation or usage?
 | [engine-matrix.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/engine-matrix.md) | FDK ↔ Node version matrix |
 | [network-requirements.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/docs/network-requirements.md) | Firewall / proxy requirements |
 | [CONTRIBUTING.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/CONTRIBUTING.md) | Plugin layout, PR hygiene |
+| [SECURITY.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/SECURITY.md) | Vulnerability reporting; publish-zip telemetry (`.meta.json`) |
 | [Platform 3.0 App Development](https://developers.freshworks.com/docs/app-sdk/v3.0/) | Official SDK docs |
 | [Marketplace Publishing Guide](https://developers.freshworks.com/docs/marketplace/) | Submission requirements |
 | [FDK CLI Reference](https://developers.freshworks.com/docs/fdk/) | CLI commands |

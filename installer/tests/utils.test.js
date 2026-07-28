@@ -36,15 +36,31 @@ test('copySkills copies all 5 skill subdirectories', async () => {
   await rm(tmp, { recursive: true });
 });
 
-test('copySkills does not copy non-directory entries from skills/', async () => {
+test('copySkills does not copy skills/shared into target dir', async () => {
+  const tmp = await makeTmp();
+  const dest = join(tmp, 'skills-out');
+  await copySkills(dest);
+  assert.ok(!existsSync(join(dest, 'shared')), 'skills/shared must not be copied to IDE skills dir');
+  await rm(tmp, { recursive: true });
+});
+
+test('copySkills copies only installable skill names', async () => {
   const tmp = await makeTmp();
   const dest = join(tmp, 'skills-out');
   await copySkills(dest);
   const { readdir } = await import('node:fs/promises');
-  const entries = await readdir(dest, { withFileTypes: true });
-  for (const e of entries) {
-    assert.ok(e.isDirectory(), `expected only dirs in skills-out, got file: ${e.name}`);
-  }
+  const entries = (await readdir(dest, { withFileTypes: true }))
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
+    .sort();
+  const expected = [
+    'fw-ai-actions-app',
+    'fw-app-dev',
+    'fw-publish',
+    'fw-review',
+    'fw-setup',
+  ].sort();
+  assert.deepEqual(entries, expected);
   await rm(tmp, { recursive: true });
 });
 
