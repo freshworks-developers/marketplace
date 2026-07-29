@@ -24,7 +24,8 @@
     "skill_version": "",
     "migrate_iterations": 0,
     "validate_iterations": 0,
-    "validation_error_categories": []
+    "validation_error_categories": [],
+    "react_meta_workflow": ""
   },
   "fw-ai-actions-app": {
     "invoked": 0,

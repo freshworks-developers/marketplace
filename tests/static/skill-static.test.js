@@ -324,10 +324,11 @@ describe('.meta.json template', () => {
     const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     const block = t['fw-app-dev'];
-    for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories']) {
+    for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories', 'react_meta_workflow']) {
       assert.ok(Object.hasOwn(block, field), `fw-app-dev block missing field: ${field}`);
     }
     assert.deepEqual(block.validation_error_categories, []);
+    assert.equal(block.react_meta_workflow, '');
   });
 
   test('fw-review block has review_failure_categories', async () => {
@@ -544,6 +545,13 @@ describe('React Meta skeleton templates', () => {
   test('command files exist for fdk-react-create and fdk-react-migrate', async () => {
     assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'commands', 'fdk-react-create.md')));
     assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'commands', 'fdk-react-migrate.md')));
+  });
+
+  test('react commands write react_meta_workflow telemetry', async () => {
+    const create = await readRepo('skills/fw-app-dev/commands/fdk-react-create.md');
+    const migrate = await readRepo('skills/fw-app-dev/commands/fdk-react-migrate.md');
+    assert.ok(create.includes('react_meta_workflow=react-create'));
+    assert.ok(migrate.includes('react_meta_workflow=react-migrate'));
   });
 });
 

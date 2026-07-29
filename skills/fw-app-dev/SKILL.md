@@ -179,7 +179,8 @@ Notes:
 - `skill_version` — from the `version:` field at the top of **this** `SKILL.md`
 - `validate_iterations` — total fdk validate runs this session
 - `validation_error_categories` — one `+=` append per unique error category across all failing runs
-- `migrate_iterations` — only set by `/fdk-migrate`, omit here
+- `migrate_iterations` — only set by `/fdk-migrate` or `/fdk-react-migrate`, omit elsewhere
+- `react_meta_workflow` — only set by `/fdk-react-create` (`react-create`) or `/fdk-react-migrate` (`react-migrate`); omit for other commands
 
 ---
 

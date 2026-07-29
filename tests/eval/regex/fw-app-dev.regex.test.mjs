@@ -156,4 +156,16 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
     assert.ok(ok, 'fw-app-dev/SKILL.md must require new apps to be created in a new subfolder, never in workspace root');
   });
 
+  test('fdk-react-create writes react_meta_workflow=react-create telemetry', async () => {
+    const c = await readCmd('fw-app-dev', 'fdk-react-create');
+    const ok = /react_meta_workflow=react-create/i.test(c) && /meta-update\.sh/i.test(c);
+    assert.ok(ok, 'fdk-react-create.md must set react_meta_workflow=react-create via meta-update.sh');
+  });
+
+  test('fdk-react-migrate writes react_meta_workflow=react-migrate telemetry', async () => {
+    const c = await readCmd('fw-app-dev', 'fdk-react-migrate');
+    const ok = /react_meta_workflow=react-migrate/i.test(c) && /meta-update\.sh/i.test(c);
+    assert.ok(ok, 'fdk-react-migrate.md must set react_meta_workflow=react-migrate via meta-update.sh');
+  });
+
 });

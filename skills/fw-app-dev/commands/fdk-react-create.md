@@ -101,7 +101,7 @@ Fix errors per **validation-workflow.mdc** (up to 6 iterations). **Do not** remo
 ```bash
 bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
-  invoked=1 skill_version=<version> validate_iterations=<n>
+  invoked=1 skill_version=<version> validate_iterations=<n> react_meta_workflow=react-create
 ```
 
 For each distinct validation error category fixed, also:

@@ -89,7 +89,7 @@ Fix per **validation-workflow.mdc** (up to 6 iterations). **Do not** strip third
 ```bash
 bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
-  invoked=1 skill_version=<version> migrate_iterations=<n> validate_iterations=<n>
+  invoked=1 skill_version=<version> migrate_iterations=<n> validate_iterations=<n> react_meta_workflow=react-migrate
 ```
 
 For each distinct validation error category:
