@@ -388,7 +388,7 @@ The installing developer must register a Google OAuth app, then enter **Client I
 ### OAuth Apps Need:
 - `modules.common.requests` with OAuth-enabled request templates
 - `config/oauth_config.json` with OAuth provider details
-- `config/requests.json` with `auth_type: "oauth"`
+- `config/requests.json` with `headers.Authorization: Bearer <%= access_token %>` and `options.oauth` set to the integration name
 
 ---
 

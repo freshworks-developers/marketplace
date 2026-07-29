@@ -354,7 +354,7 @@ You can have up to 3 OAuth integrations:
 1. **Always use integrations wrapper** - Required in Platform 3.0
 2. **Add display_name** - Helps users understand which service they're authorizing
 3. **Use oauth_iparams for dynamic domains** - When domains vary per installation
-4. **Secure client_secret** - Store in iparams as secure field
+4. **Secure client_secret** - Keep `client_secret` in `config/oauth_config.json` (literal or via `oauth_iparams` for per-install credentials) — **not** in `config/iparams.json`
 5. **Test locally** - Use `http://localhost:10001/auth/callback` for local testing
 6. **One agent token** - At least one OAuth config should use `token_type: "agent"`
 7. **Maximum 3 integrations** - Platform supports up to 3 OAuth resources

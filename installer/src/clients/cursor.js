@@ -6,9 +6,10 @@ import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, removeFw
 import { mergeMcpServer, patchMcpToken, readMcpToken, removeMcpServer } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
-const SKILLS_DIR = join(homedir(), '.cursor', 'skills');
-const RULES_DIR = join(homedir(), '.cursor', 'rules');
-const MCP_JSON = join(homedir(), '.cursor', 'mcp.json');
+const CURSOR_ROOT = process.env.FW_TEST_CURSOR_ROOT ?? join(homedir(), '.cursor');
+const SKILLS_DIR = join(CURSOR_ROOT, 'skills');
+const RULES_DIR = join(CURSOR_ROOT, 'rules');
+const MCP_JSON = join(CURSOR_ROOT, 'mcp.json');
 const SPEC_FILE = join(RULES_DIR, 'fw-dev-tools.mdc');
 const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
 

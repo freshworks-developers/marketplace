@@ -7,7 +7,19 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 ## [Unreleased]
 
 ### Bug Fixes
+- **Installer:** `copySkills()` copies only installable skill dirs (`fw-*`), not `skills/shared/` ([#29](https://github.com/freshworks-developers/fw-dev-tools/issues/29))
 - **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
+
+### Documentation
+- **fw-app-dev:** fix stale OAuth checklist in `fdk_create.md` — Platform 3.0 `options.oauth` pattern instead of `auth_type` ([#32](https://github.com/freshworks-developers/fw-dev-tools/issues/32))
+- **fw-app-dev:** fix Best Practices #4 in `oauth-configuration-latest.md` — `client_secret` belongs in `oauth_config.json`, not `iparams.json` ([#31](https://github.com/freshworks-developers/fw-dev-tools/issues/31))
+- **fw-setup:** document dual-stack FDK coexistence via nvm; clarify same-Node-only uninstall; broaden CDN tarball warnings against any registry install ([#45](https://github.com/freshworks-developers/fw-dev-tools/issues/45))
+- **Testing:** add **When to run which layer** policy table; document manual **`eval-manual.yml`** workflow for on-demand eval reports ([#39](https://github.com/freshworks-developers/fw-dev-tools/issues/39))
+- **SECURITY.md:** disclose that `.meta.json` skill metrics are included in marketplace publish zips by design ([#43](https://github.com/freshworks-developers/fw-dev-tools/issues/43))
+
+### Changed
+- **CI:** fold manual skill evals into `ci.yml` (`workflow_dispatch` + **Run skill evals**); remove `eval-manual.yml`
+- **meta-init.sh:** auto-detect IDE client from environment variables; optional second argument; skills updated to call `meta-init.sh <app-dir>` only (supersedes PR #53)
 
 ---
 
