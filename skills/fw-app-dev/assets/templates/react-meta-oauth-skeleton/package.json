@@ -1,0 +1,12 @@
+{
+  "name": "react-meta-frontend-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@freshworks/dew-components": "^1.0.1",
+    "@freshworks/dew-styles": "^1.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.18.1"
+  }
+}

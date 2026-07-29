@@ -84,11 +84,13 @@ Keep this list aligned when adding or renaming files.
 
 | Slash command | Command file |
 |---------------|----------------|
+| `/fdk-react-create` | `commands/fdk-react-create.md` |
+| `/fdk-react-migrate` | `commands/fdk-react-migrate.md` |
 | `/fdk-fix` | `commands/fdk-fix.md` |
 | `/fdk-migrate` | `commands/fdk-migrate.md` |
 | `/fdk-refactor` | `commands/fdk-refactor.md` |
 
-**Rules (`.mdc`):** `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `smart-prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
+**Rules (`.mdc`):** `react-meta-patterns.mdc`, `app-building-blocking-gates.mdc`, `app-templates.mdc`, `async-patterns.mdc`, `complexity-reduction.mdc`, `confusion.mdc`, `freshworks-platform3.mdc`, `platform3-modules-locations.mdc`, `prerequisites-check.mdc`, `smart-prerequisites-check.mdc`, `security.mdc`, `validation-workflow.mdc`
 
 ### fw-ai-actions-app — `skills/fw-ai-actions-app/`
 

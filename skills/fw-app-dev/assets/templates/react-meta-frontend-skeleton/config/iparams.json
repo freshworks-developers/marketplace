@@ -1,0 +1,8 @@
+{
+  "sample_text": {
+    "display_name": "Sample text",
+    "description": "Optional installation parameter",
+    "type": "text",
+    "required": false
+  }
+}

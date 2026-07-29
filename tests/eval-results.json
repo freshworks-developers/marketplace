@@ -1,0 +1,1112 @@
+{
+  "model": "inline-skill-content-check (no ANTHROPIC_API_KEY)",
+  "timestamp": "2026-07-27T04:12:31.159Z",
+  "results": [
+    {
+      "id": "fw-app-dev-01",
+      "skill": "fw-app-dev",
+      "label": "platform-version 2.3 → must run fdk-migrate before fdk validate",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-02",
+      "skill": "fw-app-dev",
+      "label": "fdk validate passed → write .meta.json before reporting, never mention to user",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-03",
+      "skill": "fw-app-dev",
+      "label": "1 lint error remaining after 3 iterations → cannot mark app complete",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-01",
+      "skill": "fw-setup",
+      "label": "/fw-setup-install succeeded + manifest.json present → write .meta.json before REPORT",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-02",
+      "skill": "fw-setup",
+      "label": "/fw-setup-status → must NOT write .meta.json (read-only command)",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-01",
+      "skill": "fw-review",
+      "label": "review complete with 2 failures → write .meta.json before emitting App Review Result",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-01",
+      "skill": "fw-publish",
+      "label": "metrics before fdk pack (step 4.6) → delete .meta.json after successful publish",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-02",
+      "skill": "fw-publish",
+      "label": "fdk validate failed at step 4 → keep .meta.json, publish_outcome = failed_validate",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-01",
+      "skill": "fw-ai-actions-app",
+      "label": "fdk validate completed → write .meta.json before showing result to user",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-04",
+      "skill": "fw-app-dev",
+      "label": "/fdk-review invoked → agent must redirect to fw-review skill, not handle in fw-app-dev",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-03",
+      "skill": "fw-publish",
+      "label": "publish succeeded → .meta.json deleted silently without notifying developer",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-04",
+      "skill": "fw-publish",
+      "label": "publish failed (step 4) → manifest unchanged, start_time not cleared",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-03",
+      "skill": "fw-setup",
+      "label": "\"install FDK 9\" request → deprecation warning must be shown before proceeding",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-05",
+      "skill": "fw-app-dev",
+      "label": ".meta.json write → must invoke meta-init.sh and meta-update.sh scripts, not write JSON manually",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-05",
+      "skill": "fw-publish",
+      "label": "zip upload → must use upload-app.sh script, not Python / Node / curl",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-06",
+      "skill": "fw-publish",
+      "label": "zip upload failed after 3 retries → publish_outcome = failed_upload, keep .meta.json",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-06",
+      "skill": "fw-app-dev",
+      "label": "metrics: validate_iterations = run count, validation_error_categories appended per unique category",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-04",
+      "skill": "fw-setup",
+      "label": "metrics: setup_node_changed/setup_fdk_changed reflect actual change — false when nothing changed",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-02",
+      "skill": "fw-review",
+      "label": "metrics: review_failure_categories populated with actual rule IDs, not generic labels",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-08",
+      "skill": "fw-publish",
+      "label": "feedback step: must ask before step 5, skip gracefully if no answer — never write null or empty",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-08b",
+      "skill": "fw-publish",
+      "label": "feedback liked + comment → meta-feedback.sh with rating and comment before step 5",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-09",
+      "skill": "fw-publish",
+      "label": "new vs existing: must ask user — never assume appId from .fdk/app-info.json",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-10",
+      "skill": "fw-publish",
+      "label": "fw-review prerequisite: must run fw-review before publishing — cannot skip",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "spec-01",
+      "skill": "fw-app-dev",
+      "label": "update check: run check-update.sh on first skill invocation only, not on every message",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-07",
+      "skill": "fw-publish",
+      "label": "new listing → supportEmail must be collected before create_app_upload_url, STOP if missing",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-07",
+      "skill": "fw-app-dev",
+      "label": "must run /fw-setup-status before building a new app",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-03",
+      "skill": "fw-review",
+      "label": "multiple manifest.json — only ask which app to review",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-11",
+      "skill": "fw-publish",
+      "label": "actions.json present → ask about worksWith ai_actions before submit",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-12",
+      "skill": "fw-publish",
+      "label": "update existing listing without actions.json → downgrade warning and confirm",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-02",
+      "skill": "fw-ai-actions-app",
+      "label": "nested vendor API payload → flat parameters in actions.json, nest in server.js",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-03",
+      "skill": "fw-ai-actions-app",
+      "label": "api_key in actions.json → must use secure iparams instead",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-04",
+      "skill": "fw-review",
+      "label": "fdk missing → STOP, offer fw-setup, no silent install, no full review report",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-08",
+      "skill": "fw-app-dev",
+      "label": "implement_app MCP tool requested → refuse, use fw-app-dev skill flow",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-09",
+      "skill": "fw-app-dev",
+      "label": "FDK 10 + Node 24 installed, manifest engines 9/18 → raise engines, not downgrade toolchain",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-05",
+      "skill": "fw-setup",
+      "label": "/fw-setup-upgrade succeeded + manifest present → write .meta.json before REPORT",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-06",
+      "skill": "fw-setup",
+      "label": "/fw-setup-troubleshoot without --fix → no .meta.json write",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-07",
+      "skill": "fw-setup",
+      "label": "/fw-setup-troubleshoot --fix → write .meta.json before REPORT",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-08",
+      "skill": "fw-setup",
+      "label": "npm install -g @freshworks/fdk → refuse, use CDN tarball",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-04",
+      "skill": "fw-ai-actions-app",
+      "label": "external HTTP in server → $request.invokeTemplate only",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-05",
+      "skill": "fw-ai-actions-app",
+      "label": "AI-only app → no app/ folder or Crayons UI",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-13",
+      "skill": "fw-publish",
+      "label": "latest version in development state → STOP, stuck-version warning",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-14",
+      "skill": "fw-publish",
+      "label": "MCP 401 → STOP auth setup, no retry loop",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-15",
+      "skill": "fw-publish",
+      "label": "manifest engines mismatch → STOP, engines-mismatch prompt, no fdk pack",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-10",
+      "skill": "fw-app-dev",
+      "label": "6 validate iterations failed → LAST RESORT engines downgrade only then",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-11",
+      "skill": "fw-app-dev",
+      "label": "Platform 2.x product block → migrate, not validate on 3.0 toolchain",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-06",
+      "skill": "fw-ai-actions-app",
+      "label": "multiple manifest.json → ask which app (Q1)",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-07",
+      "skill": "fw-ai-actions-app",
+      "label": "actions.json handler name mismatch → must align case-sensitively",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-05",
+      "skill": "fw-review",
+      "label": "deterministic script crashes → continue review, do not abort",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-16",
+      "skill": "fw-publish",
+      "label": "targetState → always \"test\", never prompt user",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-17",
+      "skill": "fw-publish",
+      "label": "zip has only ./manifest.json → STOP before create_app_upload_url",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-09",
+      "skill": "fw-setup",
+      "label": "/fw-setup-use → no .meta.json write (read-only stack switch)",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "spec-02",
+      "skill": "fw-app-dev",
+      "label": "update check: check-update.sh once per session only",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-10",
+      "skill": "fw-setup",
+      "label": "/fw-setup-downgrade succeeded + manifest present → write .meta.json before REPORT",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-setup-11",
+      "skill": "fw-setup",
+      "label": "/fw-setup-install succeeded, no manifest.json → skip .meta.json write",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-12",
+      "skill": "fw-app-dev",
+      "label": "fdk missing → offer fw-setup, no silent install",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-13",
+      "skill": "fw-app-dev",
+      "label": "Scenario A: FDK 9 + Platform 2.x → fw-setup-install then fdk-migrate",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-14",
+      "skill": "fw-app-dev",
+      "label": "Scenario E: FDK 9 + Platform 3.0 manifest → upgrade toolchain, not downgrade app",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-15",
+      "skill": "fw-app-dev",
+      "label": "client $request.post() → must use $request.invokeTemplate",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-16",
+      "skill": "fw-app-dev",
+      "label": "\"product\" block in manifest → reject, use \"modules\"",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-17",
+      "skill": "fw-app-dev",
+      "label": "Create sidebar app → React Meta + DEW, metaConfig in manifest",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-18",
+      "skill": "fw-app-dev",
+      "label": "Migrate JS → /fdk-react-migrate",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-19",
+      "skill": "fw-app-dev",
+      "label": "Meta app: no Crayons; DEW packages present",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-20",
+      "skill": "fw-app-dev",
+      "label": "Platform 2.x → /fdk-migrate first",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-21",
+      "skill": "fw-app-dev",
+      "label": "\"Vanilla JS\" → vanilla skeleton",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-22",
+      "skill": "fw-app-dev",
+      "label": "Router includes path=\"*\"",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-23",
+      "skill": "fw-app-dev",
+      "label": "metaConfig in manifest.json only",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-24",
+      "skill": "fw-app-dev",
+      "label": "TypeScript .tsx valid",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-25",
+      "skill": "fw-app-dev",
+      "label": "User asks for Tailwind → allowed",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-app-dev-26",
+      "skill": "fw-app-dev",
+      "label": "Custom vite.config.js — FDK merge precedence",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-review-06",
+      "skill": "fw-review",
+      "label": "review with 0 failures → still write .meta.json before App Review Result",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-18",
+      "skill": "fw-publish",
+      "label": "submit_custom_app fails → publish_outcome failed_submit, keep .meta.json",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-19",
+      "skill": "fw-publish",
+      "label": "custom app limit warning must be shown before step 6",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-20",
+      "skill": "fw-publish",
+      "label": "fdk missing at publish → STOP, offer fw-setup",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-21",
+      "skill": "fw-publish",
+      "label": "update existing listing → supportEmail not required",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-publish-22",
+      "skill": "fw-publish",
+      "label": "zip layout gate requires .meta.json in upload package",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-08",
+      "skill": "fw-ai-actions-app",
+      "label": "array of objects in parameters → forbidden",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "fw-ai-actions-09",
+      "skill": "fw-ai-actions-app",
+      "label": "no manifest.json in workspace → inform user and stop",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "spec-03",
+      "skill": "fw-app-dev",
+      "label": "mandatory end-to-end skill order before publish",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "spec-04",
+      "skill": "fw-app-dev",
+      "label": "check-update.sh writes update_check to ~/.fw-dev-tools/.meta.json, not per-app .meta.json",
+      "passed": 1,
+      "total": 1,
+      "pass": true,
+      "attempts": [
+        {
+          "pass": true,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

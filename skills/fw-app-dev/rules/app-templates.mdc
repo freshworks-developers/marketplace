@@ -15,24 +15,41 @@ globs: ["**/manifest.json", "**/server/**/*.js", "**/app/**/*.js"]
 **YES** → Go to Step 2
 **NO** → Use **Serverless Template** (`assets/templates/serverless-skeleton/`)
 
-### Step 2: Does the app need backend logic (events, external APIs, data processing)?
+### Step 2: Did the user explicitly request vanilla JS + Crayons?
 
-**YES** → Go to Step 3
+**YES** → Go to Step 3 (vanilla templates)
+**NO** → **Default: React Meta** — Go to Step 4
+
+### Step 3: Vanilla JS only (explicit opt-in)
+
+**Does the app need backend logic?**
+
+**YES** → OAuth? → `oauth-skeleton` / else `hybrid-skeleton`
 **NO** → Use **Frontend Template** (`assets/templates/frontend-skeleton/`)
 
-### Step 3: Does the app need OAuth authentication?
+### Step 4: React Meta (default for UI apps)
 
-**YES** → Use **OAuth Template** (`assets/templates/oauth-skeleton/`)
-**NO** → Use **Hybrid Template** (`assets/templates/hybrid-skeleton/`)
+**Does the app need backend logic (events, external APIs, data processing)?**
+
+**YES** → Go to Step 5
+**NO** → Use **React Meta Frontend** (`assets/templates/react-meta-frontend-skeleton/`)
+
+### Step 5: Does the app need OAuth authentication?
+
+**YES** → Use **React Meta OAuth** (`assets/templates/react-meta-oauth-skeleton/`)
+**NO** → Use **React Meta Hybrid** (`assets/templates/react-meta-hybrid-skeleton/`)
 
 ## Template Overview
 
 | Template | Location | Use Case | Key Files |
 |----------|----------|----------|-----------|
-| **Frontend** | `assets/templates/frontend-skeleton/` | UI only, no backend | app/, manifest.json, config/iparams.json |
+| **React Meta Frontend** (default) | `assets/templates/react-meta-frontend-skeleton/` | UI only, Meta + DEW | app/, `metaConfig`, package.json, config/iparams.json |
+| **React Meta Hybrid** | `assets/templates/react-meta-hybrid-skeleton/` | UI + Backend + APIs | app/, server/, config/requests.json, `metaConfig` |
+| **React Meta OAuth** | `assets/templates/react-meta-oauth-skeleton/` | UI + Backend + OAuth | app/, server/, oauth_config.json, `metaConfig` |
+| **Frontend** (vanilla opt-in) | `assets/templates/frontend-skeleton/` | Crayons vanilla JS | app/scripts/app.js, Crayons CDN |
 | **Serverless** | `assets/templates/serverless-skeleton/` | Backend events, no UI | server/server.js, manifest.json |
-| **Hybrid** | `assets/templates/hybrid-skeleton/` | UI + Backend + External APIs | app/, server/, config/requests.json |
-| **OAuth** | `assets/templates/oauth-skeleton/` | UI + Backend + OAuth | app/, server/, config/oauth_config.json |
+| **Hybrid** (vanilla opt-in) | `assets/templates/hybrid-skeleton/` | Vanilla UI + Backend | app/, server/, config/requests.json |
+| **OAuth** (vanilla opt-in) | `assets/templates/oauth-skeleton/` | Vanilla UI + OAuth | app/, server/, config/oauth_config.json |
 
 ## Template Usage Instructions
 
@@ -79,7 +96,17 @@ Update `manifest.json` module names based on target product:
 
 ### 5. Verify Mandatory Files
 
-**Frontend apps MUST have:**
+**React Meta frontend apps MUST have:**
+- [VALID] `manifest.json` → `metaConfig.framework: "react"`
+- [VALID] `package.json` with React 19+, `@freshworks/dew-components`, `@freshworks/dew-styles`
+- [VALID] `app/index.html` at app root with `#root`
+- [VALID] `app/index.jsx` + `app/components/` (Router with `path="*"`)
+- [VALID] Icon file matching manifest `location.icon` (e.g. `app/icon.svg`)
+- [VALID] `config/iparams.json` (can be minimal)
+- [VALID] Optional: `vite.config.js`, Tailwind/PostCSS configs (see `react-meta-patterns.mdc`)
+- [INVALID] `@freshworks/crayons` or Crayons CDN in Meta apps
+
+**Vanilla frontend apps MUST have:**
 - [VALID] `app/index.html` with Crayons CDN
 - [VALID] `app/scripts/app.js`
 - [VALID] `app/styles/style.css`
@@ -105,7 +132,7 @@ Update `manifest.json` module names based on target product:
 
 - [VALID] Use `"platform-version": "3.0"`
 - [VALID] Use `"modules"` structure (NOT `"product"`)
-- [VALID] Use Crayons components (NOT plain HTML)
+- [VALID] React Meta: **required** `@freshworks/dew-components` + `@freshworks/dew-styles` (NOT Crayons)
 - [VALID] Use `$request.invokeTemplate()` (NOT `$request.post()`)
 
 ### Mandatory Patterns
@@ -130,32 +157,23 @@ All templates are in: `skills/fw-app-dev/assets/templates/`
 
 ```
 assets/templates/
-├── frontend-skeleton/       # UI only
-│   ├── app/
-│   ├── manifest.json
-│   └── config/iparams.json
-├── serverless-skeleton/     # Backend only
-│   ├── server/server.js
-│   ├── manifest.json
-│   └── config/iparams.json
-├── hybrid-skeleton/         # UI + Backend
-│   ├── app/
-│   ├── server/server.js
-│   ├── config/requests.json
-│   └── manifest.json
-└── oauth-skeleton/          # UI + Backend + OAuth
-    ├── app/
-    ├── server/server.js
-    ├── config/oauth_config.json
-    ├── config/requests.json
-    └── manifest.json
+├── react-meta-frontend-skeleton/   # DEFAULT — UI only, Meta + DEW
+├── react-meta-hybrid-skeleton/     # DEFAULT — UI + Backend
+├── react-meta-oauth-skeleton/      # DEFAULT — UI + OAuth
+├── frontend-skeleton/              # Vanilla opt-in
+├── serverless-skeleton/            # Backend only
+├── hybrid-skeleton/                # Vanilla opt-in
+└── oauth-skeleton/                 # Vanilla opt-in
 ```
+
+Prefer **`fdk create --template react-starter-template`** when CLI is available; fall back to copying `react-meta-*` skeletons.
 
 ## Quick Reference: Common Scenarios
 
 | Scenario | Template | Why |
 |----------|----------|-----|
-| Display data in sidebar | Frontend | No backend needed |
+| Display data in sidebar | React Meta Frontend | Default Meta + DEW UI |
+| Display data (vanilla JS requested) | Frontend | Explicit Crayons opt-in |
 | Send webhook on ticket create | Serverless | No UI needed |
 | Fetch external API data | Hybrid | UI + backend API calls |
 | Integrate with GitHub | OAuth | Requires OAuth flow |

@@ -16,9 +16,10 @@ alwaysApply: true
 
 **BEFORE writing any code, you MUST:**
 
-1. **Determine app type:** Frontend / Serverless / Hybrid — See **app-templates.mdc** for how to choose
+1. **Determine app type:** Frontend / Serverless / Hybrid — See **app-templates.mdc** (React Meta is default for UI)
 2. **If manifest will declare ANY `location`** (ticket_sidebar, full_page_app, asset_sidebar, etc.):
-   - ✅ You MUST create the FULL frontend structure (app/, index.html, scripts/app.js, styles/style.css, styles/images/icon.svg)
+   - **React Meta** (`metaConfig.framework: "react"`): create `app/index.html`, `app/index.jsx`, `app/components/`, icon per manifest, `package.json` with DEW deps
+   - **Vanilla opt-in:** create FULL frontend structure (app/, index.html, scripts/app.js, styles/style.css, styles/images/icon.svg)
    - ❌ NEVER declare a location without creating ALL referenced files
 3. **If manifest will declare `url: "index.html"`**:
    - ✅ app/index.html MUST exist before you finish
@@ -57,6 +58,21 @@ alwaysApply: true
 
 **If app has ANY frontend (location declared):**
 
+**React Meta** (`metaConfig.framework: "react"`):
+
+```
+app/
+├── index.html          ← REQUIRED (or manifest url)
+├── index.jsx           ← REQUIRED entry
+├── icon.svg            ← REQUIRED (or path in manifest icon)
+├── components/         ← REQUIRED (App, Router with path="*")
+└── styles/
+    └── app.css         ← REQUIRED
+package.json            ← REQUIRED (React, DEW — no Crayons)
+```
+
+**Vanilla JS (explicit opt-in):**
+
 ```
 app/
 ├── index.html          ← REQUIRED (or whatever url is in manifest)
@@ -68,7 +84,16 @@ app/
         └── icon.svg    ← REQUIRED - NEVER SKIP
 ```
 
-**Checklist - ALL must be YES before marking app complete:**
+**Checklist - React Meta - ALL must be YES before marking app complete:**
+- [ ] `metaConfig.framework` is `"react"` in manifest.json
+- [ ] app/index.html exists at app root
+- [ ] app/index.jsx and app/components/ exist
+- [ ] package.json includes `@freshworks/dew-components` and `@freshworks/dew-styles`
+- [ ] Router includes fallback route `path="*"`
+- [ ] No `@freshworks/crayons` in package.json or HTML CDN scripts
+- [ ] Icon file exists at manifest-declared path
+
+**Checklist - Vanilla - ALL must be YES:**
 - [ ] app/ folder exists
 - [ ] app/index.html exists (or file matching manifest url)
 - [ ] app/scripts/app.js exists
