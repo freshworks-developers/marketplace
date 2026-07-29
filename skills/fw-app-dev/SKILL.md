@@ -267,7 +267,8 @@ Before generating ANY code, verify these are NEVER present:
 
 8. **[ALERT] Manifest-to-File Consistency (CRITICAL)**
    - **If manifest has `location` with `url: "index.html"` → `app/index.html` MUST exist**
-   - **If manifest has `location` with `icon: "styles/images/icon.svg"` → `app/styles/images/icon.svg` MUST exist**
+   - **React Meta:** if manifest declares `icon: "icon.svg"` (or another path) → file MUST exist at that path under `app/` (react-meta skeletons use **`app/icon.svg`**); **`app/index.jsx`** MUST exist
+   - **Vanilla JS (opt-in):** if manifest declares `icon: "styles/images/icon.svg"` → **`app/styles/images/icon.svg`** MUST exist; UI logic in **`app/scripts/app.js`**
    - **If manifest has `functions` or `events` → `server/server.js` MUST exist**
    - [INVALID] NEVER create manifest referencing files that don't exist
    - [VALID] ALWAYS create files BEFORE adding them to manifest
@@ -371,7 +372,7 @@ Use this process for every app request so the right features are generated.
 - Request: Freshservice, ticket_sidebar, button "Get status", use requester email, Microsoft Teams presence via Graph, show result.
 - **Data methods:** Use both `client.data.get("ticket")` for requester email (for presence) and `client.data.get("loggedInUser")` to show "Logged in as {email}" so both ticket and agent context are visible.
 - **Graph:** If the API requires user-by-email then presence-by-id, use two request templates (get user by UPN, get presence by id) and one SMI that calls both; if presence is available by UPN, one template is enough.
-- **Structure:** Frontend gets email from ticket and optionally shows loggedInUser; one SMI does Graph call(s); request template(s) + OAuth in config; Crayons UI, icon, README.
+- **Structure:** Frontend gets email from ticket and optionally shows loggedInUser; one SMI does Graph call(s); request template(s) + OAuth in config; **DEW UI (Meta default)** or **Crayons (vanilla opt-in)**, icon, README.
 
 ## React Meta framework (default UI)
 
@@ -442,7 +443,7 @@ External API → React Meta Hybrid + `requests.json`; OAuth → `react-meta-oaut
    - Fix JSON structure errors (multiple top-level objects → merge)
    - Fix comma placement (missing commas → add, trailing commas → remove)
    - Fix template syntax (`{{variable}}` → `<%= context.variable %>`)
-   - Create missing mandatory files (`icon.svg`, `iparams.json`, `README.md`)
+   - Create missing mandatory files (**Meta:** `app/icon.svg`; **vanilla:** `app/styles/images/icon.svg`; **always:** `config/iparams.json`, `README.md`)
    - Fix FQDN issues (host with path → FQDN only)
    - Fix path issues (missing `/` → add `/` prefix)
    - Re-run `fdk validate`

@@ -1182,4 +1182,26 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
+  // fw-app-dev-50: explicit vanilla opt-in — frontend-skeleton, not /fdk-react-create
+  {
+    id: 'fw-app-dev-50',
+    skill: 'fw-app-dev',
+    label: 'explicit vanilla JS / Crayons request → vanilla skeletons, not React Meta',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Developer asks: "Build a Freshdesk sidebar app using vanilla JavaScript and Crayons components — no React." According to fw-app-dev: should /fdk-react-create or react-meta skeletons be used, or should the agent use vanilla frontend/hybrid/oauth skeletons with app/scripts/app.js and Crayons CDN?',
+    schema: {
+      type: 'object',
+      required: ['uses_vanilla_skeleton', 'avoids_react_meta'],
+      properties: {
+        uses_vanilla_skeleton: { type: 'boolean' },
+        avoids_react_meta: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_vanilla_skeleton, true, 'explicit vanilla request must use vanilla skeletons');
+      assert.equal(output.avoids_react_meta, true, 'must not scaffold React Meta when vanilla is explicitly requested');
+    },
+  },
+
 ];

@@ -176,6 +176,21 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
     assert.ok(ok, 'fw-app-dev/SKILL.md must default new UI apps to React Meta with vanilla as opt-in');
   });
 
+  test('fw-app-dev-50 explicit vanilla request uses vanilla skeletons not React Meta', async () => {
+    const c = await readSkill('fw-app-dev');
+    const ok = /user asked vanilla JS|explicitly.*vanilla|vanilla JS\?/i.test(c)
+      && /frontend-skeleton|vanilla.*skeleton/i.test(c)
+      && /app\/scripts\/app\.js/i.test(c);
+    assert.ok(ok, 'fw-app-dev/SKILL.md must route explicit vanilla requests to vanilla skeletons with app/scripts/app.js');
+  });
+
+  test('SKILL.md manifest-to-file rule covers Meta icon.jsx and vanilla icon.js paths', async () => {
+    const c = await readSkill('fw-app-dev');
+    const ok = /app\/icon\.svg/i.test(c) && /app\/index\.jsx/i.test(c)
+      && /app\/styles\/images\/icon\.svg/i.test(c) && /app\/scripts\/app\.js/i.test(c);
+    assert.ok(ok, 'SKILL.md must document Meta vs vanilla manifest-to-file paths');
+  });
+
   test('SKILL.md splits Meta vs vanilla engine pins', async () => {
     const c = await readSkill('fw-app-dev');
     const ok = /10\.1\.0/i.test(c) && /React Meta.*10\.1\.0|Meta.*10\.1\.0/i.test(c)
