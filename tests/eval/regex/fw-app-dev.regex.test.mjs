@@ -168,4 +168,19 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
     assert.ok(ok, 'fdk-react-migrate.md must set react_meta_workflow=react-migrate via meta-update.sh');
   });
 
+  test('fw-app-dev-49 new UI app defaults to React Meta unless user opts into vanilla Crayons', async () => {
+    const c = await readSkill('fw-app-dev');
+    const ok = /React Meta.*default|default.*React Meta/i.test(c)
+      && /vanilla.*opt-in|opt-in.*vanilla|explicitly.*vanilla/i.test(c)
+      && /fdk-react-create|react-meta/i.test(c);
+    assert.ok(ok, 'fw-app-dev/SKILL.md must default new UI apps to React Meta with vanilla as opt-in');
+  });
+
+  test('SKILL.md splits Meta vs vanilla engine pins', async () => {
+    const c = await readSkill('fw-app-dev');
+    const ok = /10\.1\.0/i.test(c) && /React Meta.*10\.1\.0|Meta.*10\.1\.0/i.test(c)
+      && /10\.0\.1/i.test(c) && /vanilla|serverless/i.test(c);
+    assert.ok(ok, 'SKILL.md must document Meta engines 10.1.0 and vanilla/serverless 10.0.1');
+  });
+
 });

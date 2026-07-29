@@ -8,8 +8,8 @@ export default function App() {
     <PlaceholderWrapper>
       <BrowserRouter>
         <Routes>
-          <Route path="*" element={<Home />} />
           <Route path="/app/demo" element={<DemoPage />} />
+          <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </PlaceholderWrapper>

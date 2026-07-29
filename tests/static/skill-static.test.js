@@ -512,6 +512,11 @@ describe('React Meta skeleton templates', () => {
     test(`${name}: index.html at app root`, async () => {
       assert.ok(await fileExists(join(base, 'app', 'index.html')), 'app/index.html must exist');
     });
+
+    test(`${name}: index.html includes appclient script`, async () => {
+      const html = await readFile(join(base, 'app', 'index.html'), 'utf8');
+      assert.ok(html.includes('{{{appclient}}}'), 'index.html must include {{{appclient}}} for PlaceholderWrapper');
+    });
   }
 
   test('react-meta reference docs mention vite merge and Tailwind', async () => {
@@ -552,6 +557,10 @@ describe('React Meta skeleton templates', () => {
     const migrate = await readRepo('skills/fw-app-dev/commands/fdk-react-migrate.md');
     assert.ok(create.includes('react_meta_workflow=react-create'));
     assert.ok(migrate.includes('react_meta_workflow=react-migrate'));
+    assert.ok(create.includes('meta-init.sh <app-directory>'));
+    assert.ok(!create.includes('meta-init.sh <app-directory> <ide-client>'));
+    assert.ok(migrate.includes('meta-init.sh <app-directory>'));
+    assert.ok(!migrate.includes('meta-init.sh <app-directory> <ide-client>'));
   });
 });
 

@@ -99,7 +99,7 @@ Fix errors per **validation-workflow.mdc** (up to 6 iterations). **Do not** remo
 **Scripts only — DO NOT hand-write JSON.**
 
 ```bash
-bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory> <ide-client>
+bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
 bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
   invoked=1 skill_version=<version> validate_iterations=<n> react_meta_workflow=react-create
 ```
