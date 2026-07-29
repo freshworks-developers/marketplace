@@ -29,3 +29,5 @@ We aim to acknowledge reports within **5 business days**. We will work with you 
 **In scope:** `@freshworks/fw-dev-tools` installer, bundled skills, scripts under `skills/shared/scripts/`, and repository MCP configuration (`.mcp.json`).
 
 **Out of scope:** vulnerabilities in third-party services, the Freshworks Platform or FDK itself, or custom apps built using these skills.
+
+**Disclaimer:** Apps published via **fw-publish** include **`.meta.json`** at the zip root by design for server-side skill-quality metrics; this is separate from install state at `~/.fw-dev-tools/.meta.json`.

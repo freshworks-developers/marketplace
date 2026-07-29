@@ -2,11 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { writeFile, rm, mkdir } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
-import { homedir } from 'node:os';
+import { INSTALL_JSON } from '../src/utils.js';
 
-// version-check.js uses a module-level INSTALL_JSON constant derived from homedir().
-// We test the exported logic against the real install.json path, cleaning up after.
-const INSTALL_JSON = join(homedir(), '.fw-dev-tools', '.meta.json');
+// version-check.js reads install state via utils (respects FW_DEV_TOOLS_HOME in test runs).
 
 async function writeState(data) {
   await mkdir(dirname(INSTALL_JSON), { recursive: true });

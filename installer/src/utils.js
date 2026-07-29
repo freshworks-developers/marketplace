@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { cp, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -9,7 +9,9 @@ export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
 export const SCRIPTS_SRC = join(REPO_ROOT, 'skills', 'shared', 'scripts');
 export const META_TEMPLATE = join(REPO_ROOT, 'skills', 'shared', '.meta.template.json');
-export const FW_DEV_TOOLS_DIR = join(homedir(), '.fw-dev-tools');
+export const FW_DEV_TOOLS_DIR = process.env.FW_DEV_TOOLS_HOME
+  ? process.env.FW_DEV_TOOLS_HOME
+  : join(homedir(), '.fw-dev-tools');
 export const INSTALL_JSON = join(FW_DEV_TOOLS_DIR, '.meta.json');
 
 const DEFAULT_UPDATE_CHECK = {
@@ -76,16 +78,16 @@ export async function removeClaudePluginCache(
 }
 
 /**
- * Copy all skill subdirectories from the repo's skills/ into targetDir.
- * Each skill gets its own subdirectory: targetDir/fw-setup/, targetDir/fw-app-dev/, etc.
+ * Copy installable skill trees from skills/ into targetDir.
+ * Only FW_SKILLS (+ legacy names) — not skills/shared/ (scripts go via copyScripts()).
  */
 export async function copySkills(targetDir) {
   await mkdir(targetDir, { recursive: true });
-  const skills = await readdir(SKILLS_SRC, { withFileTypes: true });
-  for (const entry of skills) {
-    if (!entry.isDirectory()) continue;
-    const dest = join(targetDir, entry.name);
-    await cp(join(SKILLS_SRC, entry.name), dest, { recursive: true });
+  const names = [...FW_SKILLS, ...FW_SKILLS_LEGACY];
+  for (const skill of names) {
+    const src = join(SKILLS_SRC, skill);
+    if (!existsSync(src)) continue;
+    await cp(src, join(targetDir, skill), { recursive: true });
   }
 }
 

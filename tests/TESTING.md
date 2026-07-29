@@ -33,10 +33,21 @@ No LLM or API keys required.
 
 | Workflow | Runs | What it gates |
 |----------|------|---------------|
-| `ci.yml` | Layers 1 + 2 + 3 | installer tests, static tests, regex evals |
+| `ci.yml` | Layers 1 + 2 + 3 (PR/push); layers 2–4 optional (manual) | installer tests, static tests, regex evals; on-demand eval report when **Run skill evals** is checked |
 | `dependency-review.yml` | — | High/critical CVEs on new deps |
 | `dependency-audit.yml` | — | Lockfile audit (installer, tests) |
 | `secret-scan.yml` | — | gitleaks secret scan |
+
+### When to run which layer
+
+| Change type | Required before merge |
+|-------------|----------------------|
+| **Any PR** | Layers **1–3** — automatic via `ci.yml` (installer + static + regex) |
+| **`SKILL.md`, command, rule, `.meta.template.json`** | Layer **4** locally (or manual workflow) + attach **`tests/all-tests-report.html`** to the PR |
+| **`installer/` changes** | Layer **1** in CI + optional **`bash tests/e2e/e2e.sh --from-repo`** locally |
+| **Release / major refactor** | **`bash tests/run-all-tests.sh --llm-eval --e2e`** — all layers |
+
+Layer 4 is **not** in PR CI (no agent CLI or API key on default runners). PR authors run evals locally or a maintainer triggers **[CI](https://github.com/freshworks-developers/fw-dev-tools/actions/workflows/ci.yml)** with **Run skill evals** checked (`workflow_dispatch`). Without `claude`/`cursor` on the runner, Layer 4 scenarios are skipped and the uploaded report reflects layers 2–3 only.
 
 ### Local only (run before submitting a PR)
 

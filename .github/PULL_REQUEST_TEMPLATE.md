@@ -33,7 +33,7 @@ cd tests && npm install && npm test        # static + parser + regex evals — r
 
 ### LLM evals (required when `SKILL.md`, a command file, or `.meta.template.json` is modified)
 
-Behavioral scenarios in `tests/eval/scenarios/*.js` (with matching regex checks in `tests/eval/regex/`). Run via:
+See **When to run which layer** in [`tests/TESTING.md`](tests/TESTING.md). Behavioral scenarios live in `tests/eval/scenarios/*.js` (with matching regex checks in `tests/eval/regex/`). Run via:
 
 ```bash
 cd tests && npm run eval                   # static + regex + LLM evals + HTML report
