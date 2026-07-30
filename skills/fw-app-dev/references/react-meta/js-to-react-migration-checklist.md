@@ -17,7 +17,8 @@ Use with **`/fdk-react-migrate`**.
 ## Frontend
 
 - [ ] Keep HTML at `app/` or `config/` root
-- [ ] Replace Crayons CDN with React entry (`app/index.jsx`)
+- [ ] Load DEW styles via `app/styles/app.css` `@import` — **no `<DewTheme>` JSX wrapper**
+- [ ] Replace Crayons CDN with React entry (`app/index.jsx` + `app/mount.jsx`)
 - [ ] Port `app/scripts/app.js` logic to `app/components/*.jsx`
 - [ ] Add React Router: specific `/app/...` routes **before** `path="*"` catch-all
 - [ ] **Remap navigation:** every old link/view path → `/app/...`; update all `Link` / `navigate()` / `href` targets

@@ -517,6 +517,26 @@ describe('React Meta skeleton templates', () => {
       const html = await readFile(join(base, 'app', 'index.html'), 'utf8');
       assert.ok(html.includes('{{{appclient}}}'), 'index.html must include {{{appclient}}} for PlaceholderWrapper');
     });
+
+    test(`${name}: index.jsx does not wrap root in DewTheme`, async () => {
+      const entry = await readFile(join(base, 'app', 'index.jsx'), 'utf8');
+      assert.ok(!entry.includes('<DewTheme'), 'DewTheme is not a React component — must not wrap App root');
+      assert.ok(entry.includes('./styles/app.css'), 'index.jsx must import app.css (DEW tokens + app styles)');
+      assert.ok(entry.includes('./mount'), 'index.jsx must delegate render to app/mount.jsx');
+    });
+
+    test(`${name}: app/styles/app.css loads DEW token CSS`, async () => {
+      const css = await readFile(join(base, 'app', 'styles', 'app.css'), 'utf8');
+      assert.ok(css.includes('@freshworks/dew-styles/dist/colors.css'));
+      assert.ok(css.includes('fonts.css'));
+      assert.ok(css.includes('numbers.css'));
+    });
+
+    test(`${name}: mount.jsx includes RootErrorBoundary`, async () => {
+      const mount = await readFile(join(base, 'app', 'mount.jsx'), 'utf8');
+      assert.ok(mount.includes('getDerivedStateFromError'), 'mount.jsx should include RootErrorBoundary');
+      assert.ok(mount.includes('mountApp'), 'mount.jsx must export mountApp');
+    });
   }
 
   test('react-meta reference docs mention vite merge and Tailwind', async () => {
@@ -533,6 +553,7 @@ describe('React Meta skeleton templates', () => {
     assert.ok(dew.includes('@freshworks/dew-styles'));
     assert.ok(dew.includes('dew.freshworkscorp.com/dew-3.0'));
     assert.ok(!dew.includes('github.com/freshworks/fw-dew'));
+    assert.ok(/Do not.*DewTheme|not a React component/i.test(dew), 'must warn against DewTheme JSX wrapper');
   });
 
   test('react-meta-patterns.mdc exists', async () => {

@@ -26,6 +26,7 @@ globs: ["**/manifest.json", "**/app/**/*.{jsx,tsx,js,ts,html}", "**/vite.config.
 - `@freshworks/crayons`, Crayons CDN, `<fw-*>` web components
 - Plain HTML form controls as primary UI (use DEW React components)
 - `metaConfig` outside `manifest.json`
+- **`<DewTheme>` as a JSX wrapper** — `DewTheme` is a Tailwind config export, not a React component (causes blank UI / invalid element type)
 
 ## Allowed alongside DEW
 

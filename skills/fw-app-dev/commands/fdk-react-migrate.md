@@ -56,7 +56,7 @@ See **`references/react-meta/js-to-react-migration-checklist.md`**.
 
 1. **Keep** `app/index.html` at app root (update to `#root` shell; retain `{{{appclient}}}` if SMI/Data/Request used).
 2. **Remove** Crayons CDN scripts from HTML.
-3. Create **`app/index.jsx`** entry importing DEW styles + App component.
+3. Create **`app/index.jsx`** + **`app/mount.jsx`** — import DEW tokens via `app/styles/app.css`; **do not** wrap root in `<DewTheme>` (not a React component)
 4. Move UI logic from **`app/scripts/app.js`** into **`app/components/`** as React components.
 5. Add **React Router** with `path="*"` home route and `/app/...` feature routes — **specific `/app/...` routes before the `path="*"` catch-all**.
 6. **Remap all navigation paths (CRITICAL — UI breaks if skipped):**
