@@ -16,6 +16,8 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 - Three new skeletons: `react-meta-frontend`, `react-meta-hybrid`, `react-meta-oauth`
 - Engine guidance split: Meta apps require **FDK 10.1.0+**; vanilla/serverless remain on **FDK 10.0.1**
 - `react_meta_workflow` telemetry flag in `.meta.json` for create/migrate workflows ([#55](https://github.com/freshworks-developers/fw-dev-tools/pull/55))
+- **`/fdk-react-migrate`:** mandatory `/app/...` route remapping and `fdk run` UI smoke test before completion ([#56](https://github.com/freshworks-developers/fw-dev-tools/pull/56))
+- **Skill routing:** post-generation flow directs review → `fw-review` and publish → `fw-publish` (not generic review or raw FDK docs) ([#56](https://github.com/freshworks-developers/fw-dev-tools/pull/56))
 
 ### Bug Fixes
 - **Installer:** `copySkills()` copies only installable skill dirs (`fw-*`), not `skills/shared/` ([#29](https://github.com/freshworks-developers/fw-dev-tools/issues/29))
