@@ -19,7 +19,9 @@ Use with **`/fdk-react-migrate`**.
 - [ ] Keep HTML at `app/` or `config/` root
 - [ ] Replace Crayons CDN with React entry (`app/index.jsx`)
 - [ ] Port `app/scripts/app.js` logic to `app/components/*.jsx`
-- [ ] Add React Router with `path="*"` + `/app/...` routes
+- [ ] Add React Router: specific `/app/...` routes **before** `path="*"` catch-all
+- [ ] **Remap navigation:** every old link/view path → `/app/...`; update all `Link` / `navigate()` / `href` targets
+- [ ] **Multi-location:** each manifest `location.url` HTML at `app/` root with `#root` (+ `{{{appclient}}}` if SMI/Data/Request)
 - [ ] Replace `<fw-*>` / plain HTML with DEW components
 - [ ] Preserve `{{{appclient}}}` where SMI/Data/Request used
 - [ ] Update icon path if moving to `app/icon.svg`
@@ -40,4 +42,5 @@ Use with **`/fdk-react-migrate`**.
 
 - [ ] `npm install`
 - [ ] `fdk validate` → 0 platform, 0 lint errors
+- [ ] **`fdk run` + product smoke test** — UI loads, routes navigate (not blank / not stuck on Loading…)
 - [ ] Write `.meta.json` via meta scripts

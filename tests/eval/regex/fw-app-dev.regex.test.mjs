@@ -168,6 +168,13 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
     assert.ok(ok, 'fdk-react-migrate.md must set react_meta_workflow=react-migrate via meta-update.sh');
   });
 
+  test('fdk-react-migrate requires route remapping and fdk run smoke test', async () => {
+    const c = await readCmd('fw-app-dev', 'fdk-react-migrate');
+    const ok = /\/app\/\.\.\.|Remap all navigation|route remapping/i.test(c)
+      && /fdk run/i.test(c) && /Loading/i.test(c);
+    assert.ok(ok, 'fdk-react-migrate.md must require /app/... path remapping and UI smoke test via fdk run');
+  });
+
   test('fw-app-dev-49 new UI app defaults to React Meta unless user opts into vanilla Crayons', async () => {
     const c = await readSkill('fw-app-dev');
     const ok = /React Meta.*default|default.*React Meta/i.test(c)

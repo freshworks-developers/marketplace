@@ -58,10 +58,16 @@ See **`references/react-meta/js-to-react-migration-checklist.md`**.
 2. **Remove** Crayons CDN scripts from HTML.
 3. Create **`app/index.jsx`** entry importing DEW styles + App component.
 4. Move UI logic from **`app/scripts/app.js`** into **`app/components/`** as React components.
-5. Add **React Router** with `path="*"` home route and `/app/...` feature routes.
-6. Replace Crayons / plain HTML with DEW components from `@freshworks/dew-components` + `@freshworks/dew-styles`.
-7. **Delete or archive** `app/scripts/app.js` after logic is ported (Meta bundles via Vite).
-8. Update icon path in manifest if moving icon to `app/icon.svg`.
+5. Add **React Router** with `path="*"` home route and `/app/...` feature routes — **specific `/app/...` routes before the `path="*"` catch-all**.
+6. **Remap all navigation paths (CRITICAL — UI breaks if skipped):**
+   - Grep `app/` for old paths: `href=`, `window.location`, `navigate(`, `<Link to=`, click handlers that change views.
+   - Map each vanilla page/view to a React Router route under **`/app/...`** (e.g. `/demo` → `/app/demo`).
+   - Add a matching `<Route path="/app/...">` for every feature page; update every `Link` / `navigate()` to the new path.
+   - Do **not** leave stale vanilla-only paths — `fdk validate` can pass while the UI stays blank or routes fail.
+7. **Multi-location HTML:** For **each** manifest `location.url` (e.g. `index.html`, `ticketSidebar.html`), ensure the file exists at **`app/` root** (not under `components/`) with **`#root`** and **`{{{appclient}}}`** when SMI/Data/Request is used.
+8. Replace Crayons / plain HTML with DEW components from `@freshworks/dew-components` + `@freshworks/dew-styles`.
+9. **Delete or archive** `app/scripts/app.js` after logic is ported (Meta bundles via Vite).
+10. Update icon path in manifest if moving icon to `app/icon.svg`.
 
 **Do not** move manifest-referenced HTML under `app/components/`.
 
@@ -82,9 +88,18 @@ fdk validate
 
 Fix per **validation-workflow.mdc** (up to 6 iterations). **Do not** strip third-party libraries added for the app.
 
+## Step 7b: UI smoke test (MANDATORY before complete)
+
+`fdk validate` alone does **not** prove the migrated UI works.
+
+1. Run **`fdk run`** in the app directory.
+2. Open the app in the product with **`?dev=true`** at the declared manifest location.
+3. Confirm: app renders (not stuck on **Loading…**), home route loads, **`/app/...`** feature links navigate correctly.
+4. If UI is blank or routes fail → fix path remapping (Step 5.6) and re-test. **Do not** report migrate complete until UI loads.
+
 ## Step 8: MANDATORY — Write .meta.json (DO NOT SKIP)
 
-**Scripts only — DO NOT hand-write JSON.**
+**Run only after Step 7b passes.** Scripts only — DO NOT hand-write JSON.
 
 ```bash
 bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>

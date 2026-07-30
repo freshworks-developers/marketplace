@@ -2,11 +2,15 @@
 
 Validation: [0 platform errors, 0 lint errors]
 
-Next steps:
+Local test:
 1. cd <app-directory>
 2. fdk run
 3. Test in Freshworks product with ?dev=true
 
-Would you like me to review and publish this app to the Freshworks Marketplace? (yes / no)
-- yes → run fw-review now, then fw-publish
-- no  → you're done; run the above steps to test locally
+Marketplace path (mandatory order — use skills, not generic AI review or raw FDK docs):
+- Review → open **fw-review** skill (expect `## App Review Result` only)
+- Pack / publish → open **fw-publish** skill (only after fw-review passes)
+
+Would you like me to run **fw-review** now, then **fw-publish**? (yes / no)
+- yes → fw-review first, then fw-publish
+- no  → local test above; say "run fw-review" or "run fw-publish" when ready

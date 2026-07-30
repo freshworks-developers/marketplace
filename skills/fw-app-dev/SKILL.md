@@ -604,7 +604,15 @@ Vanilla Crayons docs: `references/ui/crayons-docs/{component}.md` · Meta: `refe
 
 ## Post-Generation Message
 
-After successfully generating an app, use [`references/templates/post-generation-message.txt`](references/templates/post-generation-message.txt).
+After successfully generating or migrating an app, use [`references/templates/post-generation-message.txt`](references/templates/post-generation-message.txt).
+
+**Skill routing (mandatory — do not substitute generic review or FDK docs):**
+
+| User intent | Route to | Not acceptable |
+|-------------|----------|----------------|
+| Review / audit app | **`fw-review`** skill (structured report per that skill) | Generic code review, no skill |
+| Pack / publish / upload | **`fw-publish`** skill (after **fw-review**) | Raw `fdk pack` from docs alone |
+| Migrate vanilla → Meta | **`/fdk-react-migrate`** on **vanilla** 3.0 app only | Re-migrate an already-Meta app |
 
 **Optional MCP (once, if not configured):** check per [`references/examples/mcp-availability-check.md`](references/examples/mcp-availability-check.md); prompt from [`references/templates/mcp-config-prompt.txt`](references/templates/mcp-config-prompt.txt). If YES → `AGENTS.md` + `skills/fw-publish/SKILL.md`.
 
