@@ -1,7 +1,7 @@
 {
   "name": "fw-review",
   "displayName": "Freshworks App Review",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Automated Freshworks custom app audit: iparams, frontend, script-backed checks, security, and structured report output (rules + scripts).",
   "author": {
     "name": "Freshworks Developers",

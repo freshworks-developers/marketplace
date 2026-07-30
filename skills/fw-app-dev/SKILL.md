@@ -1,6 +1,6 @@
 ---
 name: fw-app-dev
-version: "1.2.0"
+version: "1.3.0"
 description: "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 marketplace apps. REQUIRES Node.js 24.x + FDK 10.x. New UI apps default to React Meta (DEW, metaConfig.framework react); vanilla Crayons is opt-in. Commands: /fdk-react-create, /fdk-react-migrate, /fdk-fix, /fdk-migrate, /fdk-refactor. Does NOT install FDK/Node—use fw-setup."
 compatibility: "Freshworks Platform 3.0. PREREQUISITES: Node.js 24.x + FDK 10.x must be installed. Default engines: FDK 10.0.1 + Node 24.11.0; Meta apps: FDK 10.1.0 minimum. Last-resort engines downgrade (FDK 9.8.2 + Node 18.20.8) only after six fdk validate fix iterations and toolchain-only failure—see SKILL.md."
 argument-hint: "[fdk-react-create|fdk-react-migrate|fdk-fix|fdk-migrate|fdk-refactor]"

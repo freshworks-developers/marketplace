@@ -6,20 +6,42 @@ All notable changes to `@freshworks/fw-dev-tools` are documented here.
 
 ## [Unreleased]
 
+---
+
+## [1.3.0] — 2026-07-30
+
+### React Meta (fw-app-dev)
+- **React Meta is now the default UI stack** for new Platform 3.0 apps — DEW components, `metaConfig.framework: "react"`, React Router
+- New commands: **`/fdk-react-create`** (scaffold) and **`/fdk-react-migrate`** (vanilla JS → React Meta)
+- Three new skeletons: `react-meta-frontend`, `react-meta-hybrid`, `react-meta-oauth`
+- Engine guidance split: Meta apps require **FDK 10.1.0+**; vanilla/serverless remain on **FDK 10.0.1**
+- `react_meta_workflow` telemetry flag in `.meta.json` for create/migrate workflows ([#55](https://github.com/freshworks-developers/fw-dev-tools/pull/55))
+- **`/fdk-react-migrate`:** mandatory `/app/...` route remapping and `fdk run` UI smoke test before completion ([#56](https://github.com/freshworks-developers/fw-dev-tools/pull/56))
+- **Skill routing:** post-generation flow directs review → `fw-review` and publish → `fw-publish` (not generic review or raw FDK docs) ([#56](https://github.com/freshworks-developers/fw-dev-tools/pull/56))
+
 ### Bug Fixes
 - **Installer:** `copySkills()` copies only installable skill dirs (`fw-*`), not `skills/shared/` ([#29](https://github.com/freshworks-developers/fw-dev-tools/issues/29))
 - **Codex installer:** write MCP config to `~/.codex/mcp.json` instead of `process.cwd()/.mcp.json` so install location no longer depends on shell working directory ([#42](https://github.com/freshworks-developers/fw-dev-tools/issues/42))
+- **Cursor uninstall:** remove `fw-dev-mcp` from `~/.cursor/mcp.json` on uninstall, preserving other MCP entries ([#28](https://github.com/freshworks-developers/fw-dev-tools/issues/28))
+- **macOS Tahoe (Darwin 25+):** strip `com.apple.provenance` xattr after `writeInstallState()` to prevent EPERM on `.meta.json` writes ([#27](https://github.com/freshworks-developers/fw-dev-tools/issues/27))
+
+### Changed
+- **meta-init.sh:** auto-detect IDE client from environment variables; optional second argument; skills call `meta-init.sh <app-dir>` only (supersedes PR #53)
+- **fw-ai-actions-app:** `README.md` is now a mandatory build step with consolidated template in `ai-actions-readme.mdc`
+- **CI:** fold manual skill evals into `ci.yml` (`workflow_dispatch` + **Run skill evals**); remove `eval-manual.yml`; unify to Node 24
+- Replace deprecated `@anthropic-ai/add-skill` install references with `npx @freshworks/fw-dev-tools install` ([#33](https://github.com/freshworks-developers/fw-dev-tools/issues/33))
 
 ### Documentation
 - **fw-app-dev:** fix stale OAuth checklist in `fdk_create.md` — Platform 3.0 `options.oauth` pattern instead of `auth_type` ([#32](https://github.com/freshworks-developers/fw-dev-tools/issues/32))
 - **fw-app-dev:** fix Best Practices #4 in `oauth-configuration-latest.md` — `client_secret` belongs in `oauth_config.json`, not `iparams.json` ([#31](https://github.com/freshworks-developers/fw-dev-tools/issues/31))
 - **fw-setup:** document dual-stack FDK coexistence via nvm; clarify same-Node-only uninstall; broaden CDN tarball warnings against any registry install ([#45](https://github.com/freshworks-developers/fw-dev-tools/issues/45))
-- **Testing:** add **When to run which layer** policy table; document manual **`eval-manual.yml`** workflow for on-demand eval reports ([#39](https://github.com/freshworks-developers/fw-dev-tools/issues/39))
 - **SECURITY.md:** disclose that `.meta.json` skill metrics are included in marketplace publish zips by design ([#43](https://github.com/freshworks-developers/fw-dev-tools/issues/43))
+- **TESTING.md:** rewrite for layered test layout; add **When to run which layer** policy table ([#39](https://github.com/freshworks-developers/fw-dev-tools/issues/39))
 
-### Changed
-- **CI:** fold manual skill evals into `ci.yml` (`workflow_dispatch` + **Run skill evals**); remove `eval-manual.yml`
-- **meta-init.sh:** auto-detect IDE client from environment variables; optional second argument; skills updated to call `meta-init.sh <app-dir>` only (supersedes PR #53)
+### Test Suite
+- Restructured into 5 layers: installer, static, regex evals, LLM evals, E2E — unified runner via `tests/run-all-tests.sh`
+- Regex eval scenarios moved to per-skill `.mjs` files under `tests/eval/regex/`; LLM scenarios to `tests/eval/scenarios/`
+- New `fw-app-dev-49` eval scenario for React Meta default routing
 
 ---
 
