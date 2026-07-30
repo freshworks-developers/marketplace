@@ -1,6 +1,6 @@
 {
   "name": "fw-publish",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Publish Platform 3.0 custom apps to the Freshworks Marketplace using MCP tools (validate, pack, app-upload, submit/update).",
   "author": {
     "name": "Freshworks Developers",
