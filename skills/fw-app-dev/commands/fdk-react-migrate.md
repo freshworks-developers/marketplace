@@ -97,7 +97,9 @@ Fix per **validation-workflow.mdc** (up to 6 iterations). **Do not** strip third
 3. Confirm: app renders (not stuck on **Loading…**), home route loads, **`/app/...`** feature links navigate correctly.
 4. If UI is blank or routes fail → fix path remapping (Step 5.6) and re-test. **Do not** report migrate complete until UI loads.
 
-**Scripts only — DO NOT hand-write JSON.**
+## Step 8: MANDATORY — Write .meta.json (DO NOT SKIP)
+
+**Run only after Step 7b passes.** Scripts only — DO NOT hand-write JSON.
 
 ```bash
 bash ~/.fw-dev-tools/scripts/meta-init.sh <app-directory>
