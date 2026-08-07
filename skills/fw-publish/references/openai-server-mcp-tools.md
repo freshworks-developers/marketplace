@@ -2,7 +2,9 @@
 
 **Hosted endpoint:** `https://mcp.freshworks.dev/mcp`  
 
-**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. `**get_developer_docs`** is **FALLBACK ONLY** when fw-app-dev delegates or fails.
+**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. **`get_developer_docs`** is **FALLBACK ONLY** when fw-app-dev delegates or fails.
+
+**MCP boundary:** Build, fix, review, and migrate via **skills only** — not MCP. Legacy build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated; the server returns a redirect contract. See **`deprecated-mcp-build-tools.md`**.
 
 ---
 
