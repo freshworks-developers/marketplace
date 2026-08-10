@@ -49,7 +49,11 @@ export const FW_SKILLS = [
 export const FW_SKILLS_LEGACY = ['fw-marketplace-app-dev'];
 
 /** Tier 2 orchestration specs copied to ~/.fw-dev-tools/specs/ on install. */
-export const SHIPPED_SPECS = ['agent-behaviour.md', 'fw-session.schema.json'];
+export const SHIPPED_SPECS = [
+  'agent-behaviour.md',
+  'fw-session.schema.json',
+  'platform-knowledge-map.md',
+];
 
 /**
  * Remove prior fw-dev-tools skill trees under a skills root (Cursor/Codex copy targets).

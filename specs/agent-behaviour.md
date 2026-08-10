@@ -5,7 +5,26 @@
 
 ## Preflight {#preflight}
 
-*(US-004 — populated in a later story.)*
+Run **before** classifying intent or invoking any skill on the first message of an IDE session (or when the user opens a new app workspace).
+
+### Steps
+
+1. **Locate session** — read `<app-project-root>/.fw-session.json` (see §session).
+2. **No session file** — greet with capability hint:
+   > "I can help you build, update, fix, or publish a Freshworks app. Describe what you'd like to do."
+   Do not invoke skills until the user states a goal.
+3. **Valid session** — show a **resume banner** in plain language:
+   > "Resuming **[app type or intent label]** — last step: **[phase / last milestone]**."
+   Offer: **Continue** (proceed with saved intent) or **Start fresh** (delete session after confirm).
+4. **Stale session** — if `updated_at` is older than **30 days**, warn before resuming:
+   > "Your saved progress is over 30 days old — continue or start fresh?"
+   Require explicit confirm before destructive resume.
+5. **Corrupt session** — follow §session corrupt-file rule; offer start fresh.
+6. **Publish pending** — if `progress.phase` is `publish` or review passed but publish not done, **do not auto-publish**. State status and ask if the user wants to submit.
+
+### Ordering
+
+Preflight → intent classification → Tier 2 intent section → skills. Never skip preflight on session-aware workspaces.
 
 ## Session lifecycle {#session}
 
@@ -262,11 +281,56 @@ Stop immediately. Route through skills only.
 
 ## Knowledge core {#knowledge}
 
-*(US-005.)*
+Platform Q&A lookup order (§2.4):
+
+1. **fw-dev-mcp / developer documentation** — query when MCP is available; cite the doc or tool response.
+2. **Static fallback** — search `specs/platform-knowledge-map.md` (installed copy under `~/.fw-dev-tools/specs/`).
+3. **Limitation** — if neither source answers the question:
+   > "I cannot verify this from available sources. Check the Freshworks developer docs or ask in the developer community."
+
+**Rules:**
+
+- Never fabricate API limits, product names, or event lists.
+- Multi-product questions ("Freshdesk or Freshservice?") — ask one clarifying question before answering.
+- Platform Q&A does **not** auto-start skill orchestration unless the user follow-ups with a build/fix/publish request.
+
+### Citation format
+
+End answers with source tag: `(Source: developer docs)` or `(Source: platform knowledge map)`.
 
 ## UX copy {#ux-copy}
 
-*(US-007 — plain-language labels; no skill names in user-facing text.)*
+User-facing text must be **plain language** — never expose internal skill names (`fw-setup`, `fw-app-dev`, etc.) in chat replies.
+
+### Step labels (orchestration progress)
+
+| Internal phase | User-facing label |
+|----------------|-------------------|
+| discover | Understanding your request |
+| setup | Preparing your workspace |
+| build | Building your app |
+| validate | Checking your app |
+| review | Reviewing quality |
+| publish | Submitting to marketplace |
+| done | Complete |
+
+### Examples
+
+- ❌ "Running fw-review now"
+- ✅ "Reviewing your app for marketplace quality"
+
+- ❌ "Invoking fw-setup for Node 24"
+- ✅ "Preparing your workspace (checking tools)"
+
+### Non-coder tone
+
+- Use short sentences; explain *why* a gate exists ("Review catches issues before publish").
+- On escalation, avoid jargon — refer to "automated fixes" not "fix_attempt_count".
+- Preflight resume (§preflight) uses app description, not file paths.
+
+### Telemetry
+
+When a non-coder completes a golden path (create → review → publish offer), suggest `session_sync` / milestone event via meta scripts.
 
 ## Telemetry {#telemetry}
 

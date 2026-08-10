@@ -300,3 +300,24 @@ test('agent-behaviour.md session section documents read/write rules', async () =
   assert.ok(/validate_passed/i.test(content), 'must document validate milestone');
   assert.ok(/never write API keys/i.test(content), 'must prohibit secrets');
 });
+
+test('preflight: resume banner and stale session rules', async () => {
+  const content = await readFile(BEHAVIOUR_FILE, 'utf8');
+  assert.ok(content.includes('## Preflight'), 'must have preflight section');
+  assert.ok(/resume banner/i.test(content), 'must document resume banner');
+  assert.ok(/30 days/i.test(content), 'must warn on stale session');
+  assert.ok(/do not auto-publish/i.test(content), 'must block auto-publish on resume');
+});
+
+test('ux-copy: no skill names in user-facing guidance', async () => {
+  const content = await readFile(BEHAVIOUR_FILE, 'utf8');
+  assert.ok(content.includes('## UX copy'), 'must have ux-copy section');
+  assert.ok(/never expose internal skill names/i.test(content), 'must forbid skill names in UX');
+  assert.ok(content.includes('Checking your app'), 'must have plain-language step label');
+});
+
+test('knowledge: lookup order and limitation message', async () => {
+  const content = await readFile(BEHAVIOUR_FILE, 'utf8');
+  assert.ok(content.includes('platform-knowledge-map.md'), 'must reference knowledge map');
+  assert.ok(/cannot verify this from available sources/i.test(content), 'must state limitation');
+});
