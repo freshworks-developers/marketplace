@@ -30,6 +30,23 @@ Read fw-dev-tools skills **only** from the install path for your IDE. Never mix 
 
 **End-to-end order:** fw-setup → fw-app-dev / fw-ai-actions-app → fw-review (MANDATORY) → fw-publish
 
+## Intent routing (Tier 1)
+
+On every user message: read `<app-dir>/.fw-session.json` if present, then classify intent and load Tier 2 (`specs/agent-behaviour.md` or installed copy) for the matched section.
+
+| Intent | Signals | Tier 2 section |
+|--------|---------|----------------|
+| `create-new` | No `manifest.json` in app dir | `#create-new` |
+| `add-feature` | Valid `manifest.json`; extend app | `#add-feature` |
+| `troubleshoot` | Build/compile/validation errors | `#troubleshoot` |
+| `update-existing` | Published app; session publish state | `#update-existing` |
+| `migrate` | Platform 2.x / FDK 9 in manifest | `#migrate` |
+| `publish-status` | Rejection / deployment status questions | `#publish-status` |
+
+**Aliases:** `create` → `create-new`, `update` → `update-existing`.
+
+If intent is unclear, follow Tier 2 `#disambiguation` — ask one clarifying question; do not guess.
+
 ## Non-negotiables
 
 - Platform version `"3.0"`; use `modules` not legacy `product`
