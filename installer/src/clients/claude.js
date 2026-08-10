@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { writeInstallState, prompt, copyScripts, copySkills, removeFwSkillDirs, removeClaudePluginCache, claudePluginCacheDir, FW_DEV_TOOLS_DIR, FW_SKILLS, REPO_ROOT } from '../utils.js';
+import { writeInstallState, prompt, copyScripts, copySpecs, copySkills, removeFwSkillDirs, removeClaudePluginCache, claudePluginCacheDir, FW_DEV_TOOLS_DIR, FW_SKILLS, REPO_ROOT } from '../utils.js';
 import { upsertBlock, removeBlock } from '../fenced-block.js';
 
 const execFileAsync = promisify(execFile);
@@ -37,6 +37,9 @@ export async function install({ yes = false } = {}) {
 
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
+
+  await copySpecs();
+  console.log('  ✓ Orchestration specs copied to ~/.fw-dev-tools/specs/');
 
   const claudeSkillsDir = join(homedir(), '.claude', 'skills');
   const removedStale = await removeFwSkillDirs(claudeSkillsDir);

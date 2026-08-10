@@ -4,7 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { copySkills, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState } from '../src/utils.js';
+import { copySkills, copySpecs, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState, SHIPPED_SPECS } from '../src/utils.js';
 
 async function makeTmp() {
   const dir = join(tmpdir(), `utils-test-${Date.now()}-${Math.floor(Math.random() * 10000)}`);
@@ -105,6 +105,19 @@ test('removeClaudePluginCache removes marketplace cache tree', async () => {
   assert.equal(existsSync(cacheRoot), false);
   assert.equal(await removeClaudePluginCache(cacheRoot), false);
   await rm(tmp, { recursive: true });
+});
+
+// ---------------------------------------------------------------------------
+// copySpecs
+// ---------------------------------------------------------------------------
+
+test('copySpecs copies shipped Tier 2 specs to fw-dev-tools dir', async () => {
+  const specsDir = join(dirname(INSTALL_JSON), 'specs');
+  await copySpecs();
+  for (const file of SHIPPED_SPECS) {
+    assert.ok(existsSync(join(specsDir, file)), `${file} should be copied to specs dir`);
+  }
+  await rm(specsDir, { recursive: true, force: true });
 });
 
 // ---------------------------------------------------------------------------
