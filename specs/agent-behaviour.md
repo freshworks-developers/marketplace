@@ -13,11 +13,41 @@
 
 ## Disambiguation {#disambiguation}
 
-When intent confidence is low or the user message is ambiguous (e.g. "fix my app"):
+Use this section when Tier 1 cannot classify with confidence, or the user message matches a **vague trigger** below.
 
-1. Ask **one** clarifying question — do not guess silently.
-2. Offer up to four options mapping to intents: troubleshoot, add-feature, update-existing, publish-status.
-3. Do not run destructive actions until the user clarifies.
+### Rules
+
+1. Ask **exactly one** clarifying question — never guess silently.
+2. Present **up to four** intent options as plain-language choices (text labels, not skill names).
+3. Do **not** run destructive actions (Edit/Write, publish, migrate) until the user picks a path.
+4. If the user ignores clarification or stays ambiguous after one turn, **stop** — do not proceed with destructive work. Offer to restate options or escalate.
+5. If the user spans two intents, address the **primary** intent first; note the secondary in session when available.
+
+### Vague triggers → clarifying question
+
+| User phrase (examples) | Clarifying question template | Options (max 4) |
+|------------------------|------------------------------|-----------------|
+| "fix my app" | "I can help — what kind of fix do you need?" | troubleshoot (build error) · add-feature · update-existing · publish-status |
+| "help with my app" | "What would you like to do with your app?" | create-new (no app yet) · add-feature · troubleshoot · publish-status |
+| "update my app" | "Do you want to add a feature, fix an error, or update a published version?" | add-feature · troubleshoot · update-existing · migrate |
+| "something wrong" / "not working" | "Is this a build/validation error, or a marketplace publish issue?" | troubleshoot · publish-status |
+| "continue" / "keep going" (no session) | "I don't have saved progress yet — are you building new, fixing, or checking publish status?" | create-new · troubleshoot · publish-status |
+
+### Response format
+
+After the user selects an option, restate the chosen intent in plain language (e.g. "Got it — I'll troubleshoot the build error") and load the matching intent section (`#troubleshoot`, etc.).
+
+### Compound requests
+
+When a message contains two intents (e.g. "add a feature and publish"), confirm the **sequence**: implement feature first (`#add-feature`), then offer review/publish — never publish before review.
+
+### Escalation after one turn
+
+If still ambiguous after one clarifying exchange, respond:
+
+> "I'm not sure which path you mean. Please pick one: fix a build error, add a feature, update a published app, check publish status, or start a new app."
+
+Do not default to code changes or publish.
 
 ## Intent: create-new {#create-new}
 
