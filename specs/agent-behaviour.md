@@ -9,7 +9,41 @@
 
 ## Session lifecycle {#session}
 
-*(US-003 — see `specs/fw-session.schema.json` when present.)*
+**File:** `<app-project-root>/.fw-session.json`  
+**Schema:** `specs/fw-session.schema.json` (validate structure before write)
+
+### Read rules
+
+1. **Every interaction** — read `.fw-session.json` at the app project root before classifying or dispatching skills.
+2. **Scope** — session applies to the **active app directory only** (where `manifest.json` lives or will be created). Never read or write session files from parent monorepos or sibling app folders.
+3. **Missing file** — treat as fresh workflow; create on first milestone write.
+4. **Corrupt or invalid JSON** — do not guess contents. Tell the user: "Your saved progress file looks damaged — I can start fresh or you can fix `.fw-session.json` manually." Offer **start fresh** (delete file) before continuing.
+5. **Cross-IDE** — same schema across Cursor, Claude Code, and Codex; no IDE-specific fields.
+
+### Write rules
+
+1. **Milestones** — commit session updates when reaching: intent classification, `validate_passed`, `review_passed`, `migrate_complete`, publish attempt, escalation counter change, or phase transition.
+2. **Required fields** — always set `schema_version` (`"1.0.0"`), `intent`, `progress.phase`, and `updated_at` (ISO8601 UTC).
+3. **Progress** — append milestone strings to `progress.milestones` (e.g. `validate_passed`, `review_passed`); set `progress.app_type` when product/app type is confirmed.
+4. **Publish block** — populate `publish` after first marketplace submit attempt (`tracking_id`, `last_version`, `last_status`).
+5. **Escalation block** — update `escalation.deploy_attempt_count` (max 6) and `fix_attempt_count` (max 3 per error signature); reset fix count when `last_error_signature` changes.
+6. **Size** — keep file under ~32KB; do not store logs, diffs, or source code in session.
+7. **Secrets prohibited** — never write API keys, OAuth tokens, iparam values, or credentials. Session is world-readable in dev workspaces.
+
+### Example (minimal)
+
+```json
+{
+  "schema_version": "1.0.0",
+  "intent": "create-new",
+  "progress": {
+    "phase": "validate",
+    "milestones": ["setup_complete", "validate_passed"],
+    "app_type": "platform-3-react"
+  },
+  "updated_at": "2026-08-10T10:00:00.000Z"
+}
+```
 
 ## Disambiguation {#disambiguation}
 
