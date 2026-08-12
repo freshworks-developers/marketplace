@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 export const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SKILLS_SRC = join(REPO_ROOT, 'skills');
+export const SPECS_SRC = join(REPO_ROOT, 'specs');
 export const SCRIPTS_SRC = join(REPO_ROOT, 'skills', 'shared', 'scripts');
 export const META_TEMPLATE = join(REPO_ROOT, 'skills', 'shared', '.meta.template.json');
 export const FW_DEV_TOOLS_DIR = process.env.FW_DEV_TOOLS_HOME
@@ -46,6 +47,13 @@ export const FW_SKILLS = [
 ];
 
 export const FW_SKILLS_LEGACY = ['fw-marketplace-app-dev'];
+
+/** Tier 2 orchestration specs copied to ~/.fw-dev-tools/specs/ on install. */
+export const SHIPPED_SPECS = [
+  'agent-behaviour.md',
+  'fw-session.schema.json',
+  'platform-knowledge-map.md',
+];
 
 /**
  * Remove prior fw-dev-tools skill trees under a skills root (Cursor/Codex copy targets).
@@ -98,6 +106,19 @@ export async function copyScripts() {
   const dest = join(FW_DEV_TOOLS_DIR, 'scripts');
   await mkdir(dest, { recursive: true });
   await cp(SCRIPTS_SRC, dest, { recursive: true });
+}
+
+/**
+ * Copy Tier 2 spec artifacts to ~/.fw-dev-tools/specs/ for IDE agents.
+ */
+export async function copySpecs() {
+  const dest = join(FW_DEV_TOOLS_DIR, 'specs');
+  await mkdir(dest, { recursive: true });
+  for (const file of SHIPPED_SPECS) {
+    const src = join(SPECS_SRC, file);
+    if (!existsSync(src)) continue;
+    await cp(src, join(dest, file));
+  }
 }
 
 export async function writeInstallState({ client, method = 'npx' }) {

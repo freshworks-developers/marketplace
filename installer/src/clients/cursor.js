@@ -2,7 +2,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
+import { copySkills, copyScripts, copySpecs, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken, removeMcpServer } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
@@ -26,6 +26,9 @@ export async function install({ yes = false } = {}) {
 
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
+
+  await copySpecs();
+  console.log('  ✓ Orchestration specs copied to ~/.fw-dev-tools/specs/');
 
   const removed = await removeFwSkillDirs(SKILLS_DIR);
   if (removed > 0) {

@@ -17,7 +17,7 @@
     "commander": "^12.0.0"
   },
   "scripts": {
-    "test": "node --test --test-concurrency=1 tests/mcp-merge.test.js tests/fenced-block.test.js tests/utils.test.js tests/orchestration-spec.test.js tests/version-check.test.js tests/claude.test.js tests/codex.test.js tests/integration.test.js tests/scripts.test.js tests/status-update.test.js tests/installer-lifecycle.test.js tests/skill-static.test.js tests/regression-uninstall.test.js"
+    "test": "node --test --test-concurrency=1 tests/mcp-merge.test.js tests/fenced-block.test.js tests/utils.test.js tests/orchestration-spec.test.js tests/agent-behaviour.test.js ../tests/session-schema.test.js ../tests/orchestration-scenarios.test.js tests/version-check.test.js tests/claude.test.js tests/codex.test.js tests/integration.test.js tests/scripts.test.js tests/status-update.test.js tests/installer-lifecycle.test.js tests/skill-static.test.js tests/regression-uninstall.test.js"
   },
   "keywords": [
     "freshworks",

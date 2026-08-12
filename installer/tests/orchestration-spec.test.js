@@ -35,6 +35,32 @@ test('spec file lists deprecated MCP tools', async () => {
   const content = await readFile(SPEC_FILE, 'utf8');
   assert.ok(content.includes('DEPRECATED'), 'should flag deprecated tools');
   assert.ok(content.includes('implement_app'), 'should list implement_app');
+  assert.ok(content.includes('idea_to_app'), 'should list idea_to_app');
+  assert.ok(content.includes('fix_app_errors'), 'should list fix_app_errors');
+});
+
+test('spec file contains intent routing table for six intents', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  const intents = [
+    'create-new',
+    'add-feature',
+    'troubleshoot',
+    'update-existing',
+    'migrate',
+    'publish-status',
+  ];
+  for (const intent of intents) {
+    assert.ok(content.includes(intent), `spec must include intent ${intent}`);
+  }
+  assert.ok(content.includes('Intent routing'), 'spec must have intent routing section');
+  assert.ok(content.includes('Aliases'), 'spec must document intent aliases');
+  assert.ok(content.includes('create` → `create-new'), 'spec must map create alias');
+});
+
+test('spec file references session file and Tier 2 delegation', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  assert.ok(content.includes('.fw-session.json'), 'spec must reference session file');
+  assert.ok(content.includes('agent-behaviour'), 'spec must delegate to Tier 2 brain');
 });
 
 test('spec file includes update command hint', async () => {
