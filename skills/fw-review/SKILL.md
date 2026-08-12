@@ -5,6 +5,14 @@ version: "1.3.0"
 compatibility: "Freshworks Platform 3.0; optional FDK on PATH for validate-oriented phases (use fw-setup when missing)"
 ---
 
+## Entry contract
+
+- **Invoked by:** controller after build/validate milestones or explicit review request
+- **Preconditions:** App directory with `manifest.json`; `fdk` available or user consented to fw-setup install
+- **Returns:** `done` (review report emitted) | `blocked` (missing fdk / app dir) | `escalate` (unrecoverable manifest issues)
+- **On complete:** hand control back to the controller — controller offers publish; do **not** invoke fw-publish from this skill
+- **Session:** `session-read.sh` at start; on pass — `session-write.sh <app-dir> --merge-json '{"progress":{"milestones":["review_passed"],"phase":"review"}}' step=reviewed`
+
 # fw-review
 
 This is an automated pipeline. **After the app directory is determined (Q1 pre-flight below),** do not ask further questions or interact with the user for disambiguation — execute the remaining phases silently and produce **only** the formatted **App Review Result** block in [rules/report.md](rules/report.md). Do not prefix or suffix that block with commentary (no Pass/N/A rationales, script notes, or pipeline status).

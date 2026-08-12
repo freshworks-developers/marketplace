@@ -318,6 +318,7 @@ test('ux-copy: no skill names in user-facing guidance', async () => {
 
 test('knowledge: lookup order and limitation message', async () => {
   const content = await readFile(BEHAVIOUR_FILE, 'utf8');
-  assert.ok(content.includes('platform-knowledge-map.md'), 'must reference knowledge map');
+  assert.ok(content.includes('ecosystem-map.md'), 'must reference ecosystem map');
   assert.ok(/cannot verify this from available sources/i.test(content), 'must state limitation');
+  assert.ok(content.includes('get_developer_docs'), 'must reference MCP deep lookup');
 });

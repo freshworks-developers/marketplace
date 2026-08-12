@@ -5,6 +5,14 @@ version: "1.3.0"
 compatibility: "Freshworks Platform 3.0, MCP (fw-dev-mcp), Developer Portal JWT"
 ---
 
+## Entry contract
+
+- **Invoked by:** controller after fw-review pass and explicit user consent to publish
+- **Preconditions:** fw-review completed; MCP auth confirmed (`list_custom_apps` smoke test); non-sandbox network for upload
+- **Returns:** `done` (submit/version created) | `blocked` (auth/network/review missing) | `escalate` (repeated upload failures)
+- **On complete:** hand control back to the controller — update session publish block via `session-write.sh`; do not start new workflows
+- **Session:** read `publish.tracking_id` from session; write `publish.tracking_id`, `step=published` after successful submit
+
 # Publish (Platform 3.0 custom app)
 
 **MANDATORY PREREQUISITE:** Run **fw-review** skill before publishing to ensure marketplace compliance. The review checks iparams, frontend files, security patterns, and generates a structured audit report. Do not proceed with publishing until review passes.

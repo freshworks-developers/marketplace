@@ -52,8 +52,12 @@ export const FW_SKILLS_LEGACY = ['fw-marketplace-app-dev'];
 export const SHIPPED_SPECS = [
   'agent-behaviour.md',
   'fw-session.schema.json',
+  'ecosystem-map.md',
   'platform-knowledge-map.md',
 ];
+
+export const BRAIN_SPEC_SRC = join(SPECS_SRC, 'agent-behaviour.md');
+export const BRAIN_SPEC_INSTALLER = join(REPO_ROOT, 'installer', 'src', 'specs', 'agent-behaviour.md');
 
 /**
  * Remove prior fw-dev-tools skill trees under a skills root (Cursor/Codex copy targets).
@@ -110,6 +114,7 @@ export async function copyScripts() {
 
 /**
  * Copy Tier 2 spec artifacts to ~/.fw-dev-tools/specs/ for IDE agents.
+ * Also syncs agent-behaviour.md into installer/src/specs/ for packaging.
  */
 export async function copySpecs() {
   const dest = join(FW_DEV_TOOLS_DIR, 'specs');
@@ -119,6 +124,15 @@ export async function copySpecs() {
     if (!existsSync(src)) continue;
     await cp(src, join(dest, file));
   }
+  await mkdir(dirname(BRAIN_SPEC_INSTALLER), { recursive: true });
+  if (existsSync(BRAIN_SPEC_SRC)) {
+    await cp(BRAIN_SPEC_SRC, BRAIN_SPEC_INSTALLER);
+  }
+}
+
+/** Read Tier 2 brain markdown for always-loaded IDE installs. */
+export async function readBrainSpecContent() {
+  return readFile(BRAIN_SPEC_SRC, 'utf8');
 }
 
 export async function writeInstallState({ client, method = 'npx' }) {

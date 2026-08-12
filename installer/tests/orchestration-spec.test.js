@@ -61,6 +61,19 @@ test('spec file references session file and Tier 2 delegation', async () => {
   const content = await readFile(SPEC_FILE, 'utf8');
   assert.ok(content.includes('.fw-session.json'), 'spec must reference session file');
   assert.ok(content.includes('agent-behaviour'), 'spec must delegate to Tier 2 brain');
+  assert.ok(content.includes('Controller loop'), 'spec must document controller loop');
+  assert.ok(content.includes('ecosystem-map.md'), 'spec must reference ecosystem map');
+  assert.ok(content.includes('session-read.sh'), 'spec must reference session scripts');
+});
+
+test('spec file documents exact DEPRECATED interceptor message', async () => {
+  const content = await readFile(SPEC_FILE, 'utf8');
+  assert.ok(
+    content.includes(
+      '[DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill'
+    ),
+    'must include exact DEPRECATED message'
+  );
 });
 
 test('spec file includes update command hint', async () => {

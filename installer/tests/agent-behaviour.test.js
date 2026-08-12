@@ -41,8 +41,10 @@ test('disambiguation: escalation after one turn', async () => {
   assert.ok(/Do not default to code changes/i.test(content), 'must not default to destructive path');
 });
 
-test('disambiguation: compound request handling', async () => {
+test('agent-behaviour.md documents decomposition and entry contract', async () => {
   const content = await readFile(BEHAVIOUR_FILE, 'utf8');
-  assert.ok(/Compound requests/i.test(content), 'must document compound intents');
-  assert.ok(/never publish before review/i.test(content), 'must enforce review before publish');
+  assert.ok(content.includes('## Decomposition'), 'must have decomposition section');
+  assert.ok(content.includes('#decomposition'), 'must have decomposition anchor');
+  assert.ok(content.includes('## Skill entry contract'), 'must document entry contract');
+  assert.ok(content.includes('#entry-contract'), 'must have entry contract anchor');
 });

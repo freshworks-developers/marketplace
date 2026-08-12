@@ -7,6 +7,14 @@ argument-hint: "[install|upgrade|downgrade|uninstall|status] [version]"
 allowed-tools: "shell, task, read, write, strreplace, glob, grep"
 ---
 
+## Entry contract
+
+- **Invoked by:** controller when toolchain missing or user requests FDK/Node setup
+- **Preconditions:** User consent for mutating install/upgrade/downgrade operations
+- **Returns:** `done` (fdk + node verified globally) | `blocked` (user declined install) | `escalate` (verification failed after retries)
+- **On complete:** hand control back to the controller — controller resumes prior intent chain (e.g. fw-app-dev)
+- **Session:** `session-read.sh` at start; on success — `session-write.sh <app-dir> progress.phase=setup` when app dir present
+
 # FDK Setup
 
 **MOST IMPORTANT - ZERO TOLERANCE: FDK installation is NEVER complete until verification shows FDK accessible globally AND persists across new shells. NEVER say "installation complete" with ANY verification failures.**

@@ -2,7 +2,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, copyScripts, copySpecs, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS } from '../utils.js';
+import { copySkills, copyScripts, copySpecs, writeInstallState, prompt, REPO_ROOT, removeFwSkillDirs, FW_SKILLS, readBrainSpecContent } from '../utils.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken, removeMcpServer } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
@@ -11,11 +11,20 @@ const SKILLS_DIR = join(CURSOR_ROOT, 'skills');
 const RULES_DIR = join(CURSOR_ROOT, 'rules');
 const MCP_JSON = join(CURSOR_ROOT, 'mcp.json');
 const SPEC_FILE = join(RULES_DIR, 'fw-dev-tools.mdc');
+const BRAIN_SPEC_FILE = join(RULES_DIR, 'fw-dev-tools-agent-behaviour.mdc');
 const SPEC_SRC = join(REPO_ROOT, 'installer', 'src', 'specs', 'fw-dev-tools-spec.md');
 
 const MDC_FRONTMATTER = `---
 name: fw-dev-tools
 description: Freshworks Agentic Developer Toolkit — routing and skill orchestration
+alwaysApply: true
+---
+
+`;
+
+const BRAIN_MDC_FRONTMATTER = `---
+name: fw-dev-tools-agent-behaviour
+description: Freshworks App Development AI Agent — orchestration brain (Tier 2)
 alwaysApply: true
 ---
 
@@ -60,6 +69,10 @@ export async function install({ yes = false } = {}) {
   await writeFile(SPEC_FILE, MDC_FRONTMATTER + specContent, 'utf8');
   console.log(`  ✓ Routing spec written to ${SPEC_FILE}`);
 
+  const brainContent = await readBrainSpecContent();
+  await writeFile(BRAIN_SPEC_FILE, BRAIN_MDC_FRONTMATTER + brainContent, 'utf8');
+  console.log(`  ✓ Agent behaviour spec written to ${BRAIN_SPEC_FILE}`);
+
   const { action, backupPath } = await mergeMcpServer(MCP_JSON, CURSOR_MCP_ENTRY);
   if (action === 'unchanged') {
     console.log(`  ✓ MCP config already up to date`);
@@ -103,6 +116,10 @@ export async function uninstall({ yes = false } = {}) {
   if (existsSync(SPEC_FILE)) {
     await rm(SPEC_FILE);
     console.log(`  ✓ Removed ${SPEC_FILE}`);
+  }
+  if (existsSync(BRAIN_SPEC_FILE)) {
+    await rm(BRAIN_SPEC_FILE);
+    console.log(`  ✓ Removed ${BRAIN_SPEC_FILE}`);
   }
 
   const { action, backupPath } = await removeMcpServer(MCP_JSON);

@@ -4,7 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { copySkills, copySpecs, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState, SHIPPED_SPECS } from '../src/utils.js';
+import { copySkills, copySpecs, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState, SHIPPED_SPECS, BRAIN_SPEC_INSTALLER, BRAIN_SPEC_SRC } from '../src/utils.js';
 
 async function makeTmp() {
   const dir = join(tmpdir(), `utils-test-${Date.now()}-${Math.floor(Math.random() * 10000)}`);
@@ -117,6 +117,10 @@ test('copySpecs copies shipped Tier 2 specs to fw-dev-tools dir', async () => {
   for (const file of SHIPPED_SPECS) {
     assert.ok(existsSync(join(specsDir, file)), `${file} should be copied to specs dir`);
   }
+  assert.ok(existsSync(BRAIN_SPEC_INSTALLER), 'agent-behaviour should sync to installer/src/specs/');
+  const src = await readFile(BRAIN_SPEC_SRC, 'utf8');
+  const installed = await readFile(BRAIN_SPEC_INSTALLER, 'utf8');
+  assert.equal(installed, src, 'installer brain spec must match specs/agent-behaviour.md');
   await rm(specsDir, { recursive: true, force: true });
 });
 
