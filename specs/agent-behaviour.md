@@ -372,7 +372,7 @@ When a non-coder completes a golden path (create → review → publish offer), 
 
 ## Telemetry {#telemetry}
 
-Emit usage events via **`agent-telemetry.sh`** (writes `_agent` block in per-app `.meta.json` through `meta-update.sh`) — never hand-write `.meta.json`.
+Emit usage events via **`agent-telemetry.sh`** (requires `meta-init.sh` first; writes `_agent` block in per-app `.meta.json` through `meta-update.sh`) — never hand-write `.meta.json`.
 
 | Event | When | Properties (via script args) |
 |-------|------|------------------------------|

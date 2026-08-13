@@ -71,7 +71,7 @@ After classification emit telemetry: `bash ~/.fw-dev-tools/scripts/agent-telemet
 - New UI apps: React Meta default; vanilla Crayons only when explicitly requested
 - External HTTP only via `$request.invokeTemplate` and `config/requests.json`
 - `fdk validate`: zero platform errors and zero lint errors before complete
-- fw-review is MANDATORY before fw-publish — never skip
+- fw-review is MANDATORY before fw-publish — never skip it
 - Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` — **never hand-write**
 - **Deprecated MCP tools** — if invoked, output exactly and stop (Tier 2 §deprecated-mcp):
   > [DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill instead located at `skills/fw-app-dev/SKILL.md`. Stopping execution.
