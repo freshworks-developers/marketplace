@@ -1,0 +1,12 @@
+@import '@freshworks/dew-styles/dist/colors.css';
+@import '@freshworks/dew-styles/dist/fonts.css';
+@import '@freshworks/dew-styles/dist/numbers.css';
+
+.iparams-form {
+  padding: 16px;
+}
+
+.iparams-form h1 {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+}

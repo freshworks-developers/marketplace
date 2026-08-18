@@ -560,6 +560,27 @@ describe('React Meta skeleton templates', () => {
     assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'rules', 'react-meta-patterns.mdc')));
   });
 
+  test('react-meta custom-iparams skeleton and docs', async () => {
+    const base = join(TEMPLATES_DIR, 'react-meta-custom-iparams-skeleton');
+    const html = await readFile(join(base, 'config', 'iparams.html'), 'utf8');
+    assert.ok(html.includes('id="root"'));
+    assert.ok(html.includes('{{{appclient}}}'));
+    assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'main.jsx')));
+    assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'IparamsForm.jsx')));
+    const form = await readFile(join(base, 'config', 'assets', 'components', 'IparamsForm.jsx'), 'utf8');
+    assert.ok(form.includes('window.getConfigs'));
+    assert.ok(form.includes('window.postConfigs'));
+    assert.ok(form.includes('window.validate'));
+    assert.ok(form.includes('formRef.current'));
+    assert.ok(form.includes('@freshworks/dew-components'));
+    const main = await readFile(join(base, 'config', 'assets', 'components', 'main.jsx'), 'utf8');
+    assert.ok(main.includes('iparams.css'));
+    assert.ok(!form.includes('@freshworks/crayons'));
+    const doc = await readRepo('skills/fw-app-dev/references/react-meta/custom-iparams.md');
+    assert.ok(doc.includes('config/iparams.html'));
+    assert.ok(doc.includes('react-meta-custom-iparams-skeleton'));
+  });
+
   test('plugin.json registers react commands', async () => {
     const plugin = await readJson('skills/fw-app-dev/.cursor-plugin/plugin.json');
     const names = plugin.commands.map(c => c.name);

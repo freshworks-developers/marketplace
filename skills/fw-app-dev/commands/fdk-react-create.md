@@ -67,6 +67,7 @@ Ensure the app includes:
 
 **Optional (when user asks):**
 
+- **Custom Settings page** — copy `react-meta-custom-iparams-skeleton/config/`; remove `iparams.json` — see `custom-iparams.md`
 - Tailwind — add deps + `tailwind.config.js`, `postcss.config.js`; see `references/react-meta/styling-and-third-party.md`
 - Custom **`vite.config.js`** — project root; FDK merge rules in `references/react-meta/vite-config.md`
 - TypeScript — `.tsx` files + `tsconfig.json`
@@ -118,4 +119,5 @@ bash ~/.fw-dev-tools/scripts/meta-update.sh <app-directory> fw-app-dev \
 
 - `references/react-meta/react-meta-fdk-standards.md`
 - `references/react-meta/dew-components.md`
+- `references/react-meta/custom-iparams.md`
 - `references/cli/fdk_create.md`
