@@ -496,11 +496,12 @@ describe('React Meta skeleton templates', () => {
       assert.equal(manifest.metaConfig?.framework, 'react');
     });
 
-    test(`${name}: package.json has DEW deps and no Crayons`, async () => {
+    test(`${name}: package.json has DEW deps, react-error-boundary, and no Crayons`, async () => {
       const pkg = JSON.parse(await readFile(join(base, 'package.json'), 'utf8'));
       const deps = pkg.dependencies ?? {};
       assert.ok(deps['@freshworks/dew-components'], 'must include dew-components');
       assert.ok(deps['@freshworks/dew-styles'], 'must include dew-styles');
+      assert.ok(deps['react-error-boundary'], 'must include react-error-boundary');
       assert.ok(!deps['@freshworks/crayons'], 'must not include crayons');
     });
 
@@ -532,10 +533,13 @@ describe('React Meta skeleton templates', () => {
       assert.ok(css.includes('numbers.css'));
     });
 
-    test(`${name}: mount.jsx includes RootErrorBoundary`, async () => {
+    test(`${name}: mount.jsx uses react-error-boundary`, async () => {
       const mount = await readFile(join(base, 'app', 'mount.jsx'), 'utf8');
-      assert.ok(mount.includes('getDerivedStateFromError'), 'mount.jsx should include RootErrorBoundary');
+      assert.ok(mount.includes('react-error-boundary'), 'mount.jsx should import react-error-boundary');
+      assert.ok(mount.includes('ErrorBoundary'), 'mount.jsx should wrap App in ErrorBoundary');
+      assert.ok(mount.includes('ErrorFallback'), 'mount.jsx should use shared ErrorFallback component');
       assert.ok(mount.includes('mountApp'), 'mount.jsx must export mountApp');
+      assert.ok(await fileExists(join(base, 'app', 'components', 'ErrorFallback.jsx')));
     });
   }
 
@@ -566,6 +570,7 @@ describe('React Meta skeleton templates', () => {
     assert.ok(html.includes('id="root"'));
     assert.ok(html.includes('{{{appclient}}}'));
     assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'main.jsx')));
+    assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'mount.jsx')));
     assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'IparamsForm.jsx')));
     const form = await readFile(join(base, 'config', 'assets', 'components', 'IparamsForm.jsx'), 'utf8');
     assert.ok(form.includes('window.getConfigs'));
@@ -574,11 +579,17 @@ describe('React Meta skeleton templates', () => {
     assert.ok(form.includes('formRef.current'));
     assert.ok(form.includes('@freshworks/dew-components'));
     const main = await readFile(join(base, 'config', 'assets', 'components', 'main.jsx'), 'utf8');
-    assert.ok(main.includes('iparams.css'));
+    assert.ok(main.includes('./mount'));
+    const iparamsMount = await readFile(join(base, 'config', 'assets', 'components', 'mount.jsx'), 'utf8');
+    assert.ok(iparamsMount.includes('ErrorBoundary'));
+    assert.ok(iparamsMount.includes('ErrorFallback'));
+    assert.ok(iparamsMount.includes('mountIparams'));
+    assert.ok(await fileExists(join(base, 'config', 'assets', 'components', 'ErrorFallback.jsx')));
     assert.ok(!form.includes('@freshworks/crayons'));
     const doc = await readRepo('skills/fw-app-dev/references/react-meta/custom-iparams.md');
     assert.ok(doc.includes('config/iparams.html'));
     assert.ok(doc.includes('react-meta-custom-iparams-skeleton'));
+    assert.ok(doc.includes('react-error-boundary'));
   });
 
   test('plugin.json registers react commands', async () => {

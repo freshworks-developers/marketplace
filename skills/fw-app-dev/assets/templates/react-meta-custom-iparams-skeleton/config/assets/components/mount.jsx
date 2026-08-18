@@ -1,12 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import App from './components/App';
-import ErrorFallback from './components/ErrorFallback';
+import ErrorFallback from './ErrorFallback';
+import IparamsForm from './IparamsForm';
 
-export function mountApp() {
+export function mountIparams() {
   createRoot(document.getElementById('root')).render(
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <App />
+      <IparamsForm />
     </ErrorBoundary>
   );
 }

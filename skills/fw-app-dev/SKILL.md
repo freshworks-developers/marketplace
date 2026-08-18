@@ -384,6 +384,7 @@ Use this process for every app request so the right features are generated.
 | Migrate vanilla → Meta | **`/fdk-react-migrate`** (Platform **3.0** only; **`/fdk-migrate`** first for **2.x**) |
 | Manifest | **`metaConfig.framework: "react"`** in **`manifest.json` only** |
 | UI | **`@freshworks/dew-components`** + **`@freshworks/dew-styles`** (**required**) |
+| Error handling | **`react-error-boundary`** in `app/mount.jsx` (and iparams `mount.jsx` when custom Settings) |
 | Forbidden (Meta) | **`@freshworks/crayons`**, Crayons CDN, `<fw-*>` — **no Crayons in Meta workflow** |
 | Router | Home/fallback **`path="*"`**; feature routes **`/app/...`** |
 | TypeScript | **Supported** — `.tsx` / `.ts`, optional `tsconfig.json`; React **19+** preferred |

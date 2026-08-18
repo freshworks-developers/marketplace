@@ -18,7 +18,9 @@ config/
 ├── iparams.html
 └── assets/
     ├── components/
-    │   ├── main.jsx          # Entry (FDK Vite bundle)
+    │   ├── main.jsx          # Entry → mountIparams()
+    │   ├── mount.jsx         # ErrorBoundary + createRoot
+    │   ├── ErrorFallback.jsx # Settings error UI
     │   └── IparamsForm.jsx   # DEW form + window methods
     └── styles/
         └── iparams.css       # DEW @import tokens
@@ -47,6 +49,7 @@ DEW only (`@freshworks/dew-components` + `@freshworks/dew-styles`). No Crayons. 
 ```bash
 cp -r <skill-path>/assets/templates/react-meta-custom-iparams-skeleton/config/* <app-dir>/config/
 rm <app-dir>/config/iparams.json   # if present
+npm install react-error-boundary     # if not already in package.json from Meta skeleton
 ```
 
 Test: `http://localhost:10001/custom_configs` during `fdk run`.

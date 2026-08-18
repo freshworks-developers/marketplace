@@ -57,11 +57,11 @@ Ensure the app includes:
    - `"platform-version": "3.0"`
    - `"metaConfig": { "framework": "react", "packageManager": "npm" }`
    - `"engines": { "node": "24.11.0", "fdk": "10.1.0" }`
-2. **`package.json`** — React **19+**, `@freshworks/dew-components`, `@freshworks/dew-styles`, `react-router-dom`
+2. **`package.json`** — React **19+**, `@freshworks/dew-components`, `@freshworks/dew-styles`, `react-error-boundary`, `react-router-dom`
 3. **`app/index.html`** at app root with `#root`; add `{{{appclient}}}` for hybrid/OAuth/SMI
 4. **React Router** — `<Route path="*" element={<Home />} />` plus feature routes under `/app/...`
 5. **DEW sample component** — import UI only from `@freshworks/dew-components`; load DEW tokens via `@import` in `app/styles/app.css`, then `import './styles/app.css'` in `app/index.jsx` (see skeleton)
-6. **No `<DewTheme>` JSX wrapper** — `DewTheme` is Tailwind config only; use `app/mount.jsx` pattern from skeleton
+6. **No `<DewTheme>` JSX wrapper** — `DewTheme` is Tailwind config only; use `app/mount.jsx` with **`react-error-boundary`** (see skeleton)
 7. **No Crayons** — no `@freshworks/crayons`, no Crayons CDN, no `<fw-*>` in Meta app
 8. **`README.md`** — create before validate (see SKILL.md)
 

@@ -217,4 +217,19 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
     assert.ok(ok, 'dew-components.md and react-meta-patterns.mdc must forbid DewTheme JSX wrapper');
   });
 
+  test('fdk-react-create and migrate require react-error-boundary in Meta apps', async () => {
+    const create = await readCmd('fw-app-dev', 'fdk-react-create');
+    const migrate = await readCmd('fw-app-dev', 'fdk-react-migrate');
+    const ok = /react-error-boundary/i.test(create) && /react-error-boundary/i.test(migrate);
+    assert.ok(ok, 'react create/migrate commands must document react-error-boundary');
+  });
+
+  test('custom-iparams.md documents iparams.html skeleton and npm dep', async () => {
+    const doc = await readRepo('skills/fw-app-dev/references/react-meta/custom-iparams.md');
+    const ok = /react-meta-custom-iparams-skeleton/i.test(doc)
+      && /iparams\.html/i.test(doc)
+      && /react-error-boundary/i.test(doc);
+    assert.ok(ok, 'custom-iparams.md must document skeleton, iparams.html, and react-error-boundary');
+  });
+
 });

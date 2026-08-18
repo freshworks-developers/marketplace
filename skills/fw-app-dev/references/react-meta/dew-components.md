@@ -51,7 +51,7 @@ Render `<App />` via `mountApp()` after `import './styles/app.css'`. DEW compone
 
 **Do not** wrap the root in `<DewTheme>` — in `@freshworks/dew-components` v1.x it is **not** a React component. `<DewTheme><App /></DewTheme>` crashes React (`Element type is invalid… got: object`) and leaves a blank UI.
 
-Optional: use `app/mount.jsx` with an inline `RootErrorBoundary` so runtime errors show a message instead of a white screen.
+Optional: use `app/mount.jsx` with `react-error-boundary` so runtime errors show a message instead of a white screen.
 
 Browse available exports and usage in Storybook before adding custom UI.
 

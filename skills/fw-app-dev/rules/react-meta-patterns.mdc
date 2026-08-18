@@ -57,6 +57,7 @@ app/
 ├── index.html              # At app root (name configurable in manifest location.url)
 ├── icon.svg                # Or path declared in manifest
 ├── index.jsx               # Entry (bundled by FDK Vite)
+├── mount.jsx               # ErrorBoundary + createRoot (react-error-boundary)
 ├── components/
 ├── public/
 └── styles/
