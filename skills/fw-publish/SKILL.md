@@ -374,7 +374,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 | **`get_app_status`** | Get aggregate app-level status. Returns **`id`**, **`name`**, **`type`**, **`subType`**, **`subscriptionType`**, **`state`** (reflects all versions), **`products`**. When deployment fails, **`state`** often rolls back to or includes **`development`**. | Step 12 (post-publish verification) |
 
 **Other tools on `fw-dev-mcp` server:**
-- **`get_developer_docs`**: Fetch developer documentation. **FALLBACK ONLY** - use only if **fw-app-dev** skill fails or when skill explicitly delegates.
+- **`get_developer_docs`**: Fetch developer documentation. **PRIMARY** documentation source — use first for platform questions; fall back to hardcoded skill references if MCP is unavailable.
 - **DEPRECATED** (do NOT use): **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**. Always use **fw-app-dev** skill for app development work.
 
 ## Error handling

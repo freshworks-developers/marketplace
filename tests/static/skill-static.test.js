@@ -878,10 +878,10 @@ describe('PR#21 — fw-publish reference files', () => {
     }
   });
 
-  test('3.x: openai-server-mcp-tools.md marks get_developer_docs as fallback only', async () => {
+  test('3.x: openai-server-mcp-tools.md marks get_developer_docs as primary', async () => {
     const md = await readRepo(`${FW_PUB_REF}/openai-server-mcp-tools.md`);
     const lower = md.toLowerCase();
-    assert.ok(lower.includes('fallback'), 'get_developer_docs must be marked as fallback');
+    assert.ok(lower.includes('primary'), 'get_developer_docs must be marked as primary');
   });
 
   test('3.x: fw-publish SKILL.md links all resolve to real files', async () => {

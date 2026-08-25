@@ -2,7 +2,7 @@
 
 **Hosted endpoint:** `https://mcp.freshworks.dev/mcp`  
 
-**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. `**get_developer_docs`** is **FALLBACK ONLY** when fw-app-dev delegates or fails.
+**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. **`get_developer_docs`** is the **PRIMARY** documentation source; fall back to hardcoded skill references if MCP is unavailable.
 
 ---
 
@@ -113,7 +113,7 @@ Aggregate app-level snapshot (`state` reflects all versions).
 
 ---
 
-## `get_developer_docs` (fallback)
+## `get_developer_docs` (primary)
 
 RAG retrieval of Freshworks marketplace development docs.
 
