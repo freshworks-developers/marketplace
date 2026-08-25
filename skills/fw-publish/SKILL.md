@@ -50,7 +50,7 @@ The MCP server is set up but the API key needs to be refreshed or was never set.
 
    **Claude Code (via plugin):** The freshworks plugin prompts for the API key at install time. If you skipped it, run `/config` and update the plugin settings. The key is stored securely in the system keychain.
 
-   **Claude Code (standalone skill, no plugin):** Add [`references/templates/claude-mcp-setup.json`](references/templates/claude-mcp-setup.json) to project `.mcp.json` or `~/.claude.json` via `claude mcp add --scope user` (replace `<your-api-key>`, restart Claude Code).
+   **Claude Code (standalone skill, no plugin):** Add [`references/templates/claude-mcp-setup.json`](references/templates/claude-mcp-setup.json) to project `mcp.json` or `~/.claude.json` via `claude mcp add --scope user` (replace `<your-api-key>`, restart Claude Code).
 4. Re-run the publish command
 
 **DO NOT proceed with any publish step until auth is confirmed.**
@@ -402,7 +402,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 | `manifest.json` | App root; must be Platform 3.0 with `modules`. |
 | Zip member names | After **`fdk pack`**, the upload zip must list **`manifest.json`** at archive root (not only **`./manifest.json`**). See **Zip layout gate** at end of step 5. |
 | `fdk` on PATH | `fdk validate` + `fdk pack`. |
-| MCP tools configured | Claude Code: from root **`.mcp.json`** when the marketplace plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
+| MCP tools configured | Claude Code: from root **`mcp.json`** when the marketplace plugin is installed (prompted at install via `userConfig`). Cursor: merge that file’s server block into `~/.cursor/mcp.json`. |
 | Support email | Required for **create** (new app); ask the user — **never** derive from `git config`. Updates reuse publisher metadata from the existing marketplace app. |
 | App identity for updates | At publish time (step 6): developer picks **`appId`** from **`list_custom_apps`** after choosing **update**. Do not use `.fdk/app-info.json` for routing. |
 

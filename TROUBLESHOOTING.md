@@ -83,7 +83,7 @@ const result = await $request.post('https://api.example.com', {});
 **Cursor:**
 - Needs THREE things to work:
   1. `SKILL.md` - The main skill
-  2. `.cursor-plugin/plugin.json` - Config file
+  2. `com.cursor/skills-metadata.json` - Config file
   3. `rules/*.mdc` - Rule files that enforce patterns
 - If ANY of these are broken, parts of the skill won’t work
 
@@ -137,7 +137,7 @@ cp -r skills/fw-* ~/.cursor/skills/
 # 2. For Claude Code:
 mkdir -p ~/.fw-dev-tools
 cp -r skills ~/.fw-dev-tools/
-cp -r .claude-plugin ~/.fw-dev-tools/
+cp -r io.anthropic.claude-code ~/.fw-dev-tools/
 claude plugin marketplace add ~/.fw-dev-tools
 claude plugin install fw-setup@freshworks-dev-tools
 claude plugin install fw-app-dev@freshworks-dev-tools
@@ -176,7 +176,7 @@ ls ~/.codex/skills/fw-app-dev/SKILL.md    # Codex
 
 **`token_revoked` / HTTP 401 on Codex:** Your ChatGPT login expired. Run `codex logout && codex login`, then restart Codex.
 
-**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. The installer writes MCP config to **`~/.codex/mcp.json`** (same `mcpServers` shape as the repo **[.mcp.json](.mcp.json)**); put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`). Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes` from any directory — MCP path does not depend on your shell cwd. This is separate from Codex CLI login.
+**MCP tools missing or HTTP 401 on publish:** Configure **`fw-dev-mcp`** JWT per **[AGENTS.md](AGENTS.md)** and **[skills/fw-publish/](skills/fw-publish/)**. The installer writes MCP config to **`~/.codex/mcp.json`** (same `mcpServers` shape as the repo **[mcp.json](mcp.json)**); put your JWT in the client-supported form (typically `Authorization: Bearer <your-jwt>`). Re-run `npx @freshworks/fw-dev-tools install --tools codex --yes` from any directory — MCP path does not depend on your shell cwd. This is separate from Codex CLI login.
 
 ---
 
@@ -202,7 +202,7 @@ The skill you installed has a broken or outdated `plugin.json` file. It's missin
 
 **Check If This Is Your Issue:**
 ```bash
-cat ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json
+cat ~/.cursor/skills/fw-app-dev/com.cursor/skills-metadata.json
 ```
 
 Look for these lines:
@@ -219,10 +219,10 @@ Look for these lines:
 cd ~/.cursor/skills/fw-app-dev/
 
 # Backup original
-cp .cursor-plugin/plugin.json .cursor-plugin/plugin.json.backup
+cp com.cursor/skills-metadata.json com.cursor/skills-metadata.json.backup
 
 # Add the missing fields
-# Edit .cursor-plugin/plugin.json and add these lines after "name":
+# Edit com.cursor/skills-metadata.json and add these lines after "name":
 # "rulesDirectory": "./rules",
 # "commandsDirectory": "./commands",
 ```
@@ -230,10 +230,10 @@ cp .cursor-plugin/plugin.json .cursor-plugin/plugin.json.backup
 **Or edit directly:**
 ```bash
 # For macOS/Linux:
-cat .cursor-plugin/plugin.json | \
+cat com.cursor/skills-metadata.json | \
   python3 -c "import sys,json; d=json.load(sys.stdin); d['rulesDirectory']='./rules'; d['commandsDirectory']='./commands'; print(json.dumps(d,indent=2))" \
-  > .cursor-plugin/plugin.json.new && \
-  mv .cursor-plugin/plugin.json.new .cursor-plugin/plugin.json
+  > com.cursor/skills-metadata.json.new && \
+  mv com.cursor/skills-metadata.json.new com.cursor/skills-metadata.json
 ```
 
 **After fixing, restart Cursor.**
@@ -270,7 +270,7 @@ skill/
 New pattern (post-0.40, multi-IDE compatible):
 ```
 skill/
-├── .cursor-plugin/plugin.json  # Config only
+├── com.cursor/skills-metadata.json  # Config only
 ├── rules/                      # IDE-agnostic
 └── commands/                   # IDE-agnostic
 ```
@@ -288,7 +288,7 @@ cd ~/.cursor/skills/fw-app-dev/
 # Remove old structure
 rm -rf .cursor/commands
 rm -rf .cursor/rules
-# Keep .cursor-plugin/ for config
+# Keep com.cursor/ for config
 
 # Verify rules at root
 ls -la rules/
@@ -303,7 +303,7 @@ ls .cursor/commands 2>&1 | grep "No such file"
 
 # SHOULD exist:
 ls rules/*.mdc | wc -l  # > 0
-ls .cursor-plugin/plugin.json  # exists
+ls com.cursor/skills-metadata.json  # exists
 ```
 
 ---
@@ -404,7 +404,7 @@ The skill developer broke the rule files. This is a skill bug, not your fault.
 ```bash
 # Get diagnostic info
 cd ~/.cursor/skills/fw-app-dev/
-cat .cursor-plugin/plugin.json | grep rules
+cat com.cursor/skills-metadata.json | grep rules
 ls -la rules/*.mdc
 ```
 
@@ -931,7 +931,7 @@ Check settings for custom path option (may vary by version)
 
 ### OpenAI Codex
 - Slash commands (`/fdk-fix`, `/fw-setup-*`) are **not** guaranteed; use **`SKILL.md`** workflows explicitly
-- Must install plugin from **repository root** (see [.codex-plugin/plugin.json](.codex-plugin/plugin.json))
+- Must install plugin from **repository root** (see [com.openai.codex/plugin.json](com.openai.codex/plugin.json))
 - MCP token wiring is client-specific; follow **AGENTS.md** and **fw-publish**
 
 ---

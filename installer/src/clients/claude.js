@@ -52,7 +52,12 @@ export async function install({ yes = false } = {}) {
 
   await copySkills(join(FW_DEV_TOOLS_DIR, 'skills'));
   const { cp: cpAsync } = await import('node:fs/promises');
-  await cpAsync(join(REPO_ROOT, '.claude-plugin'), join(FW_DEV_TOOLS_DIR, '.claude-plugin'), { recursive: true });
+  // Agent Plugins 1.0.0: copy spec-compliant root manifests + extension dir
+  await cpAsync(join(REPO_ROOT, 'plugin.json'), join(FW_DEV_TOOLS_DIR, 'plugin.json'));
+  await cpAsync(join(REPO_ROOT, 'mcp.json'), join(FW_DEV_TOOLS_DIR, 'mcp.json'));
+  await cpAsync(join(REPO_ROOT, 'io.anthropic.claude-code'), join(FW_DEV_TOOLS_DIR, 'io.anthropic.claude-code'), { recursive: true });
+  // Backward compatibility: Claude Code plugin system reads .claude-plugin/
+  await cpAsync(join(REPO_ROOT, 'io.anthropic.claude-code'), join(FW_DEV_TOOLS_DIR, '.claude-plugin'), { recursive: true });
   console.log('  ✓ Skills and plugin manifest copied to ~/.fw-dev-tools/');
 
   // Remove legacy install.json left by old manual install method

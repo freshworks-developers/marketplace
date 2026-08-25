@@ -199,7 +199,7 @@ describe('.meta.json write pattern', () => {
 // SKILL.md version vs plugin.json
 // ---------------------------------------------------------------------------
 
-describe('SKILL.md version matches plugin.json', () => {
+describe('SKILL.md version matches root plugin.json', () => {
   async function skillFrontmatterVersion(skill) {
     const raw = await readSkill(skill);
     const m = raw.match(/^version:\s*"?([^"\n]+)"?/m);
@@ -208,16 +208,10 @@ describe('SKILL.md version matches plugin.json', () => {
   }
 
   for (const skill of SKILLS) {
-    test(`${skill}: SKILL.md version matches .claude-plugin/plugin.json`, async () => {
+    test(`${skill}: SKILL.md version matches root plugin.json`, async () => {
       const skillVer = await skillFrontmatterVersion(skill);
-      const plugin = await readJson(`skills/${skill}/.claude-plugin/plugin.json`);
-      assert.equal(skillVer, plugin.version, `${skill}: SKILL.md and claude plugin.json versions must match`);
-    });
-
-    test(`${skill}: SKILL.md version matches .cursor-plugin/plugin.json`, async () => {
-      const skillVer = await skillFrontmatterVersion(skill);
-      const plugin = await readJson(`skills/${skill}/.cursor-plugin/plugin.json`);
-      assert.equal(skillVer, plugin.version, `${skill}: SKILL.md and cursor plugin.json versions must match`);
+      const plugin = await readJson('plugin.json');
+      assert.equal(skillVer, plugin.version, `${skill}: SKILL.md and root plugin.json versions must match`);
     });
   }
 });
@@ -250,23 +244,20 @@ describe('Release hygiene — fleet version lock', () => {
       'installer/package.json must match marketplace/package.json (run scripts/bump-version.mjs)'
     );
 
+    // Root plugin.json (Agent Plugins 1.0.0)
+    const rootPlugin = await readJson('plugin.json');
+    assert.equal(rootPlugin.version, canonical, 'plugin.json must match fleet release');
+
     for (const skill of SKILLS) {
       assert.equal(
         await skillFrontmatterVersion(skill),
         canonical,
         `${skill}/SKILL.md version must match fleet release`
       );
-      for (const pluginDir of ['.claude-plugin', '.cursor-plugin']) {
-        const plugin = await readJson(`skills/${skill}/${pluginDir}/plugin.json`);
-        assert.equal(
-          plugin.version,
-          canonical,
-          `${skill}/${pluginDir}/plugin.json must match fleet release`
-        );
-      }
     }
 
-    for (const manifest of ['.claude-plugin/marketplace.json', '.cursor-plugin/marketplace.json']) {
+    // Extension directory manifests (Agent Plugins 1.0.0)
+    for (const manifest of ['io.anthropic.claude-code/marketplace.json', 'com.cursor/marketplace.json']) {
       const mp = await readJson(manifest);
       assert.equal(mp.version, canonical, `${manifest} top-level version`);
       for (const plugin of mp.plugins) {
@@ -539,9 +530,9 @@ describe('React Meta skeleton templates', () => {
     assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'rules', 'react-meta-patterns.mdc')));
   });
 
-  test('plugin.json registers react commands', async () => {
-    const plugin = await readJson('skills/fw-app-dev/.cursor-plugin/plugin.json');
-    const names = plugin.commands.map(c => c.name);
+  test('skills-metadata.json registers react commands', async () => {
+    const metadata = await readJson('com.cursor/skills-metadata.json');
+    const names = metadata['fw-app-dev'].commands.map(c => c.name);
     assert.equal(names.length, 5, `expected 5 commands, got: ${names.join(', ')}`);
     assert.ok(names.includes('fdk-react-create'));
     assert.ok(names.includes('fdk-react-migrate'));
@@ -679,9 +670,9 @@ describe('PR#21 — fdk-review removal', () => {
     assert.deepEqual(hits, [], `fdk-review still referenced in:\n${hits.join('\n')}`);
   });
 
-  test('1.2: fw-app-dev plugin.json has fdk-fix, fdk-migrate, fdk-refactor commands', async () => {
-    const plugin = await readJson('skills/fw-app-dev/.cursor-plugin/plugin.json');
-    const names = plugin.commands.map(c => c.name);
+  test('1.2: fw-app-dev skills-metadata has fdk-fix, fdk-migrate, fdk-refactor commands', async () => {
+    const metadata = await readJson('com.cursor/skills-metadata.json');
+    const names = metadata['fw-app-dev'].commands.map(c => c.name);
     assert.ok(names.includes('fdk-fix'));
     assert.ok(names.includes('fdk-migrate'));
     assert.ok(names.includes('fdk-refactor'));
@@ -697,10 +688,10 @@ describe('PR#21 — fdk-review removal', () => {
   });
 
   test('1.4: plugin manifests do not mention /fdk-review', async () => {
-    const claude = await readRepo('.claude-plugin/marketplace.json');
-    const cursor = await readRepo('.cursor-plugin/marketplace.json');
-    assert.ok(!claude.includes('fdk-review'), '.claude-plugin/marketplace.json must not mention fdk-review');
-    assert.ok(!cursor.includes('fdk-review'), '.cursor-plugin/marketplace.json must not mention fdk-review');
+    const claude = await readRepo('io.anthropic.claude-code/marketplace.json');
+    const cursor = await readRepo('com.cursor/marketplace.json');
+    assert.ok(!claude.includes('fdk-review'), 'io.anthropic.claude-code/marketplace.json must not mention fdk-review');
+    assert.ok(!cursor.includes('fdk-review'), 'com.cursor/marketplace.json must not mention fdk-review');
   });
 });
 
@@ -1010,22 +1001,40 @@ describe('PR#21 — AGENTS.md subagents cleanup', () => {
 // ---------------------------------------------------------------------------
 
 describe('PR#21 — plugin manifest consistency', () => {
-  test('10.1: .claude-plugin and .cursor-plugin have matching versions', async () => {
-    const claude = await readJson('.claude-plugin/marketplace.json');
-    const cursor = await readJson('.cursor-plugin/marketplace.json');
+  test('10.1: extension directory manifests have matching versions', async () => {
+    const claude = await readJson('io.anthropic.claude-code/marketplace.json');
+    const cursor = await readJson('com.cursor/marketplace.json');
     assert.equal(claude.version, cursor.version, 'plugin versions must match across claude and cursor manifests');
   });
 
   test('10.2: all plugin JSON files parse without error', async () => {
     const files = [
-      '.claude-plugin/marketplace.json',
-      '.cursor-plugin/marketplace.json',
-      'skills/fw-app-dev/.cursor-plugin/plugin.json',
+      'plugin.json',
+      'mcp.json',
+      'io.anthropic.claude-code/marketplace.json',
+      'com.cursor/marketplace.json',
+      'com.cursor/skills-metadata.json',
     ];
     for (const f of files) {
       const parsed = await readJson(f);
       assert.ok(parsed, `${f} must parse as valid JSON`);
     }
+  });
+
+  test('10.3: root plugin.json has required Agent Plugins 1.0.0 fields', async () => {
+    const plugin = await readJson('plugin.json');
+    assert.equal(plugin.$schema, 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json');
+    assert.ok(plugin.name, 'plugin.json must have name');
+    assert.ok(/^[a-z0-9][a-z0-9.-]*[a-z0-9]$/.test(plugin.name), 'plugin name must be kebab-case');
+  });
+
+  test('10.4: mcp.json has required Agent Plugins 1.0.0 fields', async () => {
+    const mcp = await readJson('mcp.json');
+    assert.equal(mcp.$schema, 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
+    assert.ok(mcp.mcpServers, 'mcp.json must have mcpServers');
+    const server = mcp.mcpServers['fw-dev-mcp'];
+    assert.ok(server, 'mcp.json must have fw-dev-mcp server');
+    assert.equal(server.type, 'streamable-http', 'fw-dev-mcp must use streamable-http transport');
   });
 });
 

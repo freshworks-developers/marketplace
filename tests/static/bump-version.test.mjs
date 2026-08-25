@@ -23,9 +23,11 @@ const COPY_ITEMS = [
   'package.json',
   'installer',
   'skills',
-  '.claude-plugin',
-  '.cursor-plugin',
-  '.codex-plugin',
+  'plugin.json',
+  'mcp.json',
+  'io.anthropic.claude-code',
+  'com.cursor',
+  'com.openai.codex',
   'scripts',
 ];
 
@@ -54,6 +56,12 @@ async function makeBumpFixture() {
 async function collectVersions(dir) {
   const checks = [];
 
+  // Root plugin.json (Agent Plugins 1.0.0)
+  checks.push([
+    'plugin.json',
+    (await readJson(join(dir, 'plugin.json'))).version,
+  ]);
+
   checks.push([
     'installer/package.json',
     (await readJson(join(dir, 'installer', 'package.json'))).version,
@@ -64,13 +72,10 @@ async function collectVersions(dir) {
       `skills/${skill}/SKILL.md`,
       await skillFrontmatterVersion(join(dir, 'skills', skill, 'SKILL.md')),
     ]);
-    for (const pluginDir of ['.claude-plugin', '.cursor-plugin']) {
-      const rel = `skills/${skill}/${pluginDir}/plugin.json`;
-      checks.push([rel, (await readJson(join(dir, rel))).version]);
-    }
   }
 
-  for (const manifest of ['.claude-plugin/marketplace.json', '.cursor-plugin/marketplace.json']) {
+  // Extension directory manifests (Agent Plugins 1.0.0)
+  for (const manifest of ['io.anthropic.claude-code/marketplace.json', 'com.cursor/marketplace.json']) {
     const mp = await readJson(join(dir, manifest));
     checks.push([`${manifest} (top)`, mp.version]);
     for (const plugin of mp.plugins) {
@@ -79,9 +84,9 @@ async function collectVersions(dir) {
   }
 
   for (const rel of [
-    '.claude-plugin/plugin.json',
-    '.cursor-plugin/plugin.json',
-    '.codex-plugin/plugin.json',
+    'io.anthropic.claude-code/plugin.json',
+    'com.cursor/plugin.json',
+    'com.openai.codex/plugin.json',
   ]) {
     checks.push([rel, (await readJson(join(dir, rel))).version]);
   }

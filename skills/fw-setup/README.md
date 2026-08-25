@@ -244,12 +244,6 @@ fw-setup/
 ├── SKILL.md                   # Main skill logic and operation templates
 ├── README.md                  # This file
 │
-├── .cursor-plugin/
-│   └── plugin.json            # Command registration for Cursor
-│
-├── .claude-plugin/
-│   └── plugin.json            # Command registration for Claude Code
-│
 ├── commands/                  # Slash command definitions (/fw-setup *)
 │   ├── fw-setup-install.md   # optional --version
 │   ├── fw-setup-upgrade.md   # optional --to

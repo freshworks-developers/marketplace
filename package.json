@@ -10,11 +10,14 @@
     "installer/bin/",
     "installer/src/",
     "skills/",
-    ".claude-plugin",
-    ".mcp.json"
+    "plugin.json",
+    "mcp.json",
+    "io.anthropic.claude-code",
+    "com.cursor",
+    "com.openai.codex"
   ],
   "scripts": {
-    "version": "node scripts/bump-version.mjs && git add installer/package.json skills/ .claude-plugin/ .cursor-plugin/ .codex-plugin/"
+    "version": "node scripts/bump-version.mjs && git add installer/package.json skills/ plugin.json mcp.json io.anthropic.claude-code/ com.cursor/ com.openai.codex/"
   },
   "dependencies": {
     "commander": "^12.0.0"

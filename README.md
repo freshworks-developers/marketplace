@@ -136,7 +136,7 @@ Guides you through `fdk validate → pack → upload → submit` via MCP without
 
 ## MCP (marketplace publish)
 
-Publishing uses the **fw-dev-mcp server**. This repo bundles `.mcp.json` at the repository root (URL + `Authorization` header). MCP token placement, copy-paste blocks, and tool names are documented in the publish skill under **[skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/)**.
+Publishing uses the **fw-dev-mcp server**. This repo bundles `mcp.json` at the repository root (URL + transport type per [Agent Plugins 1.0.0](https://agent-plugins.org/)). MCP token placement, copy-paste blocks, and tool names are documented in the publish skill under **[skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/)**.
 
 ---
 

@@ -4,7 +4,7 @@ Skill for publishing **Freshworks Platform 3.0** custom apps to the **Freshworks
 
 ## Overview
 
-**fw-publish** guides you through auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps without leaving your IDE. MCP server config is **`.mcp.json`** at the **repository root**. Pair with **fw-app-dev** (full UI apps) or **fw-ai-actions-app** (AI Actions / `actions.json` integrations) for manifest and validation fixes before packing. Skill routing: **[AGENTS.md](../../AGENTS.md)**.
+**fw-publish** guides you through auth preflight, `fdk validate` / `fdk pack`, binary upload, and marketplace API steps without leaving your IDE. MCP server config is **`mcp.json`** at the **repository root** (Agent Plugins 1.0.0). Pair with **fw-app-dev** (full UI apps) or **fw-ai-actions-app** (AI Actions / `actions.json` integrations) for manifest and validation fixes before packing. Skill routing: **[AGENTS.md](../../AGENTS.md)**.
 
 ## Install
 
@@ -32,14 +32,14 @@ codex plugin marketplace add freshworks-developers/fw-dev-tools
 | Path | Purpose |
 |------|---------|
 | `SKILL.md` | Orchestration, MCP tool usage, error handling |
-| *(repo root)* `.mcp.json` | Reference `fw-dev-mcp` server block (URL + `Authorization`); bundled at monorepo root, not under `skills/fw-publish/` |
+| *(repo root)* `mcp.json` | Reference `fw-dev-mcp` server block (URL + transport); bundled at monorepo root, not under `skills/fw-publish/` |
 
 ## Requirements
 
 - **Developer Portal API key** for MCP authentication: API key from [developers.freshworks.com/developer/](https://developers.freshworks.com/developer/) - API key for Freddy AI Copilot for VS Code plugin & Agentic Developer Toolkit. or Connect to Developer MCP server (For MCP configuration)
 - **MCP server configuration**: `fw-dev-mcp` at `https://mcp.freshworks.dev/mcp` with `Authorization` header
   - **Claude Code**: API key stored in keychain via `userConfig.mcp_auth_token`, referenced as `${user_config.mcp_auth_token}`
-  - **Cursor**: Copy `.mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)
+  - **Cursor**: Copy `mcp.json` server block to `~/.cursor/mcp.json` and use literal `Bearer <token>` (Cursor doesn't resolve `user_config`)
 - **FDK 10.x** and **Node 24.x** for validate/pack (see **fw-setup**)
 - Built zip from `fdk pack` before upload
 

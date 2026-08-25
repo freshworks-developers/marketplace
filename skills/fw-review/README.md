@@ -492,7 +492,7 @@ Installation-time configuration review is scoped to `manifest.json`, default ipa
 | `SKILL.md` | Workflow, authoritative rule ID summary, prerequisites |
 | `rules/` | Detailed criteria for iparam, frontend, script-backed checks, and report output |
 | `scripts/` | Node CLIs for script-backed checks listed in the rule inventory |
-| `.claude-plugin/` / `.cursor-plugin/` | Plugin metadata for marketplace installs |
+| *(repo root)* `io.anthropic.claude-code/` / `com.cursor/` | Plugin metadata for marketplace installs |
 
 ## Requirements
 
