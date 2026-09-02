@@ -126,4 +126,4 @@ RAG retrieval of Freshworks marketplace development docs.
 
 **Returns:** Markdown documentation string (sections separated by `---`).
 
-**fw-dev-tools policy:** Use only when **fw-app-dev** explicitly delegates or fails — not as primary app-building path.
+**fw-dev-tools policy:** **PRIMARY** source for platform documentation questions — use first, fall back to hardcoded skill references if MCP is unavailable. **fw-app-dev** remains the primary path for app-building work (implementation, validation, review); this tool is for doc lookup, not implementation routing.
