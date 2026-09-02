@@ -1,0 +1,30 @@
+{
+  "integrations": {
+    "github": {
+      "display_name": "GitHub",
+      "client_id": "<%= oauth_iparams.client_id %>",
+      "client_secret": "<%= oauth_iparams.client_secret %>",
+      "authorize_url": "https://github.com/login/oauth/authorize",
+      "token_url": "https://github.com/login/oauth/access_token",
+      "options": {
+        "scope": "read:user"
+      },
+      "token_type": "account",
+      "oauth_iparams": {
+        "client_id": {
+          "display_name": "OAuth Client ID",
+          "description": "Client ID from your OAuth app in the Github",
+          "type": "text",
+          "required": true
+        },
+        "client_secret": {
+          "display_name": "OAuth Client Secret",
+          "description": "Client secret from your OAuth app in the Github",
+          "type": "text",
+          "required": true,
+          "secure": true
+        }
+      }
+    }
+  }
+}

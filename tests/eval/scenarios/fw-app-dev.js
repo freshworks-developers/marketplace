@@ -1160,4 +1160,48 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
+  // fw-app-dev-49: Meta-default routing — React Meta unless user explicitly opts into vanilla Crayons
+  {
+    id: 'fw-app-dev-49',
+    skill: 'fw-app-dev',
+    label: 'new UI app defaults to React Meta unless user explicitly opts into vanilla Crayons',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Developer asks: "Build a Freshdesk ticket sidebar app." They did NOT mention vanilla JS or Crayons. According to fw-app-dev: should the default path be React Meta (/fdk-react-create or react-meta skeletons), and should vanilla Crayons only be used when explicitly requested?',
+    schema: {
+      type: 'object',
+      required: ['defaults_to_react_meta', 'vanilla_only_when_explicit'],
+      properties: {
+        defaults_to_react_meta: { type: 'boolean' },
+        vanilla_only_when_explicit: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.defaults_to_react_meta, true, 'new UI apps must default to React Meta');
+      assert.equal(output.vanilla_only_when_explicit, true, 'vanilla Crayons is opt-in only');
+    },
+  },
+
+  // fw-app-dev-50: explicit vanilla opt-in — frontend-skeleton, not /fdk-react-create
+  {
+    id: 'fw-app-dev-50',
+    skill: 'fw-app-dev',
+    label: 'explicit vanilla JS / Crayons request → vanilla skeletons, not React Meta',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'Developer asks: "Build a Freshdesk sidebar app using vanilla JavaScript and Crayons components — no React." According to fw-app-dev: should /fdk-react-create or react-meta skeletons be used, or should the agent use vanilla frontend/hybrid/oauth skeletons with app/scripts/app.js and Crayons CDN?',
+    schema: {
+      type: 'object',
+      required: ['uses_vanilla_skeleton', 'avoids_react_meta'],
+      properties: {
+        uses_vanilla_skeleton: { type: 'boolean' },
+        avoids_react_meta: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.uses_vanilla_skeleton, true, 'explicit vanilla request must use vanilla skeletons');
+      assert.equal(output.avoids_react_meta, true, 'must not scaffold React Meta when vanilla is explicitly requested');
+    },
+  },
+
 ];

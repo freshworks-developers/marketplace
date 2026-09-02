@@ -51,6 +51,9 @@ const SKELETON_MANIFESTS = [
   join(TEMPLATES_DIR, 'frontend-skeleton', 'manifest.json'),
   join(TEMPLATES_DIR, 'serverless-skeleton', 'manifest.json'),
   join(TEMPLATES_DIR, 'hybrid-skeleton', 'manifest.json'),
+  join(TEMPLATES_DIR, 'react-meta-frontend-skeleton', 'manifest.json'),
+  join(TEMPLATES_DIR, 'react-meta-hybrid-skeleton', 'manifest.json'),
+  join(TEMPLATES_DIR, 'react-meta-oauth-skeleton', 'manifest.json'),
 ];
 
 // ---------------------------------------------------------------------------
@@ -321,10 +324,11 @@ describe('.meta.json template', () => {
     const raw = await readFile(join(SKILLS_DIR, 'shared', '.meta.template.json'), 'utf8');
     const t = JSON.parse(raw);
     const block = t['fw-app-dev'];
-    for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories']) {
+    for (const field of ['migrate_iterations', 'validate_iterations', 'validation_error_categories', 'react_meta_workflow']) {
       assert.ok(Object.hasOwn(block, field), `fw-app-dev block missing field: ${field}`);
     }
     assert.deepEqual(block.validation_error_categories, []);
+    assert.equal(block.react_meta_workflow, '');
   });
 
   test('fw-review block has review_failure_categories', async () => {
@@ -424,7 +428,7 @@ describe('Skill file line counts', () => {
 // ---------------------------------------------------------------------------
 
 describe('fw-app-dev command files', () => {
-  const commands = ['fdk-fix', 'fdk-migrate'];
+  const commands = ['fdk-fix', 'fdk-migrate', 'fdk-react-create', 'fdk-react-migrate'];
 
   for (const cmd of commands) {
     test(`${cmd}.md: contains MANDATORY .meta.json write step`, async () => {
@@ -471,6 +475,93 @@ describe('fw-app-dev command files', () => {
       );
     });
   }
+});
+
+// ---------------------------------------------------------------------------
+// React Meta skeleton templates
+// ---------------------------------------------------------------------------
+
+describe('React Meta skeleton templates', () => {
+  const REACT_META_SKELETONS = [
+    'react-meta-frontend-skeleton',
+    'react-meta-hybrid-skeleton',
+    'react-meta-oauth-skeleton',
+  ];
+
+  for (const name of REACT_META_SKELETONS) {
+    const base = join(TEMPLATES_DIR, name);
+
+    test(`${name}: manifest has metaConfig.framework react`, async () => {
+      const manifest = JSON.parse(await readFile(join(base, 'manifest.json'), 'utf8'));
+      assert.equal(manifest.metaConfig?.framework, 'react');
+    });
+
+    test(`${name}: package.json has DEW deps and no Crayons`, async () => {
+      const pkg = JSON.parse(await readFile(join(base, 'package.json'), 'utf8'));
+      const deps = pkg.dependencies ?? {};
+      assert.ok(deps['@freshworks/dew-components'], 'must include dew-components');
+      assert.ok(deps['@freshworks/dew-styles'], 'must include dew-styles');
+      assert.ok(!deps['@freshworks/crayons'], 'must not include crayons');
+    });
+
+    test(`${name}: App.jsx includes path="*" route`, async () => {
+      const app = await readFile(join(base, 'app', 'components', 'App.jsx'), 'utf8');
+      assert.ok(app.includes('path="*"'), 'Router must include path="*" fallback');
+    });
+
+    test(`${name}: index.html at app root`, async () => {
+      assert.ok(await fileExists(join(base, 'app', 'index.html')), 'app/index.html must exist');
+    });
+
+    test(`${name}: index.html includes appclient script`, async () => {
+      const html = await readFile(join(base, 'app', 'index.html'), 'utf8');
+      assert.ok(html.includes('{{{appclient}}}'), 'index.html must include {{{appclient}}} for PlaceholderWrapper');
+    });
+  }
+
+  test('react-meta reference docs mention vite merge and Tailwind', async () => {
+    const vite = await readRepo('skills/fw-app-dev/references/react-meta/vite-config.md');
+    const styling = await readRepo('skills/fw-app-dev/references/react-meta/styling-and-third-party.md');
+    assert.ok(vite.includes('deep-merge') || vite.includes('deep-merges'));
+    assert.ok(vite.includes('FDK wins'));
+    assert.ok(styling.includes('Tailwind'));
+  });
+
+  test('dew-components.md requires DEW packages and Storybook', async () => {
+    const dew = await readRepo('skills/fw-app-dev/references/react-meta/dew-components.md');
+    assert.ok(dew.includes('@freshworks/dew-components'));
+    assert.ok(dew.includes('@freshworks/dew-styles'));
+    assert.ok(dew.includes('dew.freshworkscorp.com/dew-3.0'));
+    assert.ok(!dew.includes('github.com/freshworks/fw-dew'));
+  });
+
+  test('react-meta-patterns.mdc exists', async () => {
+    assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'rules', 'react-meta-patterns.mdc')));
+  });
+
+  test('plugin.json registers react commands', async () => {
+    const plugin = await readJson('skills/fw-app-dev/.cursor-plugin/plugin.json');
+    const names = plugin.commands.map(c => c.name);
+    assert.equal(names.length, 5, `expected 5 commands, got: ${names.join(', ')}`);
+    assert.ok(names.includes('fdk-react-create'));
+    assert.ok(names.includes('fdk-react-migrate'));
+  });
+
+  test('command files exist for fdk-react-create and fdk-react-migrate', async () => {
+    assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'commands', 'fdk-react-create.md')));
+    assert.ok(await fileExists(join(SKILLS_DIR, 'fw-app-dev', 'commands', 'fdk-react-migrate.md')));
+  });
+
+  test('react commands write react_meta_workflow telemetry', async () => {
+    const create = await readRepo('skills/fw-app-dev/commands/fdk-react-create.md');
+    const migrate = await readRepo('skills/fw-app-dev/commands/fdk-react-migrate.md');
+    assert.ok(create.includes('react_meta_workflow=react-create'));
+    assert.ok(migrate.includes('react_meta_workflow=react-migrate'));
+    assert.ok(create.includes('meta-init.sh <app-directory>'));
+    assert.ok(!create.includes('meta-init.sh <app-directory> <ide-client>'));
+    assert.ok(migrate.includes('meta-init.sh <app-directory>'));
+    assert.ok(!migrate.includes('meta-init.sh <app-directory> <ide-client>'));
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -588,10 +679,9 @@ describe('PR#21 — fdk-review removal', () => {
     assert.deepEqual(hits, [], `fdk-review still referenced in:\n${hits.join('\n')}`);
   });
 
-  test('1.2: fw-app-dev plugin.json has exactly 3 commands (fdk-fix, fdk-migrate, fdk-refactor)', async () => {
+  test('1.2: fw-app-dev plugin.json has fdk-fix, fdk-migrate, fdk-refactor commands', async () => {
     const plugin = await readJson('skills/fw-app-dev/.cursor-plugin/plugin.json');
     const names = plugin.commands.map(c => c.name);
-    assert.equal(names.length, 3, `expected 3 commands, got: ${names.join(', ')}`);
     assert.ok(names.includes('fdk-fix'));
     assert.ok(names.includes('fdk-migrate'));
     assert.ok(names.includes('fdk-refactor'));

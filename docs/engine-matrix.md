@@ -5,7 +5,7 @@ Authoritative **Platform 3.0** toolchain pins for this skill bundle. **Agents sh
 | Stack | FDK | Node (nvm / nvm-windows) | Notes |
 |-------|-----|--------------------------|--------|
 | **Publish to Marketplace** | **10.x** | **24.11.x** (see FDK release notes for exact minimum **24.11** patch) | Required for submission / review. |
-| **Active dev (recommended)** | **10.x** | **24.11.x** | Default for new apps. CDN: `https://cdn.freshdev.io/fdk/latest-v24.tgz` (or `vX.Y.Z.tgz` pinned). |
+| **Active dev (recommended)** | **10.x** | **24.11.x** | Default for new apps. CDN: `https://cdn.freshdev.io/fdk/latest-v24.tgz` (or `vX.Y.Z.tgz` pinned). Meta apps: **FDK 10.1.0+**; optional **`vite.config.js`**: **FDK 10.1.5+**. |
 | **Legacy / migration** | **9.x** *(deprecated May 31, 2026)* | **18.x** | Development only — **not** for publishing. CDN: `latest.tgz` / `vX.Y.Z.tgz`. Show deprecation warning. |
 | **Forbidden** | Platform **2.x** | *(any)* | Reject — migrate to Platform **3.0** per **fw-app-dev** `/fdk-migrate`. **Platform 2.3** support ends **May 31, 2026** (same calendar as **Node 18** below). |
 
