@@ -115,6 +115,10 @@ Keep this list aligned when adding or renaming files.
 
 **Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
 
+### shared — `skills/shared/`
+
+**Commands:** none. **Rules (`.mdc`):** `rules/preflight.mdc` (installed to `~/.fw-dev-tools/specs/preflight.mdc` with the orchestration specs).
+
 ### fw-review — `skills/fw-review/`
 
 **Commands:** none (pipeline in `SKILL.md`; checks via `scripts/*.js` per `rules/script-check-rules.md`).

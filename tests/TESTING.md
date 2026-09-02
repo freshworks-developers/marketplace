@@ -23,7 +23,7 @@ bash tests/run-all-tests.sh --llm-eval --e2e   # all layers
 
 Generates `tests/all-tests-report.html` — tabbed report with results for all layers.
 
-**Scenario counts:** 123 installer · 215 static/parser · 143 regex (140 active, 3 skipped) · 187 LLM active (13 disabled pending upstream skill changes).
+**Scenario counts:** 123+ installer · 215+ static/parser · 145+ regex · 193+ LLM active (includes six orchestration scenarios ported from `tests/scenarios/*.md`).
 
 ## What runs where
 
@@ -79,6 +79,7 @@ tests/
       fw-review.js
       fw-publish.js
       fw-ai-actions.js
+      orchestration.js            # Six intent/session orchestration scenarios
     regex/                        # Layer 3: per-skill regex checks (CI, ~80ms)
       fw-app-dev.regex.test.mjs
       fw-setup.regex.test.mjs

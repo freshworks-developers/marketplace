@@ -34,7 +34,7 @@ user message
 
 **Tier 2 brain:** `~/.fw-dev-tools/specs/agent-behaviour.md` (always-loaded copy) — load intent sections, guardrails, escalation, telemetry on demand.
 
-**Preflight:** first message per session — `skills/shared/rules/preflight.mdc` (installed via skill refs); see Tier 2 §preflight.
+**Preflight:** first message per session — `~/.fw-dev-tools/specs/preflight.mdc`; see Tier 2 §preflight.
 
 ## Which skill to use
 
