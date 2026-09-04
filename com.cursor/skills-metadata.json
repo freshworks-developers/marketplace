@@ -1,0 +1,132 @@
+{
+  "fw-setup": {
+    "interface": {
+      "displayName": "Freshworks FDK Setup",
+      "shortDescription": "Install and manage FDK with Node.js via nvm.",
+      "longDescription": "Shell Tasks and inline commands for FDK 10 on Node 24, optional FDK 9 on Node 18, uninstall, status, troubleshoot --fix, and workspace nvm/.nvmrc. Legacy /fdk-* slash aliases where registered."
+    },
+    "rulesDirectory": "./rules",
+    "commandsDirectory": "./commands",
+    "commands": [
+      {
+        "name": "fw-setup-install",
+        "description": "Install FDK 10 + Node 24; optional --version X.Y.Z (CDN pin)",
+        "file": "commands/fw-setup-install.md"
+      },
+      {
+        "name": "fw-setup-upgrade",
+        "description": "Upgrade FDK; optional --to X.Y.Z semver (CDN vX.Y.Z.tgz)",
+        "file": "commands/fw-setup-upgrade.md"
+      },
+      {
+        "name": "fw-setup-downgrade",
+        "description": "Downgrade FDK 10 → 9; optional semver 9.x.y or latest 9 line",
+        "file": "commands/fw-setup-downgrade.md"
+      },
+      {
+        "name": "fw-setup-uninstall",
+        "description": "Uninstall FDK (keeps Node.js/nvm)",
+        "file": "commands/fw-setup-uninstall.md"
+      },
+      {
+        "name": "fw-setup-status",
+        "description": "FDK / Node / nvm status; optional --verbose",
+        "file": "commands/fw-setup-status.md"
+      },
+      {
+        "name": "fw-setup-troubleshoot",
+        "description": "Diagnose FDK/nvm/PATH; optional --fix (shell Task, zshrc-safe)",
+        "file": "commands/fw-setup-troubleshoot.md"
+      },
+      {
+        "name": "fw-setup-use",
+        "description": "Workspace stack: nvm use + .nvmrc (10/9); optional --write-nvmrc; inline only",
+        "file": "commands/fw-setup-use.md"
+      }
+    ],
+    "tags": [
+      "automation",
+      "setup",
+      "cli"
+    ]
+  },
+  "fw-app-dev": {
+    "interface": {
+      "displayName": "Freshworks App Development",
+      "shortDescription": "Platform 3.0 apps: React Meta (default), manifest, requests, OAuth, serverless.",
+      "longDescription": "Enforces Platform 3.0 patterns with slash commands /fdk-react-create, /fdk-react-migrate, /fdk-fix, /fdk-migrate, /fdk-refactor. For structured pre-submission review, use the fw-review skill. Does not install FDK or Node — use the fw-setup skill for the toolchain."
+    },
+    "rulesDirectory": "./rules",
+    "commandsDirectory": "./commands",
+    "commands": [
+      {
+        "name": "fdk-react-create",
+        "description": "Create a new React Meta app (default UI stack)",
+        "file": "commands/fdk-react-create.md"
+      },
+      {
+        "name": "fdk-react-migrate",
+        "description": "Migrate vanilla JS Platform 3.0 app to React Meta",
+        "file": "commands/fdk-react-migrate.md"
+      },
+      {
+        "name": "fdk-fix",
+        "description": "Fix all platform validation errors and lint errors",
+        "file": "commands/fdk-fix.md"
+      },
+      {
+        "name": "fdk-migrate",
+        "description": "Migrate Platform 2.3 (2.x), FDK 9.x, Node 18 → Platform 3.0, FDK 10, Node 24",
+        "file": "commands/fdk-migrate.md"
+      },
+      {
+        "name": "fdk-refactor",
+        "description": "Reduce function complexity to meet cyclomatic complexity ≤ 7",
+        "file": "commands/fdk-refactor.md"
+      }
+    ],
+    "tags": [
+      "development",
+      "validation",
+      "migration"
+    ]
+  },
+  "fw-ai-actions-app": {
+    "interface": {
+      "displayName": "Freshworks AI Actions (fw-ai-actions-app)",
+      "shortDescription": "actions.json, SMI handlers, request templates, and third-party API integrations.",
+      "longDescription": "Expert guidance for flat request parameters, nested responses in server.js, iparams/OAuth, fdk validate, test data, and integration scoping. Pair with fw-app-dev for full marketplace UI apps and fw-setup for the toolchain."
+    },
+    "rulesDirectory": "./rules",
+    "tags": [
+      "ai-actions",
+      "integration",
+      "validation"
+    ]
+  },
+  "fw-review": {
+    "interface": {
+      "displayName": "Freshworks App Review (fw-review)",
+      "shortDescription": "Structured app review: rules, deterministic scripts, report format.",
+      "longDescription": "Silent pipeline over manifest, iparams, frontend rules, and script-backed checks. Pair with fw-setup for FDK availability and fw-app-dev for fixes after review."
+    },
+    "rulesDirectory": "./rules",
+    "tags": [
+      "review",
+      "validation",
+      "marketplace"
+    ]
+  },
+  "fw-publish": {
+    "interface": {
+      "displayName": "Freshworks Marketplace Publish",
+      "shortDescription": "MCP: validate, pack, app-upload, submit/update.",
+      "longDescription": "Auth preflight, fdk validate/pack, app-upload, submit/update via MCP. API key from https://developers.freshworks.com/developer/. Pair with fw-app-dev for manifest and validation fixes."
+    },
+    "tags": [
+      "automation",
+      "publishing",
+      "marketplace"
+    ]
+  }
+}

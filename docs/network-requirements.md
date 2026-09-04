@@ -6,7 +6,7 @@ Typical Freshworks custom-app development with this bundle needs **outbound HTTP
 |------|---------|
 | **`cdn.freshdev.io`** | FDK CDN tarballs (`npm install -g https://…tgz`). |
 | **`registry.npmjs.org`** (or corporate **npm** mirror) | Node package restore for `npm` / FDK dependencies. |
-| **`mcp.freshworks.dev`** | Marketplace **MCP** (publish, list apps) via **`.mcp.json`**. |
+| **`mcp.freshworks.dev`** | Marketplace **MCP** (publish, list apps) via **`mcp.json`**. |
 | **`developers.freshworks.com`** | Developer portal profile, API keys, documentation. |
 
 ## TLS inspection

@@ -113,7 +113,7 @@ function skillFrontmatterVersion(skillMd) {
 
 async function assertLocalClaudeMarketplace(home) {
   const skillPath = join(devToolsHome(home), 'skills', 'fw-app-dev', 'SKILL.md');
-  const marketplacePath = join(devToolsHome(home), '.claude-plugin', 'marketplace.json');
+  const marketplacePath = join(devToolsHome(home), 'io.anthropic.claude-code', 'marketplace.json');
   await access(skillPath);
   await access(marketplacePath);
   const skillVer = skillFrontmatterVersion(await readFile(skillPath, 'utf8'));

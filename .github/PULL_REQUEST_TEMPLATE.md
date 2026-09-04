@@ -6,7 +6,7 @@
 
 - [ ] Skill content (`SKILL.md`, command file, rule file)
 - [ ] Reference / template file
-- [ ] Plugin manifest (`.claude-plugin`, `.cursor-plugin`, `.codex-plugin`, `skills/*/.cursor-plugin`)
+- [ ] Plugin manifest (`plugin.json`, `mcp.json`, `io.anthropic.claude-code/`, `com.cursor/`, `com.openai.codex/`)
 - [ ] Installer (`installer/`)
 - [ ] Test suite (`tests/`, `installer/tests/`)
 - [ ] CI / docs / infra only

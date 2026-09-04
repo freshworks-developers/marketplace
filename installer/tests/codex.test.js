@@ -31,11 +31,11 @@ async function makeTmp() {
 
 test('resolveSkillsDir returns ~/.codex/skills when plugin.json is absent', async () => {
   const tmp = await makeTmp();
-  // Call with a cwd that has no .codex-plugin directory — relies on the
+  // Call with a cwd that has no com.openai.codex directory — relies on the
   // actual REPO_ROOT from utils.js, but the fallback is exercised when
   // the manifest has no `skills` field.
   // We test the fallback by creating a minimal plugin.json with no `skills` key.
-  const pluginDir = join(tmp, '.codex-plugin');
+  const pluginDir = join(tmp, 'com.openai.codex');
   await mkdir(pluginDir, { recursive: true });
   await writeFile(join(pluginDir, 'plugin.json'), JSON.stringify({ name: 'test' }), 'utf8');
 

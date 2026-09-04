@@ -16,7 +16,7 @@ export function resolveMcpJsonPath() {
 }
 
 export async function resolveSkillsDir() {
-  const pluginJson = join(REPO_ROOT, '.codex-plugin', 'plugin.json');
+  const pluginJson = join(REPO_ROOT, 'com.openai.codex', 'plugin.json');
   if (existsSync(pluginJson)) {
     try {
       const manifest = JSON.parse(await readFile(pluginJson, 'utf8'));

@@ -41,13 +41,13 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 ```
 fw-dev-tools/
-├── .mcp.json                 # Bundled MCP: fw-dev-mcp (URL + Authorization)
+├── mcp.json                  # Bundled MCP: fw-dev-mcp (URL + Authorization)
 ├── .claude/                  # (gitignored) Local Claude Code project settings if you use them
 ├── .cursor/                  # (gitignored) Cursor IDE workspace state
 │   └── rules/                # User-specific workspace rules (local, not versioned)
-├── .claude-plugin/           # Claude Code plugin config
-├── .cursor-plugin/           # Cursor plugin config
-├── .codex-plugin/            # OpenAI Codex plugin manifest (skills + MCP pointers)
+├── io.anthropic.claude-code/  # Claude Code plugin config
+├── com.cursor/               # Cursor plugin config
+├── com.openai.codex/         # OpenAI Codex plugin manifest (skills + MCP pointers)
 ├── .agents/                  # (gitignored) Local IDE workspace state
 │   └── plugins/              # Codex repo marketplace catalog (local, not versioned)
 ├── assets/                   # Dew logo (`fw-logo.svg`) for plugin manifests
@@ -82,7 +82,7 @@ End developers receive specs through `npx @freshworks/fw-dev-tools install` (Cur
 
 ## How to Contribute
 
-When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`.cursor-plugin/marketplace.json`** and **`.claude-plugin/marketplace.json`** stay aligned with what ships.
+When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`com.cursor/marketplace.json`** and **`io.anthropic.claude-code/marketplace.json`** stay aligned with what ships.
 
 **FDK / Node version truth** should match **`docs/engine-matrix.md`** whenever you change toolchain guidance in **`skills/fw-setup/SKILL.md`**.
 
@@ -127,14 +127,12 @@ See **[SECURITY.md](SECURITY.md)** for vulnerability reporting and for disclosur
 
 ### Skill Structure
 
-Each skill follows the Agent Skills Specification. In **this repo**, editor rules live under **`skills/<name>/rules/`** (not nested under **`skills/<name>/.cursor/rules`**). The Cursor skill bundle uses **`skills/<name>/.cursor-plugin/plugin.json`** with **`rulesDirectory`** / **`commandsDirectory`** pointing at **`./rules`** and **`./commands`** beside **`SKILL.md`**.
+Each skill follows the Agent Skills Specification. In **this repo**, editor rules live under **`skills/<name>/rules/`** (not nested under **`skills/<name>/.cursor/rules`**). The Cursor skill bundle uses **`com.cursor/skills-metadata.json`** with per-skill **`rulesDirectory`** / **`commandsDirectory`** pointing at **`./rules`** and **`./commands`** beside **`SKILL.md`**.
 
 ```
 skill-name/
 ├── SKILL.md                 # Required: Main skill file with YAML frontmatter
 ├── README.md                # User-facing documentation
-├── .cursor-plugin/
-│   └── plugin.json          # rulesDirectory ./rules, commandsDirectory ./commands
 ├── commands/                # Optional: Slash commands (/fdk-fix, /fdk-migrate, …)
 │   └── command.md           # One file per command
 ├── rules/                   # Optional: Cursor rules (.mdc) or fw-review audit rules (.md)
@@ -302,7 +300,7 @@ For rule files, verify:
 
 1. **Ensure your changes are complete** and tested locally
 2. **Update documentation** if you're changing behavior (**AGENTS.md** skill inventory if **rules/** or **commands/** changed; **docs/engine-matrix.md** if toolchain pins changed)
-3. **Run docs hygiene** (`check-internal-links.py`, **`check-marketplace-versions.sh`**) if you touched umbrella plugin JSON (`.cursor-plugin/`, `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`) or docs with many links
+3. **Run docs hygiene** (`check-internal-links.py`, **`check-marketplace-versions.sh`**) if you touched umbrella plugin JSON (`com.cursor/`, `io.anthropic.claude-code/`, `com.openai.codex/`, `.agents/plugins/`) or docs with many links
 4. **Create a pull request** with:
    - Clear title describing the change
    - Description of what and why
