@@ -62,7 +62,7 @@ When any deprecated tool is invoked, the server returns a structured response (n
 3. **Follow** the skill end-to-end order: fw-setup → fw-app-dev / fw-ai-actions-app → **fw-review (mandatory)** → fw-publish.
 4. **Use MCP only for:**
    - Publish workflow tools — see **`openai-server-mcp-tools.md`**
-   - **`get_developer_docs`** — fallback when a skill explicitly delegates or fails
+   - **`get_developer_docs`** — **primary** source for platform documentation questions (doc lookup only, never implementation routing)
 
 ---
 

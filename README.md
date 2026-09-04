@@ -138,7 +138,7 @@ Guides you through `fdk validate → pack → upload → submit` via MCP without
 
 Publishing uses the **fw-dev-mcp server**. This repo bundles `mcp.json` at the repository root (URL + transport type per [Agent Plugins 1.0.0](https://agent-plugins.org/)). MCP token placement, copy-paste blocks, and tool names are documented in the publish skill under **[skills/fw-publish/](https://github.com/freshworks-developers/fw-dev-tools/tree/main/skills/fw-publish/)**.
 
-**MCP boundary:** Build, fix, review, and migrate through **skills** (`fw-app-dev`, `fw-ai-actions-app`, `fw-review`) — not MCP. MCP is for **publish** workflows and **`get_developer_docs`** fallback. Legacy build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated on the server; see **[deprecated-mcp-build-tools.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/skills/fw-publish/references/deprecated-mcp-build-tools.md)**.
+**MCP boundary:** Build, fix, review, and migrate through **skills** (`fw-app-dev`, `fw-ai-actions-app`, `fw-review`) — not MCP. MCP is for **publish** workflows and **`get_developer_docs`**, the primary source for platform documentation questions. Legacy build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated on the server; see **[deprecated-mcp-build-tools.md](https://github.com/freshworks-developers/fw-dev-tools/blob/main/skills/fw-publish/references/deprecated-mcp-build-tools.md)**.
 
 ---
 

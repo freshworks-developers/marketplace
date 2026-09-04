@@ -31,7 +31,7 @@ Then stop and emit `agent-telemetry.sh <app-dir> deprecated_blocked blocked_tool
 
 **MANDATORY EXECUTION ORDER:**
 1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`)
-2. Use MCP tool **`get_developer_docs`** ONLY as a **FALLBACK** if this skill explicitly delegates or fails
+2. For platform documentation questions, use MCP tool **`get_developer_docs`** as the **PRIMARY** source; fall back to hardcoded skill references if MCP is unavailable
 
 This skill provides:
 - Smart prerequisite checking (detects Platform 2.x migrations, engine mismatches)

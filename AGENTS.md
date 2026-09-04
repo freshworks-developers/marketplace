@@ -177,7 +177,7 @@ When the task is **building or publishing a Freshworks app** (in any workspace),
 
 - **Build / fix / review / migrate:** skills only — **`fw-app-dev`**, **`fw-ai-actions-app`**, **`fw-review`**
 - **Publish:** **`fw-publish`** + publish MCP tools — **`skills/fw-publish/references/openai-server-mcp-tools.md`**
-- **Docs fallback:** MCP **`get_developer_docs`** only when a skill explicitly delegates or fails
+- **Docs lookup:** MCP **`get_developer_docs`** is the **primary** source for platform documentation questions — use it first, and fall back to hardcoded skill references if MCP is unavailable
 - **Deprecated build tools** (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`): server returns a deprecation contract — follow its redirect to **`fw-app-dev`**; details in **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**
 
 **Platform 3.0 non-negotiables** (app work): `"platform-version": "3.0"`, **`modules`** not `product`, external HTTP via **`$request.invokeTemplate`** + **`config/requests.json`**, zero platform + lint errors before “complete”. Authoritative: **`skills/fw-app-dev/SKILL.md`**.

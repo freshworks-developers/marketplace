@@ -2,7 +2,7 @@
 
 **Hosted endpoint:** `https://mcp.freshworks.dev/mcp`  
 
-**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. **`get_developer_docs`** is **FALLBACK ONLY** when fw-app-dev delegates or fails.
+**Agent routing:** Use **fw-app-dev** for app development. Use **fw-publish** `SKILL.md` for publish orchestration. **`get_developer_docs`** is the **PRIMARY** documentation source; fall back to hardcoded skill references if MCP is unavailable.
 
 **MCP boundary:** Build, fix, review, and migrate via **skills only** — not MCP. Legacy build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated; the server returns a redirect contract. See **`deprecated-mcp-build-tools.md`**.
 
@@ -115,7 +115,7 @@ Aggregate app-level snapshot (`state` reflects all versions).
 
 ---
 
-## `get_developer_docs` (fallback)
+## `get_developer_docs` (primary)
 
 RAG retrieval of Freshworks marketplace development docs.
 
@@ -128,4 +128,4 @@ RAG retrieval of Freshworks marketplace development docs.
 
 **Returns:** Markdown documentation string (sections separated by `---`).
 
-**fw-dev-tools policy:** Use only when **fw-app-dev** explicitly delegates or fails — not as primary app-building path.
+**fw-dev-tools policy:** **PRIMARY** source for platform documentation questions — use first, fall back to hardcoded skill references if MCP is unavailable. **fw-app-dev** remains the primary path for app-building work (implementation, validation, review); this tool is for doc lookup, not implementation routing.
