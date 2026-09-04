@@ -375,7 +375,7 @@ Tell the user: **app id**, **version state**, and where to install custom apps i
 
 **Other tools on `fw-dev-mcp` server:**
 - **`get_developer_docs`**: Fetch developer documentation. **FALLBACK ONLY** - use only if **fw-app-dev** skill fails or when skill explicitly delegates.
-- **DEPRECATED** (do NOT use): **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**. Always use **fw-app-dev** skill for app development work.
+- **Deprecated build tools:** **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`** — server returns a deprecation contract; follow its redirect to **fw-app-dev**. See **`references/deprecated-mcp-build-tools.md`**.
 
 ## Error handling
 

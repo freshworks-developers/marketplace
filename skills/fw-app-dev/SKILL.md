@@ -11,7 +11,7 @@ allowed-tools: "shell read write strreplace glob grep"
 
 ## EXECUTION ORDER: Always use THIS skill for app development
 
-**DO NOT** use MCP tools **`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, or **`fix_app_errors`** directly. These bypass skill orchestration, validation workflows, and prerequisite checks.
+**DO NOT** invoke legacy MCP build tools (**`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**). The server returns a **deprecation contract** with a redirect — follow it and use THIS skill instead. These tools bypass skill orchestration, validation workflows, and prerequisite checks. See **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**.
 
 **MANDATORY EXECUTION ORDER:**
 1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`)

@@ -61,8 +61,8 @@ describe('Skill Regex Evals — fw-app-dev', { concurrency: true }, () => {
 
   test('fw-app-dev-08 implement_app MCP tool requested → refuse, use fw-app-dev skill flow', async () => {
     const c = await readSkill('fw-app-dev');
-    const ok = /DO NOT.*implement_app|implement_app.*DO NOT/i.test(c);
-    assert.ok(ok, 'fw-app-dev/SKILL.md must prohibit implement_app MCP tool');
+    const ok = /DO NOT.*implement_app|implement_app.*DO NOT|deprecation contract.*implement_app|implement_app.*deprecation contract/i.test(c);
+    assert.ok(ok, 'fw-app-dev/SKILL.md must prohibit implement_app MCP tool or reference its deprecation contract');
   });
 
   test('fw-app-dev-09 FDK 10 + Node 24 installed, manifest engines 9/18 → raise engines, not downgrade toolchain', async () => {
