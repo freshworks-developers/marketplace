@@ -1,0 +1,33 @@
+---
+description: Preflight checks before fw-dev-tools skill orchestration (FDK, Node, manifest, publish token)
+globs:
+alwaysApply: false
+---
+
+# Preflight (orchestration)
+
+Run on **first message** of an IDE session or when opening an app workspace. Full prose: Tier 2 `agent-behaviour.md` §preflight.
+
+## Executable checks
+
+1. **Session** — `bash ~/.fw-dev-tools/scripts/session-read.sh <app-dir>` (or treat missing file as fresh).
+2. **Toolchain** — `node -v` (expect **v24.x**), `fdk --version` (expect **10.x**). If missing → dispatch **fw-setup** via controller; do not validate until pass.
+3. **Manifest** — confirm `manifest.json` in active app dir when intent is not `create-new`.
+4. **Publish token** — before fw-publish chain, smoke-test MCP auth (`list_custom_apps` per fw-publish playbook).
+
+## Resume rules
+
+- Show resume banner when valid session exists.
+- Stale (`updated_at` > 30 days): require explicit confirm.
+- Corrupt JSON: offer `session-reset.sh <app-dir> --force`.
+- **Never auto-publish** on resume.
+
+## Session scripts
+
+| Script | Purpose |
+|--------|---------|
+| `session-read.sh` | Read `.fw-session.json` |
+| `session-write.sh` | Merge milestone / phase updates |
+| `session-reset.sh` | Delete session (`--force`) |
+
+Schema: `~/.fw-dev-tools/specs/fw-session.schema.json` or `skills/shared/references/fw-session-schema.json`.

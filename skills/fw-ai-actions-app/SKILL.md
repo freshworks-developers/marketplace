@@ -5,6 +5,14 @@ version: "1.3.0"
 compatibility: Freshworks Platform 3.0, FDK 10.x, Node.js 24.x
 ---
 
+## Entry contract
+
+- **Invoked by:** controller when intent is AI Actions app (create, extend, or fix actions.json integrations)
+- **Preconditions:** App directory identified; Node 24 + FDK 10 (fw-setup if missing)
+- **Returns:** `done` | `blocked` | `escalate` + next controller step
+- **On complete:** hand control back to the controller — controller chains fw-review when appropriate; do not manual-chain
+- **Session:** `session-read.sh` at start; `session-write.sh` on validate/review milestones
+
 # AI Actions Skill for Freshworks Platform 3.0
 
 You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the orchestrator:** keep it short; load detail from **`rules/`** and **`references/`** below instead of restating long guides here.
