@@ -194,59 +194,47 @@ export const FW_AI_ACTIONS_SCENARIOS = [
     },
   },
 
-  // fw-ai-actions-10: DISABLED — pending skill fix, not a flaky test.
-  // SKILL.md does not contain an explicit rule that fw-setup-status must be run first
-  // before building an AI Actions integration. The model answers from general intuition
-  // and gives inconsistent results. Fix later: add an explicit prerequisite rule to
-  // SKILL.md (e.g. "always run /fw-setup-status before creating any files") and
-  // re-enable with the "According to the fw-ai-actions-app skill:" prefix.
-  // {
-  //   id: 'fw-ai-actions-10',
-  //   skill: 'fw-ai-actions-app',
-  //   label: 'fw-setup-status prerequisite before building AI Actions app',
-  //   loadContent: () => loadSkill('fw-ai-actions-app'),
-  //   prompt: 'Developer asks you to build an AI Actions integration. You have NOT checked the toolchain yet. What is the prerequisite check you must run before creating any files?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['runs_fw_setup_status_first', 'proceeds_without_toolchain_check'],
-  //     properties: {
-  //       runs_fw_setup_status_first: { type: 'boolean' },
-  //       proceeds_without_toolchain_check: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.runs_fw_setup_status_first, true, 'must run fw-setup-status before creating any files');
-  //     assert.equal(output.proceeds_without_toolchain_check, false, 'must NOT proceed without checking toolchain first');
-  //   },
-  // },
+  {
+    id: 'fw-ai-actions-10',
+    skill: 'fw-ai-actions-app',
+    label: 'fw-setup-status prerequisite before building AI Actions app',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'According to the fw-ai-actions-app skill: Developer asks you to build an AI Actions integration. You have NOT checked the toolchain yet. What is the prerequisite check you must run before creating any files?',
+    schema: {
+      type: 'object',
+      required: ['runs_fw_setup_status_first', 'proceeds_without_toolchain_check'],
+      properties: {
+        runs_fw_setup_status_first: { type: 'boolean' },
+        proceeds_without_toolchain_check: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.runs_fw_setup_status_first, true, 'must run fw-setup-status before creating any files');
+      assert.equal(output.proceeds_without_toolchain_check, false, 'must NOT proceed without checking toolchain first');
+    },
+  },
 
-  // fw-ai-actions-11: DISABLED — pending skill fix, not a flaky test.
-  // The 200-character limit for the actions.json description field is not stated in
-  // SKILL.md or any loaded skill content. The model answers from general LLM intuition
-  // and flips between true/false. Fix later: add an explicit rule to SKILL.md
-  // (e.g. "description must be under 200 characters for reliable LLM tool selection")
-  // and re-enable.
-  // {
-  //   id: 'fw-ai-actions-11',
-  //   skill: 'fw-ai-actions-app',
-  //   label: 'actions.json description field — must be concise (<200 chars) for LLM tool selection',
-  //   loadContent: () => loadSkill('fw-ai-actions-app'),
-  //   prompt: "According to the fw-ai-actions-app skill: you are writing the 'description' field for an AI action. The developer asks for a 500-character description. Should you write a 500-character description, or keep it concise (under 200 chars) for reliable LLM tool selection?",
-  //   schema: {
-  //     type: 'object',
-  //     required: ['writes_long_description', 'keeps_description_concise'],
-  //     properties: {
-  //       writes_long_description: { type: 'boolean' },
-  //       keeps_description_concise: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.writes_long_description, false, 'must NOT write a 500-char description that hurts LLM tool selection');
-  //     assert.equal(output.keeps_description_concise, true, 'must keep description concise (under 200 chars) for reliable LLM tool selection');
-  //   },
-  // },
+  {
+    id: 'fw-ai-actions-11',
+    skill: 'fw-ai-actions-app',
+    label: 'actions.json description field — must be concise (<200 chars) for LLM tool selection',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: "According to the fw-ai-actions-app skill: you are writing the 'description' field for an AI action. The developer asks for a 500-character description. Should you write a 500-character description, or keep it concise (under 200 chars) for reliable LLM tool selection?",
+    schema: {
+      type: 'object',
+      required: ['writes_long_description', 'keeps_description_concise'],
+      properties: {
+        writes_long_description: { type: 'boolean' },
+        keeps_description_concise: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.writes_long_description, false, 'must NOT write a 500-char description that hurts LLM tool selection');
+      assert.equal(output.keeps_description_concise, true, 'must keep description concise (under 200 chars) for reliable LLM tool selection');
+    },
+  },
 
   // fw-ai-actions-12: test_data directory with sample JSON fixtures created for each action
   {
@@ -270,35 +258,26 @@ export const FW_AI_ACTIONS_SCENARIOS = [
     },
   },
 
-  // fw-ai-actions-13: manifest.json includes modules section with ai_actions config
-  // DISABLED — assertion is factually wrong, not a flaky test.
-  // The skill (SKILL.md:53) says manifest.json declares supported product modules
-  // as EMPTY objects (e.g. "support_ticket": {}); the AI actions themselves are
-  // defined in actions.json, NOT in the manifest's modules section. So
-  // `includes_ai_actions_config = true` asserts behavior the platform does not have,
-  // and the model correctly answers false. Fix later: rewrite the assertion to the
-  // truth — manifest has a modules section (true) declaring product modules, while
-  // ai_actions/action definitions live in actions.json (not the manifest).
-  // {
-  //   id: 'fw-ai-actions-13',
-  //   skill: 'fw-ai-actions-app',
-  //   label: 'manifest.json includes modules section with ai_actions configuration',
-  //   loadContent: () => loadSkill('fw-ai-actions-app'),
-  //   prompt: 'According to the fw-ai-actions-app skill: when the manifest.json is generated for an AI actions app with a Freshdesk action createTicketFromEmail (taking email_subject, email_body, customer_email), must that manifest.json include a modules section (includes_modules_section = true) with the ai_actions / invocationEvent configuration (includes_ai_actions_config = true)?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['includes_modules_section', 'includes_ai_actions_config'],
-  //     properties: {
-  //       includes_modules_section: { type: 'boolean' },
-  //       includes_ai_actions_config: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.includes_modules_section, true, 'manifest.json must include a modules section');
-  //     assert.equal(output.includes_ai_actions_config, true, 'manifest.json modules section must include ai_actions or invocationEvent configuration');
-  //   },
-  // },
+  {
+    id: 'fw-ai-actions-13',
+    skill: 'fw-ai-actions-app',
+    label: 'manifest.json includes modules section; ai_actions defined in actions.json',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'According to the fw-ai-actions-app skill: when the manifest.json is generated for an AI actions app with a Freshdesk action createTicketFromEmail (taking email_subject, email_body, customer_email), must that manifest.json include a modules section declaring product modules (includes_modules_section = true), and are the ai_actions / action definitions placed in actions.json rather than in the manifest (includes_ai_actions_in_manifest = false)?',
+    schema: {
+      type: 'object',
+      required: ['includes_modules_section', 'includes_ai_actions_in_manifest'],
+      properties: {
+        includes_modules_section: { type: 'boolean' },
+        includes_ai_actions_in_manifest: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.includes_modules_section, true, 'manifest.json must include a modules section');
+      assert.equal(output.includes_ai_actions_in_manifest, false, 'ai_actions configuration belongs in actions.json, not manifest modules');
+    },
+  },
 
   // fw-ai-actions-14: broken endpoint detection — model surfaces 404 and does not proceed
   {
@@ -366,31 +345,26 @@ export const FW_AI_ACTIONS_SCENARIOS = [
     },
   },
 
-  // fw-ai-actions-17: DISABLED — pending skill fix, not a flaky test.
-  // The "no extras beyond spec" scoping rule (actions.json must match spec exactly,
-  // no unspecified entries) is not present in SKILL.md or any loaded skill content.
-  // The model answers from general intuition and flips inconsistently. Fix later:
-  // add an explicit scoping rule to SKILL.md and re-enable.
-  // {
-  //   id: 'fw-ai-actions-17',
-  //   skill: 'fw-ai-actions-app',
-  //   label: 'scoping from CSV/spec → actions.json entries match spec exactly, no extras added',
-  //   loadContent: () => loadSkill('fw-ai-actions-app'),
-  //   prompt: 'According to the fw-ai-actions skill scoping rules: a CSV spec defines exactly 3 actions — create_ticket, update_ticket, close_ticket. Should the resulting actions.json contain exactly those 3 entries and no others (actions_json_reflects_spec = true, adds_unspecified_actions = false)?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['actions_json_reflects_spec', 'adds_unspecified_actions'],
-  //     properties: {
-  //       actions_json_reflects_spec: { type: 'boolean' },
-  //       adds_unspecified_actions: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.actions_json_reflects_spec, true, 'actions.json must contain exactly the entries defined in the spec');
-  //     assert.equal(output.adds_unspecified_actions, false, 'must not add actions that are not in the spec');
-  //   },
-  // },
+  {
+    id: 'fw-ai-actions-17',
+    skill: 'fw-ai-actions-app',
+    label: 'scoping from CSV/spec → actions.json entries match spec exactly, no extras added',
+    loadContent: () => loadSkill('fw-ai-actions-app'),
+    prompt: 'According to the fw-ai-actions-app skill scoping rules: a CSV spec defines exactly 3 actions — create_ticket, update_ticket, close_ticket. Should the resulting actions.json contain exactly those 3 entries and no others (actions_json_reflects_spec = true, adds_unspecified_actions = false)?',
+    schema: {
+      type: 'object',
+      required: ['actions_json_reflects_spec', 'adds_unspecified_actions'],
+      properties: {
+        actions_json_reflects_spec: { type: 'boolean' },
+        adds_unspecified_actions: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.actions_json_reflects_spec, true, 'actions.json must contain exactly the entries defined in the spec');
+      assert.equal(output.adds_unspecified_actions, false, 'must not add actions that are not in the spec');
+    },
+  },
 
   {
     id: 'fw-ai-actions-18',
