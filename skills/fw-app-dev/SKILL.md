@@ -354,6 +354,8 @@ Use this process for every app request so the right features are generated.
 - Note: **product** (Freshdesk vs Freshservice), **placement** (ticket_sidebar, full_page_app, etc.), **trigger** (button click, event, schedule), **integrations** (Graph, Zapier, etc.).
 - If the ask implies context (e.g. "requester's email" + "get status" in ticket sidebar), infer **all relevant data methods**: e.g. `ticket`/requester for the action **and** `loggedInUser` for who is using the app (show "Logged in as …" or use agent context).
 - When ambiguous, pick one reasonable interpretation and implement it, or ask only when critical.
+- **Multiple app folders:** When **2 or more** workspace folders each contain a `manifest.json`, **always ask** the developer which app to target before making any edits — do not silently pick one.
+- **Scope management:** When a single request covers **3 or more distinct, large features** (e.g. new UI + OAuth integration + full-page dashboard), **ask which to tackle first** rather than implementing all at once in one session.
 
 **2. Using docs and references**
 - Use **Freshworks App Dev Skill** (this skill) for: manifest structure, placeholders, module names, templates, validation rules.
@@ -535,6 +537,7 @@ Before presenting the app, validate against:
 | OAuth | `integrations` wrapper if OAuth used |
 | Schedules | No scheduled events in manifest — use `$schedule.create()` |
 | Lifecycle | Non-empty iparams → `onAppInstall`; cleanup-needed app → `onAppUninstall` |
+| onAppInstall guard | When iparams exist, add `onAppInstall` handler; **inside the handler**, guard with non-empty iparams before validation logic (e.g. `if (args.iparams && Object.keys(args.iparams).length > 0) { ... }`) |
 
 ### Code Quality
 

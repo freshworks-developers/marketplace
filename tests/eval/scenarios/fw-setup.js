@@ -43,34 +43,26 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // fw-setup-03: DISABLED — SKILL.md vs command file contradiction, not a flaky test.
-  // commands/fw-setup-install.md (lines 236-240) has a real y/N consent gate:
-  //   read -p "Continue installing FDK 9.x? (y/N): " confirm
-  // But SKILL.md routing section does not mention this gate, so loadSkill gives the
-  // model no signal about it. The assertion proceeds_without_consent=true tested
-  // SKILL.md behavior, but the actual command behavior is the opposite.
-  // Fix later: switch loadContent to loadCommand('fw-setup', 'fw-setup-install')
-  // and flip assertion to proceeds_without_consent=false to match actual command behavior.
-  // {
-  //   id: 'fw-setup-03',
-  //   skill: 'fw-setup',
-  //   label: '"install FDK 9" request → deprecation warning shown, then installation proceeds without consent gate',
-  //   loadContent: () => loadSkill('fw-setup'),
-  //   prompt: 'According to the fw-setup skill: when a developer requests FDK 9 installation — does the skill show a deprecation warning first (shows_deprecation_warning_first = true), and does it proceed with installation WITHOUT blocking to wait for explicit y/N user consent (proceeds_without_consent = true)?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['shows_deprecation_warning_first', 'proceeds_without_consent'],
-  //     properties: {
-  //       shows_deprecation_warning_first: { type: 'boolean' },
-  //       proceeds_without_consent: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.shows_deprecation_warning_first, true, 'must show FDK 9 deprecation warning before installing');
-  //     assert.equal(output.proceeds_without_consent, true, 'skill shows warning then proceeds — no y/N consent gate');
-  //   },
-  // },
+  {
+    id: 'fw-setup-03',
+    skill: 'fw-setup',
+    label: '"install FDK 9" request → deprecation warning shown, then y/N consent gate before proceeding',
+    loadContent: () => loadCommand('fw-setup', 'fw-setup-install'),
+    prompt: 'According to the fw-setup-install command: when a developer requests FDK 9 installation — does the skill show a deprecation warning first (shows_deprecation_warning_first = true), and does it block on a y/N consent prompt before proceeding (proceeds_without_consent = false)?',
+    schema: {
+      type: 'object',
+      required: ['shows_deprecation_warning_first', 'proceeds_without_consent'],
+      properties: {
+        shows_deprecation_warning_first: { type: 'boolean' },
+        proceeds_without_consent: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.shows_deprecation_warning_first, true, 'must show FDK 9 deprecation warning before installing');
+      assert.equal(output.proceeds_without_consent, false, 'command blocks on y/N consent gate before FDK 9 install');
+    },
+  },
 
   // fw-setup-04: setup_node_changed / setup_fdk_changed reflect actual change, not always true
   {
@@ -589,19 +581,26 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // fw-setup-28: DISABLED — SKILL.md references semver as the valid format but contains no explicit
-  // rule that the skill must reject or error on a non-semver string like "abc". The skill describes
-  // valid version usage (nvm alias, FDK line pinning) without a validation/rejection gate for
-  // invalid input. Enable once the skill adds an explicit invalid-version-string handling rule.
-  // {
-  //   id: 'fw-setup-28',
-  //   skill: 'fw-setup',
-  //   label: 'Developer provides invalid version string "abc" for FDK install',
-  //   loadContent: () => loadSkill('fw-setup'),
-  //   prompt: 'According to the fw-setup skill: when a developer asks to install FDK "version abc" (an invalid, non-semver version string), should the skill reject the invalid version (rejects_invalid_version = true) and explain the valid version format expected (explains_valid_format = true)?',
-  //   schema: { ... },
-  //   assert(output) { assert.equal(output.rejects_invalid_version, true, ...); assert.equal(output.explains_valid_format, true, ...); },
-  // },
+  {
+    id: 'fw-setup-28',
+    skill: 'fw-setup',
+    label: 'Developer provides invalid version string "abc" for FDK install',
+    loadContent: () => loadSkill('fw-setup'),
+    prompt: 'According to the fw-setup skill: when a developer asks to install FDK "version abc" (an invalid, non-semver version string), should the skill reject the invalid version (rejects_invalid_version = true) and explain the valid version format expected (explains_valid_format = true)?',
+    schema: {
+      type: 'object',
+      required: ['rejects_invalid_version', 'explains_valid_format'],
+      properties: {
+        rejects_invalid_version: { type: 'boolean' },
+        explains_valid_format: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.rejects_invalid_version, true, 'must reject invalid non-semver version strings');
+      assert.equal(output.explains_valid_format, true, 'must explain valid semver format (X.Y.Z)');
+    },
+  },
 
   // fw-setup-29: Homebrew Node detected — model warns of potential conflict
   {
@@ -1076,30 +1075,24 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // DISABLED — pending skill fix, not a flaky test.
-  // The expected answer ("--fix restores FDK 10 / Node 24, not FDK 9 / Node 18")
-  // is stated only in commands/fw-setup-troubleshoot.md:169, NOT in SKILL.md.
-  // loadContent here loads only SKILL.md, so the model never sees the rule and
-  // cannot answer reliably. Fix later: either surface this rule in SKILL.md, or
-  // switch loadContent to loadCommand('fw-setup', 'fw-setup-troubleshoot').
-  // {
-  //   id: 'fw-setup-51',
-  //   skill: 'fw-setup',
-  //   label: 'after --fix completes → confirms restored FDK 10 / Node 24, not FDK 9/18',
-  //   loadContent: () => loadSkill('fw-setup'),
-  //   prompt: 'According to the fw-setup skill: after /fw-setup-troubleshoot --fix completes, which stack should be confirmed as the restored default? Answer with restored_stack = "fdk10_node24", "fdk9_node18", or "unknown".',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['restored_stack'],
-  //     properties: {
-  //       restored_stack: { type: 'string', enum: ['fdk10_node24', 'fdk9_node18', 'unknown'] },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.restored_stack, 'fdk10_node24', 'troubleshoot --fix must restore FDK 10 / Node 24 as the default stack, not FDK 9 / Node 18');
-  //   },
-  // },
+  {
+    id: 'fw-setup-51',
+    skill: 'fw-setup',
+    label: 'after --fix completes → confirms restored FDK 10 / Node 24, not FDK 9/18',
+    loadContent: () => loadCommand('fw-setup', 'fw-setup-troubleshoot'),
+    prompt: 'According to the fw-setup-troubleshoot command: after /fw-setup-troubleshoot --fix completes, which stack should be confirmed as the restored default? Answer with restored_stack = "fdk10_node24", "fdk9_node18", or "unknown".',
+    schema: {
+      type: 'object',
+      required: ['restored_stack'],
+      properties: {
+        restored_stack: { type: 'string', enum: ['fdk10_node24', 'fdk9_node18', 'unknown'] },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.restored_stack, 'fdk10_node24', 'troubleshoot --fix must restore FDK 10 / Node 24 as the default stack, not FDK 9 / Node 18');
+    },
+  },
 
   {
     id: 'fw-setup-52',
@@ -1166,36 +1159,28 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // fw-setup-56: DISABLED — pending skill fix, not a flaky test.
-  // The assertion removes_fdk9=true requires "exclusive upgrade" behavior, but the term
-  // "exclusive upgrade" and the explicit rule "remove FDK 9 when upgrading to FDK 10"
-  // are not stated in SKILL.md. The model infers from general reasoning, not skill content,
-  // making the result unreliable.
-  // Fix later: add an explicit rule to fw-setup SKILL.md such as:
-  //   "When upgrading from FDK 9 to FDK 10: switch to Node 24, install FDK 10.x,
-  //    and uninstall the old FDK 9.x (exclusive upgrade — not a side-by-side setup)."
-  // {
-  //   id: 'fw-setup-56',
-  //   skill: 'fw-setup',
-  //   label: 'FDK 9 / Node 18 → upgrade to FDK 10 → Node 24, removes old FDK 9',
-  //   loadContent: () => loadSkill('fw-setup'),
-  //   prompt: 'Developer is on FDK 9 / Node 18 and asks to upgrade to FDK 10. Should the skill switch to Node 24, install the latest FDK 10.x, and remove the old FDK 9 installation as part of the exclusive upgrade?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['switches_to_node24', 'installs_fdk10', 'removes_fdk9'],
-  //     properties: {
-  //       switches_to_node24: { type: 'boolean' },
-  //       installs_fdk10: { type: 'boolean' },
-  //       removes_fdk9: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.switches_to_node24, true, 'upgrading from FDK 9 to FDK 10 must switch to Node 24');
-  //     assert.equal(output.installs_fdk10, true, 'must install latest FDK 10.x');
-  //     assert.equal(output.removes_fdk9, true, 'must remove old FDK 9.x installation (exclusive upgrade)');
-  //   },
-  // },
+  {
+    id: 'fw-setup-56',
+    skill: 'fw-setup',
+    label: 'FDK 9 / Node 18 → upgrade to FDK 10 → Node 24, removes old FDK 9',
+    loadContent: () => loadCommand('fw-setup', 'fw-setup-upgrade'),
+    prompt: 'According to the fw-setup-upgrade command: Developer is on FDK 9 / Node 18 and asks to upgrade to FDK 10. Should the skill switch to Node 24, install the latest FDK 10.x, and remove the old FDK 9 installation as part of the exclusive upgrade?',
+    schema: {
+      type: 'object',
+      required: ['switches_to_node24', 'installs_fdk10', 'removes_fdk9'],
+      properties: {
+        switches_to_node24: { type: 'boolean' },
+        installs_fdk10: { type: 'boolean' },
+        removes_fdk9: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.switches_to_node24, true, 'upgrading from FDK 9 to FDK 10 must switch to Node 24');
+      assert.equal(output.installs_fdk10, true, 'must install latest FDK 10.x');
+      assert.equal(output.removes_fdk9, true, 'must remove old FDK 9.x installation (exclusive upgrade)');
+    },
+  },
 
   // fw-setup-57: --version flag on install → pinned version, not latest (CSV 1.4)
   {
@@ -1350,35 +1335,26 @@ export const FW_SETUP_SCENARIOS = [
     },
   },
 
-  // fw-setup-63: DISABLED — skill-content gap, not a flaky test. Failed 2/3 on
-  // informs_system_wide. SKILL.md mentions "system-wide" only ONCE (line ~120) as a
-  // descriptive comparison ("brew install = single global install... one system-wide fdk")
-  // explaining why CDN+nvm is the default — it is NOT a behavioral rule. Homebrew handling is
-  // documented only for the INSTALL flow (fw-setup-install auto-detects brew), not for the
-  // workspace SWITCH (/fw-setup-use) flow this scenario tests. The model has to infer the
-  // "system-wide / nvm doesn't apply on switch" message, so it's unreliable.
-  // RE-ENABLE once the skill adds an explicit rule for the /fw-setup-use flow: when FDK is
-  // Homebrew-managed, report it's system-wide and skip nvm version switching.
-  // {
-  //   id: 'fw-setup-63',
-  //   skill: 'fw-setup',
-  //   label: 'CSV 7.10: Homebrew FDK workspace switch → system-wide message, no nvm version switching',
-  //   loadContent: () => loadSkill('fw-setup'),
-  //   prompt: 'According to the fw-setup skill: the developer has FDK installed via Homebrew and asks to switch the workspace to FDK 10 / Node 24. Should the skill inform the user that Homebrew-managed FDK is system-wide and nvm-based version switching does not apply (informs_system_wide = true), rather than attempting nvm commands (attempts_nvm_switch = false)?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['informs_system_wide', 'attempts_nvm_switch'],
-  //     properties: {
-  //       informs_system_wide: { type: 'boolean' },
-  //       attempts_nvm_switch: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.informs_system_wide, true, 'must inform user that Homebrew FDK is system-wide');
-  //     assert.equal(output.attempts_nvm_switch, false, 'must not attempt nvm version switching for Homebrew-managed FDK');
-  //   },
-  // },
+  {
+    id: 'fw-setup-63',
+    skill: 'fw-setup',
+    label: 'CSV 7.10: Homebrew FDK workspace switch → system-wide message, no nvm version switching',
+    loadContent: () => loadCommand('fw-setup', 'fw-setup-use'),
+    prompt: 'According to the fw-setup-use command: the developer has FDK installed via Homebrew and asks to switch the workspace to FDK 10 / Node 24. Should the skill inform the user that Homebrew-managed FDK is system-wide and nvm-based version switching does not apply (informs_system_wide = true), rather than attempting nvm commands (attempts_nvm_switch = false)?',
+    schema: {
+      type: 'object',
+      required: ['informs_system_wide', 'attempts_nvm_switch'],
+      properties: {
+        informs_system_wide: { type: 'boolean' },
+        attempts_nvm_switch: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.informs_system_wide, true, 'must inform user that Homebrew FDK is system-wide');
+      assert.equal(output.attempts_nvm_switch, false, 'must not attempt nvm version switching for Homebrew-managed FDK');
+    },
+  },
 
   // fw-setup-64: CSV 1.15/2.6/3.7/4.9/5.6 — legacy /fdk-* aliases recognized
   {

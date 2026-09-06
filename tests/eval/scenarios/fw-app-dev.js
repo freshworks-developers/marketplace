@@ -380,37 +380,26 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
-  // fw-app-dev-16: DISABLED pending prompt fix. Failed 3/3 runs with `undefined` on
-  // product_block_is_forbidden — this is NOT noise, it's deterministic. Root cause is test
-  // construction: the either/or prompt framing ("Is the product key allowed, OR is it
-  // forbidden...") leads the model to answer in the "allowed" frame, and the double-negative
-  // field name `product_block_is_forbidden` gets paraphrased away, so the model reliably omits
-  // that exact key from its JSON.
-  // TO FIX & RE-ENABLE: drop the either/or framing — ask the two booleans directly, e.g.
-  //   "According to the fw-app-dev skill: a manifest.json contains `"product": { "freshdesk": {} }`.
-  //    Is the `product` block forbidden on Platform 3.0 (product_block_is_forbidden = true) and must
-  //    it be replaced with a `modules` block (must_use_modules = true)?"
-  // The skill content is correct and present — only the prompt/field shape needs fixing.
-  // {
-  //   id: 'fw-app-dev-16',
-  //   skill: 'fw-app-dev',
-  //   label: '"product" block in manifest → reject, use "modules"',
-  //   loadContent: () => loadSkill('fw-app-dev'),
-  //   prompt: 'A generated manifest.json contains `"product": { "freshdesk": {} }` instead of a `"modules"` block. Is the `"product"` key allowed in a Platform 3.0 manifest, or is it forbidden and must be replaced with `"modules"`?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['product_block_is_forbidden', 'must_use_modules'],
-  //     properties: {
-  //       product_block_is_forbidden: { type: 'boolean' },
-  //       must_use_modules: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.product_block_is_forbidden, true, 'product block is forbidden on Platform 3.0');
-  //     assert.equal(output.must_use_modules, true, 'must use modules not product');
-  //   },
-  // },
+  {
+    id: 'fw-app-dev-16',
+    skill: 'fw-app-dev',
+    label: '"product" block in manifest → reject, use "modules"',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'According to the fw-app-dev skill: a manifest.json contains `"product": { "freshdesk": {} }` instead of a `"modules"` block. Is the `product` block forbidden on Platform 3.0 (product_block_is_forbidden = true) and must it be replaced with a `modules` block (must_use_modules = true)?',
+    schema: {
+      type: 'object',
+      required: ['product_block_is_forbidden', 'must_use_modules'],
+      properties: {
+        product_block_is_forbidden: { type: 'boolean' },
+        must_use_modules: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.product_block_is_forbidden, true, 'product block is forbidden on Platform 3.0');
+      assert.equal(output.must_use_modules, true, 'must use modules not product');
+    },
+  },
 
   {
     id: 'spec-03',
@@ -936,35 +925,26 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
-  // fw-app-dev-40: multiple-manifest disambiguation — skill says "ask only when critical"; 2 app folders is critical
-  // DISABLED — pending skill fix, not a flaky test.
-  // The skill says "ask only when critical" but never defines when 2+ app folders
-  // qualifies as critical. The model legitimately answers asks_which_app=false because
-  // the skill gives it no crisp rule to justify asking. The test prompt and assertion
-  // are correct — the skill behavior is undefined.
-  // Fix later: add a rule to fw-app-dev SKILL.md such as:
-  //   "When 2 or more app folders (each containing manifest.json) exist in the workspace,
-  //    always ask the developer which app to target before making any edits."
-  // {
-  //   id: 'fw-app-dev-40',
-  //   skill: 'fw-app-dev',
-  //   label: '2 app folders → "add sync button" → asks which app before editing',
-  //   loadContent: () => loadSkill('fw-app-dev'),
-  //   prompt: 'The fw-app-dev skill states: "When ambiguous, pick one reasonable interpretation and implement it, or ask only when critical." Developer says "Add a Sync to CRM button to my Freshdesk app". There are two app folders in the workspace: ./freshdesk-app/ and ./crm-app/ — each has its own manifest.json. Editing the wrong folder would break the other app. Is this a critical disambiguation case where the skill must ask which app to edit (asks_which_app = true) rather than silently editing without asking (edits_without_asking = false)?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['asks_which_app', 'edits_without_asking'],
-  //     properties: {
-  //       asks_which_app: { type: 'boolean' },
-  //       edits_without_asking: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.asks_which_app, true, 'must ask which app to edit when multiple app folders exist');
-  //     assert.equal(output.edits_without_asking, false, 'must not edit any app before user selects the target');
-  //   },
-  // },
+  {
+    id: 'fw-app-dev-40',
+    skill: 'fw-app-dev',
+    label: '2 app folders → "add sync button" → asks which app before editing',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'The fw-app-dev skill states: "When ambiguous, pick one reasonable interpretation and implement it, or ask only when critical." Developer says "Add a Sync to CRM button to my Freshdesk app". There are two app folders in the workspace: ./freshdesk-app/ and ./crm-app/ — each has its own manifest.json. Editing the wrong folder would break the other app. Is this a critical disambiguation case where the skill must ask which app to edit (asks_which_app = true) rather than silently editing without asking (edits_without_asking = false)?',
+    schema: {
+      type: 'object',
+      required: ['asks_which_app', 'edits_without_asking'],
+      properties: {
+        asks_which_app: { type: 'boolean' },
+        edits_without_asking: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.asks_which_app, true, 'must ask which app to edit when multiple app folders exist');
+      assert.equal(output.edits_without_asking, false, 'must not edit any app before user selects the target');
+    },
+  },
 
   {
     id: 'fw-app-dev-41',
@@ -987,65 +967,47 @@ export const FW_APP_DEV_SCENARIOS = [
     },
   },
 
-  // fw-app-dev-42: CSV A.13 — onAppInstall + handler if iparams non-empty
-  // DISABLED — pending skill fix, not a flaky test.
-  // CSV A.13 mandates "onAppInstall + handler if iparams non-empty" — the handler
-  // must guard against empty iparams. The skill (SKILL.md:501 + references/skill-advanced-topics.md:65)
-  // only says "Non-empty iparams → onAppInstall", meaning add the handler WHEN iparams exist,
-  // but never says the handler itself must contain an internal empty-check guard.
-  // The model correctly reads the skill and returns handles_empty_iparams=false, arguing
-  // the platform validates iparams before firing the event so no guard is needed.
-  // Fix later: add a rule to fw-app-dev SKILL.md explicitly stating the handler must
-  // guard: "if (args.iparams && Object.keys(args.iparams).length > 0) { ... }"
-  // {
-  //   id: 'fw-app-dev-42',
-  //   skill: 'fw-app-dev',
-  //   label: 'add onAppInstall email validation → handler added only if iparams non-empty',
-  //   loadContent: () => loadSkill('fw-app-dev'),
-  //   prompt: 'Developer wants to add email validation that runs on app install. The app has iparams defined in iparams.json. Should the onAppInstall handler be added, and should it only run validation if iparams are non-empty?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['adds_on_app_install_handler', 'handles_empty_iparams'],
-  //     properties: {
-  //       adds_on_app_install_handler: { type: 'boolean' },
-  //       handles_empty_iparams: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.adds_on_app_install_handler, true, 'must add onAppInstall handler for install-time validation');
-  //     assert.equal(output.handles_empty_iparams, true, 'handler must guard against empty iparams');
-  //   },
-  // },
+  {
+    id: 'fw-app-dev-42',
+    skill: 'fw-app-dev',
+    label: 'add onAppInstall email validation → handler added only if iparams non-empty',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'According to the fw-app-dev skill: Developer wants to add email validation that runs on app install. The app has iparams defined in iparams.json. Should the onAppInstall handler be added (adds_on_app_install_handler = true), and should the handler guard against empty iparams before running validation (handles_empty_iparams = true)?',
+    schema: {
+      type: 'object',
+      required: ['adds_on_app_install_handler', 'handles_empty_iparams'],
+      properties: {
+        adds_on_app_install_handler: { type: 'boolean' },
+        handles_empty_iparams: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.adds_on_app_install_handler, true, 'must add onAppInstall handler for install-time validation');
+      assert.equal(output.handles_empty_iparams, true, 'handler must guard against empty iparams');
+    },
+  },
 
-  // fw-app-dev-43: DISABLED — pending skill fix, not a flaky test.
-  // The assertion asks_to_prioritize=true requires a scope-management rule, but SKILL.md
-  // does not explicitly say "when given 3+ large feature requests at once, ask which to
-  // prioritize first." The model answers from general LLM intuition, not skill content,
-  // making the result unreliable.
-  // Fix later: add an explicit scope-management rule to fw-app-dev SKILL.md such as:
-  //   "When a single session request covers 3 or more distinct, large features,
-  //    ask the developer which to tackle first rather than implementing all at once."
-  // {
-  //   id: 'fw-app-dev-43',
-  //   skill: 'fw-app-dev',
-  //   label: 'scope creep: multiple large feature requests at once → asks which to prioritize',
-  //   loadContent: () => loadSkill('fw-app-dev'),
-  //   prompt: 'Developer says "Add a Sync to CRM button, full Slack notifications with OAuth, and also build a full-page analytics dashboard — all in this session." Should the skill attempt to implement all three at once, or ask the developer which to tackle first?',
-  //   schema: {
-  //     type: 'object',
-  //     required: ['implements_all_at_once', 'asks_to_prioritize'],
-  //     properties: {
-  //       implements_all_at_once: { type: 'boolean' },
-  //       asks_to_prioritize: { type: 'boolean' },
-  //       explanation: { type: 'string' },
-  //     },
-  //   },
-  //   assert(output) {
-  //     assert.equal(output.implements_all_at_once, false, 'must not blindly implement all features simultaneously');
-  //     assert.equal(output.asks_to_prioritize, true, 'must ask developer which feature to tackle first');
-  //   },
-  // },
+  {
+    id: 'fw-app-dev-43',
+    skill: 'fw-app-dev',
+    label: 'scope creep: multiple large feature requests at once → asks which to prioritize',
+    loadContent: () => loadSkill('fw-app-dev'),
+    prompt: 'According to the fw-app-dev skill: Developer says "Add a Sync to CRM button, full Slack notifications with OAuth, and also build a full-page analytics dashboard — all in this session." Should the skill attempt to implement all three at once (implements_all_at_once = true), or ask the developer which to tackle first (asks_to_prioritize = true)?',
+    schema: {
+      type: 'object',
+      required: ['implements_all_at_once', 'asks_to_prioritize'],
+      properties: {
+        implements_all_at_once: { type: 'boolean' },
+        asks_to_prioritize: { type: 'boolean' },
+        explanation: { type: 'string' },
+      },
+    },
+    assert(output) {
+      assert.equal(output.implements_all_at_once, false, 'must not blindly implement all features simultaneously');
+      assert.equal(output.asks_to_prioritize, true, 'must ask developer which feature to tackle first');
+    },
+  },
 
   // fw-app-dev-45: migrate request on already-Platform-3.0 app → skip migration (CSV 10.3)
   {
