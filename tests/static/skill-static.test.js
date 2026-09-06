@@ -812,6 +812,7 @@ describe('PR#21 — fw-publish reference files', () => {
 
   const REQUIRED_FILES = [
     `${FW_PUB_REF}/openai-server-mcp-tools.md`,
+    `${FW_PUB_REF}/deprecated-mcp-build-tools.md`,
     `${FW_PUB_REF}/templates/claude-mcp-setup.json`,
     `${FW_PUB_REF}/templates/cursor-mcp-setup.json`,
     `${FW_PUB_REF}/templates/custom-app-limit-warning.txt`,
@@ -882,6 +883,15 @@ describe('PR#21 — fw-publish reference files', () => {
     const md = await readRepo(`${FW_PUB_REF}/openai-server-mcp-tools.md`);
     const lower = md.toLowerCase();
     assert.ok(lower.includes('fallback'), 'get_developer_docs must be marked as fallback');
+  });
+
+  test('3.x: deprecated-mcp-build-tools.md documents deprecation contract for legacy build tools', async () => {
+    const md = await readRepo(`${FW_PUB_REF}/deprecated-mcp-build-tools.md`);
+    for (const tool of ['implement_app', 'get_implementation_plan', 'idea_to_app', 'fix_app_errors']) {
+      assert.ok(md.includes(tool), `deprecated-mcp-build-tools.md missing tool: ${tool}`);
+    }
+    assert.ok(md.includes('"deprecated": true'), 'must document deprecation contract shape');
+    assert.ok(md.includes('fw-app-dev'), 'must redirect to fw-app-dev');
   });
 
   test('3.x: fw-publish SKILL.md links all resolve to real files', async () => {

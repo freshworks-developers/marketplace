@@ -38,4 +38,5 @@ Read fw-dev-tools skills **only** from the install path for your IDE. Never mix 
 - `fdk validate`: zero platform errors and zero lint errors before complete
 - fw-review is MANDATORY before fw-publish — never skip it
 - Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` (and `meta-feedback.sh` / `meta-delete.sh` for publish) — **never** hand-write or Edit/Write the file; `skill_version` from the active skill's `SKILL.md` `version:` field, not `plugin.json`
-- DEPRECATED MCP tools (do NOT use): `implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`
+- MCP boundary: build/fix/review/migrate via skills only; publish via fw-publish + MCP publish tools; `get_developer_docs` is fallback only when a skill delegates or fails
+- Legacy MCP build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) return a **deprecation contract** on the server — if invoked, follow the redirect to fw-app-dev (do not retry the tool)

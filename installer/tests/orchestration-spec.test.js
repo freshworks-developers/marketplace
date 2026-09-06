@@ -31,10 +31,12 @@ test('spec file marks fw-review as MANDATORY', async () => {
   assert.ok(content.includes('MANDATORY'), 'fw-review must be flagged mandatory');
 });
 
-test('spec file lists deprecated MCP tools', async () => {
+test('spec file documents MCP boundary and deprecated build tools', async () => {
   const content = await readFile(SPEC_FILE, 'utf8');
-  assert.ok(content.includes('DEPRECATED'), 'should flag deprecated tools');
-  assert.ok(content.includes('implement_app'), 'should list implement_app');
+  assert.ok(content.includes('MCP boundary'), 'should document MCP boundary');
+  assert.ok(content.includes('implement_app'), 'should name deprecated implement_app');
+  assert.ok(content.includes('deprecation contract'), 'should describe server deprecation contract');
+  assert.ok(content.includes('fw-app-dev'), 'should redirect to fw-app-dev');
 });
 
 test('spec file includes update command hint', async () => {
