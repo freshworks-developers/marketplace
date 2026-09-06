@@ -269,6 +269,44 @@ describe('Release hygiene — fleet version lock', () => {
       }
     }
   });
+
+  // MP-45292 regression: io.anthropic.claude-code/marketplace.json declares five
+  // independent plugins, and Claude Code loads each entry's `source` dir as its
+  // own plugin. Without .claude-plugin/plugin.json in that dir the plugin name
+  // falls back to the install-cache directory basename — the version folder —
+  // yielding skills namespaced `1.3.0:fw-review` and breaking skill discovery.
+  test('every claude marketplace entry source declares a name-matching plugin manifest', async () => {
+    const canonical = JSON.parse(
+      await readFile(join(__dirname, '..', '..', 'package.json'), 'utf8')
+    ).version;
+    const mp = await readJson('io.anthropic.claude-code/marketplace.json');
+
+    for (const plugin of mp.plugins) {
+      const source = plugin.source.replace(/^\.\//, '');
+      const manifestPath = join(source, '.claude-plugin', 'plugin.json');
+
+      let manifest;
+      try {
+        manifest = await readJson(manifestPath);
+      } catch {
+        assert.fail(
+          `${manifestPath} is missing — Claude Code would namespace ${plugin.name}'s ` +
+            `skills by its cache directory (the version) instead of the plugin name`
+        );
+      }
+
+      assert.equal(
+        manifest.name,
+        plugin.name,
+        `${manifestPath} name must match its marketplace entry`
+      );
+      assert.equal(
+        manifest.version,
+        canonical,
+        `${manifestPath} version must match fleet release (run scripts/bump-version.mjs)`
+      );
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -66,7 +66,9 @@ for (const dir of ['io.anthropic.claude-code', 'com.cursor', 'com.openai.codex']
   }
 }
 
-// Skills — SKILL.md frontmatter version
+// Skills — SKILL.md frontmatter version + per-skill Claude plugin manifest.
+// Each marketplace entry's `source` dir is loaded by Claude Code as its own
+// plugin, so it needs its own .claude-plugin/plugin.json to resolve a name.
 const skillsDir = join(ROOT, 'skills');
 const skills = await readdir(skillsDir, { withFileTypes: true });
 for (const entry of skills) {
@@ -75,6 +77,10 @@ for (const entry of skills) {
   try {
     await updateText(skillMd, /^version: "[\d.]+"/m, `version: "${version}"`);
   } catch { /* no SKILL.md in this dir */ }
+  const skillPlugin = join(skillsDir, entry.name, '.claude-plugin', 'plugin.json');
+  try {
+    await updateJson(skillPlugin, (obj) => applyVersionToManifest(obj, version));
+  } catch { /* no per-skill manifest in this dir */ }
 }
 
 console.log(`Done — all files now at ${version}`);

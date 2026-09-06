@@ -1,0 +1,22 @@
+{
+  "name": "fw-app-dev",
+  "version": "1.3.0",
+  "description": "Expert-level skill for building, debugging, reviewing, and migrating Freshworks Platform 3.0 custom apps.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-app-dev",
+  "license": "MIT",
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "fdk",
+    "app-development",
+    "crayons"
+  ]
+}

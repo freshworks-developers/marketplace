@@ -1,0 +1,22 @@
+{
+  "name": "fw-review",
+  "version": "1.3.0",
+  "description": "Automated Freshworks custom app review: iparams, frontend, deterministic script checks, security, and structured report output.",
+  "author": {
+    "name": "Freshworks Developers",
+    "email": "skills@dev-assist.freshservice.com"
+  },
+  "homepage": "https://github.com/freshworks-developers/fw-dev-tools",
+  "repository": "https://github.com/freshworks-developers/fw-dev-tools/skills/fw-review",
+  "license": "MIT",
+  "category": "developer-tools",
+  "strict": false,
+  "keywords": [
+    "freshworks",
+    "platform-3.0",
+    "marketplace",
+    "review",
+    "validation",
+    "fdk"
+  ]
+}
