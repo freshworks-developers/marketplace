@@ -55,26 +55,26 @@ export const ORCHESTRATION_SCENARIOS = [
   {
     id: 'orchestration-03-troubleshoot',
     skill: 'orchestration',
-    label: 'troubleshoot: route targeted fix and enforce review before publish',
+    label: 'troubleshoot: apply fix immediately (no pre-write confirmation) and enforce review before publish',
     loadContent: loadOrchestrationDocs,
-    prompt: 'User says: "fdk validate fails with iparam error." What intent is this, should the agent capture/track the error before editing, and must review run before any publish?',
+    prompt: 'User says: "fdk validate fails with iparam error." What intent is this? Per the troubleshoot orchestration chain, does the agent need to ask the user for confirmation BEFORE applying an automated fix to the code (as opposed to greenfield app creation, which does require pre-write confirmation per guardrail G1)? And must review run before any publish?',
     schema: orchestrationSchema,
     assert(output) {
       assert.equal(output.classified_intent, 'troubleshoot');
-      assert.equal(output.requires_confirmation_before_write, true);
+      assert.equal(output.requires_confirmation_before_write, false, 'troubleshoot auto-fixes errors immediately (up to 3 attempts) without asking the user before each edit — only create-new gates writes behind confirmation (G1)');
       assert.equal(output.runs_review_before_publish, true);
     },
   },
   {
     id: 'orchestration-04-update-existing',
     skill: 'orchestration',
-    label: 'update-existing: load session and require explicit publish confirmation',
+    label: 'update-existing: implement changes immediately, gate only publish behind explicit confirmation',
     loadContent: loadOrchestrationDocs,
-    prompt: 'A previously published app has saved publish state. User wants to ship a new version. What intent is this, should the agent read context before edits, and must review run before publish?',
+    prompt: 'A previously published app has saved publish state. User wants to ship a new version with a small code change. What intent is this? Per the update-existing orchestration chain, does the agent need to ask the user for confirmation BEFORE implementing the scoped code change (as opposed to greenfield app creation, which does require pre-write confirmation per guardrail G1) — noting that confirmation is required only before publish, per guardrail G5? And must review run before publish?',
     schema: orchestrationSchema,
     assert(output) {
       assert.equal(output.classified_intent, 'update-existing');
-      assert.equal(output.requires_confirmation_before_write, true);
+      assert.equal(output.requires_confirmation_before_write, false, 'update-existing implements scoped edits immediately after reading the codebase — confirmation is required only before publish (G5), not before the write itself');
       assert.equal(output.runs_review_before_publish, true);
     },
   },
