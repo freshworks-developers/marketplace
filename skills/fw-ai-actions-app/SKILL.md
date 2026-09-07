@@ -20,6 +20,8 @@ You are an AI Actions specialist for Freshworks Platform 3.0. **This file is the
 - **Credentials** — never hardcode secrets; iparams (`secure: true`) or OAuth only (`rules/ai-actions-api-docs.mdc`).
 - **Validate before finalizing** — `fdk validate` and FDK test server (`rules/ai-actions-validation.mdc`).
 - **Toolchain before validate** — same gate as **`../fw-app-dev/SKILL.md`** (*Manifest + toolchain gate*): **`fw-setup`** when **Node 24.x + FDK 10.x** is missing; **`/fdk-migrate`** (or manual **2.x → 3.0**) before validate on legacy apps; align **`manifest.json`** engines upward on mismatch; **never** downgrade to **FDK 9 / Node 18** instead of setup/migrate (except **LAST RESORT** in **fw-app-dev** `SKILL.md`).
+- **Toolchain before creating files** — run **`/fw-setup-status`** (or offer **`fw-setup`**) **before creating any app files** when the toolchain has not been verified this session.
+- **Action descriptions** — keep each `actions.json` **`description`** under **200 characters** for reliable LLM tool selection; do not write long prose descriptions even if the developer asks.
 
 ---
 
@@ -57,6 +59,8 @@ fw-ai-actions-app/
 ## Modules / supported-modules source (when provided by the project)
 
 The project may supply a CSV/spec listing **Modules Supported** per app. Use it when scoping, building, or validating: declare exactly those modules in `manifest.json` (no `location` / `url` / `icon` for AI-only apps). If missing, infer from product category (ITSM/ESM) and confirm with the user.
+
+**Scoping from CSV/spec:** `actions.json` must contain **exactly** the actions defined in the spec — **no extras**. Action definitions live in **`actions.json`** (and matching `server.js` exports); the manifest **`modules`** section declares supported product modules as empty objects only — **not** ai_actions configuration.
 
 ---
 

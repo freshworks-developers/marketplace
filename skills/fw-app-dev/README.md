@@ -25,7 +25,7 @@
 
 ### Execution Order (MANDATORY)
 
-**ALWAYS use THIS skill for app development work.** Do NOT use MCP tools `implement_app`, `get_implementation_plan`, `idea_to_app`, or `fix_app_errors` directly — they bypass skill orchestration, validation workflows, and prerequisite checks.
+**ALWAYS use THIS skill for app development work.** Legacy MCP build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated — the server returns a redirect contract; follow it here instead of retrying the tool.
 
 **MCP tool `get_developer_docs` is the PRIMARY documentation source** — use it first for platform questions; fall back to hardcoded skill references if MCP is unavailable.
 
