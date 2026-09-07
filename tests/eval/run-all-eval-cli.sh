@@ -7,7 +7,7 @@ TESTS_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BATCH_DIR="$SCRIPT_DIR/eval-batch-results"
 mkdir -p "$BATCH_DIR"
 
-agents=(claude cursor)
+agents=(claude cursor opencode)
 total=${#agents[@]}
 failed_runs=0
 idx=0

@@ -2,11 +2,12 @@
 /**
  * Layer 2b: CLI-based skill behavioral evals — no API key needed.
  *
- * Uses the claude or cursor CLI (your subscription) instead of the Anthropic SDK.
+ * Uses the claude, cursor, or opencode CLI (your subscription) instead of the Anthropic SDK.
  * The fw-dev-tools skills must be installed for the CLI to have them in context.
  *
  * Run:  node tests/skill-eval-cli.js
  *       node tests/skill-eval-cli.js --cursor
+ *       node tests/skill-eval-cli.js --opencode
  *       node tests/skill-eval-cli.js --skill fw-review
  *       node tests/skill-eval-cli.js --limit 10
  *
@@ -27,7 +28,8 @@ import { SCENARIOS } from './skill-eval-scenarios.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const USE_CURSOR = process.argv.includes('--cursor') || process.env.FW_EVAL_CLI === 'cursor';
-const CLI = USE_CURSOR ? 'cursor' : 'claude';
+const USE_OPENCODE = process.argv.includes('--opencode') || process.env.FW_EVAL_CLI === 'opencode';
+const CLI = USE_OPENCODE ? 'opencode' : USE_CURSOR ? 'cursor' : 'claude';
 
 const skillFilter = (() => {
   const i = process.argv.indexOf('--skill');
@@ -60,21 +62,28 @@ async function checkCLI() {
 const cliAvailable = await checkCLI();
 if (!cliAvailable) {
   console.log(`⚠  '${CLI}' CLI not found — skipping CLI eval tests`);
-  console.log(`   Install ${CLI === 'claude' ? 'Claude Code from https://claude.ai/code' : 'Cursor from https://cursor.com'}`);
+  console.log(`   Install ${CLI === 'claude' ? 'Claude Code from https://claude.ai/code' : CLI === 'opencode' ? 'OpenCode from https://opencode.ai' : 'Cursor from https://cursor.com'}`);
   process.exit(0);
 }
 
 async function runCLI(prompt, workdir) {
   return new Promise((resolve, reject) => {
     let args;
+    let pipeStdin = false;
     // For claude, disable all built-in tools so the model cannot execute
     // commands — it is forced to answer the eval question instead of acting
     // as an agent. The variadic --tools flag would swallow a positional
     // prompt, so the prompt is piped via stdin.
-    if (USE_CURSOR) {
+    if (USE_OPENCODE) {
+      // opencode run --pure disables external plugins; --dir sets workdir.
+      // Prompt is piped via stdin to avoid shell quoting issues with long prompts.
+      args = ['run', '--pure', '--dir', workdir, '-m', 'cloudverse/anthropic-claude-4-5-sonnet'];
+      pipeStdin = true;
+    } else if (USE_CURSOR) {
       args = ['agent', '--print', '--force', '--approve-mcps', '--workspace', workdir, prompt];
     } else {
       args = ['--print', '--model', 'claude-sonnet-4-6', '--tools', ''];
+      pipeStdin = true;
     }
 
     // Strip vars injected by Claude Code desktop that force API-key auth
@@ -85,7 +94,7 @@ async function runCLI(prompt, workdir) {
     delete env.CLAUDE_CODE_CHILD_SESSION;
 
     const proc = spawn(CLI, args, { cwd: workdir, env });
-    if (!USE_CURSOR) {
+    if (pipeStdin) {
       proc.stdin.write(prompt);
       proc.stdin.end();
     }
@@ -104,12 +113,19 @@ async function runCLI(prompt, workdir) {
   });
 }
 
+function stripAnsi(text) {
+  // Strip ANSI escape sequences (colors, cursor moves, etc.)
+  return text.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, '');
+}
+
 function extractJSON(text) {
+  // Strip ANSI codes first — opencode default output includes them.
+  const clean = stripAnsi(text);
   // Scan for JSON objects using brace counting (handles arbitrary nesting depth).
   // Scan from end so the last JSON object in output wins (it's usually the answer).
   const starts = [];
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === '{') starts.push(i);
+  for (let i = 0; i < clean.length; i++) {
+    if (clean[i] === '{') starts.push(i);
   }
   for (let si = starts.length - 1; si >= 0; si--) {
     const start = starts[si];
@@ -117,8 +133,8 @@ function extractJSON(text) {
     let inString = false;
     let escape = false;
     let end = -1;
-    for (let j = start; j < text.length; j++) {
-      const ch = text[j];
+    for (let j = start; j < clean.length; j++) {
+      const ch = clean[j];
       if (escape) { escape = false; continue; }
       if (ch === '\\' && inString) { escape = true; continue; }
       if (ch === '"') { inString = !inString; continue; }
@@ -128,11 +144,11 @@ function extractJSON(text) {
     }
     if (end === -1) continue;
     try {
-      const obj = JSON.parse(text.slice(start, end + 1));
-      if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) return obj;
+      const obj = JSON.parse(clean.slice(start, end + 1));
+      if (typeof obj === 'object' && obj !== null && !Array.isArray(obj) && Object.keys(obj).length > 0) return obj;
     } catch { continue; }
   }
-  throw new Error(`No valid JSON object found in output:\n${text.slice(0, 500)}`);
+  throw new Error(`No valid JSON object found in output:\n${clean.slice(0, 500)}`);
 }
 
 const MAX_SKILL_CHARS = 25000;
