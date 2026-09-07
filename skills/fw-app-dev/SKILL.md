@@ -23,6 +23,10 @@ allowed-tools: "shell read write strreplace glob grep"
 
 **DO NOT** invoke legacy MCP build tools (**`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**). The server returns a **deprecation contract** with a redirect — follow it and use THIS skill instead. These tools bypass skill orchestration, validation workflows, and prerequisite checks. See **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**.
 
+If one of these tools is invoked anyway, output **exactly** and stop:
+
+> [DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill instead located at `skills/fw-app-dev/SKILL.md`. Stopping execution.
+
 **MANDATORY EXECUTION ORDER:**
 1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`)
 2. Use MCP tool **`get_developer_docs`** ONLY as a **FALLBACK** if this skill explicitly delegates or fails
