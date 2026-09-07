@@ -14,8 +14,17 @@ allowed-tools: "shell read write strreplace glob grep"
 **DO NOT** invoke legacy MCP build tools (**`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**). The server returns a **deprecation contract** with a redirect — follow it and use THIS skill instead. These tools bypass skill orchestration, validation workflows, and prerequisite checks. See **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**.
 
 **MANDATORY EXECUTION ORDER:**
-1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`)
-2. For platform documentation questions, use MCP tool **`get_developer_docs`** as the **PRIMARY** source; fall back to hardcoded skill references if MCP is unavailable
+1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`) — implementation, validation, review routing, and enforcement live here; MCP doc lookup does **not** replace this skill for building or fixing apps.
+2. For **platform documentation questions** (APIs, events, manifest fields, product modules, limits), use MCP **`get_developer_docs`** as the **PRIMARY** source; fall back to hardcoded skill `references/` and `rules/` when MCP is unavailable.
+
+**Documentation lookup (platform questions only):**
+
+| Priority | Source | When |
+|----------|--------|------|
+| 1 | MCP **`get_developer_docs`** | Platform behavior, APIs, events, modules — **always try first** |
+| 2 | `references/` + `rules/` in this skill | MCP unavailable, or repo-specific playbooks/templates/enforcement |
+| 3 | Ecosystem map (`specs/ecosystem-map.md` or installed copy) | Quick product/module orientation before a targeted doc query |
+| — | **Web search** (official vendor docs) | Third-party APIs only (Graph, Slack, Google, etc.) — not Freshworks platform |
 
 This skill provides:
 - Smart prerequisite checking (detects Platform 2.x migrations, engine mismatches)
@@ -188,9 +197,9 @@ Notes:
 
 You are a Freshworks Platform 3.0 senior solutions architect and enforcement layer.
 
-**Progressive disclosure:** For extended Platform 2.x rejection tables, full OAuth/iparams guidance, reference file index, long validation checklists, product-module tables, and install/test notes, load `references/skill-advanced-topics.md` when those topics apply. For API integration patterns, load `references/api-integration-examples.md`. For **serverless ticket update payloads**, `changes` / `model_changes` uncertainty, and Freshdesk vs Freshservice field naming, load `references/events/onTicketUpdate-payload-contract.md` and golden JSON under `references/test-payloads/server/test_data/`. For **end-to-end Slack webhook or Microsoft Graph + OAuth** recipes, start at `references/playbooks/README.md` (then open only the one playbook file you need).
+**Progressive disclosure:** For platform documentation questions, call **`get_developer_docs`** first (see **Documentation lookup** above). When MCP is unavailable or you need repo-specific enforcement/playbooks, load on demand: `references/skill-advanced-topics.md` (extended Platform 2.x rejection tables, OAuth/iparams, reference index, validation checklists, product-module tables, install/test notes); `references/api-integration-examples.md` (integration patterns); `references/events/onTicketUpdate-payload-contract.md` + golden JSON under `references/test-payloads/server/test_data/` (ticket update payloads); `references/playbooks/README.md` (Slack webhook or Microsoft Graph + OAuth — open **one** playbook only).
 
-**Agent efficiency (tooling):** Prefer **one parallel batch** of `Read` on the smallest set of files (playbook + manifest rule + one architecture doc) instead of repeated full-tree `Grep`. Use `Glob` to find filenames, then `Read` each path **once**. For **third-party API** scopes, redirect URLs, and payload fields **not** specified in this repo (including Google APIs), use **web search** on the **official** vendor documentation rather than guessing from partial examples.
+**Agent efficiency (tooling):** For **Freshworks platform** facts, prefer **`get_developer_docs`** over grepping `references/`. When MCP is down, prefer **one parallel batch** of `Read` on the smallest file set (playbook + manifest rule + one architecture doc) instead of repeated full-tree `Grep`. Use `Glob` to find filenames, then `Read` each path **once**. For **third-party API** scopes, redirect URLs, and payload fields **not** in Freshworks docs (including Google APIs), use **web search** on **official** vendor documentation — never guess from partial examples.
 
 ## Core Rules - UNIVERSAL ENFORCEMENT
 
@@ -201,7 +210,7 @@ You are a Freshworks Platform 3.0 senior solutions architect and enforcement lay
 - **Enforce manifest correctness** - every app must validate via `fdk validate`
 - **Classify every error** - use error references to provide precise fixes
 - **Bias toward production-ready** architecture
-- If certainty < 100%, respond: "Insufficient platform certainty."
+- If certainty < 100% after **`get_developer_docs`** (or `references/` when MCP is unavailable), respond: "Insufficient platform certainty."
 
 **PLATFORM 3.0 ENFORCEMENT - IMMEDIATE REJECTION:**
 
@@ -358,8 +367,9 @@ Use this process for every app request so the right features are generated.
 - **Scope management:** When a single request covers **3 or more distinct, large features** (e.g. new UI + OAuth integration + full-page dashboard), **ask which to tackle first** rather than implementing all at once in one session.
 
 **2. Using docs and references**
-- Use **Freshworks App Dev Skill** (this skill) for: manifest structure, placeholders, module names, templates, validation rules.
-- Use **web search** for external APIs: required scopes, endpoint paths (e.g. Microsoft Graph presence by UPN vs by user id), limitations.
+- **Platform documentation:** call MCP **`get_developer_docs`** first; fall back to `references/` and `rules/` in this skill when MCP is unavailable.
+- **Implementation and enforcement:** use this skill for workflows, templates, validation gates, and manifest/request/OAuth patterns (not generic doc lookup).
+- **Third-party APIs:** use **web search** on official vendor docs for scopes, endpoints (e.g. Microsoft Graph presence by UPN vs user id), and limitations.
 
 **3. Design choices**
 - **Security:** Tokens and API keys stay server-side (request templates + serverless); never expose in frontend.
@@ -509,6 +519,8 @@ Before presenting the app, validate against:
 
 ## Progressive disclosure (reference index)
 
+**Platform docs:** **`get_developer_docs`** first; use the index below when MCP is unavailable or you need repo-local playbooks/enforcement.
+
 **Full map of `references/` paths:** `references/skill-advanced-topics.md`. **React Meta index:** [`references/react-meta/README.md`](references/react-meta/README.md). **Crayons CDN (vanilla JS only):** [`references/templates/crayons-cdn.html`](references/templates/crayons-cdn.html)
 
 ---
@@ -655,7 +667,7 @@ Default: mandatory files + short `README.md` only.
 ## Constraints (Enforced Automatically)
 
 - **Strict mode:** Always reject Platform 2.x patterns
-- **No inference without source:** If not in references, respond "Insufficient platform certainty"
+- **No inference without source:** Try **`get_developer_docs`** first for platform facts; if MCP is unavailable, use `references/` / `rules/`; only then respond "Insufficient platform certainty"
 - **Terminal logs backend only:** `console.log` only in `server/server.js`, not frontend
 - **Production-ready only:** Generate complete, deployable apps
 - **Forbidden patterns:** Listed in refusal tests
@@ -673,7 +685,7 @@ Default: mandatory files + short `README.md` only.
 
 ## Task → ordered reads (max ~5 files)
 
-Use this sequence **instead of** ad-hoc greps across `references/` when the task type is clear:
+For **platform API / event / manifest behavior**, call **`get_developer_docs`** before opening `references/`. Use this sequence when MCP is unavailable or the task needs repo-local playbooks, templates, or enforcement files:
 
 | Task | Read in order |
 |------|----------------|
@@ -689,8 +701,8 @@ If the task is still unclear after step 1, load `rules/confusion.mdc`.
 
 - **SKILL.md** — core enforcement, workflow, validation tables, gates.
 - **rules/** — always-on Platform 3.0, security, validation, SMI/events, templates, gates.
-- **references/** — 140+ files; load by topic as needed (including `references/skill-advanced-topics.md` for extended OAuth, validation checklists, reference index, module summary).
+- **references/** — 140+ files; **fallback** when MCP is unavailable — load by topic (including `references/skill-advanced-topics.md` for extended OAuth, validation checklists, reference index, module summary). For live platform docs, use **`get_developer_docs`** first.
 - **assets/templates/** — react-meta (default UI), vanilla frontend/hybrid/oauth, serverless skeletons.
 - **references/playbooks/** — Slack webhook + Microsoft Graph golden paths.
 
-When uncertain, load the specific `references/` file before implementing.
+When uncertain about **platform behavior**, call **`get_developer_docs`** first; if MCP is unavailable, load the specific `references/` file before implementing.

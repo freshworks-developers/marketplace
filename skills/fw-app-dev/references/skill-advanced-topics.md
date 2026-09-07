@@ -1,6 +1,6 @@
 # fw-app-dev – Advanced topics (progressive disclosure)
 
-Load this file **on demand** when the task needs: full Platform 2.x rejection tables, deep OAuth/iparams setup, extended validation checklists, reference index, product module tables, install commands, or test-pattern lists. The primary skill entry point remains [`SKILL.md`](../SKILL.md).
+Load this file **on demand** when the task needs: full Platform 2.x rejection tables, deep OAuth/iparams setup, extended validation checklists, reference index, product module tables, install commands, or test-pattern lists. For **platform documentation questions**, call MCP **`get_developer_docs`** first (see [`SKILL.md`](../SKILL.md) → *Documentation lookup*); use this file when MCP is unavailable or you need repo-local detail. The primary skill entry point for app work remains [`SKILL.md`](../SKILL.md).
 
 **FDK / Node installs:** **fw-app-dev** does not install **`fdk`** or **Node**; use **`fw-setup`** (or prompt the user to add that skill). See [`SKILL.md`](../SKILL.md) → *FDK / Node.js toolchain — not provided by fw-app-dev*.
 
