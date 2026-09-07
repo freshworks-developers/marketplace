@@ -42,13 +42,13 @@ export const ORCHESTRATION_SCENARIOS = [
   {
     id: 'orchestration-02-add-feature',
     skill: 'orchestration',
-    label: 'add-feature: read full tree, scoped build, review before publish',
+    label: 'add-feature: read full tree first, implement immediately (no user confirmation), review before publish',
     loadContent: loadOrchestrationDocs,
-    prompt: 'Valid manifest and existing app code. User says: "Add a settings page to my app." What intent is this, should the agent avoid writing before reading the full tree, and must review run before publish?',
+    prompt: 'Valid manifest and existing app code. User says: "Add a settings page to my app." What intent is this? Per the add-feature orchestration chain, the agent must read the full app tree before writing (guardrail G4) — but does the agent need to ask the USER for confirmation BEFORE implementing the scoped feature (as opposed to greenfield app creation, which does require pre-write confirmation per guardrail G1)? Note explicit user consent is required only before publish, per guardrail G5. And must review run before publish?',
     schema: orchestrationSchema,
     assert(output) {
       assert.equal(output.classified_intent, 'add-feature');
-      assert.equal(output.requires_confirmation_before_write, true);
+      assert.equal(output.requires_confirmation_before_write, false, 'add-feature reads the full tree first (G4) then implements the scoped change immediately — user confirmation is required only before publish (G5), not before the write itself');
       assert.equal(output.runs_review_before_publish, true);
     },
   },

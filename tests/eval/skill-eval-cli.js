@@ -177,12 +177,16 @@ async function evalWithCLI(scenario, workdir) {
 
   const needed = Math.ceil(MAX_RETRIES / 2);
   for (let i = 0; i < MAX_RETRIES; i++) {
+    let output;
     try {
       const raw = await runCLI(prompt, workdir);
-      const output = extractJSON(raw);
+      output = extractJSON(raw);
       scenario.assert(output);
       attempts.push({ pass: true, output });
     } catch (err) {
+      if (process.env.FW_EVAL_DEBUG) {
+        console.error(`\n[debug ${scenario.id} attempt ${i + 1}] raw model output:\n${JSON.stringify(output, null, 2)}\n`);
+      }
       attempts.push({ pass: false, error: err.message });
     }
     const passed = attempts.filter(a => a.pass).length;
