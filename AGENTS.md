@@ -73,6 +73,8 @@ Contributor reference for the Tier 2 orchestration brain shipped alongside the r
 
 **Session file:** `.fw-session.json` at app project root (distinct from per-app `.meta.json` metrics).
 
+**Intent enforcement — two tiers:** `session-write.sh` hard-rejects (`exit 1`, no write) any `.fw-session.json` `intent` outside the 6 canonical values (JSON Schema `enum` in `specs/fw-session.schema.json`). `agent-telemetry.sh intent_detected last_intent=<value>` is soft by default — invalid values are normalized/checked, still written with `last_intent_valid=false` plus a stderr warning (telemetry fails open); pass `--strict` to hard-fail instead. Every **valid** classification is also appended (deduped) to `_agent.used_intents` — the full intent history for the app, not just the latest turn (`last_intent`/`last_intent_valid` only reflect the most recent event). See Tier 2 `specs/agent-behaviour.md` §telemetry.
+
 When editing orchestration rules, update **both** Tier 1 (intent table / delegation) and Tier 2 (flow detail). Keep Confluence PRD intent names aligned.
 
 ---

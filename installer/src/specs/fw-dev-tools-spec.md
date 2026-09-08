@@ -22,7 +22,8 @@ Read fw-dev-tools skills **only** from the install path for your IDE. **Never mi
 
 ```
 user message
-  → 1. classify intent (six intents; aliases: create→create-new, update→update-existing)
+  → 1. classify intent (6 canonical intents: create-new, add-feature, troubleshoot,
+       update-existing, migrate, publish-status; aliases: create→create-new, update→update-existing)
   → 2. read session (`.fw-session.json` via `bash ~/.fw-dev-tools/scripts/session-read.sh <app-dir>`)
   → 3. ground in ecosystem core (~/.fw-dev-tools/specs/ecosystem-map.md)
   → single skill fits?
@@ -63,17 +64,19 @@ If intent is unclear, follow Tier 2 `#disambiguation` — ask **one** clarifying
 
 **Aliases:** `create` → `create-new`, `update` → `update-existing`.
 
-After classification emit telemetry: `bash ~/.fw-dev-tools/scripts/agent-telemetry.sh <app-dir> intent_detected last_intent=<intent>`.
+After classification emit telemetry: `bash ~/.fw-dev-tools/scripts/agent-telemetry.sh <app-dir> intent_detected last_intent=<intent>` (one of the **6 canonical intents** above — never a free-text label). The script normalizes `create`/`update` aliases and checks the value against the 6 canonical intents — an invalid value is logged with `last_intent_valid=false` plus a stderr warning but **does not block the turn** (telemetry fails open); pass `--strict` when a caller must hard-fail on an invalid intent instead.
 
 ## Non-negotiables
 
 - Platform version `"3.0"`; use `modules` not legacy `product`
-- New UI apps: React Meta default; vanilla Crayons only when explicitly requested
 - External HTTP only via `$request.invokeTemplate` and `config/requests.json`
 - `fdk validate`: zero platform errors and zero lint errors before complete
+- New UI apps: React Meta default; vanilla Crayons only when explicitly requested
 - fw-review is MANDATORY before fw-publish — never skip it
+- **Publish requires explicit user confirmation** — always ask "Ready to submit to the marketplace?" (or equivalent) before invoking fw-publish; **never auto-publish**, even on return visits or "small" fixes (see Tier 2 §guardrails G5)
 - Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` (and `meta-feedback.sh` / `meta-delete.sh` for publish) — **never** hand-write or Edit/Write the file; `skill_version` from the active skill's `SKILL.md` `version:` field, not `plugin.json`
 - MCP boundary: build/fix/review/migrate via skills only; publish via fw-publish + MCP publish tools; **`get_developer_docs`** is the **PRIMARY** documentation source for platform questions (fall back to skill references if MCP unavailable)
+- MCP/token setup for any skill: **`skills/fw-publish/SKILL.md`** (never reference the contributor-only repo `AGENTS.md`, which is not shipped to IDEs)
 - Legacy MCP build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) return a **deprecation contract** on the server — if invoked, follow the redirect to fw-app-dev (do not retry the tool)
 - **Deprecated MCP tools** — if invoked, output exactly and stop (Tier 2 §deprecated-mcp):
   > [DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill instead located at `skills/fw-app-dev/SKILL.md`. Stopping execution.

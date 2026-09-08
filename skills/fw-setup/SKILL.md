@@ -170,7 +170,7 @@ DETECTION:
 2. Enforce **CDN Tarball Reality** (above) — not registry `@freshworks/fdk` as primary.
 3. On failure: `references/macos.md` or `references/windows.md`.
 
-**Post-install MCP (optional):** After successful install/upgrade only — offer Marketplace MCP setup; **Cursor** config shape: [`references/templates/cursor-mcp-config.json`](references/templates/cursor-mcp-config.json); **Claude Code:** `mcp.json` + `mcp_auth_token` per **AGENTS.md**. Never paste JWT in chat.
+**Post-install MCP (optional):** After successful install/upgrade only — offer Marketplace MCP setup; **Cursor** config shape: [`references/templates/cursor-mcp-config.json`](references/templates/cursor-mcp-config.json); **Claude Code:** `mcp.json` + `mcp_auth_token` per **`skills/fw-publish/SKILL.md`**. Never paste JWT in chat.
 
 ---
 

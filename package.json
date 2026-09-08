@@ -14,7 +14,7 @@
     "mcp.json",
     "io.anthropic.claude-code",
     "com.cursor",
-    "com.openai.codex"
+    "com.openai.codex",
     "specs/",
     ".claude-plugin",
     ".mcp.json"

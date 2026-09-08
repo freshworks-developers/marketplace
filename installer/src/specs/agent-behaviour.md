@@ -387,10 +387,31 @@ Emit usage events via **`agent-telemetry.sh`** (requires `meta-init.sh` first; w
 | Deprecated Tool Blocked | Legacy MCP tool blocked | `blocked_tool` |
 | Guardrail Violation Prevented | Guardrail G1–G7 triggered | `guardrail_id` |
 
+### Intent Detected enforcement (soft by default)
+
+`agent-telemetry.sh` normalizes `create`/`update` aliases and validates `last_intent` against the 6 canonical intents (`create-new`, `add-feature`, `troubleshoot`, `update-existing`, `migrate`, `publish-status`) whenever `event=intent_detected`:
+
+- **Valid** → written as-is plus `last_intent_valid=true`, and appended (deduped) to `_agent.used_intents`.
+- **Invalid** (default / non-strict) → still written, plus `last_intent_valid=false`, plus a stderr warning. **Not** added to `used_intents`. Telemetry **fails open** — a bad classification is surfaced for later audit, but never blocks the agent's turn.
+- **Invalid + `--strict`** → exits 1, nothing is written. Use `--strict` only for callers that must guarantee clean telemetry (e.g. CI/eval harnesses), not for the interactive agent loop.
+
+This is deliberately weaker than the `.fw-session.json` enforcement (Tier 2 §session), which hard-rejects an invalid `intent` on every write via the JSON Schema — session state must stay consistent for resume/preflight, while telemetry is best-effort observability and should not break the user's task.
+
+**`_agent.last_intent` vs `_agent.used_intents`:**
+
+| Field | Shape | Meaning |
+|-------|-------|---------|
+| `last_intent` | string | Most recent classification only (overwritten every `intent_detected` event) |
+| `last_intent_valid` | boolean | Whether that most recent classification was one of the 6 canonical intents |
+| `used_intents` | string[] | Deduped, append-only history of every **valid** canonical intent this app project has ever been classified as (via `meta-update.sh`'s `key+=value` array-append) — lets you see the full intent journey (e.g. `create-new` → `add-feature` → `update-existing`), not just the latest turn |
+
 **Examples:**
 
 ```bash
 bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app intent_detected last_intent=create-new intent_confidence=0.92
+bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app intent_detected last_intent=create               # alias -> create-new
+bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app intent_detected last_intent=frobnicate            # warns, still writes last_intent_valid=false; used_intents unchanged
+bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app intent_detected last_intent=frobnicate --strict   # exits 1, no write
 bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app session_sync session_milestone=validate_passed step=validated
 bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app escalation_triggered escalation_reason=fix_limit fix_iteration_count=3
 bash ~/.fw-dev-tools/scripts/agent-telemetry.sh ./my-app guardrail_violation guardrail_id=skip_review
