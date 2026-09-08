@@ -22,6 +22,7 @@ const CLI = join(REPO_ROOT, 'installer', 'bin', 'cli.js');
 const PKG_VERSION = JSON.parse(await readFile(join(REPO_ROOT, 'package.json'), 'utf8')).version;
 
 const SKILLS = ['fw-setup', 'fw-app-dev', 'fw-ai-actions-app', 'fw-review', 'fw-publish'];
+const PLUGIN_NAME = 'freshworks-dev-tools';
 const SCRIPT_NAMES = ['meta-init.sh', 'meta-update.sh', 'meta-feedback.sh', 'meta-delete.sh', 'check-update.sh'];
 
 /** Test-only Cursor/Codex roots (no leading dot — safe in restricted sandboxes). */
@@ -93,7 +94,7 @@ async function listClaudePlugins(home) {
   const plugins = [];
   const lines = out.split('\n');
   for (let i = 0; i < lines.length; i++) {
-    const nameMatch = lines[i].match(/(fw-[\w-]+)@freshworks-dev-tools/);
+    const nameMatch = lines[i].match(/([\w-]+)@freshworks-dev-tools/);
     if (!nameMatch) continue;
     const name = nameMatch[1];
     const versionMatch = lines[i + 1]?.match(/Version:\s*(\S+)/);
@@ -113,7 +114,7 @@ function skillFrontmatterVersion(skillMd) {
 
 async function assertLocalClaudeMarketplace(home) {
   const skillPath = join(devToolsHome(home), 'skills', 'fw-app-dev', 'SKILL.md');
-  const marketplacePath = join(devToolsHome(home), '.claude-plugin', 'marketplace.json');
+  const marketplacePath = join(devToolsHome(home), 'io.anthropic.claude-code', 'marketplace.json');
   await access(skillPath);
   await access(marketplacePath);
   const skillVer = skillFrontmatterVersion(await readFile(skillPath, 'utf8'));
@@ -152,8 +153,9 @@ test('Claude install copies all plugins, scripts, and writes install state', asy
   const home = await makeHome();
   try {
     const out = await runCli(home, ['install', '--tools', 'claude', '--yes']);
+    assert.match(out, new RegExp(`Installed ${PLUGIN_NAME}|✓ Installed ${PLUGIN_NAME}`), 'stdout should confirm plugin install');
     for (const skill of SKILLS) {
-      assert.match(out, new RegExp(`Installed ${skill}|✓ Installed ${skill}`), `stdout should confirm ${skill}`);
+      assert.match(out, new RegExp(skill), `stdout should mention bundled skill ${skill}`);
     }
     for (const script of SCRIPT_NAMES) {
       await access(join(devToolsHome(home), 'scripts', script));
@@ -165,10 +167,8 @@ test('Claude install copies all plugins, scripts, and writes install state', asy
     assert.ok(state.installedAt, 'installedAt should be set');
 
     const plugins = await listClaudePlugins(home);
-    assert.equal(plugins.length, 5, 'claude should have 5 fw-dev-tools plugins');
-    for (const skill of SKILLS) {
-      assert.ok(plugins.some(p => p.name === skill), `plugin ${skill} missing`);
-    }
+    assert.equal(plugins.length, 1, 'claude should have exactly 1 consolidated fw-dev-tools plugin');
+    assert.ok(plugins.some(p => p.name === PLUGIN_NAME), `plugin ${PLUGIN_NAME} missing`);
     await assertLocalClaudeMarketplace(home);
     await assertClaudeMdRouting(home);
   } finally {
@@ -256,7 +256,7 @@ test('Claude install removes stale ~/.claude/skills copies', async (t) => {
     const out = await runCli(home, ['install', '--tools', 'claude', '--yes']);
     assert.equal(existsSync(staleDir), false, 'stale ~/.claude/skills/fw-app-dev should be removed');
     assert.match(out, /Removed \d+ stale fw-dev-tools skill/);
-    assert.equal((await listClaudePlugins(home)).length, 5);
+    assert.equal((await listClaudePlugins(home)).length, 1);
   } finally {
     await cleanup(home);
   }
@@ -293,7 +293,7 @@ test('Claude install removes stale plugin cache versions', async (t) => {
     const out = await runCli(home, ['install', '--tools', 'claude', '--yes']);
     assert.equal(existsSync(staleCache), false, 'stale 1.0.0 plugin cache should be removed');
     assert.match(out, /Removed stale plugin cache/);
-    assert.equal((await listClaudePlugins(home)).length, 5);
+    assert.equal((await listClaudePlugins(home)).length, 1);
   } finally {
     await cleanup(home);
   }
@@ -334,7 +334,7 @@ test('second install does not duplicate plugins or change installedAt', async (t
     const state2 = await readInstallState(home);
     const plugins2 = await listClaudePlugins(home);
 
-    assert.equal(plugins2.length, 5);
+    assert.equal(plugins2.length, 1);
     assert.equal(plugins1.length, plugins2.length);
     assert.equal(state2.installedAt, state1.installedAt, 'installedAt must not change on re-install');
     assert.equal(state2.version, PKG_VERSION);
@@ -351,17 +351,13 @@ test('second Claude install refreshes plugins without duplicates', async (t) => 
   try {
     await runCli(home, ['install', '--tools', 'claude', '--yes']);
     const plugins1 = await listClaudePlugins(home);
-    assert.equal(plugins1.length, 5);
+    assert.equal(plugins1.length, 1);
 
     const out = await runCli(home, ['install', '--tools', 'claude', '--yes']);
-    for (const skill of SKILLS) {
-      assert.match(out, new RegExp(`Installed ${skill}|✓ Installed ${skill}`), `reinstall should confirm ${skill}`);
-    }
+    assert.match(out, new RegExp(`Installed ${PLUGIN_NAME}|✓ Installed ${PLUGIN_NAME}`), 'reinstall should confirm plugin install');
     const plugins2 = await listClaudePlugins(home);
-    assert.equal(plugins2.length, 5);
-    for (const skill of SKILLS) {
-      assert.ok(plugins2.some(p => p.name === skill), `plugin ${skill} missing after reinstall`);
-    }
+    assert.equal(plugins2.length, 1);
+    assert.ok(plugins2.some(p => p.name === PLUGIN_NAME), `plugin ${PLUGIN_NAME} missing after reinstall`);
   } finally {
     await cleanup(home);
   }
@@ -491,7 +487,7 @@ test('legacy install.json removed on Claude install', async (t) => {
     for (const script of SCRIPT_NAMES) {
       await access(join(devToolsHome(home), 'scripts', script));
     }
-    assert.equal((await listClaudePlugins(home)).length, 5);
+    assert.equal((await listClaudePlugins(home)).length, 1);
   } finally {
     await cleanup(home);
   }

@@ -47,6 +47,8 @@
     "last_event": "",
     "last_event_at": "",
     "last_intent": "",
+    "last_intent_valid": true,
+    "used_intents": [],
     "intent_confidence": 0,
     "session_milestone": "",
     "step": "",

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Propagates the version from the root package.json to all static files
- * that embed it: installer/package.json, skills SKILL.md frontmatter,
- * and plugin manifests (umbrella + per-skill + marketplace plugins[]).
+ * that embed it: root plugin.json, installer/package.json, skills SKILL.md
+ * frontmatter, and extension manifests (marketplace plugins[]).
  *
  * Run automatically via `npm version` (preversion hook).
  * Can also be run directly: node scripts/bump-version.mjs
@@ -46,35 +46,31 @@ async function updateText(filePath, pattern, replacement) {
   }
 }
 
+// Root plugin.json (Agent Plugins 1.0.0)
+await updateJson(join(ROOT, 'plugin.json'), (obj) => {
+  obj.version = version;
+});
+
 // installer/package.json
 await updateJson(join(ROOT, 'installer/package.json'), (pkg) => {
   pkg.version = version;
 });
 
-// Umbrella plugin manifests
-for (const dir of ['.cursor-plugin', '.claude-plugin', '.codex-plugin']) {
-  for (const file of ['plugin.json', 'marketplace.json']) {
+// Extension directory manifests (Agent Plugins 1.0.0 client extensions)
+for (const dir of ['io.anthropic.claude-code', 'com.cursor', 'com.openai.codex']) {
+  for (const file of ['plugin.json', 'marketplace.json', 'skills-metadata.json']) {
     try {
       const p = join(ROOT, dir, file);
       await updateJson(p, (obj) => applyVersionToManifest(obj, version));
-    } catch { /* file may not exist */ }
+    } catch { /* file may not exist in every extension */ }
   }
 }
 
-// Per-skill plugin manifests (when published standalone)
+// Skills — SKILL.md frontmatter version
 const skillsDir = join(ROOT, 'skills');
 const skills = await readdir(skillsDir, { withFileTypes: true });
 for (const entry of skills) {
   if (!entry.isDirectory()) continue;
-  for (const pluginDir of ['.cursor-plugin', '.claude-plugin']) {
-    const pluginJson = join(skillsDir, entry.name, pluginDir, 'plugin.json');
-    try {
-      await updateJson(pluginJson, (obj) => {
-        obj.version = version;
-      });
-    } catch { /* no plugin.json in this skill */ }
-  }
-
   const skillMd = join(skillsDir, entry.name, 'SKILL.md');
   try {
     await updateText(skillMd, /^version: "[\d.]+"/m, `version: "${version}"`);

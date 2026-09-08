@@ -9,6 +9,6 @@ try {
   // Success: MCP already configured, skip prompt
 } catch {
   // MCP not configured: offer setup
-  // See AGENTS.md and skills/fw-publish/SKILL.md for full setup instructions
+  // See skills/fw-publish/SKILL.md for full setup instructions
 }
 ```

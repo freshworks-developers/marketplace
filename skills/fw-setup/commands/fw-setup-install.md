@@ -325,15 +325,15 @@ POST-INSTALL MCP CONFIG (optional — only after ALL verification passes):
   
   if [[ "$mcp_response" =~ ^[yY]$ ]]; then
     # MCP configuration handles: API key prompt, IDE detection, config file creation, verification
-    # See AGENTS.md and skills/fw-publish/SKILL.md for full setup instructions
+    # See skills/fw-publish/SKILL.md for full setup instructions
     echo ""
     echo "Launching MCP configuration..."
-    echo "See: AGENTS.md and skills/fw-publish/SKILL.md for setup"
+    echo "See: skills/fw-publish/SKILL.md for setup"
     echo ""
   else
     echo "Skipped. Configure MCP later:"
     echo "- Run: /fw-setup-install (choose MCP option)"
-    echo "- Or see: README.md or AGENTS.md for manual setup"
+    echo "- Or see: skills/fw-publish/SKILL.md or README.md for manual setup"
   fi
   echo "═══════════════════════════════════════════════════════════"
 

@@ -183,6 +183,111 @@ test('agent-telemetry.sh writes _agent block to .meta.json', async () => {
   const meta = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
   assert.equal(meta._agent.last_event, 'intent_detected');
   assert.equal(meta._agent.last_intent, 'create-new');
+  assert.equal(meta._agent.last_intent_valid, true);
+  assert.deepEqual(meta._agent.used_intents, ['create-new']);
+  await rm(appDir, { recursive: true });
+});
+
+test('agent-telemetry.sh normalizes create/update aliases for last_intent', async () => {
+  const appDir = await makeAppDir();
+  await mkdir(join(appDir, 'config'), { recursive: true });
+  await execFileAsync(BASH, [join(SCRIPTS, 'meta-init.sh'), appDir]);
+  await execFileAsync(BASH, [
+    join(SCRIPTS, 'agent-telemetry.sh'),
+    appDir,
+    'intent_detected',
+    'last_intent=create',
+  ]);
+  const meta = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
+  assert.equal(meta._agent.last_intent, 'create-new');
+  assert.equal(meta._agent.last_intent_valid, true);
+  assert.deepEqual(meta._agent.used_intents, ['create-new']);
+  await rm(appDir, { recursive: true });
+});
+
+test('agent-telemetry.sh soft-fails on invalid last_intent (fails open, tags invalid, no used_intents entry)', async () => {
+  const appDir = await makeAppDir();
+  await mkdir(join(appDir, 'config'), { recursive: true });
+  await execFileAsync(BASH, [join(SCRIPTS, 'meta-init.sh'), appDir]);
+  const { stderr } = await execFileAsync(BASH, [
+    join(SCRIPTS, 'agent-telemetry.sh'),
+    appDir,
+    'intent_detected',
+    'last_intent=frobnicate',
+  ]);
+  assert.match(stderr, /invalid|not a canonical intent/i);
+  const meta = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
+  assert.equal(meta._agent.last_intent, 'frobnicate');
+  assert.equal(meta._agent.last_intent_valid, false);
+  assert.deepEqual(meta._agent.used_intents, [], 'invalid intent must not be added to used_intents');
+  await rm(appDir, { recursive: true });
+});
+
+test('agent-telemetry.sh accumulates a deduped used_intents history across turns', async () => {
+  const appDir = await makeAppDir();
+  await mkdir(join(appDir, 'config'), { recursive: true });
+  await execFileAsync(BASH, [join(SCRIPTS, 'meta-init.sh'), appDir]);
+  for (const intent of ['create-new', 'add-feature', 'update-existing', 'add-feature']) {
+    await execFileAsync(BASH, [
+      join(SCRIPTS, 'agent-telemetry.sh'),
+      appDir,
+      'intent_detected',
+      `last_intent=${intent}`,
+    ]);
+  }
+  const meta = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
+  assert.equal(meta._agent.last_intent, 'add-feature', 'last_intent reflects only the most recent turn');
+  assert.deepEqual(
+    meta._agent.used_intents,
+    ['create-new', 'add-feature', 'update-existing'],
+    'used_intents keeps the full deduped history, not just the latest'
+  );
+  await rm(appDir, { recursive: true });
+});
+
+test('agent-telemetry.sh --strict hard-fails on invalid last_intent (no write)', async () => {
+  const appDir = await makeAppDir();
+  await mkdir(join(appDir, 'config'), { recursive: true });
+  await execFileAsync(BASH, [join(SCRIPTS, 'meta-init.sh'), appDir]);
+  const before = await readFile(join(appDir, '.meta.json'), 'utf8');
+  try {
+    await execFileAsync(BASH, [
+      join(SCRIPTS, 'agent-telemetry.sh'),
+      appDir,
+      'intent_detected',
+      'last_intent=frobnicate',
+      '--strict',
+    ]);
+    assert.fail('should exit 1 under --strict');
+  } catch (err) {
+    assert.equal(err.code, 1);
+  }
+  const after = await readFile(join(appDir, '.meta.json'), 'utf8');
+  assert.equal(after, before, '.meta.json must be unchanged when --strict rejects');
+  await rm(appDir, { recursive: true });
+});
+
+test('agent-telemetry.sh does not run intent validation for non-intent_detected events', async () => {
+  const appDir = await makeAppDir();
+  await mkdir(join(appDir, 'config'), { recursive: true });
+  await execFileAsync(BASH, [join(SCRIPTS, 'meta-init.sh'), appDir]);
+  const before = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
+  await execFileAsync(BASH, [
+    join(SCRIPTS, 'agent-telemetry.sh'),
+    appDir,
+    'guardrail_violation',
+    'guardrail_id=skip_review',
+    'last_intent=frobnicate', // arbitrary payload for a non-intent_detected event: must pass through untouched
+  ]);
+  const meta = JSON.parse(await readFile(join(appDir, '.meta.json'), 'utf8'));
+  assert.equal(meta._agent.last_event, 'guardrail_violation');
+  assert.equal(meta._agent.guardrail_id, 'skip_review');
+  assert.equal(meta._agent.last_intent, 'frobnicate', 'validation only applies to event=intent_detected');
+  assert.equal(
+    meta._agent.last_intent_valid,
+    before._agent.last_intent_valid,
+    'last_intent_valid must be untouched for non-intent_detected events'
+  );
   await rm(appDir, { recursive: true });
 });
 

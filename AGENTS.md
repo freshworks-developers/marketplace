@@ -31,7 +31,7 @@ PR checklist: **`.github/PULL_REQUEST_TEMPLATE.md`**
 
 | You change | Also update | Verify |
 |------------|-------------|--------|
-| `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`.cursor-plugin/marketplace.json`** / **`.claude-plugin/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
+| `skills/*/rules/` or `skills/*/commands/` | **Rules and commands inventory** (below) + **`com.cursor/marketplace.json`** / **`io.anthropic.claude-code/marketplace.json`** `rulesPath` / `commandsPath` | `cd tests && npm test` |
 | `skills/*/SKILL.md` behavioral gates | `tests/eval/skill-eval-scenarios.js` + **`tests/TESTING.md`** scenario table | `cd tests && npm run eval` |
 | `skills/shared/.meta.template.json` or meta scripts | All skills referencing `meta-init.sh` / `meta-update.sh` | `cd tests && npm test` |
 | `skills/fw-setup` toolchain guidance | **`docs/engine-matrix.md`** | `cd installer && npm test` |
@@ -52,11 +52,19 @@ Prefer **small, focused diffs**. Match existing markdown and plugin patterns.
 | **`installer/`** | `npx @freshworks/fw-dev-tools` CLI (install, update, status, uninstall) |
 | **`installer/src/specs/fw-dev-tools-spec.md`** | **Shipped** routing spec (~28 lines) → Cursor rule / Codex `AGENTS.md` block |
 | **`tests/`** | Static tests, LLM evals, e2e orchestration — **`tests/TESTING.md`** |
-| **`.mcp.json`** | Canonical `fw-dev-mcp` URL + `Authorization` header shape |
-| **`.cursor-plugin/`**, **`.claude-plugin/`**, **`.codex-plugin/`** | Multi-skill plugin registries (`freshworks-dev-tools`) |
+| **`mcp.json`** | Canonical `fw-dev-mcp` URL + `Authorization` header shape |
+| **`com.cursor/`**, **`io.anthropic.claude-code/`**, **`com.openai.codex/`** | Extension-dir manifests (`freshworks-dev-tools`) — see marketplace listing shape below |
+| **`.cursor-plugin/`**, **`.claude-plugin/`**, **`.codex-plugin/`** | Root-level runtime copies read directly by each client's "Import Marketplace" — keep byte-identical to their `com.cursor/` / `io.anthropic.claude-code/` / `com.openai.codex/` counterparts |
 | **`assets/fw-logo.svg`** | Marketplace branding for plugin UIs |
 
 **Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/`; plugin JSON points there — do not duplicate trees under `.cursor/` inside skills.
+
+**Marketplace listing shape — all three clients now ship 1 consolidated plugin bundling all 5 skills:**
+- **Claude Code** (`io.anthropic.claude-code/marketplace.json`) — **1 listing**, `source: "."` (repo/plugin root, which already contains `skills/<name>/SKILL.md` for all 5 skills — Claude auto-discovers the default `skills/` directory, no `rulesPath`/`commandsPath` needed). Installed via `claude plugin install freshworks-dev-tools@freshworks-dev-tools` — a single `freshworks-dev-tools@freshworks-dev-tools` entry in `claude plugin list`, confirmed via `claude plugin details freshworks-dev-tools@freshworks-dev-tools` showing `Skills (5)`.
+- **Cursor** (`com.cursor/marketplace.json` + `.cursor-plugin/marketplace.json`, kept identical) — **1 consolidated listing**, `source: "./skills"`, no per-skill `rulesPath`/`commandsPath`. Per-skill rules/commands resolve via `com.cursor/skills-metadata.json`'s `rulesDirectory`/`commandsDirectory` instead.
+- **Codex** (`com.openai.codex/plugin.json`) — 1 plugin, `skills: "./skills/"`, no marketplace-listing concept at all.
+
+When a skill's `rules/`/`commands/` change: no marketplace-listing path updates needed for Claude or Codex (both auto-discover `skills/<name>/...`); only update `com.cursor/skills-metadata.json`'s per-skill `rulesDirectory`/`commandsDirectory` for Cursor — **not** `com.cursor/marketplace.json` (it has no per-skill paths).
 
 ---
 
@@ -72,6 +80,8 @@ Contributor reference for the Tier 2 orchestration brain shipped alongside the r
 **Intents (canonical):** `create-new`, `add-feature`, `troubleshoot`, `update-existing`, `migrate`, `publish-status`.
 
 **Session file:** `.fw-session.json` at app project root (distinct from per-app `.meta.json` metrics).
+
+**Intent enforcement — two tiers:** `session-write.sh` hard-rejects (`exit 1`, no write) any `.fw-session.json` `intent` outside the 6 canonical values (JSON Schema `enum` in `specs/fw-session.schema.json`). `agent-telemetry.sh intent_detected last_intent=<value>` is soft by default — invalid values are normalized/checked, still written with `last_intent_valid=false` plus a stderr warning (telemetry fails open); pass `--strict` to hard-fail instead. Every **valid** classification is also appended (deduped) to `_agent.used_intents` — the full intent history for the app, not just the latest turn (`last_intent`/`last_intent_valid` only reflect the most recent event). See Tier 2 `specs/agent-behaviour.md` §telemetry.
 
 When editing orchestration rules, update **both** Tier 1 (intent table / delegation) and Tier 2 (flow detail). Keep Confluence PRD intent names aligned.
 
@@ -127,7 +137,7 @@ Keep this list aligned when adding or renaming files.
 
 ### fw-publish — `skills/fw-publish/`
 
-**Commands:** none. **Rules:** none. Playbooks in `SKILL.md` and `references/`; MCP in repo root **`.mcp.json`**.
+**Commands:** none. **Rules:** none. Playbooks in `SKILL.md` and `references/`; MCP in repo root **`mcp.json`**.
 
 ---
 

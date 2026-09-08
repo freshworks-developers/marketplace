@@ -35,7 +35,7 @@ JWT / API keys · OAuth secrets · domain install tokens · `iparams` values →
 
 ```bash
 ls -la ~/.cursor/skills/fw-app-dev/
-cat ~/.cursor/skills/fw-app-dev/.cursor-plugin/plugin.json
+head -20 ~/.cursor/skills/fw-app-dev/SKILL.md
 head -20 ~/.cursor/skills/fw-app-dev/SKILL.md
 ```
 

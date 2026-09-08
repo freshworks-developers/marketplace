@@ -643,7 +643,7 @@ After successfully generating or migrating an app, use [`references/templates/po
 | Pack / publish / upload | **`fw-publish`** skill (after **fw-review**) | Raw `fdk pack` from docs alone |
 | Migrate vanilla → Meta | **`/fdk-react-migrate`** on **vanilla** 3.0 app only | Re-migrate an already-Meta app |
 
-**Optional MCP (once, if not configured):** check per [`references/examples/mcp-availability-check.md`](references/examples/mcp-availability-check.md); prompt from [`references/templates/mcp-config-prompt.txt`](references/templates/mcp-config-prompt.txt). If YES → `AGENTS.md` + `skills/fw-publish/SKILL.md`.
+**Optional MCP (once, if not configured):** check per [`references/examples/mcp-availability-check.md`](references/examples/mcp-availability-check.md); prompt from [`references/templates/mcp-config-prompt.txt`](references/templates/mcp-config-prompt.txt). If YES → `skills/fw-publish/SKILL.md` (MCP tool reference: `skills/fw-publish/references/openai-server-mcp-tools.md`).
 
 **DO NOT automatically generate:**
 - [INVALID] Detailed validation reports (.validation-report.md)
