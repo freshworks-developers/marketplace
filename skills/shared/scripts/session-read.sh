@@ -11,13 +11,16 @@ APP_DIR="${1:-}"
 SESSION="$APP_DIR/.fw-session.json"
 [ -f "$SESSION" ] || exit 1
 
-node -e "
+export SESSION
+node <<'NODE'
   const fs = require('fs');
+  const sessionPath = process.env.SESSION;
   try {
-    JSON.parse(fs.readFileSync('$SESSION', 'utf8'));
-    process.stdout.write(fs.readFileSync('$SESSION', 'utf8'));
+    const content = fs.readFileSync(sessionPath, 'utf8');
+    JSON.parse(content);
+    process.stdout.write(content);
   } catch (e) {
     process.stderr.write('Invalid .fw-session.json: ' + e.message + '\n');
     process.exit(2);
   }
-"
+NODE

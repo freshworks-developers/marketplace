@@ -54,10 +54,25 @@ export const SHIPPED_SPECS = [
   'fw-session.schema.json',
   'ecosystem-map.md',
   'platform-knowledge-map.md',
+  'preflight.mdc',
 ];
 
 export const BRAIN_SPEC_SRC = join(SPECS_SRC, 'agent-behaviour.md');
 export const BRAIN_SPEC_INSTALLER = join(REPO_ROOT, 'installer', 'src', 'specs', 'agent-behaviour.md');
+const SPEC_SOURCE_FALLBACKS = {
+  'agent-behaviour.md': BRAIN_SPEC_INSTALLER,
+  'fw-session.schema.json': join(REPO_ROOT, 'skills', 'shared', 'references', 'fw-session-schema.json'),
+  'ecosystem-map.md': join(REPO_ROOT, 'skills', 'shared', 'references', 'ecosystem-map.md'),
+  'preflight.mdc': join(REPO_ROOT, 'skills', 'shared', 'rules', 'preflight.mdc'),
+};
+
+function resolveSpecSource(file) {
+  const primary = join(SPECS_SRC, file);
+  if (existsSync(primary)) return primary;
+  const fallback = SPEC_SOURCE_FALLBACKS[file];
+  if (fallback && existsSync(fallback)) return fallback;
+  throw new Error(`Missing shipped spec source: ${file}`);
+}
 
 /**
  * Remove prior fw-dev-tools skill trees under a skills root (Cursor/Codex copy targets).
@@ -114,25 +129,24 @@ export async function copyScripts() {
 
 /**
  * Copy Tier 2 spec artifacts to ~/.fw-dev-tools/specs/ for IDE agents.
- * Also syncs agent-behaviour.md into installer/src/specs/ for packaging.
+ * Also syncs agent-behaviour.md into installer/src/specs/ for packaging when
+ * running from the repository checkout.
  */
-export async function copySpecs() {
-  const dest = join(FW_DEV_TOOLS_DIR, 'specs');
+export async function copySpecs(dest = join(FW_DEV_TOOLS_DIR, 'specs'), { syncInstaller = true } = {}) {
   await mkdir(dest, { recursive: true });
   for (const file of SHIPPED_SPECS) {
-    const src = join(SPECS_SRC, file);
-    if (!existsSync(src)) continue;
+    const src = resolveSpecSource(file);
     await cp(src, join(dest, file));
   }
-  await mkdir(dirname(BRAIN_SPEC_INSTALLER), { recursive: true });
-  if (existsSync(BRAIN_SPEC_SRC)) {
+  if (syncInstaller && existsSync(BRAIN_SPEC_SRC)) {
+    await mkdir(dirname(BRAIN_SPEC_INSTALLER), { recursive: true });
     await cp(BRAIN_SPEC_SRC, BRAIN_SPEC_INSTALLER);
   }
 }
 
 /** Read Tier 2 brain markdown for always-loaded IDE installs. */
 export async function readBrainSpecContent() {
-  return readFile(BRAIN_SPEC_SRC, 'utf8');
+  return readFile(resolveSpecSource('agent-behaviour.md'), 'utf8');
 }
 
 export async function writeInstallState({ client, method = 'npx' }) {

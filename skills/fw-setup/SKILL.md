@@ -372,6 +372,7 @@ When uncertain, load the specific `references/` file before implementing.
 ## Constraints (Enforced Automatically)
 
 - **Strict mode:** Reject **Platform 2.x / 2.3** requests only. **FDK 9.x** is allowed with deprecation UX until **`docs/engine-matrix.md`** end-of-support date—not rejected outright.
+- **Invalid version strings:** Reject non-semver FDK version input (e.g. `"abc"`, `"latest-foo"`) before install/upgrade/downgrade. Explain the valid format: **`X.Y.Z`** semver (strip a leading **`v`** if present); do not proceed until the user supplies a valid version or accepts the default latest line.
 - **No inference without source:** If not in references, respond "Insufficient FDK installation certainty"
 - **Verification mandatory:** Every operation MUST pass all verification gates
 - **Production-ready only:** Generate complete, persistent installations

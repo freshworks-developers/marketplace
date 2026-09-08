@@ -115,6 +115,10 @@ Keep this list aligned when adding or renaming files.
 
 **Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
 
+### shared — `skills/shared/`
+
+**Commands:** none. **Rules (`.mdc`):** `rules/preflight.mdc` (installed to `~/.fw-dev-tools/specs/preflight.mdc` with the orchestration specs).
+
 ### fw-review — `skills/fw-review/`
 
 **Commands:** none (pipeline in `SKILL.md`; checks via `scripts/*.js` per `rules/script-check-rules.md`).
@@ -169,9 +173,12 @@ When the task is **building or publishing a Freshworks app** (in any workspace),
 | Structured marketplace review | `skills/fw-review/SKILL.md` |
 | Publish via MCP | `skills/fw-publish/SKILL.md` |
 
-**MCP tools** (`fw-dev-mcp`): documented in **`skills/fw-publish/references/openai-server-mcp-tools.md`**. Config shape: **`mcp.json`**.
+**MCP boundary** (`fw-dev-mcp`, config: **`.mcp.json`**):
 
-**Deprecated MCP tools** (do not use): `implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors` — use **fw-app-dev** instead.
+- **Build / fix / review / migrate:** skills only — **`fw-app-dev`**, **`fw-ai-actions-app`**, **`fw-review`**
+- **Publish:** **`fw-publish`** + publish MCP tools — **`skills/fw-publish/references/openai-server-mcp-tools.md`**
+- **Docs fallback:** MCP **`get_developer_docs`** only when a skill explicitly delegates or fails
+- **Deprecated build tools** (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`): server returns a deprecation contract — follow its redirect to **`fw-app-dev`**; details in **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**
 
 **Platform 3.0 non-negotiables** (app work): `"platform-version": "3.0"`, **`modules`** not `product`, external HTTP via **`$request.invokeTemplate`** + **`config/requests.json`**, zero platform + lint errors before “complete”. Authoritative: **`skills/fw-app-dev/SKILL.md`**.
 

@@ -15,6 +15,9 @@
     "io.anthropic.claude-code",
     "com.cursor",
     "com.openai.codex"
+    "specs/",
+    ".claude-plugin",
+    ".mcp.json"
   ],
   "scripts": {
     "version": "node scripts/bump-version.mjs && git add installer/package.json skills/ plugin.json mcp.json io.anthropic.claude-code/ com.cursor/ com.openai.codex/"

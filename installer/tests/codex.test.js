@@ -1,11 +1,23 @@
-import { test } from 'node:test';
+import { after, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { tmpdir, homedir } from 'node:os';
-import { resolveSkillsDir, resolveMcpJsonPath, writeAgentsMdBlock } from '../src/clients/codex.js';
+import { tmpdir } from 'node:os';
 import { removeBlock } from '../src/fenced-block.js';
+
+const CODEX_TEST_ROOT = join(
+  tmpdir(),
+  `fw-codex-home-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+);
+process.env.FW_TEST_CODEX_ROOT = CODEX_TEST_ROOT;
+
+const { resolveSkillsDir, resolveMcpJsonPath, writeAgentsMdBlock } =
+  await import('../src/clients/codex.js');
+
+after(async () => {
+  await rm(CODEX_TEST_ROOT, { recursive: true, force: true });
+});
 
 async function makeTmp() {
   const dir = join(tmpdir(), `codex-test-${Date.now()}`);
@@ -44,7 +56,7 @@ test('resolveSkillsDir fallback is an absolute path', async () => {
 
 test('resolveMcpJsonPath returns ~/.codex/mcp.json', () => {
   const result = resolveMcpJsonPath();
-  assert.equal(result, join(homedir(), '.codex', 'mcp.json'));
+  assert.equal(result, join(CODEX_TEST_ROOT, 'mcp.json'));
   assert.ok(result.startsWith('/') || /^[A-Za-z]:\\/.test(result), 'should be absolute');
 });
 
@@ -68,7 +80,7 @@ test('writeAgentsMdBlock writes block to cwd/AGENTS.md when it exists', async ()
 
 test('writeAgentsMdBlock falls back to ~/.codex/AGENTS.md when cwd has no AGENTS.md', async () => {
   const tmp = await makeTmp(); // no AGENTS.md in this dir
-  const fallback = join(homedir(), '.codex', 'AGENTS.md');
+  const fallback = join(CODEX_TEST_ROOT, 'AGENTS.md');
 
   const written = await writeAgentsMdBlock(tmp);
   assert.equal(written, fallback, 'should fall back to ~/.codex/AGENTS.md');

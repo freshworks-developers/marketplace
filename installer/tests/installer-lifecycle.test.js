@@ -56,7 +56,9 @@ async function isClaudeAvailable() {
 function skipWithoutClaude(t) {
   if (!claudeCliAvailable) {
     t.skip('claude CLI not on PATH — install Claude Code to run plugin lifecycle tests');
+    return true;
   }
+  return false;
 }
 
 async function makeHome() {
@@ -145,7 +147,7 @@ async function assertClaudeMdRouting(home, { present = true } = {}) {
 
 test('Claude install copies all plugins, scripts, and writes install state', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -223,7 +225,7 @@ test('status prints version and client after install', async () => {
 
 test('Claude install writes CLAUDE.md routing block preserving existing content', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -243,7 +245,7 @@ test('Claude install writes CLAUDE.md routing block preserving existing content'
 
 test('Claude install removes stale ~/.claude/skills copies', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -262,7 +264,7 @@ test('Claude install removes stale ~/.claude/skills copies', async (t) => {
 
 test('second Claude install removes re-created stale ~/.claude/skills copies', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -280,7 +282,7 @@ test('second Claude install removes re-created stale ~/.claude/skills copies', a
 
 test('Claude install removes stale plugin cache versions', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -299,7 +301,7 @@ test('Claude install removes stale plugin cache versions', async (t) => {
 
 test('second Claude install refreshes local marketplace skill copy', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -320,7 +322,7 @@ test('second Claude install refreshes local marketplace skill copy', async (t) =
 
 test('second install does not duplicate plugins or change installedAt', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -343,7 +345,7 @@ test('second install does not duplicate plugins or change installedAt', async (t
 
 test('second Claude install refreshes plugins without duplicates', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -427,7 +429,7 @@ test('update skips when user declines newer version', async () => {
 
 test('uninstall claude,cursor removes all global install paths', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {
@@ -472,7 +474,7 @@ test('per-app .meta.json survives global uninstall', async () => {
 
 test('legacy install.json removed on Claude install', async (t) => {
   await isClaudeAvailable();
-  skipWithoutClaude(t);
+  if (skipWithoutClaude(t)) return;
 
   const home = await makeHome();
   try {

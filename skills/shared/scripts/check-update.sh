@@ -5,7 +5,9 @@
 
 set -euo pipefail
 
-META="$HOME/.fw-dev-tools/.meta.json"
+META_DIR="${FW_DEV_TOOLS_HOME:-$HOME/.fw-dev-tools}"
+META="$META_DIR/.meta.json"
+export META
 
 [ -f "$META" ] || exit 0
 
@@ -15,7 +17,7 @@ TODAY=$(date -u +"%Y-%m-%d")
 read_field() {
   node -e "
     try {
-      const m = JSON.parse(require('fs').readFileSync('$META','utf8'));
+      const m = JSON.parse(require('fs').readFileSync(process.env.META,'utf8'));
       const v = $1;
       process.stdout.write(v == null ? '' : String(v));
     } catch { process.stdout.write(''); }
@@ -38,9 +40,9 @@ LAST_NUDGED=$(read_field "m.update_check && m.update_check.lastNudged")
     node -e "
       const fs = require('fs');
       try {
-        const m = JSON.parse(fs.readFileSync('$META','utf8'));
+        const m = JSON.parse(fs.readFileSync(process.env.META,'utf8'));
         m.update_check.lastNudged = '$TODAY';
-        fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
+        fs.writeFileSync(process.env.META, JSON.stringify(m, null, 2) + '\n');
       } catch (e) {
         process.stderr.write('[fw-dev-tools] check-update: failed to write meta: ' + e.message + '\n');
       }
@@ -63,7 +65,7 @@ LATEST=$(node -e "
 # Write update_check fields back
 node -e "
   const fs = require('fs');
-  const m = JSON.parse(fs.readFileSync('$META','utf8'));
+  const m = JSON.parse(fs.readFileSync(process.env.META,'utf8'));
   const current = '$CURRENT';
   const latest = '${LATEST:-}';
   const today = '$TODAY';
@@ -79,7 +81,7 @@ node -e "
     process.stdout.write('⚠ fw-dev-tools v' + current + ' → v' + latest + ' available. Run: npx @freshworks/fw-dev-tools update\n');
   }
   try {
-    fs.writeFileSync('$META', JSON.stringify(m, null, 2) + '\n');
+    fs.writeFileSync(process.env.META, JSON.stringify(m, null, 2) + '\n');
   } catch (e) {
     process.stderr.write('[fw-dev-tools] check-update: failed to write meta: ' + e.message + '\n');
   }

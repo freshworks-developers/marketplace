@@ -51,7 +51,7 @@ Optional root fields: `tracking_id`, `app_key`, `version_id`, `last_milestone_at
 1. **Every interaction** — read `.fw-session.json` at the app project root before classifying or dispatching skills.
 2. **Scope** — session applies to the **active app directory only** (where `manifest.json` lives or will be created). Never read or write session files from parent monorepos or sibling app folders.
 3. **Missing file** — treat as fresh workflow; create on first milestone write.
-4. **Corrupt or invalid JSON** — do not guess contents. Tell the user: "Your saved progress file looks damaged — I can start fresh or you can fix `.fw-session.json` manually." Offer **start fresh** (delete file) before continuing.
+4. **Corrupt session / invalid JSON** — do not guess contents. Tell the user: "Your saved progress file looks damaged — I can start fresh or you can fix `.fw-session.json` manually." Offer **start fresh** (`session-reset.sh <app-dir> --force`) before continuing.
 5. **Cross-IDE** — same schema across Cursor, Claude Code, and Codex; no IDE-specific fields.
 
 ### Write rules
@@ -61,8 +61,9 @@ Optional root fields: `tracking_id`, `app_key`, `version_id`, `last_milestone_at
 3. **Progress** — append milestone strings to `progress.milestones` (e.g. `validate_passed`, `review_passed`); set `progress.app_type` when product/app type is confirmed.
 4. **Publish block** — populate `publish` after first marketplace submit attempt (`tracking_id`, `last_version`, `last_status`).
 5. **Escalation block** — update `escalation.deploy_attempt_count` (max 6) and `fix_attempt_count` (max 3 per error signature); reset fix count when `last_error_signature` changes.
-6. **Size** — keep file under ~32KB; do not store logs, diffs, or source code in session.
-7. **Secrets prohibited** — never write API keys, OAuth tokens, iparam values, or credentials. Session is world-readable in dev workspaces.
+6. **Validate before write** — validate the merged document against `fw-session.schema.json` before writing; reject invalid enums, extra keys, and wrong types loudly.
+7. **Size** — keep file under ~32KB; do not store logs, diffs, or source code in session.
+8. **Secrets prohibited** — never write API keys, OAuth tokens, iparam values, or credentials. Session is world-readable in dev workspaces.
 
 ### Example (minimal)
 
@@ -108,6 +109,10 @@ After the user selects an option, restate the chosen intent in plain language (e
 ### Compound requests
 
 When a message contains two intents (e.g. "add a feature and publish"), confirm the **sequence**: implement feature first (`#add-feature`), then offer review/publish — never publish before review.
+
+### Intent switching
+
+When a saved session exists but the user clearly chooses a different goal, confirm the intent switching in plain language before any destructive action. Keep the current message's primary intent active and preserve only non-conflicting secondary context in session.
 
 ### Escalation after one turn
 

@@ -97,10 +97,10 @@ describe('Skill Regex Evals — fw-ai-actions', { concurrency: true }, () => {
     assert.ok(ok, 'fw-ai-actions-app/SKILL.md must require fetching API docs before implementation');
   });
 
-  test('fw-ai-actions-14 DEPRECATED MCP tools: implement_app, idea_to_app, fix_app_errors must not be used', async () => {
+  test('fw-ai-actions-14 MCP boundary: legacy build tools deprecated, redirect to fw-app-dev', async () => {
     const c = await readSpec();
-    const ok = /DEPRECATED MCP tools.*implement_app|implement_app.*get_implementation_plan.*idea_to_app.*fix_app_errors/i.test(c);
-    assert.ok(ok, 'spec must list implement_app, get_implementation_plan, idea_to_app, fix_app_errors as DEPRECATED');
+    const ok = /MCP boundary.*implement_app|implement_app.*deprecation contract/i.test(c);
+    assert.ok(ok, 'spec must document MCP boundary and deprecated implement_app with deprecation contract');
   });
 
   test('fw-ai-actions-15 toolchain gate same as fw-app-dev: fw-setup when missing, fdk-migrate for 2.x, never downgrade', async () => {

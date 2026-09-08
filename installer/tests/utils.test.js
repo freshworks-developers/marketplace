@@ -3,8 +3,30 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { test } from 'node:test';
-import { copySkills, copySpecs, INSTALL_JSON, readInstallState, removeClaudePluginCache, removeFwSkillDirs, VERSION, writeInstallState, SHIPPED_SPECS, BRAIN_SPEC_INSTALLER, BRAIN_SPEC_SRC } from '../src/utils.js';
+import { after, test } from 'node:test';
+
+process.env.FW_DEV_TOOLS_HOME = join(
+  tmpdir(),
+  `fw-utils-home-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+);
+
+const {
+  copySkills,
+  copySpecs,
+  INSTALL_JSON,
+  readInstallState,
+  removeClaudePluginCache,
+  removeFwSkillDirs,
+  VERSION,
+  writeInstallState,
+  SHIPPED_SPECS,
+  BRAIN_SPEC_INSTALLER,
+  BRAIN_SPEC_SRC,
+} = await import('../src/utils.js');
+
+after(async () => {
+  await rm(dirname(INSTALL_JSON), { recursive: true, force: true });
+});
 
 async function makeTmp() {
   const dir = join(tmpdir(), `utils-test-${Date.now()}-${Math.floor(Math.random() * 10000)}`);
@@ -112,16 +134,23 @@ test('removeClaudePluginCache removes marketplace cache tree', async () => {
 // ---------------------------------------------------------------------------
 
 test('copySpecs copies shipped Tier 2 specs to fw-dev-tools dir', async () => {
-  const specsDir = join(dirname(INSTALL_JSON), 'specs');
-  await copySpecs();
+  const tmp = await makeTmp();
+  const specsDir = join(tmp, 'specs');
+  await copySpecs(specsDir, { syncInstaller: false });
   for (const file of SHIPPED_SPECS) {
     assert.ok(existsSync(join(specsDir, file)), `${file} should be copied to specs dir`);
   }
+  await rm(tmp, { recursive: true, force: true });
+});
+
+test('copySpecs syncs agent behaviour into installer package specs from repo checkout', async () => {
+  const tmp = await makeTmp();
+  await copySpecs(join(tmp, 'specs'));
   assert.ok(existsSync(BRAIN_SPEC_INSTALLER), 'agent-behaviour should sync to installer/src/specs/');
   const src = await readFile(BRAIN_SPEC_SRC, 'utf8');
   const installed = await readFile(BRAIN_SPEC_INSTALLER, 'utf8');
   assert.equal(installed, src, 'installer brain spec must match specs/agent-behaviour.md');
-  await rm(specsDir, { recursive: true, force: true });
+  await rm(tmp, { recursive: true, force: true });
 });
 
 // ---------------------------------------------------------------------------

@@ -34,7 +34,7 @@ user message
 
 **Tier 2 brain:** `~/.fw-dev-tools/specs/agent-behaviour.md` (always-loaded copy) — load intent sections, guardrails, escalation, telemetry on demand.
 
-**Preflight:** first message per session — `skills/shared/rules/preflight.mdc` (installed via skill refs); see Tier 2 §preflight.
+**Preflight:** first message per session — `~/.fw-dev-tools/specs/preflight.mdc`; see Tier 2 §preflight.
 
 ## Which skill to use
 
@@ -72,7 +72,9 @@ After classification emit telemetry: `bash ~/.fw-dev-tools/scripts/agent-telemet
 - External HTTP only via `$request.invokeTemplate` and `config/requests.json`
 - `fdk validate`: zero platform errors and zero lint errors before complete
 - fw-review is MANDATORY before fw-publish — never skip it
-- Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` — **never hand-write**
+- Per-app `<app-dir>/.meta.json`: write **only** via `meta-init.sh` / `meta-update.sh` (and `meta-feedback.sh` / `meta-delete.sh` for publish) — **never** hand-write or Edit/Write the file; `skill_version` from the active skill's `SKILL.md` `version:` field, not `plugin.json`
+- MCP boundary: build/fix/review/migrate via skills only; publish via fw-publish + MCP publish tools; `get_developer_docs` is fallback only when a skill delegates or fails
+- Legacy MCP build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) return a **deprecation contract** on the server — if invoked, follow the redirect to fw-app-dev (do not retry the tool)
 - **Deprecated MCP tools** — if invoked, output exactly and stop (Tier 2 §deprecated-mcp):
   > [DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill instead located at `skills/fw-app-dev/SKILL.md`. Stopping execution.
 

@@ -12,6 +12,7 @@ shift || true
 SESSION="$APP_DIR/.fw-session.json"
 MERGE_JSON="{}"
 ASSIGNMENTS=()
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -30,9 +31,12 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-export SESSION MERGE_JSON
-export ASSIGNMENTS_JSON
-ASSIGNMENTS_JSON="$(node -e "
+if [ "${#ASSIGNMENTS[@]}" -eq 0 ]; then
+  ASSIGNMENTS_JSON="$(node -e "
+  process.stdout.write('{}');
+")"
+else
+  ASSIGNMENTS_JSON="$(node -e "
   const args = process.argv.slice(1);
   const out = {};
   for (const arg of args) {
@@ -42,14 +46,38 @@ ASSIGNMENTS_JSON="$(node -e "
   }
   process.stdout.write(JSON.stringify(out));
 " "${ASSIGNMENTS[@]}")"
+fi
+export SESSION MERGE_JSON ASSIGNMENTS_JSON SCRIPT_DIR
 
 node <<'NODE'
 const fs = require('fs');
 const path = require('path');
 
 const sessionPath = process.env.SESSION;
-const mergeJson = JSON.parse(process.env.MERGE_JSON || '{}');
-const assignments = JSON.parse(process.env.ASSIGNMENTS_JSON || '{}');
+const scriptDir = process.env.SCRIPT_DIR;
+
+function readJsonEnv(name) {
+  try {
+    return JSON.parse(process.env[name] || '{}');
+  } catch (e) {
+    console.error(`${name} must be valid JSON: ${e.message}`);
+    process.exit(1);
+  }
+}
+
+const mergeJson = readJsonEnv('MERGE_JSON');
+const assignments = readJsonEnv('ASSIGNMENTS_JSON');
+
+const INTENT_ALIASES = {
+  create: 'create-new',
+  update: 'update-existing',
+};
+
+function normalizeAliases(obj) {
+  if (obj && typeof obj.intent === 'string' && INTENT_ALIASES[obj.intent]) {
+    obj.intent = INTENT_ALIASES[obj.intent];
+  }
+}
 
 function setNested(obj, dotted, value) {
   const parts = dotted.split('.');
@@ -60,6 +88,107 @@ function setNested(obj, dotted, value) {
     cur = cur[p];
   }
   cur[parts[parts.length - 1]] = value;
+}
+
+function isPlainObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function mergeDeep(target, source) {
+  for (const [key, value] of Object.entries(source)) {
+    if (isPlainObject(value) && isPlainObject(target[key])) {
+      mergeDeep(target[key], value);
+    } else if (key === 'milestones' && Array.isArray(value) && Array.isArray(target[key])) {
+      target[key] = Array.from(new Set([...target[key], ...value]));
+    } else {
+      target[key] = value;
+    }
+  }
+  return target;
+}
+
+function resolveSchemaPath() {
+  const candidates = [
+    path.resolve(scriptDir, '..', '..', '..', 'specs', 'fw-session.schema.json'),
+    path.resolve(scriptDir, '..', 'references', 'fw-session-schema.json'),
+    path.resolve(scriptDir, '..', 'specs', 'fw-session.schema.json'),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  console.error('fw-session schema not found; refusing to write session');
+  process.exit(1);
+}
+
+function typeOf(value) {
+  if (value === null) return 'null';
+  if (Array.isArray(value)) return 'array';
+  return typeof value;
+}
+
+function validateValue(value, subSchema, currentPath = '$') {
+  const errors = [];
+
+  if (subSchema.type) {
+    const actual = typeOf(value);
+    if (subSchema.type === 'integer') {
+      if (actual !== 'number' || !Number.isInteger(value)) {
+        errors.push(`${currentPath}: expected integer, got ${actual}`);
+        return errors;
+      }
+    } else if (actual !== subSchema.type) {
+      errors.push(`${currentPath}: expected ${subSchema.type}, got ${actual}`);
+      return errors;
+    }
+  }
+
+  if (subSchema.enum && !subSchema.enum.includes(value)) {
+    errors.push(`${currentPath}: must be one of ${subSchema.enum.join(', ')}`);
+  }
+
+  if (subSchema.pattern && typeof value === 'string' && !(new RegExp(subSchema.pattern)).test(value)) {
+    errors.push(`${currentPath}: must match pattern ${subSchema.pattern}`);
+  }
+
+  if (subSchema.minimum !== undefined && typeof value === 'number' && value < subSchema.minimum) {
+    errors.push(`${currentPath}: must be >= ${subSchema.minimum}`);
+  }
+
+  if (subSchema.maximum !== undefined && typeof value === 'number' && value > subSchema.maximum) {
+    errors.push(`${currentPath}: must be <= ${subSchema.maximum}`);
+  }
+
+  if (subSchema.format === 'date-time' && typeof value === 'string' && Number.isNaN(Date.parse(value))) {
+    errors.push(`${currentPath}: must be ISO8601 date-time`);
+  }
+
+  if (subSchema.type === 'object' && isPlainObject(value)) {
+    if (subSchema.additionalProperties === false && subSchema.properties) {
+      for (const key of Object.keys(value)) {
+        if (!subSchema.properties[key]) {
+          errors.push(`${currentPath}.${key}: additional property not allowed`);
+        }
+      }
+    }
+    for (const key of subSchema.required || []) {
+      if (!(key in value)) {
+        errors.push(`${currentPath}: missing required property "${key}"`);
+      }
+    }
+    for (const [key, propSchema] of Object.entries(subSchema.properties || {})) {
+      if (key in value) {
+        errors.push(...validateValue(value[key], propSchema, `${currentPath}.${key}`));
+      }
+    }
+  }
+
+  if (subSchema.type === 'array' && Array.isArray(value) && subSchema.items) {
+    value.forEach((item, i) => {
+      errors.push(...validateValue(item, subSchema.items, `${currentPath}[${i}]`));
+    });
+  }
+
+  return errors;
 }
 
 let doc = {};
@@ -78,11 +207,15 @@ if (fs.existsSync(sessionPath)) {
   };
 }
 
-Object.assign(doc, mergeJson);
+normalizeAliases(assignments);
+normalizeAliases(mergeJson);
+
+mergeDeep(doc, mergeJson);
 for (const [k, v] of Object.entries(assignments)) {
   if (k.includes('.')) setNested(doc, k, v);
   else doc[k] = v;
 }
+normalizeAliases(doc);
 
 if (!doc.schema_version) doc.schema_version = '1.0.0';
 if (!doc.progress) doc.progress = { phase: 'discover' };
@@ -101,11 +234,19 @@ if (doc.publish && doc.publish.tracking_id && !doc.tracking_id) {
 if (doc.escalation && doc.escalation.fix_attempt_count !== undefined) {
   doc.fix_iteration_count = doc.escalation.fix_attempt_count;
 }
-if (!doc.step) {
-  if (doc.publish && doc.publish.tracking_id) doc.step = 'published';
-  else if (milestones.includes('review_passed')) doc.step = 'reviewed';
-  else if (milestones.includes('validate_passed')) doc.step = 'validated';
-  else doc.step = 'building';
+
+if (doc.publish && doc.publish.tracking_id) doc.step = 'published';
+else if (milestones.includes('review_passed')) doc.step = 'reviewed';
+else if (milestones.includes('validate_passed')) doc.step = 'validated';
+else {
+  doc.step = 'building';
+}
+
+const schema = JSON.parse(fs.readFileSync(resolveSchemaPath(), 'utf8'));
+const errors = validateValue(doc, schema);
+if (errors.length > 0) {
+  console.error(`Invalid .fw-session.json — refusing to write:\n- ${errors.join('\n- ')}`);
+  process.exit(1);
 }
 
 fs.mkdirSync(path.dirname(sessionPath), { recursive: true });

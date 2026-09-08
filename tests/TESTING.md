@@ -23,7 +23,7 @@ bash tests/run-all-tests.sh --llm-eval --e2e   # all layers
 
 Generates `tests/all-tests-report.html` — tabbed report with results for all layers.
 
-**Scenario counts:** 123 installer · 215 static/parser · 143 regex (140 active, 3 skipped) · 187 LLM active (13 disabled pending upstream skill changes).
+**Scenario counts:** 123 installer · 215 static/parser · 143 regex (140 active, 3 skipped) · 200 LLM active.
 
 ## What runs where
 
@@ -79,6 +79,7 @@ tests/
       fw-review.js
       fw-publish.js
       fw-ai-actions.js
+      orchestration.js            # Six intent/session orchestration scenarios
     regex/                        # Layer 3: per-skill regex checks (CI, ~80ms)
       fw-app-dev.regex.test.mjs
       fw-setup.regex.test.mjs
@@ -153,7 +154,7 @@ bash tests/run-all-tests.sh --llm-eval
 
 Requires `claude` or `cursor` on PATH with an active subscription. No `ANTHROPIC_API_KEY` needed. Passes `--model claude-sonnet-4-6` to the claude CLI. Runs up to 6 scenarios concurrently.
 
-Each scenario retries up to 3 times and passes if ≥ 2 attempts pass. Takes ~25 min for all **187 active** scenarios (13 additional scenarios are commented out pending upstream skill changes).
+Each scenario retries up to 3 times and passes if ≥ 2 attempts pass. Takes ~25 min for all **200 active** scenarios.
 
 **Output:** `eval/eval-cli-results.json` (machine-readable), `all-tests-report.html` (Evals tab).
 
