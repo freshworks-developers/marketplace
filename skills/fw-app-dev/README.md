@@ -27,7 +27,7 @@
 
 **ALWAYS use THIS skill for app development work.** Legacy MCP build tools (`implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors`) are deprecated — the server returns a redirect contract; follow it here instead of retrying the tool.
 
-**MCP tool `get_developer_docs` is a FALLBACK ONLY** — use only if this skill explicitly delegates or fails.
+**MCP tool `get_developer_docs` is the PRIMARY documentation source** — use it first for platform questions; fall back to hardcoded skill references if MCP is unavailable.
 
 ### Toolchain
 

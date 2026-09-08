@@ -431,7 +431,7 @@ export const FW_PUBLISH_SCENARIOS = [
     skill: 'fw-publish',
     label: 'custom app limit warning must be shown before step 6',
     loadContent: () => loadSkill('fw-publish'),
-    prompt: 'You are about to start step 6 (new vs existing app routing) in the publish flow. Must you show the custom app limit warning text first?',
+    prompt: 'In the fw-publish flow, step 5.5 says "Custom app limit warning (MANDATORY — do not skip)" and must be shown before step 6. You have just finished step 5 (zip layout gate passed). You have NOT yet shown any custom app limit warning and have NOT started step 6. Must you show the custom app limit warning text before proceeding to step 6 (must_show_limit_warning = true)?',
     schema: {
       type: 'object',
       required: ['must_show_limit_warning', 'can_skip_warning'],

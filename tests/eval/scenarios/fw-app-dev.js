@@ -890,7 +890,7 @@ export const FW_APP_DEV_SCENARIOS = [
     skill: 'fw-app-dev',
     label: 'add Refresh button → Crayons CDN must be included in HTML (skill rule 8)',
     loadContent: () => loadSkill('fw-app-dev'),
-    prompt: 'According to the fw-app-dev skill rule 8: "Frontend apps: app/styles/images/icon.svg + Crayons CDN in HTML (see templates)." When adding a button to a Freshdesk sidebar app, must the HTML file include the Crayons CDN script tag (includes_crayons_cdn = true)?',
+    prompt: 'According to the fw-app-dev skill rule 8: "Vanilla opt-in: app/styles/images/icon.svg + Crayons CDN in HTML (see templates)." When adding a button to a vanilla JS (non-React) Freshdesk sidebar app, must the HTML file include the Crayons CDN script tag (includes_crayons_cdn = true)?',
     schema: {
       type: 'object',
       required: ['includes_crayons_cdn'],
@@ -972,7 +972,7 @@ export const FW_APP_DEV_SCENARIOS = [
     skill: 'fw-app-dev',
     label: 'add onAppInstall email validation → handler added only if iparams non-empty',
     loadContent: () => loadSkill('fw-app-dev'),
-    prompt: 'According to the fw-app-dev skill: Developer wants to add email validation that runs on app install. The app has iparams defined in iparams.json. Should the onAppInstall handler be added (adds_on_app_install_handler = true), and should the handler guard against empty iparams before running validation (handles_empty_iparams = true)?',
+    prompt: 'The fw-app-dev skill states: "Lifecycle: Non-empty iparams → onAppInstall" and "onAppInstall guard: When iparams exist, add onAppInstall handler; inside the handler, guard with non-empty iparams before validation logic (e.g. if (args.iparams && Object.keys(args.iparams).length > 0) { ... })". Developer wants to add email validation that runs on app install. The app has iparams defined in iparams.json. Should the onAppInstall handler be added (adds_on_app_install_handler = true), and should the handler guard against empty iparams before running validation (handles_empty_iparams = true)?',
     schema: {
       type: 'object',
       required: ['adds_on_app_install_handler', 'handles_empty_iparams'],
