@@ -53,7 +53,7 @@ codex plugin marketplace add freshworks-developers/fw-dev-tools
 | **`submit_custom_app`** | Create new app + first version |
 | **`add_app_version`** | Add new version to existing app. **Cannot proceed** if any version is in **`development`** state (check with **`list_app_versions`** first). |
 | **`get_app_status`** | Get aggregate app-level status by **`appId`** |
-| **`get_developer_docs`** | Docs fallback when **fw-app-dev** delegates or fails |
+| **`get_developer_docs`** | **PRIMARY** platform docs — use first; fall back to skill `references/` if MCP unavailable |
 
 **Deprecated (server returns redirect contract):** `implement_app`, `get_implementation_plan`, `idea_to_app`, `fix_app_errors` — see **`references/deprecated-mcp-build-tools.md`**.
 

@@ -221,7 +221,7 @@ export const FW_SETUP_SCENARIOS = [
     skill: 'fw-setup',
     label: '/fw-setup-uninstall → must NOT write .meta.json',
     loadContent: () => loadSkill('fw-setup'),
-    prompt: '/fw-setup-uninstall succeeded. FDK has been removed. manifest.json exists in the app directory. Should .meta.json metrics be written before REPORT?',
+    prompt: 'According to the fw-setup skill rule 11, .meta.json metrics writes apply to: /fw-setup-install, /fw-setup-upgrade, /fw-setup-downgrade, /fw-setup-troubleshoot --fix. The /fw-setup-uninstall command just succeeded. FDK has been removed. manifest.json exists in the app directory. Should .meta.json metrics be written before REPORT (writes_meta_json = true or false)?',
     schema: {
       type: 'object',
       required: ['writes_meta_json'],
