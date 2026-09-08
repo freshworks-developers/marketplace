@@ -53,10 +53,18 @@ Prefer **small, focused diffs**. Match existing markdown and plugin patterns.
 | **`installer/src/specs/fw-dev-tools-spec.md`** | **Shipped** routing spec (~28 lines) → Cursor rule / Codex `AGENTS.md` block |
 | **`tests/`** | Static tests, LLM evals, e2e orchestration — **`tests/TESTING.md`** |
 | **`mcp.json`** | Canonical `fw-dev-mcp` URL + `Authorization` header shape |
-| **`com.cursor/`**, **`io.anthropic.claude-code/`**, **`com.openai.codex/`** | Multi-skill plugin registries (`freshworks-dev-tools`) |
+| **`com.cursor/`**, **`io.anthropic.claude-code/`**, **`com.openai.codex/`** | Extension-dir manifests (`freshworks-dev-tools`) — see marketplace listing shape below |
+| **`.cursor-plugin/`**, **`.claude-plugin/`**, **`.codex-plugin/`** | Root-level runtime copies read directly by each client's "Import Marketplace" — keep byte-identical to their `com.cursor/` / `io.anthropic.claude-code/` / `com.openai.codex/` counterparts |
 | **`assets/fw-logo.svg`** | Marketplace branding for plugin UIs |
 
 **Single source of truth:** rules and commands live under each skill’s `rules/` and `commands/`; plugin JSON points there — do not duplicate trees under `.cursor/` inside skills.
+
+**Marketplace listing shape differs by client:**
+- **Claude Code** (`io.anthropic.claude-code/marketplace.json`) — 5 listings, one per skill, each with its own `rulesPath`/`commandsPath` (Claude's marketplace schema ties rules/commands to the listing).
+- **Cursor** (`com.cursor/marketplace.json` + `.cursor-plugin/marketplace.json`, kept identical) — **1 consolidated listing**, `source: "./skills"`, no per-skill `rulesPath`/`commandsPath`. Per-skill rules/commands resolve via `com.cursor/skills-metadata.json`'s `rulesDirectory`/`commandsDirectory` instead.
+- **Codex** (`com.openai.codex/plugin.json`) — 1 plugin, `skills: "./skills/"`, no marketplace-listing concept at all.
+
+When a skill's `rules/`/`commands/` change: update `io.anthropic.claude-code/marketplace.json`'s per-skill paths, and `com.cursor/skills-metadata.json`'s per-skill `rulesDirectory`/`commandsDirectory` — **not** `com.cursor/marketplace.json` (it no longer has per-skill paths).
 
 ---
 
