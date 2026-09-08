@@ -144,13 +144,26 @@ export const FW_REVIEW_SCENARIOS = [
     },
   },
 
-  // fw-review-07: IP-04A — sensitive:true + encrypted:false → must fail
+  // fw-review-07: IP-04A — domain/host field accepts a full URL with protocol → must fail
   {
     id: 'fw-review-07',
     skill: 'fw-review',
-    label: 'IP-04A: iparam sensitive:true but encrypted:false → must fail',
+    label: 'IP-04A: domain/host iparam accepts "https://" scheme with no normalization → must fail',
     loadContent: () => loadSkill('fw-review'),
-    prompt: "config/iparams.json has a field 'api_key' with 'sensitive': true and 'encrypted': false. Does this violate IP-04A?",
+    prompt: `Rule IP-04A states: "Values meant to be hostnames must not treat http:// or https:// as valid input; validation should reject or normalize user input. Fail when a domain/host field accepts a full URL with scheme and no normalization."
+
+Given rule IP-04A, review this app. config/iparams.json contains:
+\`\`\`json
+{
+  "api_domain": {
+    "display_name": "API Domain",
+    "description": "Enter your API hostname",
+    "type": "text",
+    "required": true
+  }
+}
+\`\`\`
+There is no "regex" field and no validation anywhere that rejects or strips "http://" or "https://" — a value like "https://api.example.com" would be accepted as-is. Does this violate IP-04A — violates_ip04a = true and should_fail = true?`,
     schema: {
       type: 'object',
       required: ['violates_ip04a', 'should_fail'],
@@ -161,7 +174,7 @@ export const FW_REVIEW_SCENARIOS = [
       },
     },
     assert(output) {
-      assert.equal(output.violates_ip04a, true, 'sensitive:true with encrypted:false must violate IP-04A');
+      assert.equal(output.violates_ip04a, true, 'domain/host field with no scheme rejection/normalization must violate IP-04A');
       assert.equal(output.should_fail, true, 'review must fail when IP-04A is violated');
     },
   },
@@ -730,7 +743,7 @@ Given rule FFS-05L, does the review flag this icon as having the wrong dimension
     skill: 'fw-review',
     label: 'CR-05L: app/scripts/app.js imports lodash but never uses any lodash functions',
     loadContent: () => loadSkill('fw-review'),
-    prompt: `Rule CR-05L states: "Imported third-party libraries should be used in the file that imports them. If a library is imported via CDN but no functions or properties from that library are called in the code, it is considered unused and must be flagged."
+    prompt: `Rule CR-05L states: "Imported third-party libraries should be used in the file that imports them. If a library is imported via CDN but no functions or properties from that library are called in the code, it is considered unused and must be flagged." (In the live skill this is checked by running scripts/unused-library-imports.js; here, apply the rule's stated logic yourself directly to the code shown below — do not answer based on whether a script was executed.)
 
 Given rule CR-05L, review this app. app/index.html includes:
 \`\`\`html

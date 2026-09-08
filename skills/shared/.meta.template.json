@@ -42,5 +42,16 @@
     "invoked": 0,
     "skill_version": "",
     "publish_outcome": ""
+  },
+  "_agent": {
+    "last_event": "",
+    "last_event_at": "",
+    "last_intent": "",
+    "intent_confidence": 0,
+    "session_milestone": "",
+    "step": "",
+    "escalation_reason": "",
+    "blocked_tool": "",
+    "guardrail_id": ""
   }
 }

@@ -69,6 +69,17 @@ fw-dev-tools/
 └── README.md                 # Repository overview
 ```
 
+## Shipped vs contributor specs
+
+| Artifact | Shipped to IDE? | Path |
+|----------|-----------------|------|
+| Slim controller (Tier 1) | **Yes** — always loaded | `installer/src/specs/fw-dev-tools-spec.md` |
+| Orchestration brain (Tier 2) | **Yes** — always loaded | `specs/agent-behaviour.md` (synced to `installer/src/specs/` on install) |
+| Ecosystem map | **Yes** — via `~/.fw-dev-tools/specs/` | `specs/ecosystem-map.md` |
+| `AGENTS.md` (repo root) | **No** — contributor routing inventory only | Never installed to end-user IDE paths |
+
+End developers receive specs through `npx @freshworks/fw-dev-tools install` (Cursor rules, Claude `CLAUDE.md`, Codex `AGENTS.md`, and `~/.fw-dev-tools/specs/`).
+
 ## How to Contribute
 
 When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)** so Cursor / Claude **`rulesPath`** / **`commandsPath`** in **`.cursor-plugin/marketplace.json`** and **`.claude-plugin/marketplace.json`** stay aligned with what ships.

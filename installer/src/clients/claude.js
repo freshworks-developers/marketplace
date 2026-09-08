@@ -4,8 +4,8 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { writeInstallState, prompt, copyScripts, copySkills, removeFwSkillDirs, removeClaudePluginCache, claudePluginCacheDir, FW_DEV_TOOLS_DIR, FW_SKILLS, REPO_ROOT } from '../utils.js';
-import { upsertBlock, removeBlock } from '../fenced-block.js';
+import { writeInstallState, prompt, copyScripts, copySpecs, copySkills, removeFwSkillDirs, removeClaudePluginCache, claudePluginCacheDir, FW_DEV_TOOLS_DIR, FW_SKILLS, REPO_ROOT, readBrainSpecContent } from '../utils.js';
+import { upsertBlock, removeBlock, upsertBrainBlock, removeBrainBlock } from '../fenced-block.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -17,8 +17,11 @@ export async function writeClaudeMdBlock(targetPath = CLAUDE_MD) {
   const specContent = await readFile(SPEC_SRC, 'utf8');
   const block = `\n<!-- fw-dev-tools start -->\n${specContent}\n<!-- fw-dev-tools end -->\n`;
   await mkdir(join(homedir(), '.claude'), { recursive: true });
-  const existing = existsSync(targetPath) ? await readFile(targetPath, 'utf8') : '';
-  await writeFile(targetPath, upsertBlock(existing, block), 'utf8');
+  let existing = existsSync(targetPath) ? await readFile(targetPath, 'utf8') : '';
+  existing = upsertBlock(existing, block);
+  const brainContent = await readBrainSpecContent();
+  existing = upsertBrainBlock(existing, brainContent);
+  await writeFile(targetPath, existing, 'utf8');
 }
 
 const CLAUDE_CMD = process.env.FW_CLAUDE_CMD || 'claude';
@@ -37,6 +40,9 @@ export async function install({ yes = false } = {}) {
 
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
+
+  await copySpecs();
+  console.log('  ✓ Orchestration specs copied to ~/.fw-dev-tools/specs/');
 
   const claudeSkillsDir = join(homedir(), '.claude', 'skills');
   const removedStale = await removeFwSkillDirs(claudeSkillsDir);
@@ -95,7 +101,7 @@ export async function install({ yes = false } = {}) {
   }
 
   await writeClaudeMdBlock();
-  console.log(`  ✓ Routing spec written to ${CLAUDE_MD}`);
+  console.log(`  ✓ Routing + agent behaviour specs written to ${CLAUDE_MD}`);
 
   await writeInstallState({ client: 'claude', method: 'plugin' });
   console.log('✓ fw-dev-tools installed for Claude Code');
@@ -125,11 +131,12 @@ export async function uninstall({ yes = false } = {}) {
   }
 
   if (existsSync(CLAUDE_MD)) {
-    const content = await readFile(CLAUDE_MD, 'utf8');
-    const updated = removeBlock(content);
+    let content = await readFile(CLAUDE_MD, 'utf8');
+    const afterRouting = removeBlock(content);
+    const updated = removeBrainBlock(afterRouting);
     if (updated !== content) {
       await writeFile(CLAUDE_MD, updated, 'utf8');
-      console.log(`  ✓ Routing block removed from ${CLAUDE_MD}`);
+      console.log(`  ✓ Routing + brain blocks removed from ${CLAUDE_MD}`);
     }
   }
 
