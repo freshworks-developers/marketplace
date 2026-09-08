@@ -80,8 +80,10 @@ export async function install({ yes = false } = {}) {
     { yes }
   );
 
-  // Replace existing plugins so marketplace files refresh (install alone is a no-op when present).
-  for (const skill of FW_SKILLS) {
+  // Replace existing install so marketplace files refresh (install alone is a no-op when present).
+  // Uninstall legacy per-skill plugins (pre-consolidation) in case they're still present, then
+  // the single consolidated plugin (bundles all 5 skills under skills/).
+  for (const skill of [...FW_SKILLS, PLUGIN_NAME]) {
     await runClaude(['plugin', 'uninstall', `${skill}@${PLUGIN_NAME}`]);
   }
 
@@ -89,14 +91,14 @@ export async function install({ yes = false } = {}) {
     console.log(`  ✓ Removed stale plugin cache from ~/.claude/plugins/cache/${PLUGIN_NAME}`);
   }
 
-  for (const skill of FW_SKILLS) {
-    const installArgs = ['plugin', 'install', `${skill}@${PLUGIN_NAME}`];
+  {
+    const installArgs = ['plugin', 'install', `${PLUGIN_NAME}@${PLUGIN_NAME}`];
     if (token) installArgs.push('--config', `mcp_auth_token=${token}`);
     const result = await runClaude(installArgs);
     if (result.ok) {
-      console.log(`  ✓ Installed ${skill}`);
+      console.log(`  ✓ Installed ${PLUGIN_NAME} (bundles ${FW_SKILLS.join(', ')})`);
     } else {
-      console.log(`  ✗ Failed to install ${skill}: ${result.output}`);
+      console.log(`  ✗ Failed to install ${PLUGIN_NAME}: ${result.output}`);
     }
   }
 
@@ -122,7 +124,7 @@ export async function uninstall({ yes = false } = {}) {
     return;
   }
 
-  for (const skill of FW_SKILLS) {
+  for (const skill of [...FW_SKILLS, PLUGIN_NAME]) {
     const result = await runClaude(['plugin', 'uninstall', `${skill}@${PLUGIN_NAME}`]);
     if (result.ok) {
       console.log(`  ✓ Uninstalled ${skill}`);

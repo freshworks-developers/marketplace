@@ -84,7 +84,7 @@ End developers receive specs through `npx @freshworks/fw-dev-tools install` (Cur
 
 When you add, remove, or rename files under any skill’s **`rules/`** or **`commands/`**, update the **Rules and slash commands (inventory)** section in **[`AGENTS.md`](AGENTS.md)**.
 
-- **Claude:** also keep **`rulesPath`** / **`commandsPath`** in **`io.anthropic.claude-code/marketplace.json`** aligned per-skill (still one listing per skill).
+- **Claude:** `io.anthropic.claude-code/marketplace.json` is a **single consolidated listing** (`source: "."`, the plugin/repo root), which Claude auto-discovers as `skills/<name>/SKILL.md` for all 5 skills — no `rulesPath`/`commandsPath` needed. Nothing to update here when a skill's rules/commands change (Claude discovers them from the skill's own subdirectory automatically). Verify with `claude plugin details freshworks-dev-tools@freshworks-dev-tools` — should show `Skills (5)`.
 - **Cursor:** `com.cursor/marketplace.json` (and its `.cursor-plugin/marketplace.json` runtime copy — keep byte-identical) is now a **single consolidated listing** (`source: "./skills"`, no per-skill `rulesPath`/`commandsPath`). Per-skill rules/commands are instead resolved via **`com.cursor/skills-metadata.json`**'s `rulesDirectory`/`commandsDirectory` — update that file, not `marketplace.json`, when a skill's rules/commands change.
 
 **FDK / Node version truth** should match **`docs/engine-matrix.md`** whenever you change toolchain guidance in **`skills/fw-setup/SKILL.md`**.
