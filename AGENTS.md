@@ -60,6 +60,23 @@ Prefer **small, focused diffs**. Match existing markdown and plugin patterns.
 
 ---
 
+## Agent Behavior (intelligent orchestration)
+
+Contributor reference for the Tier 2 orchestration brain shipped alongside the routing spec.
+
+| Artifact | Path | Role |
+|----------|------|------|
+| Tier 1 (always loaded) | `installer/src/specs/fw-dev-tools-spec.md` | Intent table, skill routing, non-negotiables |
+| Tier 2 (on demand) | `specs/agent-behaviour.md` | Deep orchestration: intents, guardrails, escalation, session rules |
+
+**Intents (canonical):** `create-new`, `add-feature`, `troubleshoot`, `update-existing`, `migrate`, `publish-status`.
+
+**Session file:** `.fw-session.json` at app project root (distinct from per-app `.meta.json` metrics).
+
+When editing orchestration rules, update **both** Tier 1 (intent table / delegation) and Tier 2 (flow detail). Keep Confluence PRD intent names aligned.
+
+---
+
 ## Rules and slash commands (inventory)
 
 Keep this list aligned when adding or renaming files.
@@ -97,6 +114,10 @@ Keep this list aligned when adding or renaming files.
 **Commands:** none (orchestration in `SKILL.md`; optional prompts under `agents/`).
 
 **Rules (`.mdc`):** `ai-actions-api-docs.mdc`, `ai-actions-platform.mdc`, `ai-actions-readme.mdc`, `ai-actions-requests.mdc`, `ai-actions-schemas.mdc`, `ai-actions-server.mdc`, `ai-actions-test-data.mdc`, `ai-actions-validation.mdc`
+
+### shared — `skills/shared/`
+
+**Commands:** none. **Rules (`.mdc`):** `rules/preflight.mdc` (installed to `~/.fw-dev-tools/specs/preflight.mdc` with the orchestration specs).
 
 ### fw-review — `skills/fw-review/`
 

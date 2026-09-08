@@ -10,6 +10,7 @@
     "installer/bin/",
     "installer/src/",
     "skills/",
+    "specs/",
     ".claude-plugin",
     ".mcp.json"
   ],

@@ -77,4 +77,24 @@ describe('Skill Regex Evals — spec', { concurrency: true }, () => {
     }
   });
 
+  test('spec-08 session unhappy branches: corrupt, stale, reset, publish-pending, and intent switching documented', async () => {
+    const c = await readFile(join(__dirname, '..', '..', '..', 'specs', 'agent-behaviour.md'), 'utf8');
+    const ok =
+      /corrupt session/i.test(c) &&
+      /session-reset\.sh/i.test(c) &&
+      /30 days/i.test(c) &&
+      /do not auto-publish/i.test(c) &&
+      /intent switching|primary intent|secondary/i.test(c);
+    assert.ok(ok, 'Tier 2 spec must cover corrupt/stale/reset/publish-pending and intent-switching unhappy paths');
+  });
+
+  test('spec-09 session writes validate schema and prohibit secrets', async () => {
+    const c = await readFile(join(__dirname, '..', '..', '..', 'specs', 'agent-behaviour.md'), 'utf8');
+    const ok =
+      /validate before write/i.test(c) &&
+      /fw-session\.schema\.json/i.test(c) &&
+      /No secrets|never write API keys/i.test(c);
+    assert.ok(ok, 'Tier 2 spec must require schema validation and secret rejection before session writes');
+  });
+
 });

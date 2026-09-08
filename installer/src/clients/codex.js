@@ -2,8 +2,8 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
-import { copySkills, copyScripts, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC, removeFwSkillDirs } from '../utils.js';
-import { upsertBlock, removeBlock } from '../fenced-block.js';
+import { copySkills, copyScripts, copySpecs, writeInstallState, prompt, REPO_ROOT, SKILLS_SRC, removeFwSkillDirs, readBrainSpecContent } from '../utils.js';
+import { upsertBlock, removeBlock, upsertBrainBlock, removeBrainBlock } from '../fenced-block.js';
 import { mergeMcpServer, patchMcpToken, readMcpToken } from '../mcp-merge.js';
 import { CURSOR_MCP_ENTRY } from '../orchestration-spec.js';
 
@@ -38,8 +38,11 @@ export async function writeAgentsMdBlock(cwd = process.cwd()) {
   const block = `\n<!-- fw-dev-tools start -->\n${specContent}\n<!-- fw-dev-tools end -->\n`;
 
   await mkdir(CODEX_ROOT, { recursive: true });
-  const existing = existsSync(target) ? await readFile(target, 'utf8') : '';
-  await writeFile(target, upsertBlock(existing, block), 'utf8');
+  let existing = existsSync(target) ? await readFile(target, 'utf8') : '';
+  existing = upsertBlock(existing, block);
+  const brainContent = await readBrainSpecContent();
+  existing = upsertBrainBlock(existing, brainContent);
+  await writeFile(target, existing, 'utf8');
   return target;
 }
 
@@ -48,6 +51,9 @@ export async function install({ yes = false } = {}) {
 
   await copyScripts();
   console.log('  ✓ Scripts installed to ~/.fw-dev-tools/scripts/');
+
+  await copySpecs();
+  console.log('  ✓ Orchestration specs copied to ~/.fw-dev-tools/specs/');
 
   const skillsDir = await resolveSkillsDir();
   const removed = await removeFwSkillDirs(skillsDir);
@@ -58,7 +64,7 @@ export async function install({ yes = false } = {}) {
   console.log(`  ✓ Skills copied to ${skillsDir}`);
 
   const agentsPath = await writeAgentsMdBlock();
-  console.log(`  ✓ Routing spec written to ${agentsPath}`);
+  console.log(`  ✓ Routing + agent behaviour specs written to ${agentsPath}`);
 
   await mkdir(CODEX_ROOT, { recursive: true });
   const mcpJson = resolveMcpJsonPath();
@@ -108,11 +114,12 @@ export async function uninstall({ yes = false } = {}) {
   const fallbackAgents = join(CODEX_ROOT, 'AGENTS.md');
   for (const target of [cwdAgents, fallbackAgents]) {
     if (existsSync(target)) {
-      const content = await readFile(target, 'utf8');
-      const updated = removeBlock(content);
-      if (updated !== content) {
-        await writeFile(target, updated, 'utf8');
-        console.log(`  ✓ Routing block removed from ${target}`);
+      const original = await readFile(target, 'utf8');
+      let content = removeBlock(original);
+      content = removeBrainBlock(content);
+      if (content !== original) {
+        await writeFile(target, content, 'utf8');
+        console.log(`  ✓ Routing + brain blocks removed from ${target}`);
       }
     }
   }

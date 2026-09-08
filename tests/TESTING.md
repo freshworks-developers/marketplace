@@ -79,6 +79,7 @@ tests/
       fw-review.js
       fw-publish.js
       fw-ai-actions.js
+      orchestration.js            # Six intent/session orchestration scenarios
     regex/                        # Layer 3: per-skill regex checks (CI, ~80ms)
       fw-app-dev.regex.test.mjs
       fw-setup.regex.test.mjs

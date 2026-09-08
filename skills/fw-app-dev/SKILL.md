@@ -7,11 +7,25 @@ argument-hint: "[fdk-react-create|fdk-react-migrate|fdk-fix|fdk-migrate|fdk-refa
 allowed-tools: "shell read write strreplace glob grep"
 ---
 
+## Entry contract
+
+- **Invoked by:** controller (intent + session snapshot from `.fw-session.json`)
+- **Preconditions:** Active app directory identified; controller classified intent as app development (not pure setup/publish-only)
+- **Returns:** `done` | `blocked` | `escalate` + next suggested controller step
+- **On complete:** hand control back to the controller — do **not** chain the next skill manually
+- **Session:** start — `bash ~/.fw-dev-tools/scripts/session-read.sh <app-dir>`; milestone end — `session-write.sh <app-dir> progress.phase=validate` (etc.)
+
+> **Orchestration** (build → review → publish order) is owned by the Tier 1 controller spec. This skill executes **one development step** and returns.
+
 # Freshworks Platform 3.0 Development Skill
 
 ## EXECUTION ORDER: Always use THIS skill for app development
 
 **DO NOT** invoke legacy MCP build tools (**`implement_app`**, **`get_implementation_plan`**, **`idea_to_app`**, **`fix_app_errors`**). The server returns a **deprecation contract** with a redirect — follow it and use THIS skill instead. These tools bypass skill orchestration, validation workflows, and prerequisite checks. See **`skills/fw-publish/references/deprecated-mcp-build-tools.md`**.
+
+If one of these tools is invoked anyway, output **exactly** and stop:
+
+> [DEPRECATED] This action is no longer supported. Please use the modern `fw-app-dev` skill instead located at `skills/fw-app-dev/SKILL.md`. Stopping execution.
 
 **MANDATORY EXECUTION ORDER:**
 1. **ALWAYS route app development work through THIS skill first** (`fw-app-dev`) — implementation, validation, review routing, and enforcement live here; MCP doc lookup does **not** replace this skill for building or fixing apps.
